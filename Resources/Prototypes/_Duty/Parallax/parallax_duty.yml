@@ -1,0 +1,24 @@
+# SPDX-FileCopyrightText: 2025 LocalDuty
+#
+# SPDX-License-Identifier: MIT
+
+- type: parallax
+  id: ParallaxDuty
+  layersLQUseHQ: true
+  layers:
+    - texture:
+        !type:ImageParallaxTextureSource
+        path: /Textures/_Duty/Parallax/space-bg.png
+      scale: 1.0, 1.0
+      tiled: true
+      slowness: 0.0
+      scrolling: 0.0, 0.0
+      shader: unshaded
+    - texture:
+        !type:ImageParallaxTextureSource
+        path: /Textures/_Duty/Parallax/stars-bg.png
+      scale: 1.0, 1.0
+      tiled: true
+      slowness: 0.0
+      scrolling: 0.0, 0.0
+      shader: unshaded

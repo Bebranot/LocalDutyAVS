@@ -38,6 +38,14 @@ public sealed partial class AudioTab : Control
             scale: ContentAudioSystem.TtsMultiplier);
         // Corvax-TTS-End
 
+        // LocalDuty: Dynamic Ambient Music
+        Control.AddOptionPercentSlider(
+            DutyCCVars.DynamicAmbientMusicVolume,
+            SliderVolumeDutyAmbient,
+            scale: 1f);
+
+        Control.AddOptionCheckBox(DutyCCVars.DynamicAmbientMusicEnabled, DutyAmbientMusicCheckBox);
+
         // ADT Barks start
         Control.AddOptionPercentSlider(
             ADTCCVars.BarksVolume,

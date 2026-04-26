@@ -1,0 +1,67 @@
+#Customization
+- type: marking
+  id: 3eiladoTail
+  bodyPart: Tail
+  markingCategory: Tail
+  sponsorOnly: true
+  sprites:
+  - sprite: _DeadSpace/Sponsor/3eilado/Customization/tail.rsi
+    state: tail
+  - sprite: _DeadSpace/Sponsor/3eilado/Customization/tail.rsi
+    state: tail-tip
+  - sprite: _DeadSpace/Sponsor/3eilado/Customization/tail.rsi
+    state: stars
+
+- type: marking
+  id: 3eiladoHair
+  bodyPart: Hair
+  markingCategory: Hair
+  sponsorOnly: true
+  sprites:
+  - sprite: _DeadSpace/Sponsor/3eilado/Customization/hair.rsi
+    state: hair
+
+- type: marking
+  id: 3eiladoWings
+  bodyPart: Tail
+  markingCategory: Tail
+  followSkinColor: true
+  forcedColoring: true
+  sponsorOnly: true
+  speciesRestriction: [Demon]
+  sprites:
+  - sprite: _DeadSpace/Sponsor/3eilado/Customization/demon/wings.rsi
+    state: wings
+
+- type: marking
+  id: 3eiladoMothWings
+  bodyPart: Tail
+  markingCategory: Tail
+  speciesRestriction: [Moth]
+  sponsorOnly: true
+  sprites:
+  - sprite: _DeadSpace/Sponsor/3eilado/Customization/moth/wings.rsi
+    state: wings
+  - sprite: _DeadSpace/Sponsor/3eilado/Customization/moth/wings.rsi
+    state: gradient
+  - sprite: _DeadSpace/Sponsor/3eilado/Customization/moth/wings.rsi
+    state: stars
+
+- type: marking
+  id: 3eiladoWingsMothAntennas
+  bodyPart: HeadTop
+  markingCategory: HeadTop
+  speciesRestriction: [Moth]
+  sponsorOnly: true
+  sprites:
+  - sprite: _DeadSpace/Sponsor/3eilado/Customization/moth/top.rsi
+    state: head
+
+- type: marking
+  id: DemonHorns3eilado
+  bodyPart: HeadTop
+  markingCategory: HeadTop
+  sponsorOnly: true
+  sprites:
+  - sprite: _DeadSpace/Sponsor/3eilado/horns.rsi
+    state: horns

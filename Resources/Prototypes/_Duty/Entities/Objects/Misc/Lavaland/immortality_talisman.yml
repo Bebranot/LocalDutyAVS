@@ -1,0 +1,43 @@
+- type: entity
+  parent: [Incorporeal, BaseMob]
+  id: ImmortalityPocket
+  name: бессмертное нечто
+  description: Выглядит как человек... Наверное...
+  components:
+  - type: Spectral
+  - type: MovementSpeedModifier
+    baseSprintSpeed: 0
+    baseWalkSpeed: 0
+  - type: Sprite
+    sprite: /Textures/_Duty/Objects/Lavaland/immortality_pocket.rsi
+    state: icon
+
+
+- type: polymorph
+  id: ImmortalityVoidPocket
+  configuration:
+    entity: ImmortalityPocket
+    transferName: false
+    inventory: None
+    forced: false
+    revertOnDeath: true
+    allowRepeatedMorphs: false
+    polymorphSound: /Audio/Magic/ethereal_enter.ogg
+    exitPolymorphSound: /Audio/Magic/ethereal_exit.ogg
+    duration: 15
+
+- type: entity
+  id: LavalandImmortalityTalisman
+  parent: BaseItem
+  name: талисман бессмертия
+  description: Обычный камень скрывает в себе столько загадок... Рискнёте ли вы после кровавой битвы использовать его на себе?
+  components:
+  - type: Sprite
+    sprite: /Textures/_Duty/Objects/Lavaland/immortality_talisman.rsi
+    state: icon
+  - type: TriggerOnUse
+  - type: PolymorphOnTrigger
+    targetUser: true
+    polymorph: ImmortalityVoidPocket
+  - type: UseDelay
+    delay: 60

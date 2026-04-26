@@ -4,34 +4,34 @@
   levels:
     green:
       announcement: alert-level-green-announcement
-      sound: /Audio/Misc/greenalert.ogg # ADT-Tweak
+      sound: /Audio/_Duty/Announcement/code_green.ogg
       color: Green
       emergencyLightColor: LawnGreen
-      shuttleTime: 600
+      shuttleTime: 300
     blue:
       announcement: alert-level-blue-announcement
-      sound: /Audio/Misc/bluealert.ogg
+      sound: /Audio/_Duty/Announcement/code_blue.ogg
       color: DodgerBlue
       forceEnableEmergencyLights: true
       emergencyLightColor: DodgerBlue
       shuttleTime: 600
     violet:
       announcement: alert-level-violet-announcement
-      sound: /Audio/Misc/notice1.ogg
+      sound: /Audio/_Duty/Announcement/code_violet.ogg
       color: Violet
       emergencyLightColor: Violet
       forceEnableEmergencyLights: true
       shuttleTime: 600
     yellow:
       announcement: alert-level-yellow-announcement
-      sound: /Audio/Misc/notice1.ogg
+      sound: /Audio/_Duty/Announcement/code_yellow.ogg
       color: Yellow
       emergencyLightColor: Goldenrod
       forceEnableEmergencyLights: true
       shuttleTime: 600
     red:
       announcement: alert-level-red-announcement
-      sound: /Audio/ADT/Announcements/Alert/red.ogg # ADT Tweaked
+      sound: /Audio/_Duty/Announcement/code_red.ogg
       color: Red
       emergencyLightColor: Red
       forceEnableEmergencyLights: true
@@ -41,6 +41,7 @@
       selectable: false
       sound:
         path: /Audio/ADT/Announcements/Alert/gamma_alert.ogg # ADT Tweaked
+        path: /Audio/_Duty/Announcement/code_gamma.ogg
         params:
           volume: -2
       disableSelection: true
@@ -51,7 +52,7 @@
       announcement: alert-level-delta-announcement
       selectable: false
       sound:
-        path: /Audio/ADT/Announcements/Alert/delta.ogg # ADT Tweaked
+        path: /Audio/_Duty/Announcement/delta_red.ogg
         params:
           volume: -1 # ADT-Tweak
       disableSelection: true
@@ -63,7 +64,7 @@
       announcement: alert-level-epsilon-announcement
       selectable: false
       sound:
-        path: /Audio/Misc/epsilon.ogg
+        path: /Audio/_Duty/Announcement/epsilon.ogg
         params:
           volume: -2
       disableSelection: true

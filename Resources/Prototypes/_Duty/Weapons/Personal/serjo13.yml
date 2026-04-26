@@ -1,0 +1,33 @@
+- type: entity
+  name: Бебро-бита
+  parent: [BaseItem, BaseMinorContraband]
+  id: BebraBat
+  description: Металическая бита, на которой выграрированно надпись "Bebra"
+  components:
+  - type: Sprite
+    sprite: _Duty/Weapons/bebrabat.rsi
+    state: icon
+  - type: MeleeWeapon
+    wideAnimationRotation: -155
+    damage:
+      types:
+        Blunt: 8
+        Structural: 10
+    soundHit:
+      path: /Audio/_Duty/рофло звуки/udar-trubi.ogg
+  - type: Wieldable
+  - type: IncreaseDamageOnWield
+    damage:
+      types:
+        Blunt: 14
+        Structural: 35
+  - type: Item
+    size: Normal
+  - type: Clothing
+    quickEquip: true
+    slots:
+    - back
+  - type: Tool
+    qualities:
+    - Rolling
+    speedModifier: 0.75 # a bit unwieldly but does the job

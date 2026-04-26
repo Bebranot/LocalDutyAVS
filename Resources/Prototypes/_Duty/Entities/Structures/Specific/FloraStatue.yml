@@ -1,0 +1,13 @@
+- type: entity
+  id: StatueFloraShilova
+  parent: BaseStructure
+  name: Statue Of great botanist
+  suffix: Carp
+  description: Statue of the great botanist, who win a competition in iceberg salat planting.
+  components:
+  - type: Sprite
+    noRot: true
+    sprite: _Duty/Structures/FloraStatue.rsi
+    state: icon
+    drawdepth: Mobs
+    offset: "0.0,0.5"

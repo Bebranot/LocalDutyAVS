@@ -1,0 +1,42 @@
+- type: entity
+  id: RTP # Reality Tearing Projectile
+  parent: BaseBullet
+  categories: [ HideSpawnMenu ]
+  components:
+  - type: TriggerOnCollide
+    fixtureID: projectile
+  - type: Projectile
+    damage:
+      types:
+        Heat: 40
+        Structural: 50
+        Caustic: 70
+  - type: TimedDespawn
+    lifetime: 5
+  - type: Fixtures
+    fixtures:
+      projectile:
+        shape:
+          !type:PhysShapeAabb
+          bounds: "-0.15,-0.45,0.15,0.15"
+        hard: false
+        mask:
+        - Impassable
+        - BulletImpassable
+  - type: ExplodeOnTrigger
+
+- type: entity
+  id: RTPS # Reality Tearing Projectile Shard
+  name: Pellet
+  parent: BaseBullet
+  components:
+  - type: Sprite
+    sprite: Objects/Weapons/Guns/Projectiles/projectiles2.rsi
+    state: shard
+  - type: Projectile
+    deleteOnCollide: false
+    damage:
+      types:
+        Radiation: 5
+  - type: TimedDespawn
+    lifetime: 0.5

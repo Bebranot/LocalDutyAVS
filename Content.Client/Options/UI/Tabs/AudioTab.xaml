@@ -22,6 +22,10 @@
                 <ui:OptionDropDown Name="DropDownBarksOrTTS" Title="{Loc 'ui-options-barks-or-tts'}"
                                  Margin="0 0 0 8" />
                 <!-- ADT Barks end -->
+                <!-- LocalDuty: Dynamic Ambient Music start -->
+                <ui:OptionSlider Name="SliderVolumeDutyAmbient" Title="{Loc 'ui-options-duty-ambient-music-volume'}" />
+                <CheckBox Name="DutyAmbientMusicCheckBox" Text="{Loc 'ui-options-duty-ambient-music'}" />
+                <!-- LocalDuty: Dynamic Ambient Music done -->
                 <CheckBox Name="LobbyMusicCheckBox" Text="{Loc 'ui-options-lobby-music'}" />
                 <CheckBox Name="RestartSoundsCheckBox" Text="{Loc 'ui-options-restart-sounds'}" />
                 <CheckBox Name="EventMusicCheckBox" Text="{Loc 'ui-options-event-music'}" />

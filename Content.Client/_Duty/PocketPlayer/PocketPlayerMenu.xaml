@@ -1,0 +1,60 @@
+<!--
+SPDX-FileCopyrightText: 2025 LocalDuty
+SPDX-License-Identifier: MIT
+-->
+
+<ui:FancyWindow xmlns="https://spacestation14.io"
+                xmlns:ui="clr-namespace:Content.Client.UserInterface.Controls"
+                SetSize="380 520"
+                Title="Плеер Duty">
+
+    <BoxContainer Orientation="Vertical" Margin="6">
+
+        <!-- Дерево категорий и треков -->
+        <ScrollContainer VerticalExpand="True">
+            <BoxContainer Name="TrackTree"
+                          Orientation="Vertical"
+                          SeparationOverride="2"
+                          HorizontalExpand="True" />
+        </ScrollContainer>
+
+        <!-- Информация о выбранном треке -->
+        <BoxContainer Orientation="Vertical" Margin="0 4 0 0">
+            <Label Name="SongName"
+                   Text="--- не выбрано ---"
+                   HorizontalAlignment="Center"
+                   FontColorOverride="#CCCCCC" />
+            <Slider Name="PlaybackSlider" HorizontalExpand="True" Margin="0 4 0 0" />
+            <Label Name="DurationLabel"
+                   Text="00:00 / 00:00"
+                   HorizontalAlignment="Center"
+                   FontColorOverride="#888888" />
+        </BoxContainer>
+
+        <!-- Громкость -->
+        <BoxContainer Orientation="Horizontal" SeparationOverride="6" Margin="0 6 0 0">
+            <Label Text="🔊" FontColorOverride="#AAAAAA" VerticalAlignment="Center" />
+            <Slider Name="VolumeSlider"
+                    HorizontalExpand="True"
+                    MinValue="0"
+                    MaxValue="100"
+                    VerticalAlignment="Center" />
+            <Label Name="VolumeLabel"
+                   Text="100%"
+                   MinWidth="36"
+                   FontColorOverride="#AAAAAA"
+                   VerticalAlignment="Center" />
+        </BoxContainer>
+
+        <!-- Кнопки управления -->
+        <BoxContainer Orientation="Horizontal" SeparationOverride="4" Margin="0 4 0 0">
+            <Button Name="PlayButton"
+                    Text="▶ Играть"
+                    HorizontalExpand="True" />
+            <Button Name="StopButton"
+                    Text="■ Стоп"
+                    HorizontalExpand="True" />
+        </BoxContainer>
+
+    </BoxContainer>
+</ui:FancyWindow>

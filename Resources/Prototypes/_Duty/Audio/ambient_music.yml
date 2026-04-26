@@ -1,0 +1,255 @@
+- type: dynamicAmbientMusic
+  id: DutyAmbientMusic
+
+  # Очень хорошее состояние: 90–100% HP
+  tracksVeryGood:
+    - !type:SoundPathSpecifier
+      path: /Audio/_Duty/Ambient/tracksVeryGood/TVG (1).ogg
+    - !type:SoundPathSpecifier
+      path: /Audio/_Duty/Ambient/tracksVeryGood/TVG (2).ogg
+    - !type:SoundPathSpecifier
+      path: /Audio/_Duty/Ambient/tracksVeryGood/TVG (3).ogg
+    - !type:SoundPathSpecifier
+      path: /Audio/_Duty/Ambient/tracksVeryGood/TVG (4).ogg
+    - !type:SoundPathSpecifier
+      path: /Audio/_Duty/Ambient/tracksVeryGood/TVG (5).ogg
+    - !type:SoundPathSpecifier
+      path: /Audio/_Duty/Ambient/tracksVeryGood/TVG (6).ogg
+    - !type:SoundPathSpecifier
+      path: /Audio/_Duty/Ambient/tracksVeryGood/TVG (7).ogg
+    - !type:SoundPathSpecifier
+      path: /Audio/_Duty/Ambient/tracksVeryGood/TVG (8).ogg
+    - !type:SoundPathSpecifier
+      path: /Audio/_Duty/Ambient/tracksVeryGood/TVG (9).ogg
+    - !type:SoundPathSpecifier
+      path: /Audio/_Duty/Ambient/tracksVeryGood/TVG (10).ogg
+
+  # Хорошее состояние: 70–90% HP
+  tracksGood:
+    - !type:SoundPathSpecifier
+      path: /Audio/_Duty/Ambient/tracksGood/TG (1).ogg
+    - !type:SoundPathSpecifier
+      path: /Audio/_Duty/Ambient/tracksGood/TG (2).ogg
+    - !type:SoundPathSpecifier
+      path: /Audio/_Duty/Ambient/tracksGood/TG (3).ogg
+    - !type:SoundPathSpecifier
+      path: /Audio/_Duty/Ambient/tracksGood/TG (4).ogg
+    - !type:SoundPathSpecifier
+      path: /Audio/_Duty/Ambient/tracksGood/TG (5).ogg
+    - !type:SoundPathSpecifier
+      path: /Audio/_Duty/Ambient/tracksGood/TG (6).ogg
+    - !type:SoundPathSpecifier
+      path: /Audio/_Duty/Ambient/tracksGood/TG (7).ogg
+    - !type:SoundPathSpecifier
+      path: /Audio/_Duty/Ambient/tracksGood/TG (8).ogg
+    - !type:SoundPathSpecifier
+      path: /Audio/_Duty/Ambient/tracksGood/TG (9).ogg
+    - !type:SoundPathSpecifier
+      path: /Audio/_Duty/Ambient/tracksGood/TG (10).ogg
+    - !type:SoundPathSpecifier
+      path: /Audio/_Duty/Ambient/tracksGood/TG (11).ogg
+    - !type:SoundPathSpecifier
+      path: /Audio/_Duty/Ambient/tracksGood/TG (12).ogg
+
+  # Среднее состояние: 40–70% HP
+  tracksMedium:
+    - !type:SoundPathSpecifier
+      path: /Audio/_Duty/Ambient/tracksMedium/TM (1).ogg
+    - !type:SoundPathSpecifier
+      path: /Audio/_Duty/Ambient/tracksMedium/TM (3).ogg
+    - !type:SoundPathSpecifier
+      path: /Audio/_Duty/Ambient/tracksMedium/TM (2).ogg
+    - !type:SoundPathSpecifier
+      path: /Audio/_Duty/Ambient/tracksMedium/TM (4).ogg
+    - !type:SoundPathSpecifier
+      path: /Audio/_Duty/Ambient/tracksMedium/TM (5).ogg
+    - !type:SoundPathSpecifier
+      path: /Audio/_Duty/Ambient/tracksMedium/TM (6).ogg
+    - !type:SoundPathSpecifier
+      path: /Audio/_Duty/Ambient/tracksMedium/TM (7).ogg
+    - !type:SoundPathSpecifier
+      path: /Audio/_Duty/Ambient/tracksMedium/TM (8).ogg
+    - !type:SoundPathSpecifier
+      path: /Audio/_Duty/Ambient/tracksMedium/TM (9).ogg
+    - !type:SoundPathSpecifier
+      path: /Audio/_Duty/Ambient/tracksMedium/TM (10).ogg
+    - !type:SoundPathSpecifier
+      path: /Audio/_Duty/Ambient/tracksMedium/TM (11).ogg
+    - !type:SoundPathSpecifier
+      path: /Audio/_Duty/Ambient/tracksMedium/TM (12).ogg
+    - !type:SoundPathSpecifier
+      path: /Audio/_Duty/Ambient/tracksMedium/TM (13).ogg
+    - !type:SoundPathSpecifier
+      path: /Audio/_Duty/Ambient/tracksMedium/TM (14).ogg
+
+  # Ниже среднего: 25–40% HP
+  tracksBelowMedium:
+    - !type:SoundPathSpecifier
+      path: /Audio/_Duty/Ambient/tracksBelowMedium/TBM (1).ogg
+    - !type:SoundPathSpecifier
+      path: /Audio/_Duty/Ambient/tracksBelowMedium/TBM (2).ogg
+    - !type:SoundPathSpecifier
+      path: /Audio/_Duty/Ambient/tracksBelowMedium/TBM (3).ogg
+    - !type:SoundPathSpecifier
+      path: /Audio/_Duty/Ambient/tracksBelowMedium/TBM (4).ogg
+    - !type:SoundPathSpecifier
+      path: /Audio/_Duty/Ambient/tracksBelowMedium/TBM (5).ogg
+    - !type:SoundPathSpecifier
+      path: /Audio/_Duty/Ambient/tracksBelowMedium/TBM (6).ogg
+    - !type:SoundPathSpecifier
+      path: /Audio/_Duty/Ambient/tracksBelowMedium/TBM (7).ogg
+    - !type:SoundPathSpecifier
+      path: /Audio/_Duty/Ambient/tracksBelowMedium/TBM (8).ogg
+    - !type:SoundPathSpecifier
+      path: /Audio/_Duty/Ambient/tracksBelowMedium/TBM (9).ogg
+    - !type:SoundPathSpecifier
+      path: /Audio/_Duty/Ambient/tracksBelowMedium/TBM (10).ogg
+    - !type:SoundPathSpecifier
+      path: /Audio/_Duty/Ambient/tracksBelowMedium/TBM (11).ogg
+    - !type:SoundPathSpecifier
+      path: /Audio/_Duty/Ambient/tracksBelowMedium/TBM (12).ogg
+
+  # Ужасное состояние: 5–25% HP
+  tracksAwful:
+    - !type:SoundPathSpecifier
+      path: /Audio/_Duty/Ambient/tracksAwful/TA (1).ogg
+    - !type:SoundPathSpecifier
+      path: /Audio/_Duty/Ambient/tracksAwful/TA (2).ogg
+    - !type:SoundPathSpecifier
+      path: /Audio/_Duty/Ambient/tracksAwful/TA (3).ogg
+    - !type:SoundPathSpecifier
+      path: /Audio/_Duty/Ambient/tracksAwful/TA (4).ogg
+    - !type:SoundPathSpecifier
+      path: /Audio/_Duty/Ambient/tracksAwful/TA (5).ogg
+    - !type:SoundPathSpecifier
+      path: /Audio/_Duty/Ambient/tracksAwful/TA (6).ogg
+    - !type:SoundPathSpecifier
+      path: /Audio/_Duty/Ambient/tracksAwful/TA (7).ogg
+    - !type:SoundPathSpecifier
+      path: /Audio/_Duty/Ambient/tracksAwful/TA (8).ogg
+    - !type:SoundPathSpecifier
+      path: /Audio/_Duty/Ambient/tracksAwful/TA (9).ogg
+    - !type:SoundPathSpecifier
+      path: /Audio/_Duty/Ambient/tracksAwful/TA (10).ogg
+    - !type:SoundPathSpecifier
+      path: /Audio/_Duty/Ambient/tracksAwful/TA (11).ogg
+    - !type:SoundPathSpecifier
+      path: /Audio/_Duty/Ambient/tracksAwful/TA (12).ogg
+
+  # менее 5% хп
+  tracksCritical:
+    - !type:SoundPathSpecifier
+      path: /Audio/_Duty/Ambient/CritMode/PainDrone.ogg
+    - !type:SoundPathSpecifier
+      path: /Audio/_Duty/Ambient/tracksCritical/TC (2).ogg
+    - !type:SoundPathSpecifier
+      path: /Audio/_Duty/Ambient/tracksCritical/TC (3).ogg
+    - !type:SoundPathSpecifier
+      path: /Audio/_Duty/Ambient/tracksCritical/TC (4).ogg
+    - !type:SoundPathSpecifier
+      path: /Audio/_Duty/Ambient/tracksCritical/TC (5).ogg
+    - !type:SoundPathSpecifier
+      path: /Audio/_Duty/Ambient/tracksCritical/TC (6).ogg
+    - !type:SoundPathSpecifier
+      path: /Audio/_Duty/Ambient/tracksCritical/TC (7).ogg
+    - !type:SoundPathSpecifier
+      path: /Audio/_Duty/Ambient/tracksCritical/TC (8).ogg
+    - !type:SoundPathSpecifier
+      path: /Audio/_Duty/Ambient/tracksCritical/TC (9).ogg
+    - !type:SoundPathSpecifier
+      path: /Audio/_Duty/Ambient/tracksCritical/TC (10).ogg
+
+  # Боевая музыка
+  combatTracks:
+    - !type:SoundPathSpecifier
+      path: /Audio/_Duty/Ambient/AmbientWar/Hullrot/COMBAT_quarrel.ogg
+    - !type:SoundPathSpecifier
+      path: /Audio/_Duty/Ambient/AmbientWar/Hullrot/DSM_1.ogg
+    - !type:SoundPathSpecifier
+      path: /Audio/_Duty/Ambient/AmbientWar/Hullrot/DSM_2.ogg
+    - !type:SoundPathSpecifier
+      path: /Audio/_Duty/Ambient/AmbientWar/Hullrot/fallback.ogg
+    - !type:SoundPathSpecifier
+      path: /Audio/_Duty/Ambient/AmbientWar/Hullrot/GS_1.ogg
+    - !type:SoundPathSpecifier
+      path: /Audio/_Duty/Ambient/AmbientWar/Hullrot/GS_2.ogg
+    - !type:SoundPathSpecifier
+      path: /Audio/_Duty/Ambient/AmbientWar/Hullrot/GS_3.ogg
+    - !type:SoundPathSpecifier
+      path: /Audio/_Duty/Ambient/AmbientWar/Hullrot/IPM_1.ogg
+    - !type:SoundPathSpecifier
+      path: /Audio/_Duty/Ambient/AmbientWar/Hullrot/IPM_2.ogg
+    - !type:SoundPathSpecifier
+      path: /Audio/_Duty/Ambient/AmbientWar/Hullrot/NCWL_1.ogg
+    - !type:SoundPathSpecifier
+      path: /Audio/_Duty/Ambient/AmbientWar/Hullrot/NCWL_2.ogg
+    - !type:SoundPathSpecifier
+      path: /Audio/_Duty/Ambient/AmbientWar/Hullrot/SAW_1.ogg
+    - !type:SoundPathSpecifier
+      path: /Audio/_Duty/Ambient/AmbientWar/Hullrot/SAW_2.ogg
+    - !type:SoundPathSpecifier
+      path: /Audio/_Duty/Ambient/AmbientWar/Hullrot/SHI_1.ogg
+    - !type:SoundPathSpecifier
+      path: /Audio/_Duty/Ambient/AmbientWar/Hullrot/SHI_2.ogg
+    - !type:SoundPathSpecifier
+      path: /Audio/_Duty/Ambient/AmbientWar/Hullrot/SHI_3.ogg
+    - !type:SoundPathSpecifier
+      path: /Audio/_Duty/Ambient/AmbientWar/Hullrot/SHI_4.ogg
+    - !type:SoundPathSpecifier
+      path: /Audio/_Duty/Ambient/AmbientWar/Hullrot/TAP_1.ogg
+    - !type:SoundPathSpecifier
+      path: /Audio/_Duty/Ambient/AmbientWar/Hullrot/TAP_2.ogg
+    - !type:SoundPathSpecifier
+      path: /Audio/_Duty/Ambient/AmbientWar/Hullrot/TFSC_1.ogg
+    - !type:SoundPathSpecifier
+      path: /Audio/_Duty/Ambient/AmbientWar/Hullrot/TFSC_2.ogg
+    - !type:SoundPathSpecifier
+      path: /Audio/_Duty/Ambient/combatTracks/CTs (1).ogg
+    - !type:SoundPathSpecifier
+      path: /Audio/_Duty/Ambient/combatTracks/CTs (2).ogg
+    - !type:SoundPathSpecifier
+      path: /Audio/_Duty/Ambient/combatTracks/CTs (3).ogg
+    - !type:SoundPathSpecifier
+      path: /Audio/_Duty/Ambient/combatTracks/CTs (4).ogg
+    - !type:SoundPathSpecifier
+      path: /Audio/_Duty/Ambient/combatTracks/CTs (5).ogg
+    - !type:SoundPathSpecifier
+      path: /Audio/_Duty/Ambient/combatTracks/CTs (6).ogg
+    - !type:SoundPathSpecifier
+      path: /Audio/_Duty/Ambient/combatTracks/CTs (7).ogg
+    - !type:SoundPathSpecifier
+      path: /Audio/_Duty/Ambient/combatTracks/CTs (8).ogg
+    - !type:SoundPathSpecifier
+      path: /Audio/_Duty/Ambient/combatTracks/CTs (9).ogg
+
+  # Боевая музыка при низком HP (меньше 10%)
+  combatLowTracks:
+    - !type:SoundPathSpecifier
+      path: /Audio/_Duty/AdminMusic/Z-City SoundTrack - Pharmacia (Fury-13).ogg
+    - !type:SoundPathSpecifier
+      path: /Audio/_Duty/AdminMusic/Creo - Flow.ogg
+
+  # Критическое состояние (лежит без сознания)
+  tracksMobCritical:
+    - !type:SoundPathSpecifier
+      path: /Audio/_Duty/Ambient/CritMode/Dying.ogg
+    - !type:SoundPathSpecifier
+      path: /Audio/_Duty/Ambient/CritMode/Isthistheend.ogg
+    - !type:SoundPathSpecifier
+      path: /Audio/_Duty/Ambient/CritMode/Lobotomy music _ ZCITY(1).ogg
+    - !type:SoundPathSpecifier
+      path: /Audio/_Duty/Ambient/CritMode/PainDrone.ogg
+    - !type:SoundPathSpecifier
+      path: /Audio/_Duty/Ambient/CritMode/Z-City Soundtrack - Unconscious theme (the end is near)(1).ogg
+
+  # Звук смерти (одиночный)
+  deathSound: !type:SoundPathSpecifier
+    path: /Audio/_Duty/Ambient/Death.ogg
+
+  calmMinInterval: 5
+  calmMaxInterval: 45
+  calmFadeInDuration: 3.5
+  calmFadeOutDuration: 4.5
+  stateTransitionPause: 1.5
+  combatFadeOutDuration: 2.5
+  combatFadeInDuration: 0.2

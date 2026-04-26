@@ -1,0 +1,36 @@
+{
+  "version": 1,
+  "license": "CC-BY-SA-3.0",
+  "copyright": "Maded by Bad_content",
+  "size": {
+    "x": 32,
+    "y": 32
+  },
+  "states": [
+    {
+      "name": "RND",
+      "delays":
+        [
+                [
+                    0.1,
+                    0.1,
+                    0.1,
+                    0.1,
+                    0.1
+                ]
+        ]
+    },
+    {
+      "name": "salvage",
+      "delays":
+        [
+                [
+                    0.6,
+                    0.3,
+                    0.5,
+                    1.0
+                ]
+        ]
+    }
+  ]
+}

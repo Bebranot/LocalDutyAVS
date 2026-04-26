@@ -1,0 +1,40 @@
+
+- type: entity
+  parent: [ClothingHeadHelmetBase]
+  id: ClothingHeadTwistedCrown
+  name: Twisted Crown
+  description: Strange crown, that looking like artifact. It projects barrier around wearer.
+  components:
+  - type: Sprite
+    sprite: _Duty/Clothing/TwistedCrown.rsi
+  - type: Item
+    sprite: _Duty/Clothing/TwistedCrown.rsi
+    state: icon
+  - type: Clothing
+    sprite: _Duty/Clothing/TwistedCrown.rsi
+  - type: Armor
+    modifiers:
+      coefficients:
+        Heat: 0
+        Radiation: 0.05
+        Caustic: 0.40
+  - type: PressureProtection  # Похоже, оно не работает, ведь защита от давления работает только когда в слоте внешней одежды :(
+    highPressureMultiplier: 0.02
+    lowPressureMultiplier: 1000
+  - type: FireProtection
+    reduction: 1
+  - type: TemperatureProtection
+    heatingCoefficient: 0.001
+    coolingCoefficient: 0.5
+  - type: Reflect
+    reflectProb: 1
+    reflects:
+      - Energy
+    reflectingInHands: false
+  - type: LightningArcShooter
+    arcDepth: 8
+    maxLightningArc: 6
+    shootMinInterval: 20
+    shootMaxInterval: 30
+    shootRange: 4
+    lightningPrototype: WeakKudzu

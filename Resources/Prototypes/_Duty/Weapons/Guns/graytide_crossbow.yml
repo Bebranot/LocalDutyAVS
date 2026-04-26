@@ -1,0 +1,77 @@
+- type: entity
+  name: Graytide Crossbow
+  parent: BaseItem
+  id: GraytideCrossbow
+  description: Its like bow, but with much more arrows.
+  components:
+  - type: Sprite
+    sprite: _Duty/Weapons/MakeshiftCrossbow.rsi
+    state: icon
+  - type: Item
+    size: Normal
+  - type: Wieldable
+    wieldSound:
+      path: /Audio/Items/bow_pull.ogg
+  - type: UseDelay
+    delay: 2
+  - type: GunRequiresWield
+  - type: Gun
+    minAngle: 0
+    maxAngle: 1
+    fireRate: 3
+    shotsPerBurst: 4
+    selectedMode: Burst
+    availableModes:
+    - Burst
+    - SemiAuto
+    soundGunshot:
+      collection: BulletMiss
+    soundEmpty: null
+  - type: AmmoCounter
+  - type: BallisticAmmoProvider
+    whitelist:
+      tags:
+      - Arrow
+    capacity: 4
+    soundInsert:
+      path: /Audio/Weapons/Guns/Misc/arrow_nock.ogg
+  - type: ContainerContainer
+    containers:
+      ballistic-ammo: !type:Container
+        ents: []
+  - type: Construction
+    graph: GraytideCrossbowRecipe
+    node: done
+
+- type: construction
+  id: GraytideCrossbowCraft
+  graph: GraytideCrossbowRecipe
+  startNode: start
+  targetNode: done
+  category: construction-category-misc
+  objectType: Item
+
+- type: constructionGraph
+  id: GraytideCrossbowRecipe
+  start: start
+  graph:
+  - node: start
+    edges:
+    - to: done
+      steps:
+      - material: MetalRod
+        amount: 5
+      - material: Cable
+        amout: 10
+      - tag: Pipe
+        icon:
+          sprite: Structures/Piping/Atmospherics/pipe.rsi
+          state: pipeStraight
+        name: construction-graph-tag-pipe
+      - material: Steel
+        amount: 10
+      - material: WoodPlank
+        amount: 5
+        doAfter: 10
+  - node: done
+    entity: GraytideCrossbow

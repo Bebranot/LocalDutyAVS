@@ -1,0 +1,10 @@
+# todo: разбросать по фтлкам
+
+- type: alert
+  id: FuckingSvistok
+  category: FuckingSvistok
+  icons:
+  - sprite: /Textures/_LocalDuty/slurwhistle.rsi
+    state: icon
+  name: Окопный свисток офицера
+  description: Последняя надежда, и мораль бойцов...

@@ -1,0 +1,447 @@
+
+# ============================================== Начало целебного мха ==================================================================================================
+
+- type: seed
+  id: MagnificentMoss
+  name: Целебный мох
+  noun: seeds-noun-seeds
+  displayName: Колония целебного мха
+  plantRsi: _Duty/Specific/Hydroponics/Moss.rsi
+  packetPrototype: MossSeeds
+  productPrototypes:
+    - FoodMoss
+  lifespan: 60
+  maturation: 6
+  production: 9
+  yield: 5
+  potency: 15
+  growthStages: 3
+  idealHeat: 340
+  endurance: 3
+  waterConsumption: 2.5
+  nutrientConsumption: -1
+  harvestRepeat: Repeat
+  chemicals:
+    Water:
+      Min: 35
+      Max: 45
+      PotencyDivisor: 10
+    MossJuice:
+      Min: 1
+      Max: 20
+      PotencyDivisor: 40
+
+- type: flavor
+  id: Moss
+  flavorType: Base
+  description: гниль, болото, пищевое отравление
+
+- type: flavor
+  id: MossTea
+  flavorType: Base
+  description: Слегка блевотно
+
+- type: entity
+  name: Soggy Moss
+  parent: [FoodProduceBase, BaseItem]
+  id: FoodMoss
+  description: Its very wet, and looks gross
+  components:
+  - type: FlavorProfile
+    flavors:
+      - Moss
+  - type: SolutionContainerManager
+    solutions:
+      food:
+        maxVol: 50
+        reagents:
+        - ReagentId: Water
+          Quantity: 30
+        - ReagentId: MossJuice
+          Quantity: 10
+  - type: Sprite
+    sprite: _Duty/Specific/Hydroponics/Moss.rsi
+  - type: Item
+    heldPrefix: produce
+  - type: Extractable
+    juiceSolution:
+      reagents:
+      - ReagentId: Water
+        Quantity: 30
+      - ReagentId: Nutriment
+        Quantity: 20
+  - type: ThrowingAngle
+    angle: 180
+  - type: LandAtCursor
+  - type: DamageOnLand
+    damage:
+      types:
+        Blunt: 10
+  - type: Damageable
+    damageContainer: Biological
+    damageModifierSet: glass # эм... не знаю что ещё сюда поставить
+  - type: Destructible
+    thresholds:
+    - trigger:
+        !type:DamageTrigger
+        damage: 1
+      behaviors:
+      - !type:PlaySoundBehavior
+        sound:
+          path: /Audio/Effects/gib1.ogg
+          params:
+            volume: 2
+      - !type:SpillBehavior
+        solution: food
+        transferForensics: true
+      - !type:DoActsBehavior
+        acts: [ "Destruction" ]
+  - type: Fixtures
+    fixtures:
+      slips:
+        shape:
+          !type:PhysShapeAabb
+          bounds: "-0.2,-0.2,0.2,0.2"
+        hard: false
+        layer:
+        - LowImpassable
+      fix1:
+        shape:
+          !type:PhysShapeAabb
+          bounds: "-0.2,-0.2,0.2,0.2"
+        density: 30
+        mask:
+        - ItemMask
+
+- type: entity
+  parent: SeedBase
+  name: packet of Moss Spores
+  id: MossSeeds
+  components:
+    - type: Seed
+      seedId: MagnificentMoss
+    - type: Sprite
+      sprite: _Duty/Specific/Hydroponics/Moss.rsi
+      state: Moss_Spores
+
+- type: reagent
+  id: MossJuice
+  name: Сфагмиум
+  group: Botanical
+  desc: Вещество, добытое из целебного мха. Хорошо удобряет растения, и содержит в себе некоторые медикаменты, получаемые путём обработки в центрифуге
+  flavor: Moss
+  color: "#0f3300"
+  physicalDesc: Гнилой
+  plantMetabolism:
+    - !type:PlantAdjustNutrition
+      amount: 2
+    - !type:PlantAdjustWeeds
+      probability: 0.03
+      amount: -1
+  metabolisms:
+    Drink:
+      effects:
+      - !type:HealthChange
+        damage:
+          types:
+            Heat: -0.4
+            Shock: -3
+            Cold: -0.1
+            Caustic: -3
+            Asphyxiation: 8
+            Poison: 2
+            Radiation: -1
+
+- type: reagent
+  id: MossTea
+  name: Мховый чай
+  group: Botanical
+  desc: Чай, ужасный на вкус но исцеляющий ранения. Худший напиток, что может предложить бармен
+  flavor: MossTea
+  color: "#386326"
+  physicalDesc: Густой
+  metabolisms:
+    Drink:
+      effects:
+      - !type:SatiateThirst
+        factor: 3
+      - !type:HealthChange
+        damage:
+          types:
+            Heat: -0.5
+            Shock: -2
+            Cold: -1
+            Caustic: -1
+            Poison: 0.02
+            Radiation: -1
+            Asphyxiation: 1.5
+            Bloodloss: -2
+            Blunt: -1
+            Slash: -1
+            Piercing: -1
+
+- type: reaction
+  id: MossTea
+  reactants:
+    Tea:
+      amount: 3
+    MossJuice:
+      amount: 2
+  products:
+    MossTea: 5
+
+- type: reaction
+  id: MossFiltration
+  requiredMixerCategories:
+  - Centrifuge
+  reactants:
+    MossJuice:
+      amount: 1
+  products:
+    Water: 0.35
+    Omnizine: 0.1
+    Carbon: 0.1
+    DexalinPlus: 0.1
+    Lexorin: 0.3
+# ============================================== Конец целебного мха ===================================================================================================
+
+# ============================================== Начало Грозовой капусты ===============================================================================================
+
+- type: seed
+  id: ElectroCabbage
+  name: Гром-капуста
+  noun: seeds-noun-seeds
+  displayName: Гром-капуста
+  plantRsi: _Duty/Specific/Hydroponics/ElectroCabbage.rsi
+  packetPrototype: ElectroCabbageSeeds
+  productPrototypes:
+    - FoodElectroCabbage
+  lifespan: 50
+  maturation: 9
+  production: 3
+  yield: 3
+  potency: 15
+  growthStages: 1
+  chemicals:
+    Licoxide:
+      Min: 1
+      Max: 10
+      PotencyDivisor: 20
+    Plasma:
+      Min: 5
+      Max: 30
+      PotencyDivisor: 30
+
+- type: entity
+  name: Electro Cabbage
+  parent: [FoodProduceBase, BaseItem]
+  id: FoodElectroCabbage
+  description: crackling with lightnings. Better not to eat.
+  components:
+  - type: FlavorProfile
+    flavors:
+      - Moss
+  - type: SolutionContainerManager
+    solutions:
+      food:
+        maxVol: 9
+        reagents:
+        - ReagentId: Licoxide
+          Quantity: 5
+        - ReagentId: SulfuricAcid
+          Quantity: 10
+  - type: Sprite
+    layers:
+      - sprite: _Duty/Specific/Hydroponics/ElectroCabbage.rsi
+        state: produce
+      - sprite: _Duty/Specific/Hydroponics/ElectroCabbage.rsi
+        state: Unshaded_produce
+        shader: unshaded
+  - type: Item
+    heldPrefix: produce
+  - type: Extractable
+    juiceSolution:
+      reagents:
+      - ReagentId: SulfuricAcid
+        Quantity: 30
+  - type: Electrified
+    shockDamage: 5
+    requirePower: false
+    ignoreInsulation: false
+  - type: Tag
+    tags:
+    - ElectroCabbageTag
+
+- type: entity
+  parent: SeedBase
+  name: packet of electro cabbage seeds
+  id: ElectroCabbageSeeds
+  components:
+    - type: Seed
+      seedId: ElectroCabbage
+    - type: Sprite
+      sprite: _Duty/Specific/Hydroponics/ElectroCabbage.rsi
+      state: Seed
+
+- type: entity
+  id: CabbageGenerator
+  description: Um... its """"Generator""""
+  suffix: Generator
+  name: Cabbage generator
+  parent: [ BaseGenerator ]
+  placement:
+    mode: SnapgridCenter
+  components:
+  - type: InteractionOutline
+  - type: Transform
+    anchored: true
+    noRot: true
+  - type: Sprite
+    sprite: _Duty/Structures/Power/CabbageGenerator.rsi
+    state: generator
+    snapCardinals: true
+  - type: NodeContainer
+    examinable: true
+    nodes:
+      output:
+        !type:CableDeviceNode
+        nodeGroupID: MVPower
+  - type: PowerMonitoringDevice
+    group: Generator
+    loadNode: output
+    sprite: _Duty/Structures/Power/CabbageGenerator.rsi
+    state: generator
+  - type: PowerSupplier
+    supplyRate: 4000
+    supplyRampRate: 500
+    supplyRampTolerance: 500
+    voltage: Medium
+  - type: Anchorable
+  - type: Pullable
+  - type: Damageable
+    damageContainer: Biological
+    damageModifierSet: Wood # ну, я не слишком знаю какой множитель поставить ДЛЯ ГЕНЕРАТОРА ИЗ КАПУСТЫ
+  - type: PacifismDangerousAttack
+  - type: Destructible
+    thresholds:
+    - trigger:
+        !type:DamageTrigger
+        damage: 100
+      behaviors:
+      - !type:DoActsBehavior
+        acts: ["Destruction"]
+      - !type:PlaySoundBehavior
+        sound:
+          path: /Audio/Effects/gib2.ogg
+      - !type:ExplodeBehavior
+  - type: StaticPrice
+    price: 400
+  - type: Electrified
+    onHandInteract: false
+    onInteractUsing: true
+    onBump: false
+    requirePower: true
+    highVoltageNode: output
+  - type: Explosive
+    explosionType: Cryo
+    maxIntensity: 30
+    intensitySlope: 1
+    totalIntensity: 200
+  - type: Construction
+    graph: CabbageGeneratorRecipe
+    node: done
+
+- type: entity
+  parent: [ BasePowerCell ]
+  id: CabbageBattery
+  name: Cabbage battery
+  description: Its... very creatively.
+  components:
+  - type: Sprite
+    sprite: _Duty/Objects/Power/CabbageBattery.rsi
+    layers:
+    - map: [ "enum.PowerCellVisualLayers.Base" ]
+      state: CabbageBattery
+    - map: [ "enum.PowerCellVisualLayers.Unshaded" ]
+      state: o2
+      shader: unshaded
+  - type: Item
+    storedRotation: -90
+  - type: Battery
+    maxCharge: 180
+    startingCharge: 180
+    pricePerJoule: 0.15
+  - type: BatterySelfRecharger
+    autoRecharge: true
+    autoRechargeRate: 0.4
+  - type: Construction
+    graph: CabbageBatteryRecipe
+    node: done
+
+# ============================================== начало крафта из грозовой капусты
+- type: construction
+  id: CabbageGeneratorCraft
+  graph: CabbageGeneratorRecipe
+  startNode: start
+  targetNode: done
+  category: construction-category-structures
+  objectType: Item
+
+- type: construction
+  id: CabbageBatteryCraft
+  graph: CabbageBatteryRecipe
+  startNode: start
+  targetNode: done
+  category: construction-category-misc
+  objectType: Item
+
+- type: constructionGraph
+  id: CabbageBatteryRecipe
+  start: start
+  graph:
+  - node: start
+    edges:
+    - to: done
+      steps:
+      - material: MetalRod
+        amount: 2
+      - material: Cable
+        amount: 2
+      - tag: ElectroCabbageTag
+        icon:
+          sprite: _Duty/Specific/Hydroponics/ElectroCabbage.rsi
+          state: icon
+      doAfter: 6
+  - node: done
+    entity: CabbageBattery
+
+- type: constructionGraph
+  id: CabbageGeneratorRecipe
+  start: start
+  graph:
+  - node: start
+    edges:
+    - to: done
+      steps:
+      - material: WoodPlank
+        amount: 20
+      - material: MetalRod
+        amount: 6
+      - material: CableMV
+        amount: 15
+      - tag: ElectroCabbageTag
+        icon:
+          sprite: _Duty/Specific/Hydroponics/ElectroCabbage.rsi
+          state: icon
+      - tag: ElectroCabbageTag
+        icon:
+          sprite: _Duty/Specific/Hydroponics/ElectroCabbage.rsi
+          state: icon
+      - tag: ElectroCabbageTag
+        icon:
+          sprite: _Duty/Specific/Hydroponics/ElectroCabbage.rsi
+          state: icon
+        doAfter: 5
+  - node: done
+    entity: CabbageGenerator
+# ============================================== конец крафта из грозовой капусты

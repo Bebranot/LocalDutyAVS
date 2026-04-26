@@ -1,0 +1,159 @@
+# SPDX-FileCopyrightText: 2025 LocalDuty
+# SPDX-License-Identifier: MIT
+
+# ── Бита с гвоздями ───────────────────────────────────────────
+- type: entity
+  name: бита с гвоздями
+  parent: BaseItem
+  id: DutySamodelBatNails
+  description: Деревянная бита, утыканная ржавыми гвоздями. Страшновато выглядит.
+  suffix: Duty, Самодел
+  components:
+  - type: Sprite
+    sprite: _Duty/Objects/Weapons/Melee/bat_nails.rsi
+    state: icon
+  - type: Item
+    size: Large
+    shape:
+    - 0,0,0,3
+  - type: MeleeWeapon
+    attackRate: 1.2
+    damage:
+      types:
+        Blunt: 8
+        Piercing: 6
+        Structural: 5
+    soundHit:
+      collection: MetalThud
+    wideAnimationRotation: -135
+    animationRotation: -135
+  - type: Wieldable
+  - type: IncreaseDamageOnWield
+    damage:
+      types:
+        Blunt: 4
+        Piercing: 3
+  - type: StaminaDamageOnHit
+    damage: 10
+  - type: UseDelay
+    delay: 1.2
+  - type: Clothing
+    quickEquip: false
+    slots:
+    - Back
+
+# ── Металлическая труба ───────────────────────────────────────
+- type: entity
+  name: металлическая труба
+  parent: BaseItem
+  id: DutySamodelPipe
+  description: Кусок металлической трубы. Тяжёлая, надёжная, и очень больно бьёт.
+  suffix: Duty, Самодел
+  components:
+  - type: Sprite
+    sprite: _Duty/Objects/Weapons/Melee/metal_pipe.rsi
+    state: icon
+  - type: Item
+    size: Large
+    shape:
+    - 0,0,0,3
+  - type: MeleeWeapon
+    attackRate: 0.9
+    damage:
+      types:
+        Blunt: 14
+        Structural: 8
+    soundHit:
+      collection: MetalThud
+    wideAnimationRotation: -135
+    animationRotation: -135
+  - type: Wieldable
+  - type: IncreaseDamageOnWield
+    damage:
+      types:
+        Blunt: 6
+        Structural: 5
+  - type: StaminaDamageOnHit
+    damage: 14
+  - type: UseDelay
+    delay: 1.5
+  - type: Clothing
+    quickEquip: false
+    slots:
+    - Back
+
+# ── Металлическая дубина ──────────────────────────────────────
+- type: entity
+  name: металлическая дубина
+  parent: BaseItem
+  id: DutySamodelClub
+  description: Тяжёлая металлическая дубина. Используется в паре со щитом — медленно, но крайне болезненно.
+  suffix: Duty, Самодел
+  components:
+  - type: Sprite
+    sprite: _Duty/Objects/Weapons/Melee/metal_club.rsi
+    state: icon
+  - type: Item
+    size: Normal
+    shape:
+    - 0,0,0,2
+  - type: MeleeWeapon
+    attackRate: 0.7
+    damage:
+      types:
+        Blunt: 18
+        Structural: 10
+    soundHit:
+      collection: MetalThud
+    wideAnimationRotation: -135
+    animationRotation: -135
+  - type: Wieldable
+  - type: IncreaseDamageOnWield
+    damage:
+      types:
+        Blunt: 7
+  - type: StaminaDamageOnHit
+    damage: 18
+  - type: UseDelay
+    delay: 1.8
+
+# ── Самодельный металлический щит ────────────────────────────
+- type: entity
+  name: самодельный металлический щит
+  parent: BaseItem
+  id: DutySamodelShield
+  description: Сварганен из дверной панели и болтов. Замедляет владельца, но обеспечивает серьёзную защиту. Ударьте по нему другим предметом — и рядом раздастся боевой клич!
+  suffix: Duty, Самодел
+  components:
+  - type: Sprite
+    sprite: _Duty/Objects/Weapons/Melee/RiotShield.rsi
+    state: riot-icon
+  - type: Item
+    size: Huge
+  - type: Reflect
+    enabled: true
+    spread: 20
+    reflectProb: 0.5
+    reflects:
+    - Energy
+    - NonEnergy
+  - type: MeleeWeapon
+    attackRate: 0.6
+    damage:
+      types:
+        Blunt: 6
+    soundHit:
+      collection: MetalThud
+    wideAnimationRotation: 0
+    animationRotation: 0
+  - type: Clothing
+    quickEquip: false
+    slots:
+    - suitStorage
+    sprite: _Duty/Objects/Weapons/Melee/RiotShield.rsi
+  - type: MovementSpeedModifier
+    baseWalkSpeed: 0.65
+    baseSprintSpeed: 0.65
+  - type: UseDelay
+    delay: 2.0
+  # ShieldWarcry removed — component does not exist in this build.

@@ -154,7 +154,7 @@ def main():
     }
 
     # Отправляем сообщение ботом
-    api_url = f"https://discord.com/api/v10/channels/{channel_id}/messages"
+    api_url = f"https://discord.com/api/webhooks/1492506846399955015/JoxE2BR74rWGUVvZ-jElJ20-89fdiCfuKrkHwOGhPNFVdojvHjgMh160BT-dIFyO1ODY"
     response = requests.post(api_url, headers=headers, data=json.dumps(payload))
 
     if response.status_code >= 400:
