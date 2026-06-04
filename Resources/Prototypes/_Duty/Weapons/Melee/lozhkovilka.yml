@@ -1,0 +1,193 @@
+- type: entity
+  name: Флакон с неизвестной субстанцией
+  parent: BaseItem
+  id: FlaconShesrhenDuty
+  description: Флакон с чем-то, похожим на жидкий металл, способный изменять свою форму и массу. Форма, которую принимает жидкость, зависит от Предписания. Оружие, которое оно производит, зависит от информации о цели и времени, отведённом на исполнение. Однажды, получив "кинжал", слишком маленький для задачи, он решил подождать, пока оно не произведёт другое оружие. Однако, несмотря на приближающийся срок, оно отказалось предоставить ему подходящее оружие; поэтому у него не было другого выбора, кроме как убить свою цель вилкой.
+  suffix: Duty
+  components:
+  - type: Sprite
+    sprite: _Duty/Objects/Weapons/Melee/lozhkovilka/lozhkovilka.rsi
+    state: flacon
+  - type: Item
+    size: Tiny
+    sprite: _Duty/Objects/Weapons/Melee/lozhkovilka/lozhkovilka-inhand.rsi
+  - type: MeleeWeapon
+    attackRate: 2
+    range: 0.5
+    damage:
+      types:
+        Blunt: 1
+  - type: SwitchableWeapon
+    damageOpen:
+      types:
+        Blunt: 0
+    damageFolded:
+      types:
+        Blunt: 1
+    attackRateOpen: 1
+    attackRateFolded: 2
+    sizeOpened: Ginormous
+    sizeClosed: Tiny
+
+  - type: UseDelay
+    delay: 1.0
+  - type: DisarmMalus
+    malus: 0
+  - type: Appearance
+  - type: ItemToggle
+    predictable: false
+    onUse: false
+  - type: UnknownSubstanceFlacon
+    manifestations:
+    - id: axe
+      name: Топор
+      description: Когда рубишь рёбра топориком...
+      damage:
+        types:
+          Slash: 17
+      range: 1
+      angle: 60
+      animation: WeaponArcPunch
+
+      wideAnimation: WeaponArcSlash
+      wideAnimationRotation: 0
+
+      spriteState: axe
+      attackRate: 1
+
+    - id: stiletto
+      name: Стилет
+      description: Когда пронзаешь лёгкие стилетом...
+      damage:
+        types:
+          Piercing: 15
+      range: 1.5
+      angle: 25
+      animation: WeaponArcThrust
+
+      wideAnimation: WeaponArcThrust
+      wideAnimationRotation: -135
+
+      spriteState: stiletto
+      attackRate: 1
+
+    - id: sword
+      name: Полуторный меч
+      description: Когда рассекаешь плечо и череп полуторным мечом...
+      damage:
+        types:
+          Slash: 20
+      range: 1.5
+      angle: 70
+      animation: WeaponArcPunch
+
+      wideAnimation: WeaponArcSlash
+      wideAnimationRotation: 0
+
+      spriteState: sword
+      attackRate: 1
+
+    - id: rapier
+      name: Рапира
+      description: Когда пробиваешь 10 или более дыр в торсе рапирой...
+      damage:
+        types:
+          Piercing: 17
+          Holy: 6
+      range: 1.75
+      angle: 0
+      animation: WeaponArcThrust
+
+      wideAnimation: WeaponArcThrust
+      wideAnimationRotation: -135
+
+      spriteState: rapier
+      attackRate: 1
+
+    - id: hammer
+      name: Молот
+      description: Когда проламываешь затылок молотом...
+      damage:
+        types:
+          Blunt: 20
+          Piercing: 5
+          Structural: 150
+      range: 1
+      angle: 80
+      animation: WeaponArcPunch
+
+      wideAnimation: WeaponArcSlash
+      wideAnimationRotation: 0
+
+      spriteState: hammer
+      attackRate: 1
+
+    - id: longsword
+      name: Двуручный меч
+      description: Когда разрываешь тело двуручным мечом...
+      damage:
+        types:
+          Slash: 24
+      range: 1.75
+      angle: 90
+      animation: WeaponArcPunch
+
+      wideAnimation: WeaponArcSlash
+      wideAnimationRotation: 0
+
+      spriteState: longsword
+      attackRate: 1
+
+    - id: spear
+      name: Копьё
+      description: Когда проделываешь 20-дюймовую дыру копьём...
+      damage:
+        types:
+          Piercing: 18
+      range: 2
+      angle: 0
+      animation: WeaponArcThrust
+
+      wideAnimation: WeaponArcThrust
+      wideAnimationRotation: -135
+
+      spriteState: spear
+      attackRate: 1
+
+    - id: whip
+      name: Плеть
+      description: Когда разрываешь плоть на десять тысяч полосок плетью...
+      damage:
+        types:
+          Slash: 13
+          Piercing: 2
+      range: 2.5
+      angle: 60
+      animation: WeaponArcThrust
+
+      wideAnimation: WeaponArcSlash
+      wideAnimationRotation: 0
+
+      spriteState: whip
+      attackRate: 1
+
+    - id: scythe
+      name: Коса
+      description: Когда рассекаешь само пространство косой, как некий человек...
+      damage:
+        types:
+          Slash: 20
+          Piercing: 10
+          Structural: 200
+          Holy: 10
+      range: 2.5
+      angle: 100
+      animation: WeaponArcThrust
+
+
+      wideAnimation: WeaponArcSlash
+      wideAnimationRotation: 0
+
+
+      spriteState: scythe
+      attackRate: 1
