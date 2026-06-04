@@ -1,0 +1,99 @@
+{
+  "version": 1,
+  "license": "CC-BY-NC-SA-3.0",
+  "copyright": "Taken from goonstation and modified by Swept at commit https://github.com/goonstation/goonstation/pull/3555/commits/b24eb6260647c0fcfe858268a26b6160bc50017a, wielded version by Easypoll, vertical icon sprite by TiniestShark",
+  "size": {
+      "x": 64,
+      "y": 64
+  },
+    "states": [
+        {
+            "name": "flacon-inhand-left",
+            "directions": 4
+        },
+        {
+            "name": "flacon-inhand-right",
+            "directions": 4
+        },
+        {
+            "name": "flacon-open-inhand-left",
+            "directions": 4
+        },
+        {
+            "name": "flacon-open-inhand-right",
+            "directions": 4
+        },
+        {
+            "name": "axe-inhand-left",
+            "directions": 4
+        },
+        {
+            "name": "axe-inhand-right",
+            "directions": 4
+        },
+        {
+            "name": "stiletto-inhand-left",
+            "directions": 4
+        },
+        {
+            "name": "stiletto-inhand-right",
+            "directions": 4
+        },
+        {
+            "name": "sword-inhand-left",
+            "directions": 4
+        },
+        {
+            "name": "sword-inhand-right",
+            "directions": 4
+        },
+        {
+            "name": "rapier-inhand-left",
+            "directions": 4
+        },
+        {
+            "name": "rapier-inhand-right",
+            "directions": 4
+        },
+        {
+            "name": "hammer-inhand-left",
+            "directions": 4
+        },
+        {
+            "name": "hammer-inhand-right",
+            "directions": 4
+        },
+        {
+            "name": "longsword-inhand-left",
+            "directions": 4
+        },
+        {
+            "name": "longsword-inhand-right",
+            "directions": 4
+        },
+        {
+            "name": "spear-inhand-left",
+            "directions": 4
+        },
+        {
+            "name": "spear-inhand-right",
+            "directions": 4
+        },
+        {
+            "name": "whip-inhand-left",
+            "directions": 4
+        },
+        {
+            "name": "whip-inhand-right",
+            "directions": 4
+        },
+        {
+            "name": "scythe-inhand-left",
+            "directions": 4
+        },
+        {
+            "name": "scythe-inhand-right",
+            "directions": 4
+        }
+    ]
+}
