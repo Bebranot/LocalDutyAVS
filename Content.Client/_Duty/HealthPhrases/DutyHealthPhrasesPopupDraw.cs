@@ -1,6 +1,7 @@
 using Content.Shared._Duty.HealthPhrases;
 using Robust.Client.Graphics;
 using Robust.Client.ResourceManagement;
+using Robust.Shared.IoC;
 
 namespace Content.Client._Duty.HealthPhrases;
 
@@ -23,6 +24,11 @@ public static class DutyHealthPhrasesPopupDraw
         _color = Color.FromHex(DutyHealthPhrasesVisuals.PainColorHex);
     }
 
-    public static (Font Font, Color Color) GetStyle() =>
-        (_font ?? throw new InvalidOperationException("Duty health popup fonts not initialized."), _color);
+    public static (Font Font, Color Color) GetStyle()
+    {
+        if (_font == null)
+            EnsureInitialized(IoCManager.Resolve<IResourceCache>());
+
+        return (_font!, _color);
+    }
 }

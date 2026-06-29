@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: MIT
 
 # ══════════════════════════════════════════════════════════════
-#  Плеер Duty — предмет
+#  Плеер Duty —  предмет
 # ══════════════════════════════════════════════════════════════
 
 - type: entity
@@ -40,84 +40,84 @@
 
 - type: dutyTrack
   id: dpk_2b8fd475bbf9e2
-  name: "MadeOfSteel"
+  name: "Made Of Steel"
   category: "Decaying Winter"
   path:
     path: "/Audio/_Duty/PlayerDK/Decaying Winter/,___MadeOfSteel__.ogg"
 
 - type: dutyTrack
   id: dpk_d567793d9f371a
-  name: "[DEMO] Gods Will Be Watching - Forged At Sineicos"
+  name: "Gods Will Be Watching - Forged At Sineicos (Demo)"
   category: "Decaying Winter"
   path:
     path: "/Audio/_Duty/PlayerDK/Decaying Winter/[DEMO] Gods Will Be Watching - Forged At Sineicos.ogg"
 
 - type: dutyTrack
   id: dpk_97a100086a3ffb
-  name: "Calm Night Decaying Winter"
+  name: "Calm Night"
   category: "Decaying Winter"
   path:
     path: "/Audio/_Duty/PlayerDK/Decaying Winter/Calm Night Decaying Winter.ogg"
 
 - type: dutyTrack
   id: dpk_cf68e7c9cb15b7
-  name: "Calm Night remix"
+  name: "Calm Night (Remix)"
   category: "Decaying Winter"
   path:
     path: "/Audio/_Duty/PlayerDK/Decaying Winter/Calm Night remix.ogg"
 
 - type: dutyTrack
   id: dpk_a47a8237d4fe38
-  name: "Combat theme 5"
+  name: "Combat Theme 5"
   category: "Decaying Winter"
   path:
     path: "/Audio/_Duty/PlayerDK/Decaying Winter/Combat theme 5.ogg"
 
 - type: dutyTrack
   id: dpk_158a92e40a4bf8
-  name: "Decaying Winter - Bridge to Liansk"
+  name: "Bridge to Liansk"
   category: "Decaying Winter"
   path:
     path: "/Audio/_Duty/PlayerDK/Decaying Winter/Decaying Winter - Bridge to Liansk.ogg"
 
 - type: dutyTrack
   id: dpk_95d738e9212af7
-  name: "Decaying Winter Last Strandeds - EVACUATION THEME ( ROBLOX )"
+  name: "Last Strandeds - Evacuation Theme"
   category: "Decaying Winter"
   path:
     path: "/Audio/_Duty/PlayerDK/Decaying Winter/Decaying Winter Last Strandeds - EVACUATION THEME ( ROBLOX ).ogg"
 
 - type: dutyTrack
   id: dpk_e2197171d8c9cd
-  name: "Decaying Winter Ost - Farewell"
+  name: "Farewell"
   category: "Decaying Winter"
   path:
     path: "/Audio/_Duty/PlayerDK/Decaying Winter/Decaying Winter Ost - Farewell.ogg"
 
 - type: dutyTrack
   id: dpk_1dc2604da44739
-  name: "Decaying Winter Ost - Forged at Sineicos"
+  name: "Forged at Sineicos"
   category: "Decaying Winter"
   path:
     path: "/Audio/_Duty/PlayerDK/Decaying Winter/Decaying Winter Ost - Forged at Sineicos.ogg"
 
 - type: dutyTrack
   id: dpk_8b84e47589599b
-  name: "Decaying Winter Ost - Scattered Dust"
+  name: "Scattered Dust"
   category: "Decaying Winter"
   path:
     path: "/Audio/_Duty/PlayerDK/Decaying Winter/Decaying Winter Ost - Scattered Dust.ogg"
 
 - type: dutyTrack
   id: dpk_5b9fec86920f66
-  name: "Decaying Winter Ost - Scavenger War"
+  name: "Scavenger War"
   category: "Decaying Winter"
   path:
     path: "/Audio/_Duty/PlayerDK/Decaying Winter/Decaying Winter Ost - Scavenger War.ogg"
 
 - type: dutyTrack
   id: dpk_87e85e268ca97f
-  name: "ScavWarRemix"
+  name: "Scavenger War (Remix)"
   category: "Decaying Winter"
   path:
     path: "/Audio/_Duty/PlayerDK/Decaying Winter/ScavWarRemix.ogg"
@@ -131,14 +131,14 @@
 
 - type: dutyTrack
   id: dpk_03fd2aad326d09
-  name: "Weve Got Hostiles - Ulacylon boss wave"
+  name: "We've Got Hostiles - Ulacylon Boss Wave"
   category: "Decaying Winter"
   path:
     path: "/Audio/_Duty/PlayerDK/Decaying Winter/Weve Got Hostiles - Ulacylon boss wave.ogg"
 
 - type: dutyTrack
   id: dpk_2a88b96a597bad
-  name: "Wheres The Van"
+  name: "Where's The Van?"
   category: "Decaying Winter"
   path:
     path: "/Audio/_Duty/PlayerDK/Decaying Winter/Wheres The Van.ogg"
@@ -147,203 +147,203 @@
 
 - type: dutyTrack
   id: dpk_c558e61b0a25e8
-  name: "Alone in the Dark - Mewgenics"
+  name: "Alone in the Dark"
   category: "Mewgenics"
   path:
     path: "/Audio/_Duty/PlayerDK/Mewgenics/Alone in the Dark - Mewgenics.ogg"
 
 - type: dutyTrack
   id: dpk_79339824eb8e65
-  name: "Angel Wings - Mewgenics OST"
+  name: "Angel Wings"
   category: "Mewgenics"
   path:
     path: "/Audio/_Duty/PlayerDK/Mewgenics/Angel Wings - Mewgenics OST.ogg"
 
 - type: dutyTrack
   id: dpk_9505ec75b5d096
-  name: "Ballad of D. Claude - Mewgenics OST"
+  name: "Ballad of D. Claude"
   category: "Mewgenics"
   path:
     path: "/Audio/_Duty/PlayerDK/Mewgenics/Ballad of D. Claude - Mewgenics OST.ogg"
 
 - type: dutyTrack
   id: dpk_b3bdaa88200d22
-  name: "Bravest Kat - Mewgenics"
+  name: "Bravest Kat"
   category: "Mewgenics"
   path:
     path: "/Audio/_Duty/PlayerDK/Mewgenics/Bravest Kat - Mewgenics.ogg"
 
 - type: dutyTrack
   id: dpk_300adc88204ddb
-  name: "Break His Chains - Mewgenics ost"
+  name: "Break His Chains"
   category: "Mewgenics"
   path:
     path: "/Audio/_Duty/PlayerDK/Mewgenics/Break His Chains - Mewgenics ost.ogg"
 
 - type: dutyTrack
   id: dpk_3f12ff191b3802
-  name: "Brush Your Teeth - Mewgenics"
+  name: "Brush Your Teeth"
   category: "Mewgenics"
   path:
     path: "/Audio/_Duty/PlayerDK/Mewgenics/Brush Your Teeth - Mewgenics.ogg"
 
 - type: dutyTrack
   id: dpk_3f837370553aa4
-  name: "Brush Your Teeth - Mewgenics(1)"
+  name: "Brush Your Teeth (Alt)"
   category: "Mewgenics"
   path:
     path: "/Audio/_Duty/PlayerDK/Mewgenics/Brush Your Teeth - Mewgenics(1).ogg"
 
 - type: dutyTrack
   id: dpk_0c04179be8552c
-  name: "ButtermilkRanch3, Mewgenics - Tink's Theme"
+  name: "Buttermilk Ranch 3 - Tink's Theme"
   category: "Mewgenics"
   path:
     path: "/Audio/_Duty/PlayerDK/Mewgenics/ButtermilkRanch3, Mewgenics - Tink's Theme.ogg"
 
 - type: dutyTrack
   id: dpk_8df9e5364827fd
-  name: "Calamine Smoothie - Mewgenics OST"
+  name: "Calamine Smoothie"
   category: "Mewgenics"
   path:
     path: "/Audio/_Duty/PlayerDK/Mewgenics/Calamine Smoothie - Mewgenics OST.ogg"
 
 - type: dutyTrack
   id: dpk_d16401f4e5e07d
-  name: "Chaos - Mewgenics! OST"
+  name: "Chaos"
   category: "Mewgenics"
   path:
     path: "/Audio/_Duty/PlayerDK/Mewgenics/Chaos - Mewgenics! OST.ogg"
 
 - type: dutyTrack
   id: dpk_df17961a45491f
-  name: "Chirumiño, Future Boss - HUMANICIDE -Mewgenics Original Soundtrack"
+  name: "Chirumiño, Future Boss - Humanicide"
   category: "Mewgenics"
   path:
     path: "/Audio/_Duty/PlayerDK/Mewgenics/Chirumiño, Future Boss - HUMANICIDE -Mewgenics Original Soundtrack.ogg"
 
 - type: dutyTrack
   id: dpk_150ac2296cd8cf
-  name: "Chumbucket Kitty - Mewgenics"
+  name: "Chumbucket Kitty"
   category: "Mewgenics"
   path:
     path: "/Audio/_Duty/PlayerDK/Mewgenics/Chumbucket Kitty - Mewgenics.ogg"
 
 - type: dutyTrack
   id: dpk_bb724b3ad6af9d
-  name: "Class select - Mewgenics OST"
+  name: "Class Select"
   category: "Mewgenics"
   path:
     path: "/Audio/_Duty/PlayerDK/Mewgenics/Class select - Mewgenics OST.ogg"
 
 - type: dutyTrack
   id: dpk_3ecf3cd18c2b99
-  name: "Crazy Days - Mewgenics! OST"
+  name: "Crazy Days"
   category: "Mewgenics"
   path:
     path: "/Audio/_Duty/PlayerDK/Mewgenics/Crazy Days - Mewgenics! OST.ogg"
 
 - type: dutyTrack
   id: dpk_9e19049e01b734
-  name: "Crystalline Dreams - Mewgenics! OST"
+  name: "Crystalline Dreams"
   category: "Mewgenics"
   path:
     path: "/Audio/_Duty/PlayerDK/Mewgenics/Crystalline Dreams - Mewgenics! OST.ogg"
 
 - type: dutyTrack
   id: dpk_92580ec956b328
-  name: "Dirty Mittens - Mewgenics! OST"
+  name: "Dirty Mittens"
   category: "Mewgenics"
   path:
     path: "/Audio/_Duty/PlayerDK/Mewgenics/Dirty Mittens - Mewgenics! OST.ogg"
 
 - type: dutyTrack
   id: dpk_1df8fa5a7682b6
-  name: "Down With The Devil - Mewgenics"
+  name: "Down With The Devil"
   category: "Mewgenics"
   path:
     path: "/Audio/_Duty/PlayerDK/Mewgenics/Down With The Devil - Mewgenics.ogg"
 
 - type: dutyTrack
   id: dpk_135a237049c79d
-  name: "Endless Misery - Mewgenics! OST"
+  name: "Endless Misery"
   category: "Mewgenics"
   path:
     path: "/Audio/_Duty/PlayerDK/Mewgenics/Endless Misery - Mewgenics! OST.ogg"
 
 - type: dutyTrack
   id: dpk_9954ccb218018a
-  name: "Feline Invader - Mewgenics"
+  name: "Feline Invader"
   category: "Mewgenics"
   path:
     path: "/Audio/_Duty/PlayerDK/Mewgenics/Feline Invader - Mewgenics.ogg"
 
 - type: dutyTrack
   id: dpk_31090932177957
-  name: "Frank - Mewgenics In-game Soundtrack"
+  name: "Frank"
   category: "Mewgenics"
   path:
     path: "/Audio/_Duty/PlayerDK/Mewgenics/Frank - Mewgenics In-game Soundtrack.ogg"
 
 - type: dutyTrack
   id: dpk_e64a4861f32edb
-  name: "Jim Tenderizer - Mom I Really Hate You Mewgenics"
+  name: "Jim Tenderizer - Mom I Really Hate You"
   category: "Mewgenics"
   path:
     path: "/Audio/_Duty/PlayerDK/Mewgenics/Jim Tenderizer - Mom I Really Hate You Mewgenics.ogg"
 
 - type: dutyTrack
   id: dpk_6fe279d570b3fe
-  name: "Jim Tenderizer - Tuff Mewgenics OST"
+  name: "Jim Tenderizer - Tuff"
   category: "Mewgenics"
   path:
     path: "/Audio/_Duty/PlayerDK/Mewgenics/Jim Tenderizer - Tuff Mewgenics OST.ogg"
 
 - type: dutyTrack
   id: dpk_e637c38aa3db08
-  name: "Kat Fight - Mewgenics! OST"
+  name: "Kat Fight"
   category: "Mewgenics"
   path:
     path: "/Audio/_Duty/PlayerDK/Mewgenics/Kat Fight - Mewgenics! OST.ogg"
 
 - type: dutyTrack
   id: dpk_8f71626ce72cb4
-  name: "Kitschy Kitty - Mewgenics Official Lyric Video"
+  name: "Kitschy Kitty"
   category: "Mewgenics"
   path:
     path: "/Audio/_Duty/PlayerDK/Mewgenics/Kitschy Kitty - Mewgenics Official Lyric Video.ogg"
 
 - type: dutyTrack
   id: dpk_9922a2fb6e2c23
-  name: "Legend of the Claw! - Mewgenics! OST"
+  name: "Legend of the Claw!"
   category: "Mewgenics"
   path:
     path: "/Audio/_Duty/PlayerDK/Mewgenics/Legend of the Claw! - Mewgenics! OST.ogg"
 
 - type: dutyTrack
   id: dpk_286711a1b25328
-  name: "Lonesome Road - Mewgenics"
+  name: "Lonesome Road"
   category: "Mewgenics"
   path:
     path: "/Audio/_Duty/PlayerDK/Mewgenics/Lonesome Road - Mewgenics.ogg"
 
 - type: dutyTrack
   id: dpk_8649ab7756e559
-  name: "Madness - Eatin Rats! Mewgenics"
+  name: "Madness - Eatin' Rats!"
   category: "Mewgenics"
   path:
     path: "/Audio/_Duty/PlayerDK/Mewgenics/Madness - Eatin Rats! Mewgenics.ogg"
 
 - type: dutyTrack
   id: dpk_4078b0d93550ba
-  name: "Mew-Genics Title Theme - Matthias Bossi & Jon Evans"
+  name: "Matthias Bossi & Jon Evans - Mew-Genics Title Theme"
   category: "Mewgenics"
   path:
     path: "/Audio/_Duty/PlayerDK/Mewgenics/Mew-Genics Title Theme - Matthias Bossi & Jon Evans.ogg"
 
 - type: dutyTrack
   id: dpk_85da771a117d8c
-  name: "Mewgenics OST - Track 21, Carla Kihlstedt - Taser Paws"
+  name: "Carla Kihlstedt - Taser Paws"
   category: "Mewgenics"
   path:
     path: "/Audio/_Duty/PlayerDK/Mewgenics/Mewgenics OST - Track 21, Carla Kihlstedt - Taser Paws.ogg"
@@ -357,98 +357,98 @@
 
 - type: dutyTrack
   id: dpk_04c86555740ac4
-  name: "Napping All Day - Mewgenics"
+  name: "Napping All Day"
   category: "Mewgenics"
   path:
     path: "/Audio/_Duty/PlayerDK/Mewgenics/Napping All Day - Mewgenics.ogg"
 
 - type: dutyTrack
   id: dpk_67bc66dfa2a300
-  name: "pikmin, Mewgenics - Bolt of Lightning"
+  name: "Pikmin - Bolt of Lightning"
   category: "Mewgenics"
   path:
     path: "/Audio/_Duty/PlayerDK/Mewgenics/pikmin, Mewgenics - Bolt of Lightning.ogg"
 
 - type: dutyTrack
   id: dpk_db149402b2e307
-  name: "PurpleGatitos, Sewers - Mewgenics! Flush"
+  name: "Purple Gatitos - Flush"
   category: "Mewgenics"
   path:
     path: "/Audio/_Duty/PlayerDK/Mewgenics/PurpleGatitos, Sewers - Mewgenics! Flush.ogg"
 
 - type: dutyTrack
   id: dpk_41bc5aad70bfbb
-  name: "Rosalina - The Infinity mewgenics angel wings"
+  name: "Rosalina - Angel Wings (The Infinity)"
   category: "Mewgenics"
   path:
     path: "/Audio/_Duty/PlayerDK/Mewgenics/Rosalina - The Infinity mewgenics angel wings.ogg"
 
 - type: dutyTrack
   id: dpk_d657f06713a89c
-  name: "Rosalina, dig your own grave - vs The Creator mewgenics"
+  name: "Rosalina - Dig Your Own Grave (Vs The Creator)"
   category: "Mewgenics"
   path:
     path: "/Audio/_Duty/PlayerDK/Mewgenics/Rosalina, dig your own grave - vs The Creator mewgenics.ogg"
 
 - type: dutyTrack
   id: dpk_8438011846439f
-  name: "Rosalina, dig your own grave - vs The Destroyer phase 1 mewgenics"
+  name: "Rosalina - Dig Your Own Grave (Vs The Destroyer Phase 1)"
   category: "Mewgenics"
   path:
     path: "/Audio/_Duty/PlayerDK/Mewgenics/Rosalina, dig your own grave - vs The Destroyer phase 1 mewgenics.ogg"
 
 - type: dutyTrack
   id: dpk_70eef71c5ca8d1
-  name: "Rosalina, dig your own grave - vs The Destroyer phase 2 mewgenics"
+  name: "Rosalina - Dig Your Own Grave (Vs The Destroyer Phase 2)"
   category: "Mewgenics"
   path:
     path: "/Audio/_Duty/PlayerDK/Mewgenics/Rosalina, dig your own grave - vs The Destroyer phase 2 mewgenics.ogg"
 
 - type: dutyTrack
   id: dpk_d3cabdc8a554d3
-  name: "So High, Theme of the Man in the Moon - Mewgenics OST"
+  name: "So High (Theme of the Man in the Moon)"
   category: "Mewgenics"
   path:
     path: "/Audio/_Duty/PlayerDK/Mewgenics/So High, Theme of the Man in the Moon - Mewgenics OST.ogg"
 
 - type: dutyTrack
   id: dpk_78a556cc476fd4
-  name: "Stray Cat - Mewgenics OST"
+  name: "Stray Cat"
   category: "Mewgenics"
   path:
     path: "/Audio/_Duty/PlayerDK/Mewgenics/Stray Cat - Mewgenics OST.ogg"
 
 - type: dutyTrack
   id: dpk_07d9f2dd242bc0
-  name: "Sweet Delicious - Mewgenics"
+  name: "Sweet Delicious"
   category: "Mewgenics"
   path:
     path: "/Audio/_Duty/PlayerDK/Mewgenics/Sweet Delicious - Mewgenics.ogg"
 
 - type: dutyTrack
   id: dpk_4b06fa6a8133e8
-  name: "The Crack Of Doom - Mewgenics OST"
+  name: "The Crack Of Doom"
   category: "Mewgenics"
   path:
     path: "/Audio/_Duty/PlayerDK/Mewgenics/The Crack Of Doom - Mewgenics OST.ogg"
 
 - type: dutyTrack
   id: dpk_ef32901a96f155
-  name: "Them Kitty Bones - Mewgenics OST"
+  name: "Them Kitty Bones"
   category: "Mewgenics"
   path:
     path: "/Audio/_Duty/PlayerDK/Mewgenics/Them Kitty Bones - Mewgenics OST.ogg"
 
 - type: dutyTrack
   id: dpk_23d059453a3a0f
-  name: "Throbbing King - Mewgenics OST"
+  name: "Throbbing King"
   category: "Mewgenics"
   path:
     path: "/Audio/_Duty/PlayerDK/Mewgenics/Throbbing King - Mewgenics OST.ogg"
 
 - type: dutyTrack
   id: dpk_00439fd76b6f2b
-  name: "We're Dead - Mewgenics! OST"
+  name: "We're Dead"
   category: "Mewgenics"
   path:
     path: "/Audio/_Duty/PlayerDK/Mewgenics/We're Dead - Mewgenics! OST.ogg"
@@ -457,85 +457,92 @@
 
 - type: dutyTrack
   id: dpk_6bc8fed5dc56asdfsafs5c
-  name: "Persona 5 - The Royal"
+  name: "Persona 5 - Colors Flying High (The Royal)"
   category: "Karp/Persona"
   path:
     path: "/Audio/_Duty/PlayerDK/Persona/Persona 5 The Royal.ogg"
 
 - type: dutyTrack
+  id: dpk_6bc8fed5dc56asdfasdsafs5c
+  name: "Megalovania"
+  category: "Karp/Persona"
+  path:
+    path: "/Audio/_Duty/PlayerDK/Persona/megagandonia.ogg"
+
+
+- type: dutyTrack
   id: dpk_6bc8fed5dZZZZc56asdfasdf5c
-  name: "Master Of Shadow - reload"
+  name: "Master Of Shadow (Persona 3 Reload)"
   category: "Karp/Persona"
   path:
     path: "/Audio/_Duty/PlayerDK/Persona/Master Of Shadow -Reload-.ogg"
 
-
 - type: dutyTrack
   id: dpk_6bc8fed5dc5zxcga6sadf5c
-  name: "Mass Destruction -Reload-"
+  name: "Mass Destruction (Persona 3 Reload)"
   category: "Karp/Persona"
   path:
     path: "/Audio/_Duty/PlayerDK/Persona/Mass Destruction.ogg"  
 
 - type: dutyTrack
   id: dpk_6bc8fed5dc56gadsgcxsadf5c
-  name: "Shadow World"
+  name: "Shadow World (Persona 4 Golden)"
   category: "Karp/Persona"
   path:
     path: "/Audio/_Duty/PlayerDK/Persona/9.Shadow World(P4G).ogg"
 
 - type: dutyTrack
   id: dpk_6bc8fed5dc5ergeg6sadf5c
-  name: "Time To Make History"
+  name: "Time To Make History (Persona 4 Golden)"
   category: "Karp/Persona"
   path:
     path: "/Audio/_Duty/PlayerDK/Persona/8.Time To Make History(P4G).ogg"
 
 - type: dutyTrack
   id: dpk_6bc8federge5dc56sadf5c
-  name: "Never More"
+  name: "Never More (Persona 4)"
   category: "Karp/Persona"
   path:
     path: "/Audio/_Duty/PlayerDK/Persona/7.Never More(P4).ogg"
 
 - type: dutyTrack
   id: dpk_6bc8fed5dc56shadhadf5c
-  name: "Junes Theme"
+  name: "Junes Theme (Persona 4)"
   category: "Karp/Persona"
   path:
     path: "/Audio/_Duty/PlayerDK/Persona/6.Junes Theme(P4).ogg"
 
 - type: dutyTrack
   id: dpk_6bc8fed5dc56fsdfafasadf5c
-  name: "Reach Out To The Truth"
+  name: "Reach Out To The Truth (Instrumental) (Persona 4)"
   category: "Karp/Persona"
   path:
     path: "/Audio/_Duty/PlayerDK/Persona/5.Reach Out To The Truth -inst vesion-(P4).ogg"
 
 - type: dutyTrack
   id: dpk_6bc8fed5dc56asdfasfsadf5c
-  name: "О ГОСПОДИ НЕТ ДОКТОР ОНО НАЧАЛОСЬ"
+  name: "Who's There? (Persona 4)"
   category: "Karp/Persona"
   path:
     path: "/Audio/_Duty/PlayerDK/Persona/4.Who's There(P4).ogg"
 
 - type: dutyTrack
   id: dpk_6bc8fed5dfasdfasc56sadf5c
-  name: "Your Affection"
+  name: "Your Affection (Persona 4)"
   category: "Karp/Persona"
   path:
     path: "/Audio/_Duty/PlayerDK/Persona/3.Your Affection(P4).ogg"
 
 - type: dutyTrack
   id: dpk_6bc8fedsfasdf5dc56sadf5c
-  name: "Area Of The Soul"
+  name: "Aria of the Soul (Persona 4)"
   category: "Karp/Persona"
   path:
     path: "/Audio/_Duty/PlayerDK/Persona/2.Aria of the Soul(P4).ogg"
 
 - type: dutyTrack
   id: dpk_6bc8fsadfasfed5dc56sadf5c
-  name: "Pursuing My True Self"
+  name: "Pursuing My True Self (Persona 4)"
   category: "Karp/Persona"
   path:
     path: "/Audio/_Duty/PlayerDK/Persona/1.Pursuing My True Self(P4).ogg"
@@ -544,28 +551,28 @@
 
 - type: dutyTrack
   id: dpk_3ccabf755866fd
-  name: "Battle for taypan"
+  name: "Space Station 13 - Battle for Taypan (Bolgarich x Haziness Codex)"
   category: "SS13 SS14"
   path:
     path: "/Audio/_Duty/PlayerDK/SS13 SS14/.Space Station 13 - Battle for Taypan [FANMADE] By Bolgarich x Haziness Codex [TubeRipper.cc].ogg"
 
 - type: dutyTrack
   id: dpk_036c6d0af6dd5e
-  name: "Nuclear Operations (Remake) SS13 Fan Track [TubeRipper.cc"
+  name: "Space Station 13 - Nuclear Operations (Remake)"
   category: "SS13 SS14"
   path:
     path: "/Audio/_Duty/PlayerDK/SS13 SS14/Nuclear Operations (Remake) SS13 Fan Track [TubeRipper.cc.ogg"
 
 - type: dutyTrack
   id: dpk_9d8c465d155656
-  name: "nuke_ready"
+  name: "Nuke Ready"
   category: "SS13 SS14"
   path:
     path: "/Audio/_Duty/PlayerDK/SS13 SS14/nuke_ready.ogg"
 
 - type: dutyTrack
   id: dpk_475d417fb81f42
-  name: "RunningOutBolgarich"
+  name: "Bolgarich - Running Out"
   category: "SS13 SS14"
   path:
     path: "/Audio/_Duty/PlayerDK/SS13 SS14/RunningOutBolgarich.ogg"
@@ -579,14 +586,14 @@
 
 - type: dutyTrack
   id: dpk_968629f4cd87ba
-  name: "sierra_1"
+  name: "Sierra 1"
   category: "SS13 SS14"
   path:
     path: "/Audio/_Duty/PlayerDK/SS13 SS14/sierra_1.ogg"
 
 - type: dutyTrack
   id: dpk_79123557f6021a
-  name: "Space Station 13 14 - Peacemakers"
+  name: "Space Station 13/14 - Peacemakers"
   category: "SS13 SS14"
   path:
     path: "/Audio/_Duty/PlayerDK/SS13 SS14/Space Station 13 14 - Peacemakers.ogg"
@@ -602,42 +609,42 @@
 
 - type: dutyTrack
   id: dpk_86bd4266300705
-  name: "Ataman"
+  name: "Атаман"
   category: "Stalker"
   path:
     path: "/Audio/_Duty/PlayerDK/Stalker/Boombox/Ataman.ogg"
 
 - type: dutyTrack
   id: dpk_df9c4427cbaba6
-  name: "Bear"
+  name: "Медведь"
   category: "Stalker"
   path:
     path: "/Audio/_Duty/PlayerDK/Stalker/Boombox/Bear.ogg"
 
 - type: dutyTrack
   id: dpk_8ed00646fa27a6
-  name: "DeathHacker"
+  name: "Death Hacker"
   category: "Stalker"
   path:
     path: "/Audio/_Duty/PlayerDK/Stalker/Boombox/DeathHacker.ogg"
 
 - type: dutyTrack
   id: dpk_fc976684befdd0
-  name: "DeathSeenFootage"
+  name: "Death Seen Footage"
   category: "Stalker"
   path:
     path: "/Audio/_Duty/PlayerDK/Stalker/Boombox/DeathSeenFootage.ogg"
 
 - type: dutyTrack
   id: dpk_4d902c0ac55b67
-  name: "Gambit"
+  name: "Гамбит"
   category: "Stalker"
   path:
     path: "/Audio/_Duty/PlayerDK/Stalker/Boombox/Gambit.ogg"
 
 - type: dutyTrack
   id: dpk_d01a6f3fde90ec
-  name: "Gulay"
+  name: "Гуляй"
   category: "Stalker"
   path:
     path: "/Audio/_Duty/PlayerDK/Stalker/Boombox/Gulay.ogg"
@@ -658,7 +665,7 @@
 
 - type: dutyTrack
   id: dpk_23e3abc90b7bca
-  name: "Witch"
+  name: "Ведьма"
   category: "Stalker"
   path:
     path: "/Audio/_Duty/PlayerDK/Stalker/Boombox/Witch.ogg"
@@ -667,217 +674,217 @@
 
 - type: dutyTrack
   id: dpk_3a20cb4870ea0a
-  name: "army_radio3"
+  name: "Военное Радио 3"
   category: "Stalker"
   path:
     path: "/Audio/_Duty/PlayerDK/Stalker/Radio/army_radio3.ogg"
 
 - type: dutyTrack
   id: dpk_76cd66363cb6ba
-  name: "bandit_radio"
+  name: "Бандитское Радио"
   category: "Stalker"
   path:
     path: "/Audio/_Duty/PlayerDK/Stalker/Radio/bandit_radio.ogg"
 
 - type: dutyTrack
   id: dpk_c89a84c197bd25
-  name: "bar_100_rentgen"
+  name: "Бар 100 Рентген"
   category: "Stalker"
   path:
     path: "/Audio/_Duty/PlayerDK/Stalker/Radio/bar_100_rentgen.ogg"
 
 - type: dutyTrack
   id: dpk_4554f103886c7c
-  name: "bar_chistoe_nebo"
+  name: "База Чистого Неба"
   category: "Stalker"
   path:
     path: "/Audio/_Duty/PlayerDK/Stalker/Radio/bar_chistoe_nebo.ogg"
 
 - type: dutyTrack
   id: dpk_67daac8999b1e7
-  name: "belaya_noch"
+  name: "Форум - Белая Ночь"
   category: "Stalker"
   path:
     path: "/Audio/_Duty/PlayerDK/Stalker/Radio/belaya_noch.ogg"
 
 - type: dutyTrack
   id: dpk_502b813275922b
-  name: "bomj"
+  name: "Сектор Газа - Бомж"
   category: "Stalker"
   path:
     path: "/Audio/_Duty/PlayerDK/Stalker/Radio/bomj.ogg"
 
 - type: dutyTrack
   id: dpk_aa3472c7e706fd
-  name: "cherniy_stalker"
+  name: "Черный Сталкер"
   category: "Stalker"
   path:
     path: "/Audio/_Duty/PlayerDK/Stalker/Radio/cherniy_stalker.ogg"
 
 - type: dutyTrack
   id: dpk_12647c8813c372
-  name: "esttolkomig"
+  name: "Есть Только Миг"
   category: "Stalker"
   path:
     path: "/Audio/_Duty/PlayerDK/Stalker/Radio/esttolkomig.ogg"
 
 - type: dutyTrack
   id: dpk_956340fd7f6c50
-  name: "faina"
+  name: "На-На - Фаина"
   category: "Stalker"
   path:
     path: "/Audio/_Duty/PlayerDK/Stalker/Radio/faina.ogg"
 
 - type: dutyTrack
   id: dpk_2446ab55d76439
-  name: "gorod_kotorogo_net"
+  name: "Город, Которого Нет"
   category: "Stalker"
   path:
     path: "/Audio/_Duty/PlayerDK/Stalker/Radio/gorod_kotorogo_net.ogg"
 
 - type: dutyTrack
   id: dpk_59b4a1a5ca0aae
-  name: "holding_out_for_a_hero"
+  name: "Holding Out For A Hero"
   category: "Stalker"
   path:
     path: "/Audio/_Duty/PlayerDK/Stalker/Radio/holding_out_for_a_hero.ogg"
 
 - type: dutyTrack
   id: dpk_b68ea9e264bb18
-  name: "Izvozchik"
+  name: "Александр Новиков - Извозчик"
   category: "Stalker"
   path:
     path: "/Audio/_Duty/PlayerDK/Stalker/Radio/Izvozchik.ogg"
 
 - type: dutyTrack
   id: dpk_9f304fbe7aecdf
-  name: "kombat"
+  name: "Любэ - Комбат"
   category: "Stalker"
   path:
     path: "/Audio/_Duty/PlayerDK/Stalker/Radio/kombat.ogg"
 
 - type: dutyTrack
   id: dpk_f2ac57efe50ec5
-  name: "poshli_vi_vse"
+  name: "Пошли Вы Все!"
   category: "Stalker"
   path:
     path: "/Audio/_Duty/PlayerDK/Stalker/Radio/poshli_vi_vse.ogg"
 
 - type: dutyTrack
   id: dpk_4788996267b346
-  name: "radio_Svoboda"
+  name: "Радио Свобода"
   category: "Stalker"
   path:
     path: "/Audio/_Duty/PlayerDK/Stalker/Radio/radio_Svoboda.ogg"
 
 - type: dutyTrack
   id: dpk_2f6175ca5b3cfe
-  name: "renegat_radio"
+  name: "Радио Ренегатов"
   category: "Stalker"
   path:
     path: "/Audio/_Duty/PlayerDK/Stalker/Radio/renegat_radio.ogg"
 
 - type: dutyTrack
   id: dpk_c8ef23828d0ca1
-  name: "rupor"
+  name: "Рупор"
   category: "Stalker"
   path:
     path: "/Audio/_Duty/PlayerDK/Stalker/Radio/rupor.ogg"
 
 - type: dutyTrack
   id: dpk_3b8ffc4850522b
-  name: "rus_radio"
+  name: "Русское Радио"
   category: "Stalker"
   path:
     path: "/Audio/_Duty/PlayerDK/Stalker/Radio/rus_radio.ogg"
 
 - type: dutyTrack
   id: dpk_a9cc2d5a4d4917
-  name: "rus_radio2"
+  name: "Русское Радио 2"
   category: "Stalker"
   path:
     path: "/Audio/_Duty/PlayerDK/Stalker/Radio/rus_radio2.ogg"
 
 - type: dutyTrack
   id: dpk_83ff78105d2b97
-  name: "soviet"
+  name: "Советский Марш"
   category: "Stalker"
   path:
     path: "/Audio/_Duty/PlayerDK/Stalker/Radio/soviet.ogg"
 
 - type: dutyTrack
   id: dpk_0877952f5d7e42
-  name: "stalker"
+  name: "Сталкер"
   category: "Stalker"
   path:
     path: "/Audio/_Duty/PlayerDK/Stalker/Radio/stalker.ogg"
 
 - type: dutyTrack
   id: dpk_f717d49808acaf
-  name: "stalker_clear_sky_theme"
+  name: "S.T.A.L.K.E.R. Чистое Небо - Тема"
   category: "Stalker"
   path:
     path: "/Audio/_Duty/PlayerDK/Stalker/Radio/stalker_clear_sky_theme.ogg"
 
 - type: dutyTrack
   id: dpk_ea9781a45d613a
-  name: "stalker_clear_sky_theme2"
+  name: "S.T.A.L.K.E.R. Чистое Небо - Тема 2"
   category: "Stalker"
   path:
     path: "/Audio/_Duty/PlayerDK/Stalker/Radio/stalker_clear_sky_theme2.ogg"
 
 - type: dutyTrack
   id: dpk_417f743ee87643
-  name: "stalker_combat_theme"
+  name: "S.T.A.L.K.E.R. - Боевая Тема"
   category: "Stalker"
   path:
     path: "/Audio/_Duty/PlayerDK/Stalker/Radio/stalker_combat_theme.ogg"
 
 - type: dutyTrack
   id: dpk_5ab16c2a204189
-  name: "stalker_combat_theme2"
+  name: "S.T.A.L.K.E.R. - Боевая Тема 2"
   category: "Stalker"
   path:
     path: "/Audio/_Duty/PlayerDK/Stalker/Radio/stalker_combat_theme2.ogg"
 
 - type: dutyTrack
   id: dpk_c518f49366b368
-  name: "sudnayanoch"
+  name: "Судная Ночь"
   category: "Stalker"
   path:
     path: "/Audio/_Duty/PlayerDK/Stalker/Radio/sudnayanoch.ogg"
 
 - type: dutyTrack
   id: dpk_c284b27e301618
-  name: "ua_radio"
+  name: "Украинское Радио"
   category: "Stalker"
   path:
     path: "/Audio/_Duty/PlayerDK/Stalker/Radio/ua_radio.ogg"
 
 - type: dutyTrack
   id: dpk_6985615fe77d47
-  name: "un_radio"
+  name: "Радио ООН"
   category: "Stalker"
   path:
     path: "/Audio/_Duty/PlayerDK/Stalker/Radio/un_radio.ogg"
 
 - type: dutyTrack
   id: dpk_acaa77e0de9638
-  name: "un_radio2"
+  name: "Радио ООН 2"
   category: "Stalker"
   path:
     path: "/Audio/_Duty/PlayerDK/Stalker/Radio/un_radio2.ogg"
 
 - type: dutyTrack
   id: dpk_47371b3f492d46
-  name: "un_radio3"
+  name: "Радио ООН 3"
   category: "Stalker"
   path:
     path: "/Audio/_Duty/PlayerDK/Stalker/Radio/un_radio3.ogg"
 
 - type: dutyTrack
   id: dpk_15ef00383f641f
-  name: "wolf_hunt"
+  name: "Владимир Высоцкий - Охота на Волков"
   category: "Stalker"
   path:
     path: "/Audio/_Duty/PlayerDK/Stalker/Radio/wolf_hunt.ogg"
@@ -893,35 +900,35 @@
 
 - type: dutyTrack
   id: dpk_2b40453584dadc
-  name: "arstotzka_1"
+  name: "Papers, Please - Arstotzka 1"
   category: "Stalker"
   path:
     path: "/Audio/_Duty/PlayerDK/Stalker/Radio/Contributor/arstotzka_1.ogg"
 
 - type: dutyTrack
   id: dpk_f5ae50ef409385
-  name: "arstotzka_2"
+  name: "Papers, Please - Arstotzka 2"
   category: "Stalker"
   path:
     path: "/Audio/_Duty/PlayerDK/Stalker/Radio/Contributor/arstotzka_2.ogg"
 
 - type: dutyTrack
   id: dpk_1bbc728519217a
-  name: "arstotzka_3"
+  name: "Papers, Please - Arstotzka 3"
   category: "Stalker"
   path:
     path: "/Audio/_Duty/PlayerDK/Stalker/Radio/Contributor/arstotzka_3.ogg"
 
 - type: dutyTrack
   id: dpk_d79fefd2e88e6b
-  name: "AtomicHeart"
+  name: "Atomic Heart"
   category: "Stalker"
   path:
     path: "/Audio/_Duty/PlayerDK/Stalker/Radio/Contributor/AtomicHeart.ogg"
 
 - type: dutyTrack
   id: dpk_bd6aa7bf573efd
-  name: "Camelidia_1"
+  name: "Camelidia 1"
   category: "Stalker"
   path:
     path: "/Audio/_Duty/PlayerDK/Stalker/Radio/Contributor/Camelidia_1.ogg"
@@ -942,42 +949,42 @@
 
 - type: dutyTrack
   id: dpk_d5117ede5a028e
-  name: "GeneralRelease"
+  name: "General Release"
   category: "Stalker"
   path:
     path: "/Audio/_Duty/PlayerDK/Stalker/Radio/Contributor/GeneralRelease.ogg"
 
 - type: dutyTrack
   id: dpk_bb89005b77314f
-  name: "Geran"
+  name: "Герань"
   category: "Stalker"
   path:
     path: "/Audio/_Duty/PlayerDK/Stalker/Radio/Contributor/Geran.ogg"
 
 - type: dutyTrack
   id: dpk_6d67e351233525
-  name: "GimnUSSR"
+  name: "Гимн СССР"
   category: "Stalker"
   path:
     path: "/Audio/_Duty/PlayerDK/Stalker/Radio/Contributor/GimnUSSR.ogg"
 
 - type: dutyTrack
   id: dpk_d1a6a93a55fb23
-  name: "GrooveDealers"
+  name: "Groove Dealers"
   category: "Stalker"
   path:
     path: "/Audio/_Duty/PlayerDK/Stalker/Radio/Contributor/GrooveDealers.ogg"
 
 - type: dutyTrack
   id: dpk_faa293411ac826
-  name: "GSN1"
+  name: "GSN 1"
   category: "Stalker"
   path:
     path: "/Audio/_Duty/PlayerDK/Stalker/Radio/Contributor/GSN1.ogg"
 
 - type: dutyTrack
   id: dpk_cb0022cf2ef020
-  name: "GSN2"
+  name: "GSN 2"
   category: "Stalker"
   path:
     path: "/Audio/_Duty/PlayerDK/Stalker/Radio/Contributor/GSN2.ogg"
@@ -991,35 +998,35 @@
 
 - type: dutyTrack
   id: dpk_619d274e252920
-  name: "InTheHouseInAHeartbeat"
+  name: "In The House, In A Heartbeat"
   category: "Stalker"
   path:
     path: "/Audio/_Duty/PlayerDK/Stalker/Radio/Contributor/InTheHouseInAHeartbeat.ogg"
 
 - type: dutyTrack
   id: dpk_b2145906513d15
-  name: "JewishTailor"
+  name: "Jewish Tailor"
   category: "Stalker"
   path:
     path: "/Audio/_Duty/PlayerDK/Stalker/Radio/Contributor/JewishTailor.ogg"
 
 - type: dutyTrack
   id: dpk_9e21e8006e894c
-  name: "JusttheTwoofUs"
+  name: "Grover Washington Jr. - Just the Two of Us"
   category: "Stalker"
   path:
     path: "/Audio/_Duty/PlayerDK/Stalker/Radio/Contributor/JusttheTwoofUs.ogg"
 
 - type: dutyTrack
   id: dpk_c5eb4be93df01f
-  name: "LinkinParkIntheEnd"
+  name: "Linkin Park - In the End"
   category: "Stalker"
   path:
     path: "/Audio/_Duty/PlayerDK/Stalker/Radio/Contributor/LinkinParkIntheEnd.ogg"
 
 - type: dutyTrack
   id: dpk_4e99fa92e9c1fa
-  name: "MamaPriyezzhayIMenyaZaberi"
+  name: "Мама, приезжай и меня забери"
   category: "Stalker"
   path:
     path: "/Audio/_Duty/PlayerDK/Stalker/Radio/Contributor/MamaPriyezzhayIMenyaZaberi.ogg"
@@ -1033,21 +1040,21 @@
 
 - type: dutyTrack
   id: dpk_2dd897f2a9e63a
-  name: "Ostrov"
+  name: "Остров"
   category: "Stalker"
   path:
     path: "/Audio/_Duty/PlayerDK/Stalker/Radio/Contributor/Ostrov.ogg"
 
 - type: dutyTrack
   id: dpk_7d7fe8c04e7ae4
-  name: "PogasliSvechi"
+  name: "Погасли Свечи"
   category: "Stalker"
   path:
     path: "/Audio/_Duty/PlayerDK/Stalker/Radio/Contributor/PogasliSvechi.ogg"
 
 - type: dutyTrack
   id: dpk_06831cd4fcc180
-  name: "PrussiaGlory"
+  name: "Prussian Glory"
   category: "Stalker"
   path:
     path: "/Audio/_Duty/PlayerDK/Stalker/Radio/Contributor/PrussiaGlory.ogg"
@@ -1061,49 +1068,49 @@
 
 - type: dutyTrack
   id: dpk_9262fffb9728d0
-  name: "SPEEDISLIFE"
+  name: "Speed Is Life"
   category: "Stalker"
   path:
     path: "/Audio/_Duty/PlayerDK/Stalker/Radio/Contributor/SPEEDISLIFE.ogg"
 
 - type: dutyTrack
   id: dpk_8ac605cbc85d6e
-  name: "StayWithMe"
+  name: "Stay With Me"
   category: "Stalker"
   path:
     path: "/Audio/_Duty/PlayerDK/Stalker/Radio/Contributor/StayWithMe.ogg"
 
 - type: dutyTrack
   id: dpk_94fd5d36be22ef
-  name: "SunshineRainbowWhitepony"
+  name: "Sunshine, Rainbow, White Pony"
   category: "Stalker"
   path:
     path: "/Audio/_Duty/PlayerDK/Stalker/Radio/Contributor/SunshineRainbowWhitepony.ogg"
 
 - type: dutyTrack
   id: dpk_bd2e284b937462
-  name: "USSR"
+  name: "СССР"
   category: "Stalker"
   path:
     path: "/Audio/_Duty/PlayerDK/Stalker/Radio/Contributor/USSR.ogg"
 
 - type: dutyTrack
   id: dpk_8702d5e29fcd43
-  name: "vietnam"
+  name: "Vietnam"
   category: "Stalker"
   path:
     path: "/Audio/_Duty/PlayerDK/Stalker/Radio/Contributor/vietnam.ogg"
 
 - type: dutyTrack
   id: dpk_316fec6c0f59e9
-  name: "Yaochenustal"
+  name: "Я очень устал"
   category: "Stalker"
   path:
     path: "/Audio/_Duty/PlayerDK/Stalker/Radio/Contributor/Yaochenustal.ogg"
 
 - type: dutyTrack
   id: dpk_1fac04ddd1f792
-  name: "YAuydu"
+  name: "Я уйду"
   category: "Stalker"
   path:
     path: "/Audio/_Duty/PlayerDK/Stalker/Radio/Contributor/YAuydu.ogg"
@@ -1133,105 +1140,105 @@
 
 - type: dutyTrack
   id: dpk_853c282209c82e
-  name: "abgover"
+  name: "Abgover"
   category: "Stalker"
   path:
     path: "/Audio/_Duty/PlayerDK/Stalker/Radio/Donate/abgover.ogg"
 
 - type: dutyTrack
   id: dpk_6443b8edefb91c
-  name: "accept"
+  name: "Accept"
   category: "Stalker"
   path:
     path: "/Audio/_Duty/PlayerDK/Stalker/Radio/Donate/accept.ogg"
 
 - type: dutyTrack
   id: dpk_56ee33db093753
-  name: "avtor"
+  name: "Автор"
   category: "Stalker"
   path:
     path: "/Audio/_Duty/PlayerDK/Stalker/Radio/Donate/avtor.ogg"
 
 - type: dutyTrack
   id: dpk_74b0ac9f0dec41
-  name: "bamzy"
+  name: "Bamzy"
   category: "Stalker"
   path:
     path: "/Audio/_Duty/PlayerDK/Stalker/Radio/Donate/bamzy.ogg"
 
 - type: dutyTrack
   id: dpk_e82910ba32eaf8
-  name: "bespokoynik"
+  name: "Беспокойник"
   category: "Stalker"
   path:
     path: "/Audio/_Duty/PlayerDK/Stalker/Radio/Donate/bespokoynik.ogg"
 
 - type: dutyTrack
   id: dpk_a2445c6404a1ca
-  name: "Bey"
+  name: "Бей!"
   category: "Stalker"
   path:
     path: "/Audio/_Duty/PlayerDK/Stalker/Radio/Donate/Bey.ogg"
 
 - type: dutyTrack
   id: dpk_6d3e2d2d163edb
-  name: "chapaevskaya_mel"
+  name: "Чапаевская Мелодия"
   category: "Stalker"
   path:
     path: "/Audio/_Duty/PlayerDK/Stalker/Radio/Donate/chapaevskaya_mel.ogg"
 
 - type: dutyTrack
   id: dpk_eb2a79a214a813
-  name: "den"
+  name: "День"
   category: "Stalker"
   path:
     path: "/Audio/_Duty/PlayerDK/Stalker/Radio/Donate/den.ogg"
 
 - type: dutyTrack
   id: dpk_8829b7e8ba43e4
-  name: "desire"
+  name: "Desire"
   category: "Stalker"
   path:
     path: "/Audio/_Duty/PlayerDK/Stalker/Radio/Donate/desire.ogg"
 
 - type: dutyTrack
   id: dpk_14976cfbc527b9
-  name: "eagles"
+  name: "Eagles"
   category: "Stalker"
   path:
     path: "/Audio/_Duty/PlayerDK/Stalker/Radio/Donate/eagles.ogg"
 
 - type: dutyTrack
   id: dpk_69c4a9144127c7
-  name: "fearofgod"
+  name: "Fear of God"
   category: "Stalker"
   path:
     path: "/Audio/_Duty/PlayerDK/Stalker/Radio/Donate/fearofgod.ogg"
 
 - type: dutyTrack
   id: dpk_1fe395403c1353
-  name: "Finskiy_noj"
+  name: "Финский Нож"
   category: "Stalker"
   path:
     path: "/Audio/_Duty/PlayerDK/Stalker/Radio/Donate/Finskiy_noj.ogg"
 
 - type: dutyTrack
   id: dpk_bf4e637cd1d821
-  name: "Folksong"
+  name: "Folk Song"
   category: "Stalker"
   path:
     path: "/Audio/_Duty/PlayerDK/Stalker/Radio/Donate/Folksong.ogg"
 
 - type: dutyTrack
   id: dpk_a940277ad34c0b
-  name: "FuturoAramis"
+  name: "Futuro Aramis"
   category: "Stalker"
   path:
     path: "/Audio/_Duty/PlayerDK/Stalker/Radio/Donate/FuturoAramis.ogg"
 
 - type: dutyTrack
   id: dpk_c0497e77e9ac8b
-  name: "gangstas"
+  name: "Gangstas"
   category: "Stalker"
   path:
     path: "/Audio/_Duty/PlayerDK/Stalker/Radio/Donate/gangstas.ogg"
@@ -1245,126 +1252,126 @@
 
 - type: dutyTrack
   id: dpk_9cb88ed7e95aa7
-  name: "GimmeGimme"
+  name: "Gimme Gimme"
   category: "Stalker"
   path:
     path: "/Audio/_Duty/PlayerDK/Stalker/Radio/Donate/GimmeGimme.ogg"
 
 - type: dutyTrack
   id: dpk_6eb71d81f08786
-  name: "glazoedy"
+  name: "Глазоеды"
   category: "Stalker"
   path:
     path: "/Audio/_Duty/PlayerDK/Stalker/Radio/Donate/glazoedy.ogg"
 
 - type: dutyTrack
   id: dpk_e64d9f9d2ab81d
-  name: "govnovoz"
+  name: "Говновоз"
   category: "Stalker"
   path:
     path: "/Audio/_Duty/PlayerDK/Stalker/Radio/Donate/govnovoz.ogg"
 
 - type: dutyTrack
   id: dpk_e0100828d9dbcb
-  name: "grabli"
+  name: "Грабли"
   category: "Stalker"
   path:
     path: "/Audio/_Duty/PlayerDK/Stalker/Radio/Donate/grabli.ogg"
 
 - type: dutyTrack
   id: dpk_7c49193be30c3a
-  name: "HardbassNight"
+  name: "Hardbass Night"
   category: "Stalker"
   path:
     path: "/Audio/_Duty/PlayerDK/Stalker/Radio/Donate/HardbassNight.ogg"
 
 - type: dutyTrack
   id: dpk_d8da67e76f9629
-  name: "helldivers"
+  name: "Helldivers"
   category: "Stalker"
   path:
     path: "/Audio/_Duty/PlayerDK/Stalker/Radio/Donate/helldivers.ogg"
 
 - type: dutyTrack
   id: dpk_a99264f3452ba8
-  name: "Horse"
+  name: "Король и Шут - Конь"
   category: "Stalker"
   path:
     path: "/Audio/_Duty/PlayerDK/Stalker/Radio/Donate/Horse.ogg"
 
 - type: dutyTrack
   id: dpk_05ecf0c77fe36c
-  name: "jyc"
+  name: "JYC"
   category: "Stalker"
   path:
     path: "/Audio/_Duty/PlayerDK/Stalker/Radio/Donate/jyc.ogg"
 
 - type: dutyTrack
   id: dpk_36fd6d8f980393
-  name: "kanikuli"
+  name: "Каникулы"
   category: "Stalker"
   path:
     path: "/Audio/_Duty/PlayerDK/Stalker/Radio/Donate/kanikuli.ogg"
 
 - type: dutyTrack
   id: dpk_8fa841c0df42dc
-  name: "kofesiga"
+  name: "Кофе и Сигареты"
   category: "Stalker"
   path:
     path: "/Audio/_Duty/PlayerDK/Stalker/Radio/Donate/kofesiga.ogg"
 
 - type: dutyTrack
   id: dpk_fc0a349d953c69
-  name: "KombatL"
+  name: "Комбат L"
   category: "Stalker"
   path:
     path: "/Audio/_Duty/PlayerDK/Stalker/Radio/Donate/KombatL.ogg"
 
 - type: dutyTrack
   id: dpk_4f85c6d7835a54
-  name: "kometa"
+  name: "Комета"
   category: "Stalker"
   path:
     path: "/Audio/_Duty/PlayerDK/Stalker/Radio/Donate/kometa.ogg"
 
 - type: dutyTrack
   id: dpk_a29902d954edf3
-  name: "Kukushka"
+  name: "Кукушка"
   category: "Stalker"
   path:
     path: "/Audio/_Duty/PlayerDK/Stalker/Radio/Donate/Kukushka.ogg"
 
 - type: dutyTrack
   id: dpk_2bcf7152f712cf
-  name: "kupi_mne"
+  name: "Купи Мне"
   category: "Stalker"
   path:
     path: "/Audio/_Duty/PlayerDK/Stalker/Radio/Donate/kupi_mne.ogg"
 
 - type: dutyTrack
   id: dpk_f32f5aae13dc0f
-  name: "laura"
+  name: "Laura"
   category: "Stalker"
   path:
     path: "/Audio/_Duty/PlayerDK/Stalker/Radio/Donate/laura.ogg"
 
 - type: dutyTrack
   id: dpk_f5d49fd5395cf5
-  name: "ledorub"
+  name: "Ледоруб"
   category: "Stalker"
   path:
     path: "/Audio/_Duty/PlayerDK/Stalker/Radio/Donate/ledorub.ogg"
 
 - type: dutyTrack
   id: dpk_d9e01894a58a44
-  name: "lonely"
+  name: "Lonely"
   category: "Stalker"
   path:
     path: "/Audio/_Duty/PlayerDK/Stalker/Radio/Donate/lonely.ogg"
 
 - type: dutyTrack
   id: dpk_1a4781c0805210
-  name: "Low-Roar-I_ll-Keep-Coming"
+  name: "Low Roar - I'll Keep Coming"
   category: "Stalker"
   path:
     path: "/Audio/_Duty/PlayerDK/Stalker/Radio/Donate/Low-Roar-I_ll-Keep-Coming.ogg"
@@ -1392,35 +1399,35 @@
 
 - type: dutyTrack
   id: dpk_39b849bbe25b6e
-  name: "Moldovanka"
+  name: "Молдаванка"
   category: "Stalker"
   path:
     path: "/Audio/_Duty/PlayerDK/Stalker/Radio/Donate/Moldovanka.ogg"
 
 - type: dutyTrack
   id: dpk_b3ed4d00ee459c
-  name: "Nevesta_palacha"
+  name: "Король и Шут - Невеста Палача"
   category: "Stalker"
   path:
     path: "/Audio/_Duty/PlayerDK/Stalker/Radio/Donate/Nevesta_palacha.ogg"
 
 - type: dutyTrack
   id: dpk_0783c4c8a9ef2f
-  name: "nezhegol"
+  name: "Нежеголь"
   category: "Stalker"
   path:
     path: "/Audio/_Duty/PlayerDK/Stalker/Radio/Donate/nezhegol.ogg"
 
 - type: dutyTrack
   id: dpk_e28e3772a183e8
-  name: "NieMaNieba"
+  name: "Nie Ma Nieba"
   category: "Stalker"
   path:
     path: "/Audio/_Duty/PlayerDK/Stalker/Radio/Donate/NieMaNieba.ogg"
 
 - type: dutyTrack
   id: dpk_604ab54aca7ab2
-  name: "Nightcall"
+  name: "Kavinsky - Nightcall"
   category: "Stalker"
   path:
     path: "/Audio/_Duty/PlayerDK/Stalker/Radio/Donate/Nightcall.ogg"
@@ -1434,28 +1441,28 @@
 
 - type: dutyTrack
   id: dpk_c3793e3de7acb1
-  name: "patroni"
+  name: "Патроны"
   category: "Stalker"
   path:
     path: "/Audio/_Duty/PlayerDK/Stalker/Radio/Donate/patroni.ogg"
 
 - type: dutyTrack
   id: dpk_e93be02bdfd069
-  name: "Plastinki"
+  name: "Пластинки"
   category: "Stalker"
   path:
     path: "/Audio/_Duty/PlayerDK/Stalker/Radio/Donate/Plastinki.ogg"
 
 - type: dutyTrack
   id: dpk_7c27cee544321a
-  name: "poor"
+  name: "Poor"
   category: "Stalker"
   path:
     path: "/Audio/_Duty/PlayerDK/Stalker/Radio/Donate/poor.ogg"
 
 - type: dutyTrack
   id: dpk_880ef06cf91c66
-  name: "ramstain"
+  name: "Rammstein"
   category: "Stalker"
   path:
     path: "/Audio/_Duty/PlayerDK/Stalker/Radio/Donate/ramstain.ogg"
@@ -1469,7 +1476,7 @@
 
 - type: dutyTrack
   id: dpk_db1326d08a9cee
-  name: "SadSvit-silueti"
+  name: "SadSvit - Силуети"
   category: "Stalker"
   path:
     path: "/Audio/_Duty/PlayerDK/Stalker/Radio/Donate/SadSvit-silueti.ogg"
@@ -1483,49 +1490,49 @@
 
 - type: dutyTrack
   id: dpk_c7fc85ba5a30c5
-  name: "Skullfist"
+  name: "Skull Fist"
   category: "Stalker"
   path:
     path: "/Audio/_Duty/PlayerDK/Stalker/Radio/Donate/Skullfist.ogg"
 
 - type: dutyTrack
   id: dpk_38353147e9bcc5
-  name: "sleg_klas"
+  name: "След Класс"
   category: "Stalker"
   path:
     path: "/Audio/_Duty/PlayerDK/Stalker/Radio/Donate/sleg_klas.ogg"
 
 - type: dutyTrack
   id: dpk_3bed21bca4e922
-  name: "stillborn"
+  name: "Stillborn"
   category: "Stalker"
   path:
     path: "/Audio/_Duty/PlayerDK/Stalker/Radio/Donate/stillborn.ogg"
 
 - type: dutyTrack
   id: dpk_73743c2fc37f73
-  name: "sunday"
+  name: "Sunday"
   category: "Stalker"
   path:
     path: "/Audio/_Duty/PlayerDK/Stalker/Radio/Donate/sunday.ogg"
 
 - type: dutyTrack
   id: dpk_a0f807070d84fe
-  name: "territory"
+  name: "Territory"
   category: "Stalker"
   path:
     path: "/Audio/_Duty/PlayerDK/Stalker/Radio/Donate/territory.ogg"
 
 - type: dutyTrack
   id: dpk_a31654825a7c13
-  name: "Tri_sentyabrya"
+  name: "Михаил Шуфутинский - Третье Сентября"
   category: "Stalker"
   path:
     path: "/Audio/_Duty/PlayerDK/Stalker/Radio/Donate/Tri_sentyabrya.ogg"
 
 - type: dutyTrack
   id: dpk_398f895b7fa940
-  name: "Trin_trava"
+  name: "Трын-Трава"
   category: "Stalker"
   path:
     path: "/Audio/_Duty/PlayerDK/Stalker/Radio/Donate/Trin_trava.ogg"
@@ -1539,42 +1546,42 @@
 
 - type: dutyTrack
   id: dpk_689a4edbe7f537
-  name: "ulica-vostok-zapomnyu"
+  name: "Улица Восток - Запомню"
   category: "Stalker"
   path:
     path: "/Audio/_Duty/PlayerDK/Stalker/Radio/Donate/ulica-vostok-zapomnyu.ogg"
 
 - type: dutyTrack
   id: dpk_30a0f02839be78
-  name: "usinovite_bomja"
+  name: "Усыновите Бомжа"
   category: "Stalker"
   path:
     path: "/Audio/_Duty/PlayerDK/Stalker/Radio/Donate/usinovite_bomja.ogg"
 
 - type: dutyTrack
   id: dpk_4c12660cb34844
-  name: "VoiniSveta"
+  name: "Ляпис Трубецкой - Воины Света"
   category: "Stalker"
   path:
     path: "/Audio/_Duty/PlayerDK/Stalker/Radio/Donate/VoiniSveta.ogg"
 
 - type: dutyTrack
   id: dpk_b25b287d0383f6
-  name: "vova_vist"
+  name: "Вова Вист"
   category: "Stalker"
   path:
     path: "/Audio/_Duty/PlayerDK/Stalker/Radio/Donate/vova_vist.ogg"
 
 - type: dutyTrack
   id: dpk_df886ff447ad42
-  name: "vremya"
+  name: "Время"
   category: "Stalker"
   path:
     path: "/Audio/_Duty/PlayerDK/Stalker/Radio/Donate/vremya.ogg"
 
 - type: dutyTrack
   id: dpk_a12868bdde8c3e
-  name: "vstavai_Donbass"
+  name: "Вставай, Донбасс!"
   category: "Stalker"
   path:
     path: "/Audio/_Duty/PlayerDK/Stalker/Radio/Donate/vstavai_Donbass.ogg"
@@ -1595,14 +1602,14 @@
 
 - type: dutyTrack
   id: dpk_f4f2771eca86d7
-  name: "wind"
+  name: "Wind"
   category: "Stalker"
   path:
     path: "/Audio/_Duty/PlayerDK/Stalker/Radio/Donate/wind.ogg"
 
 - type: dutyTrack
   id: dpk_d603dcc54e4f47
-  name: "yarusski"
+  name: "Я Русский"
   category: "Stalker"
   path:
     path: "/Audio/_Duty/PlayerDK/Stalker/Radio/Donate/yarusski.ogg"
@@ -1611,70 +1618,70 @@
 
 - type: dutyTrack
   id: dpk_9606d707bcdfb5
-  name: "blyad"
+  name: "Блядь"
   category: "Stalker"
   path:
     path: "/Audio/_Duty/PlayerDK/Stalker/Radio/Donate/Groups/Bandits/blyad.ogg"
 
 - type: dutyTrack
   id: dpk_ef199ff9acb5b6
-  name: "central"
+  name: "Михаил Круг - Владимирский Централ"
   category: "Stalker"
   path:
     path: "/Audio/_Duty/PlayerDK/Stalker/Radio/Donate/Groups/Bandits/central.ogg"
 
 - type: dutyTrack
   id: dpk_249540dc77255d
-  name: "fraer"
+  name: "Михаил Круг - Фраер"
   category: "Stalker"
   path:
     path: "/Audio/_Duty/PlayerDK/Stalker/Radio/Donate/Groups/Bandits/fraer.ogg"
 
 - type: dutyTrack
   id: dpk_19fa2c2356dcf5
-  name: "glaza"
+  name: "Эти Глаза Напротив"
   category: "Stalker"
   path:
     path: "/Audio/_Duty/PlayerDK/Stalker/Radio/Donate/Groups/Bandits/glaza.ogg"
 
 - type: dutyTrack
   id: dpk_c95116598c4a3e
-  name: "gopstop"
+  name: "Александр Розенбаум - Гоп-Стоп"
   category: "Stalker"
   path:
     path: "/Audio/_Duty/PlayerDK/Stalker/Radio/Donate/Groups/Bandits/gopstop.ogg"
 
 - type: dutyTrack
   id: dpk_c3db92003189f7
-  name: "kolshik"
+  name: "Михаил Круг - Кольщик"
   category: "Stalker"
   path:
     path: "/Audio/_Duty/PlayerDK/Stalker/Radio/Donate/Groups/Bandits/kolshik.ogg"
 
 - type: dutyTrack
   id: dpk_d81708c08169f3
-  name: "kupola"
+  name: "Михаил Круг - Купола"
   category: "Stalker"
   path:
     path: "/Audio/_Duty/PlayerDK/Stalker/Radio/Donate/Groups/Bandits/kupola.ogg"
 
 - type: dutyTrack
   id: dpk_d957acb522e42f
-  name: "limon"
+  name: "Лимон"
   category: "Stalker"
   path:
     path: "/Audio/_Duty/PlayerDK/Stalker/Radio/Donate/Groups/Bandits/limon.ogg"
 
 - type: dutyTrack
   id: dpk_8cfcd7e999b83d
-  name: "milana"
+  name: "Милана"
   category: "Stalker"
   path:
     path: "/Audio/_Duty/PlayerDK/Stalker/Radio/Donate/Groups/Bandits/milana.ogg"
 
 - type: dutyTrack
   id: dpk_1ee67f28bc7dc5
-  name: "raer"
+  name: "Фраер (Alt)"
   category: "Stalker"
   path:
     path: "/Audio/_Duty/PlayerDK/Stalker/Radio/Donate/Groups/Bandits/raer.ogg"
@@ -1683,154 +1690,154 @@
 
 - type: dutyTrack
   id: dpk_20be27a3a80c9c
-  name: "bumka"
+  name: "Bumka"
   category: "Stalker"
   path:
     path: "/Audio/_Duty/PlayerDK/Stalker/Radio/Donate/Premium/bumka.ogg"
 
 - type: dutyTrack
   id: dpk_418902bc09cee9
-  name: "cco"
+  name: "ССО"
   category: "Stalker"
   path:
     path: "/Audio/_Duty/PlayerDK/Stalker/Radio/Donate/Premium/cco.ogg"
 
 - type: dutyTrack
   id: dpk_caf18ea3afc31a
-  name: "chrisv"
+  name: "Chris V"
   category: "Stalker"
   path:
     path: "/Audio/_Duty/PlayerDK/Stalker/Radio/Donate/Premium/chrisv.ogg"
 
 - type: dutyTrack
   id: dpk_3b18f038253bfd
-  name: "cold"
+  name: "Cold"
   category: "Stalker"
   path:
     path: "/Audio/_Duty/PlayerDK/Stalker/Radio/Donate/Premium/cold.ogg"
 
 - type: dutyTrack
   id: dpk_b0e5c60983f436
-  name: "dornc"
+  name: "Dornc"
   category: "Stalker"
   path:
     path: "/Audio/_Duty/PlayerDK/Stalker/Radio/Donate/Premium/dornc.ogg"
 
 - type: dutyTrack
   id: dpk_1e2cf60eebe572
-  name: "frizk"
+  name: "Frizk"
   category: "Stalker"
   path:
     path: "/Audio/_Duty/PlayerDK/Stalker/Radio/Donate/Premium/frizk.ogg"
 
 - type: dutyTrack
   id: dpk_ab9cd8ec7bdbd9
-  name: "gach"
+  name: "Gachi"
   category: "Stalker"
   path:
     path: "/Audio/_Duty/PlayerDK/Stalker/Radio/Donate/Premium/gach.ogg"
 
 - type: dutyTrack
   id: dpk_3e2fbb5ead4767
-  name: "galafo"
+  name: "Galafo"
   category: "Stalker"
   path:
     path: "/Audio/_Duty/PlayerDK/Stalker/Radio/Donate/Premium/galafo.ogg"
 
 - type: dutyTrack
   id: dpk_caf307bdfaa7a7
-  name: "galafon"
+  name: "Галафон"
   category: "Stalker"
   path:
     path: "/Audio/_Duty/PlayerDK/Stalker/Radio/Donate/Premium/galafon.ogg"
 
 - type: dutyTrack
   id: dpk_3e40103fa206d1
-  name: "gradusi"
+  name: "Градусы"
   category: "Stalker"
   path:
     path: "/Audio/_Duty/PlayerDK/Stalker/Radio/Donate/Premium/gradusi.ogg"
 
 - type: dutyTrack
   id: dpk_e9f4c1aa985c1b
-  name: "khaskin"
+  name: "Хаскин"
   category: "Stalker"
   path:
     path: "/Audio/_Duty/PlayerDK/Stalker/Radio/Donate/Premium/khaskin.ogg"
 
 - type: dutyTrack
   id: dpk_d7775904a7ca98
-  name: "letop"
+  name: "Летов"
   category: "Stalker"
   path:
     path: "/Audio/_Duty/PlayerDK/Stalker/Radio/Donate/Premium/letop.ogg"
 
 - type: dutyTrack
   id: dpk_9073cbeb794504
-  name: "neonbones"
+  name: "Neon Bones"
   category: "Stalker"
   path:
     path: "/Audio/_Duty/PlayerDK/Stalker/Radio/Donate/Premium/neonbones.ogg"
 
 - type: dutyTrack
   id: dpk_93fb5254aee2fc
-  name: "odnoi"
+  name: "Одной"
   category: "Stalker"
   path:
     path: "/Audio/_Duty/PlayerDK/Stalker/Radio/Donate/Premium/odnoi.ogg"
 
 - type: dutyTrack
   id: dpk_7ed670fac01b7f
-  name: "pgetto"
+  name: "Pgetto"
   category: "Stalker"
   path:
     path: "/Audio/_Duty/PlayerDK/Stalker/Radio/Donate/Premium/pgetto.ogg"
 
 - type: dutyTrack
   id: dpk_78f511acb4cb74
-  name: "plaj"
+  name: "Пляж"
   category: "Stalker"
   path:
     path: "/Audio/_Duty/PlayerDK/Stalker/Radio/Donate/Premium/plaj.ogg"
 
 - type: dutyTrack
   id: dpk_5dbb1522f4e1ad
-  name: "saluki"
+  name: "Saluki"
   category: "Stalker"
   path:
     path: "/Audio/_Duty/PlayerDK/Stalker/Radio/Donate/Premium/saluki.ogg"
 
 - type: dutyTrack
   id: dpk_f687701e740a8a
-  name: "skripa"
+  name: "Скрипа"
   category: "Stalker"
   path:
     path: "/Audio/_Duty/PlayerDK/Stalker/Radio/Donate/Premium/skripa.ogg"
 
 - type: dutyTrack
   id: dpk_567ff17be73b1f
-  name: "snova"
+  name: "Снова"
   category: "Stalker"
   path:
     path: "/Audio/_Duty/PlayerDK/Stalker/Radio/Donate/Premium/snova.ogg"
 
 - type: dutyTrack
   id: dpk_77e014793472f0
-  name: "svidanie"
+  name: "Свидание"
   category: "Stalker"
   path:
     path: "/Audio/_Duty/PlayerDK/Stalker/Radio/Donate/Premium/svidanie.ogg"
 
 - type: dutyTrack
   id: dpk_6dafe1b41dbabe
-  name: "zador"
+  name: "Задор"
   category: "Stalker"
   path:
     path: "/Audio/_Duty/PlayerDK/Stalker/Radio/Donate/Premium/zador.ogg"
 
 - type: dutyTrack
   id: dpk_5a382eb079a36d
-  name: "zoloto"
+  name: "Золото"
   category: "Stalker"
   path:
     path: "/Audio/_Duty/PlayerDK/Stalker/Radio/Donate/Premium/zoloto.ogg"
@@ -1839,70 +1846,70 @@
 
 - type: dutyTrack
   id: dpk_b935b92b82c56c
-  name: "Betrayal"
+  name: "Geneburn - Betrayal"
   category: "Tarkov"
   path:
     path: "/Audio/_Duty/PlayerDK/Tarkov/Betrayal.ogg"
 
 - type: dutyTrack
   id: dpk_3382e773dd621f
-  name: "Boneyard"
+  name: "Geneburn - Boneyard"
   category: "Tarkov"
   path:
     path: "/Audio/_Duty/PlayerDK/Tarkov/Boneyard.ogg"
 
 - type: dutyTrack
   id: dpk_c410699b16dea8
-  name: "comprehend"
+  name: "Geneburn - Comprehend"
   category: "Tarkov"
   path:
     path: "/Audio/_Duty/PlayerDK/Tarkov/comprehend.ogg"
 
 - type: dutyTrack
   id: dpk_09bbd3c8e4caf4
-  name: "Countdown"
+  name: "Geneburn - Countdown"
   category: "Tarkov"
   path:
     path: "/Audio/_Duty/PlayerDK/Tarkov/Countdown.ogg"
 
 - type: dutyTrack
   id: dpk_170988be1e2e8e
-  name: "Dark Horizon"
+  name: "Geneburn - Dark Horizon"
   category: "Tarkov"
   path:
     path: "/Audio/_Duty/PlayerDK/Tarkov/Dark Horizon.ogg"
 
 - type: dutyTrack
   id: dpk_46d72ae7381272
-  name: "Desolated"
+  name: "Geneburn - Desolated"
   category: "Tarkov"
   path:
     path: "/Audio/_Duty/PlayerDK/Tarkov/Desolated.ogg"
 
 - type: dutyTrack
   id: dpk_6ad1df2be3bb0a
-  name: "Exfiltration"
+  name: "Geneburn - Exfiltration"
   category: "Tarkov"
   path:
     path: "/Audio/_Duty/PlayerDK/Tarkov/Exfiltration.ogg"
 
 - type: dutyTrack
   id: dpk_2ab87812cd1d88
-  name: "Hostile Illusion"
+  name: "Geneburn - Hostile Illusion"
   category: "Tarkov"
   path:
     path: "/Audio/_Duty/PlayerDK/Tarkov/Hostile Illusion.ogg"
 
 - type: dutyTrack
   id: dpk_3393efa9f5e0e4
-  name: "jailbreak"
+  name: "Geneburn - Jailbreak"
   category: "Tarkov"
   path:
     path: "/Audio/_Duty/PlayerDK/Tarkov/jailbreak.ogg"
 
 - type: dutyTrack
   id: dpk_54262ff63797d6
-  name: "War goes hot (raw edit)"
+  name: "Geneburn - War Goes Hot (Raw Edit)"
   category: "Tarkov"
   path:
     path: "/Audio/_Duty/PlayerDK/Tarkov/War goes hot (raw edit).ogg"
@@ -1911,7 +1918,7 @@
 
 - type: dutyTrack
   id: dpk_ab47894b3173a9
-  name: "we are detonating nuke"
+  name: "We Are Detonating Nuke"
   category: "Общее"
   path:
     path: "/Audio/_Duty/PlayerDK/we are detonating nuke.ogg"
@@ -1920,35 +1927,42 @@
 
 - type: dutyTrack
   id: dpk_bf8017732257a4
-  name: ".battle"
+  name: "Battle"
   category: "Прочее"
   path:
     path: "/Audio/_Duty/PlayerDK/Прочее/.battle.ogg"
 
 - type: dutyTrack
+  id: dpk_bf80177asdda32257a4
+  name: "Fury-16 - Overdose (Z-City OST)"
+  category: "Прочее"
+  path:
+    path: "/Audio/_Duty/PlayerDK/Прочее/Fury-16 - Overdose Z-CITY OST.ogg"
+
+- type: dutyTrack
   id: dpk_8961178528cef7
-  name: "A Complete And Utter Destruction Of The Sense - Reikgon boss wave"
+  name: "A Complete And Utter Destruction Of The Sense - Reikgon Boss Wave"
   category: "Прочее"
   path:
     path: "/Audio/_Duty/PlayerDK/Прочее/A Complete And Utter Destruction Of The Sense - Reikgon boss wave.ogg"
 
 - type: dutyTrack
   id: dpk_08f8e82f9a7cbc
-  name: "BeforeEveryLoaded"
+  name: "Before Every Loaded"
   category: "Прочее"
   path:
     path: "/Audio/_Duty/PlayerDK/Прочее/BeforeEveryLoaded.ogg"
 
 - type: dutyTrack
   id: dpk_9c519a645a510b
-  name: "buckshot_roulette_02. General Release"
+  name: "Buckshot Roulette - General Release"
   category: "Прочее"
   path:
     path: "/Audio/_Duty/PlayerDK/Прочее/buckshot_roulette_02. General Release.ogg"
 
 - type: dutyTrack
   id: dpk_52397578854956
-  name: "buckshot_roulette_04. Socket Calibration"
+  name: "Buckshot Roulette - Socket Calibration"
   category: "Прочее"
   path:
     path: "/Audio/_Duty/PlayerDK/Прочее/buckshot_roulette_04. Socket Calibration.ogg"
@@ -1969,21 +1983,21 @@
 
 - type: dutyTrack
   id: dpk_ec4abcfdd8767d
-  name: "DebitoDeSonnoFORSAKEN"
+  name: "Debito De Sonno (Forsaken)"
   category: "Прочее"
   path:
     path: "/Audio/_Duty/PlayerDK/Прочее/DebitoDeSonnoFORSAKEN.ogg"
 
 - type: dutyTrack
   id: dpk_ac03b1dbde955e
-  name: "DeepCore"
+  name: "Deep Core"
   category: "Прочее"
   path:
     path: "/Audio/_Duty/PlayerDK/Прочее/DeepCore.ogg"
 
 - type: dutyTrack
   id: dpk_37a578fb18a9ae
-  name: "Devil May Sly - Sledge Queen boss wave"
+  name: "Devil May Sly - Sledge Queen Boss Wave"
   category: "Прочее"
   path:
     path: "/Audio/_Duty/PlayerDK/Прочее/Devil May Sly - Sledge Queen boss wave.ogg"
@@ -1997,14 +2011,14 @@
 
 - type: dutyTrack
   id: dpk_6d2ad6a05f222f
-  name: "enigma (1)"
+  name: "Enigma"
   category: "Прочее"
   path:
     path: "/Audio/_Duty/PlayerDK/Прочее/enigma (1).ogg"
 
 - type: dutyTrack
   id: dpk_2dcc18c1d3aff2
-  name: "face-off"
+  name: "Face-Off"
   category: "Прочее"
   path:
     path: "/Audio/_Duty/PlayerDK/Прочее/face-off.ogg"
@@ -2025,84 +2039,84 @@
 
 - type: dutyTrack
   id: dpk_0bc9a57f926805
-  name: "Gallant_Goon_Pizza_Tower_OST_Phase_3_Boss_Rematches_Final_Bos"
+  name: "Gallant Goon - Pizza Tower OST Final Boss Rematch (Phase 3)"
   category: "Прочее"
   path:
     path: "/Audio/_Duty/PlayerDK/Прочее/Gallant_Goon_Pizza_Tower_OST_Phase_3_Boss_Rematches_Final_Bos.ogg"
 
 - type: dutyTrack
   id: dpk_6da83d4168829c
-  name: "grotesque duel"
+  name: "Grotesque Duel"
   category: "Прочее"
   path:
     path: "/Audio/_Duty/PlayerDK/Прочее/grotesque duel.ogg"
 
 - type: dutyTrack
   id: dpk_638abaeca7a8aa
-  name: "Heaven_Pierce_Her_-_Unstoppable_Force_76171014"
+  name: "Heaven Pierce Her - Unstoppable Force"
   category: "Прочее"
   path:
     path: "/Audio/_Duty/PlayerDK/Прочее/Heaven_Pierce_Her_-_Unstoppable_Force_76171014.ogg"
 
 - type: dutyTrack
   id: dpk_46dd360a6d7a33
-  name: "Ignition (длинная!)"
+  name: "Ignition (Длинная версия)"
   category: "Прочее"
   path:
     path: "/Audio/_Duty/PlayerDK/Прочее/Ignition (длинная!).ogg"
 
 - type: dutyTrack
   id: dpk_13f308aba1dce6
-  name: "Justin Stander - Come and See (1)"
+  name: "Justin Stander - Come and See"
   category: "Прочее"
   path:
     path: "/Audio/_Duty/PlayerDK/Прочее/Justin Stander - Come and See (1).ogg"
 
 - type: dutyTrack
   id: dpk_a49bd03ae49c56
-  name: "Kerry Eurodyne Yacht Song - Cyberpunk 2077 (liquid drum and bass remix)"
+  name: "Cyberpunk 2077 - Kerry Eurodyne Yacht Song (Liquid DnB Remix)"
   category: "Прочее"
   path:
     path: "/Audio/_Duty/PlayerDK/Прочее/Kerry Eurodyne Yacht Song - Cyberpunk 2077 (liquid drum and bass remix).ogg"
 
 - type: dutyTrack
   id: dpk_e35c430ad45df1
-  name: "Killing Machine - freedom fighters boss wave"
+  name: "Killing Machine - Freedom Fighters Boss Wave"
   category: "Прочее"
   path:
     path: "/Audio/_Duty/PlayerDK/Прочее/Killing Machine - freedom fighters boss wave.ogg"
 
 - type: dutyTrack
   id: dpk_079ee31e47f0a2
-  name: "Lucas_Pope_-_06_Soldiers_of_the_Sea_A"
+  name: "Lucas Pope - Soldiers of the Sea A (Return of the Obra Dinn OST)"
   category: "Прочее"
   path:
     path: "/Audio/_Duty/PlayerDK/Прочее/Lucas_Pope_-_06_Soldiers_of_the_Sea_A.ogg"
 
 - type: dutyTrack
   id: dpk_ad79efb8cc5f0b
-  name: "Lucas_Pope_-_Death_Papers_Please_OST_Xaleon_Sound_HD"
+  name: "Lucas Pope - Death (Papers, Please OST)"
   category: "Прочее"
   path:
     path: "/Audio/_Duty/PlayerDK/Прочее/Lucas_Pope_-_Death_Papers_Please_OST_Xaleon_Sound_HD.ogg"
 
 - type: dutyTrack
   id: dpk_a8eaecd6c553ac
-  name: "Lucas_Pope_-_Papers_Please_Theme_Song_Papers_Please_OST"
+  name: "Lucas Pope - Papers, Please Theme Song"
   category: "Прочее"
   path:
     path: "/Audio/_Duty/PlayerDK/Прочее/Lucas_Pope_-_Papers_Please_Theme_Song_Papers_Please_OST.ogg"
 
 - type: dutyTrack
   id: dpk_87cea8e135235f
-  name: "M.O.O.N_Hydrogen"
+  name: "M.O.O.N. - Hydrogen"
   category: "Прочее"
   path:
     path: "/Audio/_Duty/PlayerDK/Прочее/M.O.O.N_Hydrogen.ogg"
 
 - type: dutyTrack
   id: dpk_e0472013cd96b8
-  name: "MarchBritGrenade"
+  name: "British Grenadiers March"
   category: "Прочее"
   path:
     path: "/Audio/_Duty/PlayerDK/Прочее/MarchBritGrenade.ogg"
@@ -2130,28 +2144,28 @@
 
 - type: dutyTrack
   id: dpk_59ff25c4ba7af1
-  name: "Papers_please_OST_-_Title"
+  name: "Papers, Please OST - Title Theme"
   category: "Прочее"
   path:
     path: "/Audio/_Duty/PlayerDK/Прочее/Papers_please_OST_-_Title.ogg"
 
 - type: dutyTrack
   id: dpk_b01abd994afa62
-  name: "Search'nDestroyARID"
+  name: "Search 'n Destroy Arid"
   category: "Прочее"
   path:
     path: "/Audio/_Duty/PlayerDK/Прочее/Search'nDestroyARID.ogg"
 
 - type: dutyTrack
   id: dpk_11c2a7861fb885
-  name: "UnmistakableFORSAKEN"
+  name: "Unmistakable (Forsaken)"
   category: "Прочее"
   path:
     path: "/Audio/_Duty/PlayerDK/Прочее/UnmistakableFORSAKEN.ogg"
 
 - type: dutyTrack
   id: dpk_e3c317ced7f2cd
-  name: "VanityFORSAKEN"
+  name: "Vanity (Forsaken)"
   category: "Прочее"
   path:
     path: "/Audio/_Duty/PlayerDK/Прочее/VanityFORSAKEN.ogg"
@@ -2165,7 +2179,7 @@
 
 - type: dutyTrack
   id: dpk_7a4db56c6b7fdd
-  name: "Z-City SoundTrack - Pharmacia (Fury-13)"
+  name: "Z-City Soundtrack - Pharmacia (Fury-13)"
   category: "Прочее"
   path:
     path: "/Audio/_Duty/PlayerDK/Прочее/Z-City SoundTrack - Pharmacia (Fury-13).ogg"
@@ -2174,28 +2188,28 @@
 
 - type: dutyTrack
   id: dpk_fcd3f50391a09c
-  name: ".Arktida"
+  name: "Арктида"
   category: "С словами"
   path:
     path: "/Audio/_Duty/PlayerDK/С словами/.Arktida.ogg"
 
 - type: dutyTrack
   id: dpk_9cb5f73d616973
-  name: ".Firelake - Live to Forget"
+  name: "FireLake - Live to Forget"
   category: "С словами"
   path:
     path: "/Audio/_Duty/PlayerDK/С словами/.Firelake - Live to Forget.ogg"
 
 - type: dutyTrack
   id: dpk_e6cfc1826d0427
-  name: ".i am the storm is approaching (online-audio-converter.com)"
+  name: "Bury the Light (I Am The Storm Is Approaching)"
   category: "С словами"
   path:
     path: "/Audio/_Duty/PlayerDK/С словами/.i am the storm is approaching (online-audio-converter.com).ogg"
 
 - type: dutyTrack
   id: dpk_62b30e33da31c4
-  name: ".Kavinsky Nightcall"
+  name: "Kavinsky - Nightcall"
   category: "С словами"
   path:
     path: "/Audio/_Duty/PlayerDK/С словами/.Kavinsky Nightcall.ogg"
@@ -2209,7 +2223,7 @@
 
 - type: dutyTrack
   id: dpk_0145a22ee0a5be
-  name: "Celldweller - Good Luck You're Fucked"
+  name: "Celldweller - Good Luck, You're Fucked"
   category: "С словами"
   path:
     path: "/Audio/_Duty/PlayerDK/С словами/Celldweller - Good Luck You're Fucked.ogg"
@@ -2223,42 +2237,42 @@
 
 - type: dutyTrack
   id: dpk_3a4f30f3922ac5
-  name: "Feel The Fury (Ft. MrGoodbarz, Martin T.) - SONIC.exe OUTCOME MEMORIES OST"
+  name: "Feel The Fury (ft. MrGoodbarz & Martin T.)"
   category: "С словами"
   path:
     path: "/Audio/_Duty/PlayerDK/С словами/Feel The Fury (Ft. MrGoodbarz, Martin T.) - SONIC.exe OUTCOME MEMORIES OST.ogg"
 
 - type: dutyTrack
   id: dpk_906136e5e2775e
-  name: "GSN-Russian_Specnaz"
+  name: "ГСН - Русский Спецназ"
   category: "С словами"
   path:
     path: "/Audio/_Duty/PlayerDK/С словами/GSN-Russian_Specnaz.ogg"
 
 - type: dutyTrack
   id: dpk_c8563aaba0ff22
-  name: "i am the storm is approaching (online-audio-converter.com)"
+  name: "Bury the Light (I Am The Storm Is Approaching) (Alt)"
   category: "С словами"
   path:
     path: "/Audio/_Duty/PlayerDK/С словами/i am the storm is approaching (online-audio-converter.com).ogg"
 
 - type: dutyTrack
   id: dpk_2769881cc42156
-  name: "Kavinsky Nightcall"
+  name: "Kavinsky - Nightcall (Alt)"
   category: "С словами"
   path:
     path: "/Audio/_Duty/PlayerDK/С словами/Kavinsky Nightcall.ogg"
 
 - type: dutyTrack
   id: dpk_958894d688b3cc
-  name: "Korol_i_SHut_-_Pisatel_Gudvin_48646407"
+  name: "Король и Шут - Писатель Гудвин"
   category: "С словами"
   path:
     path: "/Audio/_Duty/PlayerDK/С словами/Korol_i_SHut_-_Pisatel_Gudvin_48646407.ogg"
 
 - type: dutyTrack
   id: dpk_21ab5e85614cd2
-  name: "Korol_i_SHut_-_Rogatyjj_62571745"
+  name: "Король и Шут - Рогатый"
   category: "С словами"
   path:
     path: "/Audio/_Duty/PlayerDK/С словами/Korol_i_SHut_-_Rogatyjj_62571745.ogg"
@@ -2272,21 +2286,21 @@
 
 - type: dutyTrack
   id: dpk_3a812258a52e96
-  name: "RammsteinDuhast"
+  name: "Rammstein - Du Hast"
   category: "С словами"
   path:
     path: "/Audio/_Duty/PlayerDK/С словами/RammsteinDuhast.ogg"
 
 - type: dutyTrack
   id: dpk_4828fd9234b415
-  name: "RammsteinSonne"
+  name: "Rammstein - Sonne"
   category: "С словами"
   path:
     path: "/Audio/_Duty/PlayerDK/С словами/RammsteinSonne.ogg"
 
 - type: dutyTrack
   id: dpk_41bdb2f51abf1f
-  name: "TheProdigyBreathe"
+  name: "The Prodigy - Breathe"
   category: "С словами"
   path:
     path: "/Audio/_Duty/PlayerDK/С словами/TheProdigyBreathe.ogg"
@@ -2307,14 +2321,14 @@
 
 - type: dutyTrack
   id: dpk_742fd1cd3a0c9f
-  name: "Немецкий военный марш (WW2) - Ein Heller und ein Batzen"
+  name: "Немецкие военные марши - Ein Heller und ein Batzen"
   category: "С словами"
   path:
     path: "/Audio/_Duty/PlayerDK/С словами/Немецкий военный марш (WW2) - Ein Heller und ein Batzen.ogg"
 
 - type: dutyTrack
   id: dpk_95f0b5b53e22f9
-  name: "Немецкий военный марш - Schwarzbraun ist die haselnuss"
+  name: "Немецкие военные марши - Schwarzbraun ist die Haselnuss"
   category: "С словами"
   path:
     path: "/Audio/_Duty/PlayerDK/С словами/Немецкий военный марш - Schwarzbraun ist die haselnuss.ogg"

@@ -1,0 +1,224 @@
+# Боеприпасы 7.62x54R — порт из STALKER-14. Mutant→Piercing.
+
+# ── Снаряды ──────────────────────────────────────────────────────────────────
+- type: entity
+  parent: STBaseHRBullet
+  id: Bullet754FMJ
+  name: bullet (7.62x54)
+  categories: [ HideSpawnMenu ]
+  components:
+  - type: Projectile
+    projectileClass: 3
+    damage:
+      types:
+        Piercing: 57
+  - type: StaminaDamageOnCollide
+    damage: 10
+
+- type: entity
+  parent: Bullet754FMJ
+  id: Bullet754HPBT
+  name: bullet (7.62x54)
+  categories: [ HideSpawnMenu ]
+  components:
+  - type: Projectile
+    projectileClass: 0
+    damage:
+      types:
+        Piercing: 190
+        Blunt: 10
+        Slash: 10
+
+- type: entity
+  parent: Bullet754FMJ
+  id: Bullet754PC
+  name: bullet (7.62x54)
+  categories: [ HideSpawnMenu ]
+  components:
+  - type: Projectile
+    projectileClass: 4
+    damage:
+      types:
+        Piercing: 59
+
+- type: entity
+  parent: Bullet754FMJ
+  id: Bullet754BT
+  name: bullet (7.62x54)
+  categories: [ HideSpawnMenu ]
+  components:
+  - type: Projectile
+    projectileClass: 5
+    damage:
+      types:
+        Piercing: 62
+
+- type: entity
+  parent: Bullet754FMJ
+  id: Bullet754SAPB
+  name: bullet (7.62x54)
+  categories: [ HideSpawnMenu ]
+  components:
+  - type: Projectile
+    projectileClass: 6
+    damage:
+      types:
+        Piercing: 65
+
+# ── Патроны ──────────────────────────────────────────────────────────────────
+- type: entity
+  id: BaseSTCartridge754
+  name: cartridge (7,62x54)
+  parent: BaseCartridge
+  abstract: true
+  components:
+  - type: Tag
+    tags:
+    - Cartridge
+    - STCartridge754
+  - type: CartridgeAmmo
+    deleteOnSpawn: true
+  - type: Sprite
+    sprite: _Stalker/Objects/Weapons/Guns/Ammunition/Casings/ammo_casing.rsi
+    layers:
+    - state: base
+      map: ["enum.AmmoVisualLayers.Base"]
+  - type: Appearance
+  - type: SpentAmmoVisuals
+    state: "base"
+
+- type: entity
+  id: STCartridge754FMJ
+  name: cartridge 7.62x54 FMJ
+  suffix: "Stalker"
+  parent: BaseSTCartridge754
+  components:
+  - type: CartridgeAmmo
+    proto: Bullet754FMJ
+
+- type: entity
+  id: STCartridge754PC
+  name: cartridge 7.62x54 PS
+  suffix: "Stalker"
+  parent: BaseSTCartridge754
+  components:
+  - type: CartridgeAmmo
+    proto: Bullet754PC
+
+- type: entity
+  id: STCartridge754HPBT
+  name: cartridge 7.62x54 HP BT
+  suffix: "Stalker"
+  parent: BaseSTCartridge754
+  components:
+  - type: CartridgeAmmo
+    proto: Bullet754HPBT
+
+- type: entity
+  id: STCartridge754BT
+  name: cartridge 7.62x54 BT
+  suffix: "Stalker"
+  parent: BaseSTCartridge754
+  components:
+  - type: CartridgeAmmo
+    proto: Bullet754BT
+
+- type: entity
+  id: STCartridge754SNB
+  name: cartridge 7.62x54 SNB
+  suffix: "Stalker"
+  parent: BaseSTCartridge754
+  components:
+  - type: CartridgeAmmo
+    proto: Bullet754SAPB
+
+# ── Магазины ─────────────────────────────────────────────────────────────────
+- type: entity
+  id: Base754Mag5
+  name: магазин 7,62x54 (5)
+  description: Магазин 7,62x54 для винтовок. Вместимость 5.
+  parent: BaseItem
+  suffix: "Duty, Stalker"
+  components:
+  - type: Tag
+    tags:
+    - Magazine754
+  - type: BallisticAmmoProvider
+    mayTransfer: true
+    proto: STCartridge754FMJ
+    whitelist:
+      tags:
+      - STCartridge754
+    capacity: 5
+  - type: Item
+    size: Small
+    shape:
+    - 0,0,0,0
+  - type: ContainerContainer
+    containers:
+      ballistic-ammo: !type:Container
+  - type: Sprite
+    scale: 0.8, 0.8
+    sprite: _Stalker/Objects/Weapons/Guns/Ammunition/Magazines/754/svd5.rsi
+    layers:
+    - state: base
+      map: ["enum.GunVisualLayers.Base"]
+    - state: mag-1
+      map: ["enum.GunVisualLayers.Mag"]
+  - type: MagazineVisuals
+    magState: mag
+    steps: 2
+    zeroVisible: false
+  - type: Appearance
+
+- type: entity
+  id: 754Mag10
+  name: магазин 7,62x54 (10)
+  description: Магазин 7,62x54 для винтовок. Вместимость 10.
+  parent: Base754Mag5
+  components:
+  - type: BallisticAmmoProvider
+    mayTransfer: true
+    proto: STCartridge754FMJ
+    whitelist:
+      tags:
+      - STCartridge754
+    capacity: 10
+  - type: Item
+    size: Small
+    shape:
+    - 0,0,0,1
+  - type: Sprite
+    scale: 0.8, 0.8
+    sprite: _Stalker/Objects/Weapons/Guns/Ammunition/Magazines/754/svd10.rsi
+    layers:
+    - state: base
+      map: ["enum.GunVisualLayers.Base"]
+    - state: mag-1
+      map: ["enum.GunVisualLayers.Mag"]
+
+- type: entity
+  id: 754Mag20
+  name: магазин 7,62x54 (20)
+  description: Магазин 7,62x54 для винтовок. Вместимость 20.
+  parent: Base754Mag5
+  components:
+  - type: BallisticAmmoProvider
+    mayTransfer: true
+    proto: STCartridge754FMJ
+    whitelist:
+      tags:
+      - STCartridge754
+    capacity: 20
+  - type: Item
+    size: Normal
+    shape:
+    - 0,0,0,2
+  - type: Sprite
+    scale: 0.8, 0.8
+    sprite: _Stalker/Objects/Weapons/Guns/Ammunition/Magazines/754/svd20.rsi
+    layers:
+    - state: base
+      map: ["enum.GunVisualLayers.Base"]
+    - state: mag-1
+      map: ["enum.GunVisualLayers.Mag"]

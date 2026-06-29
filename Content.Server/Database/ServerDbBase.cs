@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using Content.Server.Administration.Logs;
 using Content.Server.Administration.Managers;
 using Content.Server.ADT;
+using Content.Shared._Duty.HealthPhrases;
 using Content.Shared.Administration.Logs;
 using Content.Shared.ADT.Language;
 using Content.Shared.ADT.SpeechBarks;
@@ -31,6 +32,10 @@ namespace Content.Server.Database
     public abstract class ServerDbBase
     {
         private readonly ISawmill _opsLog;
+
+        // Duty HealthPhrases: System.Text.Json по умолчанию не сериализует поля (только свойства).
+        // IncludeFields = true нужен для корректной работы с HealthPhrasesData.
+        private static readonly JsonSerializerOptions HealthPhrasesJsonOptions = new() { IncludeFields = true };
         public event Action<DatabaseNotification>? OnNotificationReceived;
 
         /// <param name="opsLog">Sawmill to trace log database operations to.</param>
@@ -286,7 +291,7 @@ namespace Content.Server.Database
                 loadouts[role.RoleName] = loadout;
             }
 
-            return new HumanoidCharacterProfile(
+            var result = new HumanoidCharacterProfile(
                 profile.CharacterName,
                 profile.FlavorText,
                 profile.Species,
@@ -317,6 +322,20 @@ namespace Content.Server.Database
                 profile.HeadshotUrl
                 // ADT end
             );
+
+            // Duty HealthPhrases
+            if (!string.IsNullOrEmpty(profile.HealthPhrasesJson))
+            {
+                try
+                {
+                    var hpData = JsonSerializer.Deserialize<HealthPhrasesData>(profile.HealthPhrasesJson, HealthPhrasesJsonOptions);
+                    if (hpData != null)
+                        result = result.WithHealthPhrases(hpData);
+                }
+                catch { /* игнорируем невалидный JSON */ }
+            }
+
+            return result;
         }
 
         private static Profile ConvertProfiles(HumanoidCharacterProfile humanoid, int slot, Profile? profile = null)
@@ -418,6 +437,9 @@ namespace Content.Server.Database
             profile.OOCNotes = humanoid.OOCNotes;
             profile.HeadshotUrl = humanoid.HeadshotUrl;
             // ADT end
+
+            // Duty HealthPhrases
+            profile.HealthPhrasesJson = JsonSerializer.Serialize(humanoid.HealthPhrases, HealthPhrasesJsonOptions);
 
             return profile;
         }

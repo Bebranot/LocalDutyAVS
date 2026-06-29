@@ -2,6 +2,7 @@ using Content.Server.Administration.Logs;
 using Content.Server.Destructible;
 using Content.Server.Effects;
 using Content.Server.Weapons.Ranged.Systems;
+using Content.Shared._Duty.Aiming;
 using Content.Shared.Camera;
 using Content.Shared.Damage.Components;
 using Content.Shared.Damage.Systems;
@@ -110,7 +111,9 @@ public sealed class ProjectileSystem : SharedProjectileSystem
                     }
                 }
             }
-            else
+            // _Duty: прицельное прошивание (стрельба лёжа) — пуля проходит сквозь живые цели и
+            // тратится только после исчерпания лимита пробитий. Учёт целей/урона — в AimPenetrationSystem.
+            else if (!TryComp<AimPenetrationComponent>(uid, out var aimPen) || aimPen.Hits >= aimPen.MaxTargets)
             {
                 component.ProjectileSpent = true;
             }

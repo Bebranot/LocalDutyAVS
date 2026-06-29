@@ -1,0 +1,16 @@
+- type: entity
+  name: "Гипоспрей Офицера Синего Щита"
+  parent: HyposprayBrigmedic
+  description: "Отличный и компактный гипоспрей, подходящий под полевые условия."
+  suffix: Duty
+  id: DutyHypoBlueShield
+  components:
+  - type: Sprite
+    sprite: _DeadSpace/Sponsor/nikitafuji1515/hypo.rsi
+    state: hypo
+  - type: Item
+    sprite: _DeadSpace/Sponsor/nikitafuji1515/hypo.rsi
+  - type: SolutionContainerManager
+    solutions:
+      hypospray:
+        maxVol: 10

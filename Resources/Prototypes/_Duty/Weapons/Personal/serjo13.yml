@@ -6,7 +6,7 @@
   suffix: "[Duty] serjo13"
   components:
   - type: Sprite
-    sprite: _Duty/Weapons/bebrabat.rsi
+    sprite: _Duty/Weapons/Melee/bebrabat.rsi
     state: icon
   - type: MeleeWeapon
     wideAnimationRotation: -155

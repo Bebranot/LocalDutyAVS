@@ -15,4 +15,5 @@ public enum DutyAmbientMusicLevel
     Combat,
     CombatLow,
     Death,
+    CritEnter,
 }

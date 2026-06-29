@@ -4,7 +4,7 @@
   bodyPart: Tail
   markingCategory: Tail
   speciesRestriction: [Human, Felinid]
-  #sponsorOnly: false # AdventureTime-Sponsors
+  #sponsorOnly: false #Duty - ХАЛЯВА # AdventureTime-Sponsors
   coloring:
     default:
       type:

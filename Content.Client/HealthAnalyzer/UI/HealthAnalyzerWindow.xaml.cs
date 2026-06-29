@@ -23,6 +23,7 @@ using Robust.Client.ResourceManagement;
 using Robust.Shared.Prototypes;
 using Robust.Shared.Utility;
 using Content.Shared.ADT.Body.Allergies;
+using Content.Shared._Duty.Lazarus;
 
 namespace Content.Client.HealthAnalyzer.UI
 {
@@ -139,7 +140,9 @@ namespace Content.Client.HealthAnalyzer.UI
 
             // Alerts
 
-            var showAlerts = msg.Unrevivable == true || msg.Bleeding == true;
+            var hasLazarusScar = _entityManager.HasComponent<LazarusScarComponent>(target.Value); // _Duty
+
+            var showAlerts = msg.Unrevivable == true || msg.Bleeding == true || hasLazarusScar;
 
             AlertsDivider.Visible = showAlerts;
             AlertsContainer.Visible = showAlerts;
@@ -151,6 +154,15 @@ namespace Content.Client.HealthAnalyzer.UI
                 AlertsContainer.AddChild(new RichTextLabel
                 {
                     Text = Loc.GetString("health-analyzer-window-entity-unrevivable-text"),
+                    Margin = new Thickness(0, 4),
+                    MaxWidth = 300
+                });
+
+            // _Duty: цена воскрешения эффектом Лазаруса — снижено максимальное здоровье.
+            if (hasLazarusScar)
+                AlertsContainer.AddChild(new RichTextLabel
+                {
+                    Text = Loc.GetString("health-analyzer-window-entity-lazarus-scar-text"),
                     Margin = new Thickness(0, 4),
                     MaxWidth = 300
                 });

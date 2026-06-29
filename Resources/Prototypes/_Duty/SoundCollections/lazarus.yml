@@ -1,0 +1,14 @@
+# Звуки эффекта Лазаруса ("Last Standing"). Источник — Casualties: Unknown.
+# В коллекции можно держать несколько файлов: проигрывается случайный.
+
+# Сердцебиение — подводка, играет первым (на затемнении экрана).
+- type: soundCollection
+  id: DutyLazarusHeartbeat
+  files:
+    - /Audio/_Duty/Lazarus/LazarusHeartbeat.ogg
+
+# Основной звук "Last Standing" — вступает с задержкой, наезжая на сердцебиение.
+- type: soundCollection
+  id: DutyLazarusMusic
+  files:
+    - /Audio/_Duty/Lazarus/LazarusLastStand.ogg

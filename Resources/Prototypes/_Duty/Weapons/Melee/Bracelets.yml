@@ -169,7 +169,7 @@
       WideAnimationRotation: -135
     - type: Sharp
     - type: ComboStrike
-      hitsRequired: 10
+      hitsRequired: 5
       bonusDamage:
         types:
           Blunt: 10

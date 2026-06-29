@@ -3,7 +3,7 @@
   bodyPart: RHand
   markingCategory: Arms
   speciesRestriction: [DraskSpecies]
-  sponsorOnly: false
+  sponsorOnly: false #Duty - ХАЛЯВА
   coloring:
     default:
       type:
@@ -25,7 +25,7 @@
   bodyPart: LHand
   markingCategory: Arms
   speciesRestriction: [DraskSpecies]
-  sponsorOnly: false
+  sponsorOnly: false #Duty - ХАЛЯВА
   coloring:
     default:
       type:

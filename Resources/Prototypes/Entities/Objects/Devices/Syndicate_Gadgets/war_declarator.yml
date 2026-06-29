@@ -22,5 +22,7 @@
           type: WarDeclaratorBoundUserInterface
     - type: WarDeclarator
       message: war-declarator-default-message
+      sound:
+        path: /Audio/_Duty/WIP/war.ogg
     - type: AccessReader
       access: [["NuclearOperative"]]

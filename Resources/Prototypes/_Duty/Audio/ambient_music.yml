@@ -50,6 +50,8 @@
       path: /Audio/_Duty/Ambient/tracksGood/TG (11).ogg
     - !type:SoundPathSpecifier
       path: /Audio/_Duty/Ambient/tracksGood/TG (12).ogg
+    - !type:SoundPathSpecifier
+      path: /Audio/_Duty/Ambient/CasualtiesUnknown/whatswiththesand.ogg
 
   # Среднее состояние: 40–70% HP
   tracksMedium:
@@ -81,6 +83,16 @@
       path: /Audio/_Duty/Ambient/tracksMedium/TM (13).ogg
     - !type:SoundPathSpecifier
       path: /Audio/_Duty/Ambient/tracksMedium/TM (14).ogg
+    - !type:SoundPathSpecifier
+      path: /Audio/_Duty/Ambient/CasualtiesUnknown/Absolute.ogg
+    - !type:SoundPathSpecifier
+      path: /Audio/_Duty/Ambient/CasualtiesUnknown/CHASE_IT_DOWN.ogg
+    - !type:SoundPathSpecifier
+      path: /Audio/_Duty/Ambient/CasualtiesUnknown/CombatInTheCold.ogg
+    - !type:SoundPathSpecifier
+      path: /Audio/_Duty/Ambient/CasualtiesUnknown/refractions.ogg
+    - !type:SoundPathSpecifier
+      path: /Audio/_Duty/Ambient/CasualtiesUnknown/whatswiththesand.ogg
 
   # Ниже среднего: 25–40% HP
   tracksBelowMedium:
@@ -108,6 +120,26 @@
       path: /Audio/_Duty/Ambient/tracksBelowMedium/TBM (11).ogg
     - !type:SoundPathSpecifier
       path: /Audio/_Duty/Ambient/tracksBelowMedium/TBM (12).ogg
+    - !type:SoundPathSpecifier
+      path: /Audio/_Duty/Ambient/CasualtiesUnknown/Absolute.ogg
+    - !type:SoundPathSpecifier
+      path: /Audio/_Duty/Ambient/CasualtiesUnknown/BiologicalEclusionZone.ogg
+    - !type:SoundPathSpecifier
+      path: /Audio/_Duty/Ambient/CasualtiesUnknown/CHASE_IT_DOWN.ogg
+    - !type:SoundPathSpecifier
+      path: /Audio/_Duty/Ambient/CasualtiesUnknown/CombatInTheCold.ogg
+    - !type:SoundPathSpecifier
+      path: /Audio/_Duty/Ambient/CasualtiesUnknown/DEEP.ogg
+    - !type:SoundPathSpecifier
+      path: /Audio/_Duty/Ambient/CasualtiesUnknown/FamiliarFace.ogg
+    - !type:SoundPathSpecifier
+      path: /Audio/_Duty/Ambient/CasualtiesUnknown/OddPlace.ogg
+    - !type:SoundPathSpecifier
+      path: /Audio/_Duty/Ambient/CasualtiesUnknown/refractions.ogg
+    - !type:SoundPathSpecifier
+      path: /Audio/_Duty/Ambient/CasualtiesUnknown/TheUnknown.ogg
+    - !type:SoundPathSpecifier
+      path: /Audio/_Duty/Ambient/CasualtiesUnknown/UnethicalExperiments.ogg
 
   # Ужасное состояние: 5–25% HP
   tracksAwful:
@@ -135,6 +167,22 @@
       path: /Audio/_Duty/Ambient/tracksAwful/TA (11).ogg
     - !type:SoundPathSpecifier
       path: /Audio/_Duty/Ambient/tracksAwful/TA (12).ogg
+    - !type:SoundPathSpecifier
+      path: /Audio/_Duty/Ambient/CasualtiesUnknown/Absolute.ogg
+    - !type:SoundPathSpecifier
+      path: /Audio/_Duty/Ambient/CasualtiesUnknown/BiologicalEclusionZone.ogg
+    - !type:SoundPathSpecifier
+      path: /Audio/_Duty/Ambient/CasualtiesUnknown/CHASE_IT_DOWN.ogg
+    - !type:SoundPathSpecifier
+      path: /Audio/_Duty/Ambient/CasualtiesUnknown/DEEP.ogg
+    - !type:SoundPathSpecifier
+      path: /Audio/_Duty/Ambient/CasualtiesUnknown/lushdescent.ogg
+    - !type:SoundPathSpecifier
+      path: /Audio/_Duty/Ambient/CasualtiesUnknown/OddPlace.ogg
+    - !type:SoundPathSpecifier
+      path: /Audio/_Duty/Ambient/CasualtiesUnknown/TheUnknown.ogg
+    - !type:SoundPathSpecifier
+      path: /Audio/_Duty/Ambient/CasualtiesUnknown/UnethicalExperiments.ogg
 
   # менее 5% хп
   tracksCritical:
@@ -158,6 +206,22 @@
       path: /Audio/_Duty/Ambient/tracksCritical/TC (9).ogg
     - !type:SoundPathSpecifier
       path: /Audio/_Duty/Ambient/tracksCritical/TC (10).ogg
+    - !type:SoundPathSpecifier
+      path: /Audio/_Duty/Ambient/CasualtiesUnknown/CHASE_IT_DOWN.ogg
+    - !type:SoundPathSpecifier
+      path: /Audio/_Duty/Ambient/CasualtiesUnknown/DEEP.ogg
+    - !type:SoundPathSpecifier
+      path: /Audio/_Duty/Ambient/CasualtiesUnknown/DroningGrays.ogg
+    - !type:SoundPathSpecifier
+      path: /Audio/_Duty/Ambient/CasualtiesUnknown/exhausted.ogg
+    - !type:SoundPathSpecifier
+      path: /Audio/_Duty/Ambient/CasualtiesUnknown/lushdescent.ogg
+    - !type:SoundPathSpecifier
+      path: /Audio/_Duty/Ambient/CasualtiesUnknown/OddPlace.ogg
+    - !type:SoundPathSpecifier
+      path: /Audio/_Duty/Ambient/CasualtiesUnknown/RUN_FOR_YOUR_LIFE.ogg
+    - !type:SoundPathSpecifier
+      path: /Audio/_Duty/Ambient/CasualtiesUnknown/whathaveidone.ogg
 
   # Боевая музыка
   combatTracks:
@@ -221,13 +285,27 @@
       path: /Audio/_Duty/Ambient/combatTracks/CTs (8).ogg
     - !type:SoundPathSpecifier
       path: /Audio/_Duty/Ambient/combatTracks/CTs (9).ogg
+    - !type:SoundPathSpecifier
+      path: /Audio/_Duty/Ambient/CasualtiesUnknown/Bonus-legacydeath.ogg
+    - !type:SoundPathSpecifier
+      path: /Audio/_Duty/Ambient/CasualtiesUnknown/CHASE_IT_DOWN.ogg
+    - !type:SoundPathSpecifier
+      path: /Audio/_Duty/Ambient/CasualtiesUnknown/CombatInTheCold.ogg
+    - !type:SoundPathSpecifier
+      path: /Audio/_Duty/Ambient/CasualtiesUnknown/lushdescent.ogg
+    - !type:SoundPathSpecifier
+      path: /Audio/_Duty/Ambient/CasualtiesUnknown/OddPlace.ogg
+    - !type:SoundPathSpecifier
+      path: /Audio/_Duty/Ambient/CasualtiesUnknown/refractions.ogg
+    - !type:SoundPathSpecifier
+      path: /Audio/_Duty/Ambient/CasualtiesUnknown/RUN_FOR_YOUR_LIFE.ogg
+    - !type:SoundPathSpecifier
+      path: /Audio/_Duty/Ambient/CasualtiesUnknown/whathaveidone.ogg
 
   # Боевая музыка при низком HP (меньше 10%)
   combatLowTracks:
     - !type:SoundPathSpecifier
       path: /Audio/_Duty/AdminMusic/Z-City SoundTrack - Pharmacia (Fury-13).ogg
-    - !type:SoundPathSpecifier
-      path: /Audio/_Duty/AdminMusic/Creo - Flow.ogg
 
   # Критическое состояние (лежит без сознания)
   tracksMobCritical:
@@ -235,7 +313,7 @@
         path: /Audio/_Duty/Ambient/CritMode/Dying.ogg
       duration: 19
     - sound:
-        path: /Audio/_Duty/Ambient/CritMode/Isthistheend.ogg
+        path: /Audio/_Duty/Ambient/CritMode/isthistheend.ogg
       duration: 349
     - sound:
         path: /Audio/_Duty/Ambient/CritMode/Lobotomy music _ ZCITY(1).ogg
@@ -249,12 +327,30 @@
     - sound:
         path: /Audio/_Duty/Ambient/CritMode/Z-City Soundtrack - Unconscious theme (the end is near)(1).ogg
       duration: 38
+    - sound: 
+        path: /Audio/_Duty/Ambient/CasualtiesUnknown/despair.ogg
+      duration: 346 
+    - sound: 
+        path: /Audio/_Duty/Ambient/CasualtiesUnknown/DrawYourLastBreath1.ogg
+      duration: 19
+    - sound: 
+        path: /Audio/_Duty/Ambient/CasualtiesUnknown/isthistheend.ogg
+      duration: 349
 
+  # проигрывается при смерти
+  deathSounds:
+    - !type:SoundPathSpecifier
+      path: /Audio/_Duty/Ambient/Death.ogg
+    - !type:SoundPathSpecifier
+      path: /Audio/_Duty/Ambient/DrawYourLastBreath2.ogg
 
-  # Звук смерти (одиночный)
-  deathSound: !type:SoundPathSpecifier
-    path: /Audio/_Duty/Ambient/Death.ogg
+  # Звуки входа в критическое состояние
+  critEnterSounds:
+    - !type:SoundPathSpecifier
+      path: /Audio/_Duty/Ambient/CasualtiesUnknown/lobotomy.ogg
 
+  # Настройки и все такое
+  volumeBoostDb: 2 # Общий буст громкости всей динамической музыки/эмбиента (dB)
   calmMinInterval: 5
   calmMaxInterval: 45
   calmFadeInDuration: 3.5

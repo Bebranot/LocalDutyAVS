@@ -80,6 +80,11 @@ public sealed partial class ProjectileComponent : Component
     /// </summary>
     [DataField]
     public bool ProjectileSpent;
+
+    // _Duty: безвредное поле для портированных из STALKER-14 снарядов (там Projectile имел
+    // projectileClass для своей системы точности). Поведения у нас не несёт — только чтобы YAML грузился.
+    [DataField]
+    public int ProjectileClass;
     /// <summary>
     ///     When a projectile has this threshold set, it will continue to penetrate entities until the damage dealt reaches this threshold.
     /// </summary>

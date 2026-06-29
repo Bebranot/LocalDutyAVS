@@ -6,37 +6,37 @@
   suffix: "[Duty] karp335"
   components:
   - type: Sprite
-    sprite: _Duty/Weapons/axe.rsi
+    sprite: _Duty/Weapons/Melee/PufferAxe.rsi
     state: icon
   - type: Item
     size: Ginormous
   - type: MeleeRequiresWield
   - type: MeleeWeapon
-    attackRate: 0.67 #676767676767676767 
+    attackRate: 1 # грёбанный шыстдысят севен - DK
     range: 1.2 #1.2 look better
     damage:
       types:
         Blunt: 5
-        Piercing: 1
+        Piercing: 2
         Structural: 10
   - type: Wieldable
     HeavyStaminaCost: 35
   - type: IncreaseDamageOnWield
     damage:
       types:
-        Blunt: 10 #ну, баффа он заслужил. а то слаймы заробастят ;)
-        Piercing: 2
-        Structural: 50  #серьезно, 190 урона для личного оружия!? личные оружия нужны для самозащиты, а не уничтожения стен! топор != молот.
+        Blunt: 10 # сделал урон чётным (20 в суме), всего на 1 единицу больше чем было. - DK
+        Piercing: 3
+        Structural: 50  #серьезно, 190 урона для личного оружия!? личные оружия нужны для самозащиты, а не уничтожения стен! топор != молот. <- бебра, там было 19 урона. если чат джэбэдэ держит тебя в заложниках, скинь мне орла в личку. - DK
   - type: Tool
     qualities:
       - Prying
     useSound: /Audio/Items/jaws_pry.ogg
   - type: Prying
     speedModifier: 1
-    pryPowered: true
+    pryPowered: false # оно могло открывать запитанные двери, а это ужасно и я буду плакать :( - DK
     useSound: /Audio/Items/jaws_pry.ogg
   - type: Clothing
-    sprite: _Duty/Weapons/axe.rsi
+    sprite: _Duty/Weapons/Melee/PufferAxe.rsi
     quickEquip: false
     slots:
     - back

@@ -1,0 +1,14 @@
+{
+    "version": 1,
+    "size": {
+        "x": 64,
+        "y": 64
+    },
+    "license": "MIT",
+    "copyright": "2025 LocalDuty",
+    "states": [
+        {
+            "name": "icon"
+        }
+    ]
+}

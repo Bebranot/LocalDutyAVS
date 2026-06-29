@@ -1,0 +1,165 @@
+# Семейство АК-103 (7.62x39) — порт из STALKER-14. Патроны 739 уже портированы.
+- type: entity
+  abstract: true
+  parent: STBaseWeaponRifle
+  id: STBaseWeaponRifleAK103
+  components:
+  - type: STWeight
+    self: 3.6
+  - type: Clothing
+    sprite: _Stalker/Objects/Weapons/Guns/Rifles/ak103.rsi
+  - type: Item
+    sprite: _Stalker/Objects/Weapons/Guns/Rifles/ak103.rsi
+  - type: Sprite
+    sprite: _Stalker/Objects/Weapons/Guns/Rifles/ak103.rsi
+  - type: Gun
+    soundGunshot:
+      path: /Audio/_Stalker/Effects/Guns/103_shoot.ogg
+    minAngle: 50
+    maxAngle: 100
+    angleIncrease: 1.8
+    selectedMode: FullAuto
+    availableModes:
+    - SemiAuto
+    - FullAuto
+    angleDecay: 8
+    fireRate: 7
+  - type: ItemSlots
+    slots:
+      gun_magazine:
+        name: Magazine
+        startingItem: Base739Mag10
+        insertSound: /Audio/_Stalker/Weapons/Guns/RifleGen/MagIn/rifle_magin.ogg
+        ejectSound: /Audio/_Stalker/Weapons/Guns/RifleGen/MagOut/rifle_magout.ogg
+        priority: 4
+        whitelist:
+          tags:
+          - Magazine739
+      gun_module_muzzle:
+        name: Muzzle
+        priority: 3
+        whitelist:
+          tags:
+          - STWeaponModuleRifleSilencerRu
+      gun_module_scope:
+        name: Scope
+        priority: 2
+        whitelist:
+          tags:
+          - STWeaponModuleRifleScopeRu
+      gun_chamber:
+        name: Chamber
+        startingItem: STCartridge739FMJ
+        priority: 1
+        whitelist:
+          tags:
+          - STCartridge739
+  - type: STWeaponDamageFalloff
+    falloffMultiplier: 0.85
+  - type: STWeaponAccuracy
+    accuracyMultiplier: 1.55
+
+- type: entity
+  parent: STBaseWeaponRifleAK103
+  id: STWeaponRifleAK103
+  name: AK-103
+  suffix: "Duty, Stalker"
+  description: Современный вариант Калашникова под 7.62x39мм. Ценится в Зоне за надёжность и огневую мощь.
+
+- type: entity
+  parent: STBaseWeaponRifleAK103
+  id: STWeaponRifleAK103Kamo
+  name: AK-103 "Veteran"
+  suffix: "Duty, Stalker"
+  description: Тщательно доработанный AK-103 с улучшенными характеристиками.
+  components:
+  - type: Clothing
+    sprite: _Stalker/Objects/Weapons/Guns/Rifles/_Skins/ak103donate.rsi
+  - type: Item
+    sprite: _Stalker/Objects/Weapons/Guns/Rifles/_Skins/ak103donate.rsi
+  - type: Sprite
+    sprite: _Stalker/Objects/Weapons/Guns/Rifles/_Skins/ak103donate.rsi
+  - type: Gun
+    angleDecay: 8
+    angleIncrease: 1.8
+    fireRate: 8
+
+- type: entity
+  parent: STBaseWeaponRifleAK103
+  id: STWeaponRifleAK203
+  name: AK-203
+  suffix: "Duty, Stalker"
+  description: Новейшая эволюция Калашникова. Редкость в Зоне, обычно с военными экспедициями.
+  components:
+  - type: Clothing
+    sprite: _Stalker/Objects/Weapons/Guns/Rifles/_Skins/ak203.rsi
+  - type: Item
+    sprite: _Stalker/Objects/Weapons/Guns/Rifles/_Skins/ak203.rsi
+  - type: Sprite
+    sprite: _Stalker/Objects/Weapons/Guns/Rifles/_Skins/ak203.rsi
+  - type: Gun
+    soundGunshot:
+      path: /Audio/_Stalker/Effects/Guns/203_Sound.ogg
+    minAngle: 50
+    maxAngle: 95
+    angleIncrease: 1.25
+    angleDecay: 8
+    fireRate: 7
+
+- type: entity
+  parent: STWeaponRifleSaiga545
+  id: STWeaponRifleSaiga739
+  name: saiga 7.39
+  suffix: "Duty, Stalker"
+  description: Гражданская версия под 7.62x39. Популярна у сталкеров за доступность боеприпасов.
+  components:
+  - type: ItemSlots
+    slots:
+      gun_magazine:
+        name: Magazine
+        startingItem: Base739Mag10
+        insertSound: /Audio/_Stalker/Weapons/Guns/RifleGen/MagIn/rifle_magin.ogg
+        ejectSound: /Audio/_Stalker/Weapons/Guns/RifleGen/MagOut/rifle_magout.ogg
+        priority: 4
+        whitelist:
+          tags:
+          - Magazine739
+      gun_module_muzzle:
+        name: Muzzle
+        priority: 3
+        whitelist:
+          tags:
+          - STWeaponModuleRifleSilencerRu
+      gun_module_scope:
+        name: Scope
+        priority: 2
+        whitelist:
+          tags:
+          - STWeaponModuleRifleScopeRu
+      gun_chamber:
+        name: Chamber
+        startingItem: STCartridge739FMJ
+        priority: 1
+        whitelist:
+          tags:
+          - STCartridge739
+
+- type: entity
+  parent: STWeaponRifleSaiga739
+  id: STWeaponRifleSaiga739Auto
+  name: saiga 7.39
+  suffix: "Duty, Stalker"
+  description: Гражданская версия под 7.62x39, автоматический вариант.
+  components:
+  - type: Gun
+    soundGunshot:
+      path: /Audio/_Stalker/Effects/Guns/103_shoot.ogg
+    minAngle: 50
+    maxAngle: 90
+    angleIncrease: 2
+    selectedMode: FullAuto
+    availableModes:
+    - SemiAuto
+    - FullAuto
+    angleDecay: 10
+    fireRate: 5

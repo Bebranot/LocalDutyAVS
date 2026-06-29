@@ -20,6 +20,7 @@ public static class DutyAmbientMusicCVar
         DutyAmbientMusicLevel.Combat => DutyCCVars.DynamicAmbientMusicVolumeCombat,
         DutyAmbientMusicLevel.CombatLow => DutyCCVars.DynamicAmbientMusicVolumeCombatLow,
         DutyAmbientMusicLevel.Death => DutyCCVars.DynamicAmbientMusicVolumeDeath,
+        DutyAmbientMusicLevel.CritEnter => DutyCCVars.DynamicAmbientMusicVolumeCritEnter,
         _ => DutyCCVars.DynamicAmbientMusicVolumeVeryGood,
     };
 
@@ -35,6 +36,7 @@ public static class DutyAmbientMusicCVar
         DutyAmbientMusicLevel.Combat => "duty-ambient-level-combat",
         DutyAmbientMusicLevel.CombatLow => "duty-ambient-level-combat-low",
         DutyAmbientMusicLevel.Death => "duty-ambient-level-death",
+        DutyAmbientMusicLevel.CritEnter => "duty-ambient-level-crit-enter",
         _ => "duty-ambient-level-unknown",
     };
 

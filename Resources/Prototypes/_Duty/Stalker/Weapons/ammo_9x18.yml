@@ -1,0 +1,242 @@
+# Боеприпасы 9x18 — порт из STALKER-14. Mutant→Piercing.
+
+# ── Снаряды ──────────────────────────────────────────────────────────────────
+- type: entity
+  id: Bullet918PGJ
+  name: bullet (9х18 auto)
+  parent: STBasePistolBullet
+  categories: [ HideSpawnMenu ]
+  components:
+  - type: TimedDespawn
+    lifetime: 2
+  - type: Projectile
+    projectileClass: 1
+    damage:
+      types:
+        Piercing: 22
+  - type: StaminaDamageOnCollide
+    damage: 1
+
+- type: entity
+  id: Bullet918PST
+  name: bullet (9х18 auto)
+  parent: Bullet918PGJ
+  categories: [ HideSpawnMenu ]
+  components:
+  - type: Projectile
+    projectileClass: 2
+    damage:
+      types:
+        Piercing: 25
+
+- type: entity
+  id: Bullet918SP7
+  name: bullet (9х18 auto)
+  parent: Bullet918PGJ
+  categories: [ HideSpawnMenu ]
+  components:
+  - type: Projectile
+    projectileClass: 0
+    damage:
+      types:
+        Piercing: 40
+        Blunt: 5
+        Slash: 5
+
+- type: entity
+  id: Bullet918PBM
+  name: bullet (9х18 auto)
+  parent: Bullet918PGJ
+  categories: [ HideSpawnMenu ]
+  components:
+  - type: Projectile
+    projectileClass: 3
+    damage:
+      types:
+        Piercing: 25
+
+# ── Патроны ──────────────────────────────────────────────────────────────────
+- type: entity
+  id: BaseSTCartridge918
+  name: cartridge (9х18 auto)
+  parent: BaseCartridge
+  abstract: true
+  components:
+  - type: Tag
+    tags:
+    - Cartridge
+    - STCartridge918
+  - type: CartridgeAmmo
+    deleteOnSpawn: true
+  - type: Sprite
+    sprite: _Stalker/Objects/Weapons/Guns/Ammunition/Casings/ammo_casing.rsi
+    layers:
+    - state: base
+      map: ["enum.AmmoVisualLayers.Base"]
+  - type: Appearance
+  - type: SpentAmmoVisuals
+    state: "base"
+
+- type: entity
+  id: STCartridge918PGJ
+  name: cartridge 9x18 P
+  suffix: "Stalker"
+  parent: BaseSTCartridge918
+  components:
+  - type: CartridgeAmmo
+    proto: Bullet918PGJ
+
+- type: entity
+  id: STCartridge918PST
+  name: cartridge 9x18 PST
+  suffix: "Stalker"
+  parent: BaseSTCartridge918
+  components:
+  - type: CartridgeAmmo
+    proto: Bullet918PST
+
+- type: entity
+  id: STCartridge918SP7
+  name: cartridge 9x18 SP-7
+  suffix: "Stalker"
+  parent: BaseSTCartridge918
+  components:
+  - type: CartridgeAmmo
+    proto: Bullet918SP7
+
+- type: entity
+  id: STCartridge918PBM
+  name: cartridge 9x18 PBM
+  suffix: "Stalker"
+  parent: BaseSTCartridge918
+  components:
+  - type: CartridgeAmmo
+    proto: Bullet918PBM
+
+# ── Магазины ─────────────────────────────────────────────────────────────────
+- type: entity
+  id: BasePMMag
+  name: магазин ПМм 9x18 (10)
+  description: Магазин 9x18 мм для ПМм. Вместимость 10.
+  parent: BaseItem
+  suffix: "Duty, Stalker"
+  components:
+  - type: Tag
+    tags:
+    - MagazinePM
+  - type: BallisticAmmoProvider
+    mayTransfer: true
+    proto: STCartridge918PGJ
+    whitelist:
+      tags:
+      - STCartridge918
+    capacity: 10
+  - type: Item
+    size: Small
+    shape:
+    - 0,0,0,0
+  - type: ContainerContainer
+    containers:
+      ballistic-ammo: !type:Container
+  - type: Appearance
+  - type: Sprite
+    sprite: Objects/Weapons/Guns/Ammunition/Magazine/Pistol/pistol_mag.rsi
+    layers:
+    - state: base
+      map: ["enum.GunVisualLayers.Base"]
+    - state: mag-1
+      map: ["enum.GunVisualLayers.Mag"]
+  - type: MagazineVisuals
+    magState: mag
+    steps: 5
+    zeroVisible: false
+
+- type: entity
+  id: BaseAPSMag
+  name: магазин АПС 9x18 (20)
+  description: Магазин 9x18 для пистолетов АПС. Вместимость 20.
+  parent: BasePMMag
+  components:
+  - type: Tag
+    tags:
+    - MagazineAPS
+  - type: BallisticAmmoProvider
+    mayTransfer: true
+    proto: STCartridge918PGJ
+    whitelist:
+      tags:
+      - STCartridge918
+    capacity: 20
+  - type: Sprite
+    sprite: Objects/Weapons/Guns/Ammunition/Magazine/Pistol/pistol_high_capacity_mag.rsi
+    layers:
+    - state: base
+      map: ["enum.GunVisualLayers.Base"]
+    - state: mag-1
+      map: ["enum.GunVisualLayers.Mag"]
+  - type: MagazineVisuals
+    magState: mag
+    steps: 6
+    zeroVisible: false
+
+- type: entity
+  id: BizonMag
+  name: шнековый магазин "Бизон" 9x18 (64)
+  description: Шнековый магазин на Бизон под 9х18. Вместимость 64.
+  parent: BasePMMag
+  components:
+  - type: Tag
+    tags:
+    - MagazineBizon
+  - type: BallisticAmmoProvider
+    mayTransfer: true
+    proto: STCartridge918PGJ
+    whitelist:
+      tags:
+      - STCartridge918
+    capacity: 64
+  - type: Item
+    size: Normal
+    shape:
+    - 0,0,1,1
+  - type: Sprite
+    scale: 0.8, 0.8
+    sprite: _Stalker/Objects/Weapons/Guns/Ammunition/Magazines/919/bizon.rsi
+    layers:
+    - state: base
+      map: ["enum.GunVisualLayers.Base"]
+    - state: mag-1
+      map: ["enum.GunVisualLayers.Mag"]
+  - type: MagazineVisuals
+    magState: mag
+    steps: 2
+    zeroVisible: false
+
+- type: entity
+  id: Vz61Mag
+  name: магазин vz. 61 "Скорпион" 9x18 (20)
+  description: Магазин на компактного ПП "Скорпион". Вместимость 20.
+  parent: BasePMMag
+  components:
+  - type: Tag
+    tags:
+    - MagazineVz61
+  - type: BallisticAmmoProvider
+    mayTransfer: true
+    proto: STCartridge918PGJ
+    whitelist:
+      tags:
+      - STCartridge918
+    capacity: 20
+  - type: Sprite
+    scale: 0.8, 0.8
+    sprite: _Stalker/Objects/Weapons/Guns/Ammunition/Magazines/919/vz61.rsi
+    layers:
+    - state: base
+      map: ["enum.GunVisualLayers.Base"]
+    - state: mag-1
+      map: ["enum.GunVisualLayers.Mag"]
+  - type: MagazineVisuals
+    magState: mag
+    steps: 2
+    zeroVisible: false

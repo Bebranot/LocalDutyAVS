@@ -1,0 +1,15 @@
+# Крики при старте рывка алебарды ОСЩ. Заглушки — список можно расширять, добавляя новые файлы сюда.
+
+- type: soundCollection
+  id: HalberdChargeCryMale
+  files:
+    - /Audio/_Duty/Weapons/Halberd/HalberdChargeCryMale.ogg
+    - /Audio/_Duty/Weapons/Halberd/HalberdChargeCryMale2.ogg
+
+
+- type: soundCollection
+  id: HalberdChargeCryFemale
+  files:
+    - /Audio/_Duty/Weapons/Halberd/HalberdChargeCryFemale.ogg
+    - /Audio/_Duty/Weapons/Halberd/HalberdChargeCryFemale1.ogg
+

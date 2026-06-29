@@ -1,0 +1,472 @@
+# Пистолеты — порт из STALKER-14 (Фаза 1, ваниль-поведение).
+# Стрип: FarGunshot, ParticleOnGunShot, Craftable, RepositoryItem.
+# gun_auto_sear/gun_module_muzzle — слоты модулей (Фаза 2), контейнеры создаёт ItemSlots.
+
+# ── АПС (9x18) ───────────────────────────────────────────────────────────────
+- type: entity
+  parent: STBaseWeaponPistol
+  id: WeaponPistolStalkerAPS
+  suffix: "Duty, Stalker"
+  name: АПС
+  description: Автоматический Пистолет Стечкина под 9х18 и собственный магазин на 20 патронов.
+  components:
+  - type: STWeight
+    self: 1.1
+  - type: Sprite
+    scale: 0.6, 0.6
+    sprite: _Stalker/Objects/Weapons/Guns/Pistols/aps.rsi
+    layers:
+    - state: base
+      map: ["enum.GunVisualLayers.Base"]
+    - state: mag-0
+      map: ["enum.GunVisualLayers.Mag"]
+  - type: Clothing
+    sprite: _Stalker/Objects/Weapons/Guns/Pistols/aps.rsi
+  - type: Gun
+    soundGunshot:
+      path: /Audio/_Stalker/Effects/Guns/pm-shoot.ogg
+    projectileSpeed: 35
+    minAngle: 10
+    maxAngle: 50
+    fireRate: 8
+    angleIncrease: 1.5
+    angleDecay: 5
+    selectedMode: FullAuto
+    availableModes:
+    - FullAuto
+  - type: ItemSlots
+    slots:
+      gun_magazine:
+        name: Magazine
+        startingItem: BaseAPSMag
+        priority: 3
+        whitelist:
+          tags:
+          - MagazineAPS
+      gun_auto_sear:
+        name: Insides
+        priority: 2
+        whitelist:
+          tags:
+          - STModuleAutoSear
+      gun_module_muzzle:
+        name: Muzzle
+        priority: 4
+        whitelist:
+          tags:
+          - STWeaponModulePistolSilencer
+      gun_chamber:
+        name: Chamber
+        startingItem: STCartridge918PGJ
+        priority: 1
+        whitelist:
+          tags:
+          - STCartridge918
+
+- type: entity
+  parent: WeaponPistolStalkerAPS
+  id: WeaponPistolStalkerAPSHugo
+  name: АПС "Хуго"
+  description: Массивный и надёжный пистолет с прочной металлической рамой — верный спутник бывалого сталкера.
+  components:
+  - type: Clothing
+    sprite: _Stalker/Objects/Weapons/Guns/Pistols/_Skins/apshugo.rsi
+  - type: Item
+    sprite: _Stalker/Objects/Weapons/Guns/Pistols/_Skins/apshugo.rsi
+  - type: Sprite
+    sprite: _Stalker/Objects/Weapons/Guns/Pistols/_Skins/apshugo.rsi
+
+# ── ГШ-18 (9x19) ─────────────────────────────────────────────────────────────
+- type: entity
+  parent: STBaseWeaponPistol
+  id: WeaponPistolGSH18
+  suffix: "Duty, Stalker"
+  name: ГШ-18
+  description: Пистолет ГШ-18, разработанный в тульском КБП. Поставляется с разными магазинами.
+  components:
+  - type: STWeight
+    self: 0.47
+  - type: Sprite
+    scale: 0.8, 0.8
+    sprite: _Stalker/Objects/Weapons/Guns/Pistols/gsh-18.rsi
+    layers:
+    - state: base
+      map: ["enum.GunVisualLayers.Base"]
+    - state: mag-0
+      map: ["enum.GunVisualLayers.Mag"]
+  - type: Clothing
+    sprite: _Stalker/Objects/Weapons/Guns/Pistols/gsh-18.rsi
+  - type: Gun
+    projectileSpeed: 35
+    minAngle: 3
+    maxAngle: 40
+    angleIncrease: 1
+    angleDecay: 5
+    fireRate: 6
+    availableModes:
+    - SemiAuto
+  - type: ItemSlots
+    slots:
+      gun_magazine:
+        name: Magazine
+        startingItem: BaseGSH-18Mag10
+        priority: 3
+        whitelist:
+          tags:
+          - MagazineGSH-18
+      gun_module_muzzle:
+        name: Muzzle
+        priority: 4
+        whitelist:
+          tags:
+          - STWeaponModulePistolSilencer
+      gun_auto_sear:
+        name: Insides
+        priority: 2
+        whitelist:
+          tags:
+          - STModuleAutoSear
+      gun_chamber:
+        name: Chamber
+        startingItem: STCartridge919PSOGJ
+        priority: 1
+        whitelist:
+          tags:
+          - STCartridge919
+
+# ── Glock-17 (9x19) ──────────────────────────────────────────────────────────
+- type: entity
+  parent: STBaseWeaponPistol
+  id: WeaponPistolStalkerGlock
+  suffix: "Duty, Stalker"
+  name: Glock-17
+  description: Один из самых популярных пистолетов в США под 9x19.
+  components:
+  - type: STWeight
+    self: 1
+  - type: Sprite
+    scale: 0.8, 0.8
+    sprite: _Stalker/Objects/Weapons/Guns/Pistols/glock.rsi
+    layers:
+    - state: base
+      map: ["enum.GunVisualLayers.Base"]
+    - state: mag-0
+      map: ["enum.GunVisualLayers.Mag"]
+  - type: Gun
+    projectileSpeed: 35
+    minAngle: 5
+    maxAngle: 50
+    angleIncrease: 1
+    angleDecay: 5
+    fireRate: 6
+    availableModes:
+    - SemiAuto
+  - type: ItemSlots
+    slots:
+      gun_magazine:
+        name: Magazine
+        startingItem: GlockMag17
+        priority: 3
+        whitelist:
+          tags:
+          - MagazineGlock
+      gun_module_muzzle:
+        name: Muzzle
+        priority: 4
+        whitelist:
+          tags:
+          - STWeaponModulePistolSilencer
+      gun_auto_sear:
+        name: Insides
+        priority: 2
+        whitelist:
+          tags:
+          - STModuleGlockSwitch
+      gun_chamber:
+        name: Chamber
+        startingItem: STCartridge919PSOGJ
+        priority: 1
+        whitelist:
+          tags:
+          - STCartridge919
+
+# ── Люгер LP08 (9x19) ────────────────────────────────────────────────────────
+- type: entity
+  parent: [ STBaseWeaponPistol, BaseGunWieldable ]
+  id: WeaponPistolStalkerLP08
+  suffix: "Duty, Stalker"
+  name: Люгер
+  description: Люгер 9x19 — компактный, быстрый и готов к приключениям.
+  components:
+  - type: STWeight
+    self: 1.1
+  - type: Sprite
+    scale: 0.6, 0.6
+    sprite: _Stalker/Objects/Weapons/Guns/Pistols/luger.rsi
+    layers:
+    - state: base
+      map: ["enum.GunVisualLayers.Base"]
+    - state: mag-0
+      map: ["enum.GunVisualLayers.Mag"]
+  - type: Clothing
+    sprite: _Stalker/Objects/Weapons/Guns/Pistols/luger.rsi
+  - type: Gun
+    soundGunshot:
+      path: /Audio/_Stalker/Effects/Guns/pm-shoot.ogg
+    projectileSpeed: 35
+    minAngle: 10
+    maxAngle: 50
+    fireRate: 9
+    angleIncrease: 1.5
+    angleDecay: 5
+    selectedMode: FullAuto
+    availableModes:
+    - FullAuto
+  - type: GunWieldBonus
+    minAngle: -5
+    maxAngle: -10
+  - type: ItemSlots
+    slots:
+      gun_magazine:
+        name: Magazine
+        startingItem: LP08Drum
+        priority: 3
+        whitelist:
+          tags:
+          - LugerMagazin
+      gun_module_muzzle:
+        name: Muzzle
+        priority: 4
+        whitelist:
+          tags:
+          - STWeaponModulePistolSilencer
+      gun_auto_sear:
+        name: Insides
+        priority: 2
+        whitelist:
+          tags:
+          - STModuleAutoSear
+      gun_chamber:
+        name: Chamber
+        startingItem: STCartridge919PSOGJ
+        priority: 1
+        whitelist:
+          tags:
+          - STCartridge919
+
+# ── ПМм (9x18) ───────────────────────────────────────────────────────────────
+- type: entity
+  parent: STBaseWeaponPistol
+  id: WeaponPistolStalkerPM
+  suffix: "Duty, Stalker"
+  name: ПМм
+  description: Распространённый в Зоне советский пистолет. Доступное и неприхотливое оружие новичка.
+  components:
+  - type: STWeight
+    self: 0.7
+  - type: Sprite
+    scale: 0.8, 0.8
+    sprite: _Stalker/Objects/Weapons/Guns/Pistols/Pm.rsi
+    layers:
+    - state: base
+      map: ["enum.GunVisualLayers.Base"]
+    - state: mag-0
+      map: ["enum.GunVisualLayers.Mag"]
+  - type: Clothing
+    sprite: _Stalker/Objects/Weapons/Guns/Pistols/Pm.rsi
+  - type: Gun
+    soundGunshot:
+      path: /Audio/_Stalker/Effects/Guns/pm-shoot.ogg
+    projectileSpeed: 35
+    minAngle: 10
+    maxAngle: 40
+    fireRate: 4
+    angleIncrease: 2
+    angleDecay: 5
+    selectedMode: SemiAuto
+    availableModes:
+    - SemiAuto
+  - type: ItemSlots
+    slots:
+      gun_magazine:
+        name: Magazine
+        startingItem: BasePMMag
+        priority: 3
+        whitelist:
+          tags:
+          - MagazinePM
+      gun_module_muzzle:
+        name: Muzzle
+        priority: 4
+        whitelist:
+          tags:
+          - STWeaponModulePistolSilencer
+      gun_auto_sear:
+        name: Insides
+        priority: 2
+        whitelist:
+          tags:
+          - STModuleAutoSear
+      gun_chamber:
+        name: Chamber
+        startingItem: STCartridge918PGJ
+        priority: 1
+        whitelist:
+          tags:
+          - STCartridge918
+
+- type: entity
+  parent: WeaponPistolStalkerPM
+  id: WeaponPistolStalkerPMModifed
+  name: ПМм 9x19
+  description: ПМм под 9х19 на магазине Glock. Удобнее и скорострельнее, но просела отдача и скорость пули.
+  components:
+  - type: STWeight
+    self: 1.3
+  - type: Item
+    size: Normal
+  - type: Gun
+    soundGunshot:
+      path: /Audio/_Stalker/Effects/Guns/pm-shoot.ogg
+    projectileSpeed: 15
+    minAngle: 10
+    maxAngle: 30
+    fireRate: 6
+    angleIncrease: 2
+    angleDecay: 5
+    selectedMode: SemiAuto
+    availableModes:
+    - SemiAuto
+  - type: ItemSlots
+    slots:
+      gun_magazine:
+        name: Magazine
+        startingItem: GlockMag17
+        priority: 2
+        whitelist:
+          tags:
+          - MagazineGlock
+      gun_chamber:
+        name: Chamber
+        startingItem: STCartridge919PSOGJ
+        priority: 1
+        whitelist:
+          tags:
+          - STCartridge919
+
+# ── TEC-9 (9x19) ─────────────────────────────────────────────────────────────
+- type: entity
+  parent: STBaseWeaponPistol
+  id: WeaponStalkerPistolTec9
+  suffix: "Duty, Stalker"
+  name: TEC-9
+  description: Самозарядный пистолет, разработанный в Швеции в 1980-х.
+  components:
+  - type: STWeight
+    self: 1
+  - type: Sprite
+    scale: 0.8, 0.8
+    sprite: _Stalker/Objects/Weapons/Guns/Pistols/tec-9.rsi
+    layers:
+    - state: base
+      map: ["enum.GunVisualLayers.Base"]
+    - state: mag-0
+      map: ["enum.GunVisualLayers.Mag"]
+  - type: Gun
+    projectileSpeed: 35
+    minAngle: 5
+    maxAngle: 40
+    angleIncrease: 1
+    angleDecay: 5
+    fireRate: 6
+    availableModes:
+    - SemiAuto
+  - type: ItemSlots
+    slots:
+      gun_magazine:
+        name: Magazine
+        startingItem: BaseTEC9Mag
+        priority: 3
+        whitelist:
+          tags:
+          - MagazineTEC
+      gun_module_muzzle:
+        name: Muzzle
+        priority: 4
+        whitelist:
+          tags:
+          - STWeaponModulePistolSilencer
+      gun_auto_sear:
+        name: Insides
+        priority: 2
+        whitelist:
+          tags:
+          - STModuleAutoSear
+      gun_chamber:
+        name: Chamber
+        startingItem: STCartridge919PSOGJ
+        priority: 1
+        whitelist:
+          tags:
+          - STCartridge919
+
+# ── ТТ (7.62x25) ─────────────────────────────────────────────────────────────
+- type: entity
+  parent: STBaseWeaponPistol
+  id: WeaponPistolStalkerTT
+  suffix: "Duty, Stalker"
+  name: Тульский Токарев
+  description: Легендарный пистолет калибра 7.62х25, разработанный в СССР.
+  components:
+  - type: STWeight
+    self: 0.7
+  - type: Sprite
+    scale: 0.8, 0.8
+    sprite: _Stalker/Objects/Weapons/Guns/Pistols/tt.rsi
+    layers:
+    - state: base
+      map: ["enum.GunVisualLayers.Base"]
+    - state: mag-0
+      map: ["enum.GunVisualLayers.Mag"]
+  - type: Clothing
+    sprite: _Stalker/Objects/Weapons/Guns/Pistols/tt.rsi
+  - type: Gun
+    soundGunshot:
+      path: /Audio/_Stalker/Effects/Guns/tt.ogg
+    projectileSpeed: 35
+    minAngle: 5
+    maxAngle: 40
+    fireRate: 4
+    angleIncrease: 0.5
+    angleDecay: 5
+    selectedMode: SemiAuto
+    availableModes:
+    - SemiAuto
+  - type: ItemSlots
+    slots:
+      gun_magazine:
+        name: Magazine
+        startingItem: TTMag
+        priority: 3
+        whitelist:
+          tags:
+          - MagazineTT
+      gun_module_muzzle:
+        name: Muzzle
+        priority: 4
+        whitelist:
+          tags:
+          - STWeaponModulePistolSilencer
+      gun_auto_sear:
+        name: Insides
+        priority: 2
+        whitelist:
+          tags:
+          - STModuleAutoSear
+      gun_chamber:
+        name: Chamber
+        startingItem: STCartridge725PGL
+        priority: 1
+        whitelist:
+          tags:
+          - STCartridge725

@@ -9,12 +9,28 @@ using Robust.Shared.Utility;
 
 namespace Content.Client._Duty.HealthPhrases;
 
+internal enum PhraseLevel
+{
+    Level70,
+    Level55,
+    Level40,
+    Level25,
+    Level10,
+    Level5,
+}
+
+internal enum PhraseKind
+{
+    Popup,
+    Whisper,
+}
+
 [GenerateTypedNameReferences]
 public sealed partial class HealthPhrasesTab : Control
 {
     public event Action<HealthPhrasesData>? OnPhrasesChanged;
 
-    private readonly Dictionary<string, TextEdit> _inputs = new();
+    private readonly Dictionary<(PhraseLevel, PhraseKind), TextEdit> _inputs = new();
     private bool _suppressChanges;
 
     public HealthPhrasesTab()
@@ -34,15 +50,15 @@ public sealed partial class HealthPhrasesTab : Control
             Margin = new Thickness(0, 0, 0, 8),
         });
 
-        AddLevel("70", "duty-health-phrases-level-70");
-        AddLevel("55", "duty-health-phrases-level-55");
-        AddLevel("40", "duty-health-phrases-level-40");
-        AddLevel("25", "duty-health-phrases-level-25");
-        AddLevel("10", "duty-health-phrases-level-10");
-        AddLevel("5", "duty-health-phrases-level-5");
+        AddLevel(PhraseLevel.Level70, "duty-health-phrases-level-70");
+        AddLevel(PhraseLevel.Level55, "duty-health-phrases-level-55");
+        AddLevel(PhraseLevel.Level40, "duty-health-phrases-level-40");
+        AddLevel(PhraseLevel.Level25, "duty-health-phrases-level-25");
+        AddLevel(PhraseLevel.Level10, "duty-health-phrases-level-10");
+        AddLevel(PhraseLevel.Level5, "duty-health-phrases-level-5");
     }
 
-    private void AddLevel(string levelKey, string locKey)
+    private void AddLevel(PhraseLevel level, string locKey)
     {
         var panel = new PanelContainer { HorizontalExpand = true };
         panel.PanelOverride = new StyleBoxFlat { BackgroundColor = Color.FromHex("#2d2d2d") };
@@ -61,14 +77,14 @@ public sealed partial class HealthPhrasesTab : Control
             Margin = new Thickness(0, 0, 0, 8),
         });
 
-        AddPhraseField(box, levelKey, "Popup", "duty-health-phrases-popup-label");
-        AddPhraseField(box, levelKey, "Whisper", "duty-health-phrases-whisper-label");
+        AddPhraseField(box, level, PhraseKind.Popup, "duty-health-phrases-popup-label");
+        AddPhraseField(box, level, PhraseKind.Whisper, "duty-health-phrases-whisper-label");
 
         panel.AddChild(box);
         LevelsContainer.AddChild(panel);
     }
 
-    private void AddPhraseField(BoxContainer parent, string levelKey, string typeKey, string locKey)
+    private void AddPhraseField(BoxContainer parent, PhraseLevel level, PhraseKind kind, string locKey)
     {
         parent.AddChild(new Label
         {
@@ -92,7 +108,7 @@ public sealed partial class HealthPhrasesTab : Control
         };
 
         parent.AddChild(input);
-        _inputs[$"{levelKey}_{typeKey}"] = input;
+        _inputs[(level, kind)] = input;
     }
 
     public void SetData(HealthPhrasesData data)
@@ -100,18 +116,18 @@ public sealed partial class HealthPhrasesTab : Control
         _suppressChanges = true;
         try
         {
-            SetField("70", "Popup", data.Popup70);
-            SetField("70", "Whisper", data.Whisper70);
-            SetField("55", "Popup", data.Popup55);
-            SetField("55", "Whisper", data.Whisper55);
-            SetField("40", "Popup", data.Popup40);
-            SetField("40", "Whisper", data.Whisper40);
-            SetField("25", "Popup", data.Popup25);
-            SetField("25", "Whisper", data.Whisper25);
-            SetField("10", "Popup", data.Popup10);
-            SetField("10", "Whisper", data.Whisper10);
-            SetField("5", "Popup", data.Popup5);
-            SetField("5", "Whisper", data.Whisper5);
+            SetField(PhraseLevel.Level70, PhraseKind.Popup, data.Popup70);
+            SetField(PhraseLevel.Level70, PhraseKind.Whisper, data.Whisper70);
+            SetField(PhraseLevel.Level55, PhraseKind.Popup, data.Popup55);
+            SetField(PhraseLevel.Level55, PhraseKind.Whisper, data.Whisper55);
+            SetField(PhraseLevel.Level40, PhraseKind.Popup, data.Popup40);
+            SetField(PhraseLevel.Level40, PhraseKind.Whisper, data.Whisper40);
+            SetField(PhraseLevel.Level25, PhraseKind.Popup, data.Popup25);
+            SetField(PhraseLevel.Level25, PhraseKind.Whisper, data.Whisper25);
+            SetField(PhraseLevel.Level10, PhraseKind.Popup, data.Popup10);
+            SetField(PhraseLevel.Level10, PhraseKind.Whisper, data.Whisper10);
+            SetField(PhraseLevel.Level5, PhraseKind.Popup, data.Popup5);
+            SetField(PhraseLevel.Level5, PhraseKind.Whisper, data.Whisper5);
         }
         finally
         {
@@ -119,9 +135,9 @@ public sealed partial class HealthPhrasesTab : Control
         }
     }
 
-    private void SetField(string levelKey, string typeKey, List<string> phrases)
+    private void SetField(PhraseLevel level, PhraseKind kind, List<string> phrases)
     {
-        if (!_inputs.TryGetValue($"{levelKey}_{typeKey}", out var input))
+        if (!_inputs.TryGetValue((level, kind), out var input))
             return;
 
         input.TextRope = new Rope.Leaf(string.Join("\n", phrases));
@@ -129,22 +145,22 @@ public sealed partial class HealthPhrasesTab : Control
 
     private HealthPhrasesData CollectData() => new()
     {
-        Popup70 = ParsePhrases(GetInputText("70", "Popup")),
-        Whisper70 = ParsePhrases(GetInputText("70", "Whisper")),
-        Popup55 = ParsePhrases(GetInputText("55", "Popup")),
-        Whisper55 = ParsePhrases(GetInputText("55", "Whisper")),
-        Popup40 = ParsePhrases(GetInputText("40", "Popup")),
-        Whisper40 = ParsePhrases(GetInputText("40", "Whisper")),
-        Popup25 = ParsePhrases(GetInputText("25", "Popup")),
-        Whisper25 = ParsePhrases(GetInputText("25", "Whisper")),
-        Popup10 = ParsePhrases(GetInputText("10", "Popup")),
-        Whisper10 = ParsePhrases(GetInputText("10", "Whisper")),
-        Popup5 = ParsePhrases(GetInputText("5", "Popup")),
-        Whisper5 = ParsePhrases(GetInputText("5", "Whisper")),
+        Popup70 = ParsePhrases(GetInputText(PhraseLevel.Level70, PhraseKind.Popup)),
+        Whisper70 = ParsePhrases(GetInputText(PhraseLevel.Level70, PhraseKind.Whisper)),
+        Popup55 = ParsePhrases(GetInputText(PhraseLevel.Level55, PhraseKind.Popup)),
+        Whisper55 = ParsePhrases(GetInputText(PhraseLevel.Level55, PhraseKind.Whisper)),
+        Popup40 = ParsePhrases(GetInputText(PhraseLevel.Level40, PhraseKind.Popup)),
+        Whisper40 = ParsePhrases(GetInputText(PhraseLevel.Level40, PhraseKind.Whisper)),
+        Popup25 = ParsePhrases(GetInputText(PhraseLevel.Level25, PhraseKind.Popup)),
+        Whisper25 = ParsePhrases(GetInputText(PhraseLevel.Level25, PhraseKind.Whisper)),
+        Popup10 = ParsePhrases(GetInputText(PhraseLevel.Level10, PhraseKind.Popup)),
+        Whisper10 = ParsePhrases(GetInputText(PhraseLevel.Level10, PhraseKind.Whisper)),
+        Popup5 = ParsePhrases(GetInputText(PhraseLevel.Level5, PhraseKind.Popup)),
+        Whisper5 = ParsePhrases(GetInputText(PhraseLevel.Level5, PhraseKind.Whisper)),
     };
 
-    private string GetInputText(string levelKey, string typeKey) =>
-        _inputs.TryGetValue($"{levelKey}_{typeKey}", out var input) ? Rope.Collapse(input.TextRope) : string.Empty;
+    private string GetInputText(PhraseLevel level, PhraseKind kind) =>
+        _inputs.TryGetValue((level, kind), out var input) ? Rope.Collapse(input.TextRope) : string.Empty;
 
     private static List<string> ParsePhrases(string text) =>
         text.Split('\n', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries).ToList();

@@ -107,7 +107,7 @@
   categories: [ HideSpawnMenu ]
   components:
     - type: TimedDespawn
-      lifetime: 0.55
+      lifetime: 0.45
     - type: Sprite
       sprite: _Duty/Weapons/Effects/ArtifactSwordSwing.rsi
       state: megaswing
@@ -119,6 +119,6 @@
       tags:
         - HideContextMenu
     - type: PointLight
-      radius: 6
+      radius: 3
       energy: 4
       color: "#ff2e2e"

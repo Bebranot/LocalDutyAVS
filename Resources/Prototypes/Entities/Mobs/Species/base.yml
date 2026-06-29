@@ -9,6 +9,7 @@
   id: BaseMobSpecies
   abstract: true
   components:
+  - type: Concussion # _Duty: шкала контузии от выстрелов/взрывов
   - type: Sprite
     layers:
     - map: [ "enum.HumanoidVisualLayers.Chest" ]

@@ -1,0 +1,270 @@
+# Боеприпасы .45 ACP (Thompson) — порт из STALKER-14. Mutant→Piercing.
+
+# ── Снаряды ──────────────────────────────────────────────────────────────────
+- type: entity
+  id: Bullet45ACPLFMJ
+  name: bullet (.45 ACP Lasermatch FMJ)
+  parent: STBase45ACP
+  categories: [ HideSpawnMenu ]
+  components:
+  - type: TimedDespawn
+    lifetime: 2
+  - type: Projectile
+    projectileClass: 1
+    damage:
+      types:
+        Piercing: 24
+
+- type: entity
+  id: Bullet45ACPMFMJ
+  name: bullet (.45 ACP Match FMJ)
+  parent: Bullet45ACPLFMJ
+  categories: [ HideSpawnMenu ]
+  components:
+  - type: Projectile
+    projectileClass: 2
+    damage:
+      types:
+        Piercing: 25
+
+- type: entity
+  id: Bullet45ACPHydroshock
+  name: bullet (.45 ACP Hydra-Shok)
+  parent: Bullet45ACPLFMJ
+  categories: [ HideSpawnMenu ]
+  components:
+  - type: Projectile
+    projectileClass: 1
+    damage:
+      types:
+        Blunt: 10
+        Slash: 10
+        Piercing: 50
+
+- type: entity
+  id: Bullet45ACPRIP
+  name: bullet (.45 ACP RIP)
+  parent: Bullet45ACPLFMJ
+  categories: [ HideSpawnMenu ]
+  components:
+  - type: Projectile
+    projectileClass: 0
+    damage:
+      types:
+        Piercing: 52
+        Blunt: 7
+        Slash: 7
+
+- type: entity
+  id: Bullet45ACPAP
+  name: bullet (.45 ACP AP)
+  parent: Bullet45ACPLFMJ
+  categories: [ HideSpawnMenu ]
+  components:
+  - type: Projectile
+    projectileClass: 3
+    damage:
+      types:
+        Piercing: 28
+
+# ── Патроны ──────────────────────────────────────────────────────────────────
+- type: entity
+  id: BaseCartridge45ACP
+  name: cartridge (.45 ACP auto)
+  parent: BaseCartridge
+  abstract: true
+  components:
+  - type: Tag
+    tags:
+    - Cartridge
+    - Cartridge45ACP
+  - type: CartridgeAmmo
+    deleteOnSpawn: true
+  - type: Sprite
+    sprite: _Stalker/Objects/Weapons/Guns/Ammunition/Casings/ammo_casing.rsi
+    layers:
+    - state: base
+      map: ["enum.AmmoVisualLayers.Base"]
+  - type: Appearance
+  - type: SpentAmmoVisuals
+    state: "base"
+
+- type: entity
+  id: Cartridge45ACPLFMJ
+  name: cartridge .45 ACP Lasermatch FMJ
+  suffix: "Stalker"
+  parent: BaseCartridge45ACP
+  components:
+  - type: CartridgeAmmo
+    proto: Bullet45ACPLFMJ
+
+- type: entity
+  id: Cartridge45ACPMFMJ
+  name: cartridge .45 ACP Match FMJ
+  suffix: "Stalker"
+  parent: BaseCartridge45ACP
+  components:
+  - type: CartridgeAmmo
+    proto: Bullet45ACPMFMJ
+
+- type: entity
+  id: Cartridge45ACPHydroshock
+  name: cartridge .45 ACP Hydra-Shok
+  suffix: "Stalker"
+  parent: BaseCartridge45ACP
+  components:
+  - type: CartridgeAmmo
+    proto: Bullet45ACPHydroshock
+
+- type: entity
+  id: Cartridge45ACPRIP
+  name: cartridge .45 ACP RIP
+  suffix: "Stalker"
+  parent: BaseCartridge45ACP
+  components:
+  - type: CartridgeAmmo
+    proto: Bullet45ACPRIP
+
+- type: entity
+  id: Cartridge45ACPAP
+  name: cartridge .45 ACP AP
+  suffix: "Stalker"
+  parent: BaseCartridge45ACP
+  components:
+  - type: CartridgeAmmo
+    proto: Bullet45ACPAP
+
+# ── Спидлоадер (.45 ACP, для револьверов) ────────────────────────────────────
+- type: entity
+  id: STSpeedLoader45ACP
+  name: спидлоадер (.45 ACP)
+  suffix: "Duty, Stalker"
+  parent: BaseItem
+  components:
+  - type: Tag
+    tags:
+    - STSpeedLoader45ACP
+  - type: SpeedLoader
+  - type: BallisticAmmoProvider
+    proto: Cartridge45ACPLFMJ
+    whitelist:
+      tags:
+      - Cartridge45ACP
+    capacity: 6
+  - type: ContainerContainer
+    containers:
+      ballistic-ammo: !type:Container
+  - type: Sprite
+    sprite: Objects/Weapons/Guns/Ammunition/SpeedLoaders/Magnum/magnum_speed_loader.rsi
+    layers:
+    - state: base
+      map: ["enum.GunVisualLayers.Base"]
+    - state: base-6
+      map: ["enum.GunVisualLayers.Mag"]
+  - type: MagazineVisuals
+    magState: base
+    steps: 7
+    zeroVisible: false
+  - type: Appearance
+
+# ── Магазины ─────────────────────────────────────────────────────────────────
+- type: entity
+  id: BaseTommyGunMag
+  name: магазин ПП Томпсона (40)
+  description: Магазин для "Томми гана". Вместимость 40.
+  parent: BaseItem
+  suffix: "Duty, Stalker"
+  components:
+  - type: Tag
+    tags:
+    - MagazineTommyGun
+  - type: BallisticAmmoProvider
+    mayTransfer: true
+    proto: Cartridge45ACPLFMJ
+    whitelist:
+      tags:
+      - Cartridge45ACP
+    capacity: 40
+  - type: Item
+    size: Small
+    shape:
+    - 0,0,0,1
+  - type: ContainerContainer
+    containers:
+      ballistic-ammo: !type:Container
+  - type: Sprite
+    scale: 0.8, 0.8
+    sprite: _Stalker/Objects/Weapons/Guns/Ammunition/Magazines/919/vityaz.rsi
+    layers:
+    - state: base
+      map: ["enum.GunVisualLayers.Base"]
+    - state: mag-1
+      map: ["enum.GunVisualLayers.Mag"]
+  - type: MagazineVisuals
+    magState: mag
+    steps: 2
+    zeroVisible: false
+  - type: Appearance
+
+- type: entity
+  id: TommyGunDrum
+  name: барабан ПП Томпсона (60)
+  description: Барабан для "Томми гана". Вместимость 60.
+  parent: BaseTommyGunMag
+  components:
+  - type: Item
+    size: Normal
+    shape:
+    - 0,0,1,1
+  - type: Sprite
+    scale: 0.7, 0.7
+    sprite: _Stalker/Objects/Weapons/Guns/Ammunition/Magazines/919/tommygun_drum.rsi
+    layers:
+    - state: base
+      map: ["enum.GunVisualLayers.Base"]
+    - state: mag-1
+      map: ["enum.GunVisualLayers.Mag"]
+  - type: BallisticAmmoProvider
+    mayTransfer: true
+    proto: Cartridge45ACPLFMJ
+    whitelist:
+      tags:
+      - Cartridge45ACP
+    capacity: 60
+
+- type: entity
+  id: TommyGunDrum2
+  name: барабан ПП Томпсона оригинальной конструкции (60)
+  description: Барабан для "Томми гана". Вместимость 60.
+  parent: TommyGunDrum
+  components:
+  - type: Sprite
+    scale: 0.7, 0.7
+    sprite: _Stalker/Objects/Weapons/Guns/Ammunition/Magazines/919/tommygun_drum2.rsi
+    layers:
+    - state: base
+      map: ["enum.GunVisualLayers.Base"]
+    - state: mag-1
+      map: ["enum.GunVisualLayers.Mag"]
+
+- type: entity
+  id: TommyGunBigDrum
+  name: барабан ПП Томпсона (100)
+  description: Огромный и редкий барабан для "Томми гана". Вместимость 100.
+  parent: TommyGunDrum
+  components:
+  - type: Sprite
+    scale: 0.7, 0.7
+    sprite: _Stalker/Objects/Weapons/Guns/Ammunition/Magazines/919/tommygun_big_drum.rsi
+    layers:
+    - state: base
+      map: ["enum.GunVisualLayers.Base"]
+    - state: mag-1
+      map: ["enum.GunVisualLayers.Mag"]
+  - type: BallisticAmmoProvider
+    mayTransfer: true
+    proto: Cartridge45ACPLFMJ
+    whitelist:
+      tags:
+      - Cartridge45ACP
+    capacity: 100

@@ -28,6 +28,7 @@ public sealed class HealthPhrasesSystem : EntitySystem
     [Dependency] private readonly IGameTiming _timing = default!;
     [Dependency] private readonly IConfigurationManager _cfg = default!;
     [Dependency] private readonly IConsoleHost _console = default!;
+    [Dependency] private readonly IPlayerManager _playerManager = default!;
 
     private bool _enabled;
     private float _popupMin;
@@ -162,10 +163,11 @@ public sealed class HealthPhrasesSystem : EntitySystem
     private bool TryPickFtlPhrase(string baseKey, out string? result)
     {
         var variants = new List<string>();
-        for (var i = 1; i <= 10; i++)
+        var i = 1;
+        while (Loc.TryGetString($"{baseKey}-{i}", out var str))
         {
-            if (Loc.TryGetString($"{baseKey}-{i}", out var str))
-                variants.Add(str);
+            variants.Add(str);
+            i++;
         }
 
         if (variants.Count == 0)
@@ -180,7 +182,10 @@ public sealed class HealthPhrasesSystem : EntitySystem
 
     private string BuildFtlKey(string race, HpLevel level, PhraseType type)
     {
-        // Ключи локали: 50/40/35/25/10/5 (см. health_phrases.ftl)
+        // Ключи локали исторически названы по верхней границе диапазона, а не по HpLevel:
+        // Level70 (55-70% HP) -> "50", Level55 (40-55%) -> "40", Level40 (25-40%) -> "35",
+        // Level25 (10-25%) -> "25", Level10 (5-10%) -> "10", Level5 (0-5%) -> "5".
+        // См. health_phrases.ftl — несовпадение чисел с реальным % HP намеренное, не баг.
         var levelStr = level switch
         {
             HpLevel.Level70 => "50",
@@ -243,8 +248,7 @@ public sealed class HealthPhrasesSystem : EntitySystem
             return;
         }
 
-        var playerManager = IoCManager.Resolve<IPlayerManager>();
-        if (!playerManager.TryGetSessionByUsername(args[0], out var session))
+        if (!_playerManager.TryGetSessionByUsername(args[0], out var session))
         {
             shell.WriteError($"Игрок '{args[0]}' не найден.");
             return;
@@ -298,8 +302,7 @@ public sealed class HealthPhrasesSystem : EntitySystem
     {
         if (args.Length == 1)
         {
-            var playerManager = IoCManager.Resolve<IPlayerManager>();
-            var names = playerManager.Sessions.Select(s => new CompletionOption(s.Name));
+            var names = _playerManager.Sessions.Select(s => new CompletionOption(s.Name));
             return CompletionResult.FromOptions(names);
         }
 

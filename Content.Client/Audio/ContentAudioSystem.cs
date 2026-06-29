@@ -99,7 +99,10 @@ public sealed partial class ContentAudioSystem : SharedContentAudioSystem
         // TODO: Maybe handle the removals by making it seamless?
         _fadingIn.Remove(stream.Value);
         var diff = component.Volume - MinVolume;
-        _fadingOut.Add(stream.Value, diff / duration);
+        // Индексатор, а не Add: повторный FadeOut на уже угасающем потоке должен
+        // обновлять скорость, а не падать с "same key" (например, при резком выходе
+        // из крита во время кроссфейда крит-музыки).
+        _fadingOut[stream.Value] = diff / duration;
     }
 
     public void FadeIn(EntityUid? stream, AudioComponent? component = null, float duration = DefaultDuration)
@@ -110,7 +113,7 @@ public sealed partial class ContentAudioSystem : SharedContentAudioSystem
         _fadingOut.Remove(stream.Value);
         var curVolume = component.Volume;
         var change = (MinVolume - curVolume) / duration;
-        _fadingIn.Add(stream.Value, (change, component.Volume));
+        _fadingIn[stream.Value] = (change, component.Volume);
         component.Volume = MinVolume;
     }
 

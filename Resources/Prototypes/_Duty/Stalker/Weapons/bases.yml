@@ -1,0 +1,172 @@
+# Базы портированного из STALKER-14 оружия — привязаны к нашим ванильным базам.
+# Дают слои спрайта/визуал магазина, чтобы семейства стволов копировались почти вербатим.
+# Кастомные компоненты (STWeight/STWeaponDamageFalloff/STWeaponAccuracy) — пустышки (см. StalkerStubComponents.cs).
+
+# ── База рифлов ──────────────────────────────────────────────────────────────
+- type: entity
+  abstract: true
+  parent: BaseWeaponRifle
+  id: STBaseWeaponRifle
+  name: rifle
+  components:
+  - type: Sprite
+    layers:
+    - state: base
+      map: ["enum.GunVisualLayers.Base"]
+    - state: mag-0
+      map: ["enum.GunVisualLayers.Mag"]
+  - type: MagazineVisuals
+    magState: mag
+    steps: 1
+    zeroVisible: true
+  - type: Appearance
+  - type: STWeaponModuleContainer
+  # Слот прицела для ВСЕХ рифлов (включая АК) — чтобы обвесы крепились единообразно.
+  # Магазинные снайперки переопределяют его своим (sniper sight) — мерж по ключу.
+  - type: ItemSlots
+    slots:
+      gun_module_scope:
+        name: Scope
+        priority: 2
+        whitelist:
+          tags:
+          - STWeaponModuleRifleScopeRu
+          - STWeaponModuleRifleScopeNato
+  - type: FarGunshot
+    range: 260
+    sound:
+      path: /Audio/_Stalker/Effects/FarGunshots/rifle1.ogg
+
+# ── База ПП (SMG) ────────────────────────────────────────────────────────────
+- type: entity
+  abstract: true
+  parent: BaseWeaponSubMachineGun
+  id: STBaseWeaponSMG
+  name: smg
+  components:
+  - type: Sprite
+    layers:
+    - state: base
+      map: ["enum.GunVisualLayers.Base"]
+    - state: mag-0
+      map: ["enum.GunVisualLayers.Mag"]
+  - type: MagazineVisuals
+    magState: mag
+    steps: 1
+    zeroVisible: true
+  - type: Appearance
+  - type: STWeaponModuleContainer
+  - type: FarGunshot
+    range: 190
+    sound:
+      path: /Audio/_Stalker/Effects/FarGunshots/smg1.ogg
+
+# ── База пистолетов ──────────────────────────────────────────────────────────
+- type: entity
+  abstract: true
+  parent: BaseWeaponPistol
+  id: STBaseWeaponPistol
+  name: pistol
+  components:
+  - type: Sprite
+    layers:
+    - state: base
+      map: ["enum.GunVisualLayers.Base"]
+    - state: mag-0
+      map: ["enum.GunVisualLayers.Mag"]
+  - type: MagazineVisuals
+    magState: mag
+    steps: 1
+    zeroVisible: true
+  - type: Appearance
+  - type: STWeaponModuleContainer
+  - type: FarGunshot
+    range: 120
+    sound:
+      path: /Audio/_Stalker/Effects/FarGunshots/pistol1.ogg
+
+# ── База снайперок ───────────────────────────────────────────────────────────
+# Болтовки заряжаются прямо в ствол (ballistic-ammo), часть — через магазин.
+- type: entity
+  abstract: true
+  parent: BaseWeaponSniper
+  id: STBaseWeaponSniper
+  name: sniper
+  components:
+  - type: Sprite
+    layers:
+    - state: base
+      map: ["enum.GunVisualLayers.Base"]
+    - map: ["enum.GunVisualLayers.Mag"]
+  - type: GunWieldBonus
+    minAngle: -50
+    maxAngle: -50
+  - type: ContainerContainer
+    containers:
+      ballistic-ammo: !type:Container
+        ents: []
+      gun_module_scope: !type:ContainerSlot {}
+      gun_module_muzzle: !type:ContainerSlot {}
+  - type: ItemSlots
+    slots:
+      gun_module_scope:
+        name: Scope
+        priority: 2
+        whitelist:
+          tags:
+          - STWeaponModuleSniperSight
+      gun_module_muzzle:
+        name: Muzzle
+        priority: 1
+        whitelist:
+          tags:
+          - STWeaponModuleSniperSilencer
+  - type: STWeaponModuleContainer
+  - type: FarGunshot
+    range: 350
+    sound:
+      path: /Audio/_Stalker/Effects/FarGunshots/sniper1.ogg
+
+# ── База револьверов ─────────────────────────────────────────────────────────
+- type: entity
+  abstract: true
+  parent: BaseWeaponRevolver
+  id: STBaseWeaponRevolver
+  name: revolver
+  components:
+  - type: FarGunshot
+    range: 170
+    sound:
+      path: /Audio/_Stalker/Effects/FarGunshots/pistol1.ogg
+
+# ── Базы снарядов (реparent на ванильный BaseBullet) ─────────────────────────
+- type: entity
+  abstract: true
+  parent: BaseBullet
+  id: STBaseLRBullet
+
+- type: entity
+  abstract: true
+  parent: BaseBullet
+  id: STBaseMRBullet
+
+- type: entity
+  abstract: true
+  parent: BaseBullet
+  id: STBaseHRBullet
+
+- type: entity
+  abstract: true
+  parent: BaseBullet
+  id: STBaseSPBullet
+
+# Пистолетные/ПП снаряды (малая дальность)
+- type: entity
+  abstract: true
+  parent: BaseBullet
+  id: STBasePistolBullet
+
+- type: entity
+  abstract: true
+  parent: BaseBullet
+  id: STBase45ACP

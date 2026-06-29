@@ -1,0 +1,8 @@
+# Duty: Замедление после срабатывания эффекта Лазаруса ("Last Standing").
+# Персонаж не падает, но временно медлителен — тело ещё не отошло от шока.
+# Наследуется от ванильного StatusEffectSlowdown (Resources/Prototypes/Entities/StatusEffects/movement.yml).
+
+- type: entity
+  parent: StatusEffectSlowdown
+  id: DutyLazarusSlowdownStatusEffect
+  name: lazarus aftershock slowdown

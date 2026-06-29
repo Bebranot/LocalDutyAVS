@@ -90,6 +90,17 @@ public abstract partial class SharedGunSystem
         Dirty(uid, component);
     }
 
+    // _Duty: легальный сеттер доступных режимов огня (GunComponent.AvailableModes под [Access]).
+    // Нужен системе обвесов STALKER (авто-шептало/glock-switch добавляют FullAuto).
+    public void SetAvailableModes(EntityUid uid, SelectiveFire modes, GunComponent component)
+    {
+        if (component.AvailableModes == modes)
+            return;
+
+        component.AvailableModes = modes;
+        Dirty(uid, component);
+    }
+
     /// <summary>
     /// Cycles the gun's <see cref="SelectiveFire"/> to the next available one.
     /// </summary>

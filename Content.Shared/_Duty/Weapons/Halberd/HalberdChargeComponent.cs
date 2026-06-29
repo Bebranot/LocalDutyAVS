@@ -1,3 +1,4 @@
+using Robust.Shared.Audio;
 using Robust.Shared.GameStates;
 using Robust.Shared.Prototypes;
 
@@ -16,6 +17,10 @@ public sealed partial class HalberdChargeComponent : Component
 
     [DataField]
     public EntityUid? ChargeActionEntity;
+
+    /// <summary>Сохранённое время окончания кулдауна рывка — переживает unwield/wield (баг с пересозданием Action).</summary>
+    [DataField]
+    public TimeSpan ChargeCooldownEnd = TimeSpan.Zero;
 
     // ── Параметры способности ─────────────────────────────────
 
@@ -51,12 +56,35 @@ public sealed partial class HalberdChargeComponent : Component
     [DataField]
     public float KnockdownOnMiss = 2f;
 
+    /// <summary>Замедление при попадании в моба — длительность (секунды). Персонаж не падает, но замедляется.</summary>
+    [DataField]
+    public float HitSlowdownDuration = 3f;
+
+    /// <summary>Множитель скорости при попадании в моба (0.5 = в два раза медленнее).</summary>
+    [DataField]
+    public float HitSlowdownSpeedModifier = 0.5f;
+
+    /// <summary>Звук рывка — зацикленный, играет всё время чарджа, останавливается вручную. Заглушка — звук шагов поставит пользователь позже.</summary>
+    [DataField]
+    public SoundSpecifier ChargeLoopSound = new SoundPathSpecifier("/Audio/_Duty/Weapons/Halberd/HalberdCharge.ogg", AudioParams.Default.WithLoop(true));
+
+    /// <summary>Крик при старте рывка для персонажа мужского пола — случайный из коллекции HalberdChargeCryMale (Resources/Prototypes/_Duty/SoundCollections/halberd_charge_cries.yml). Новые варианты добавляются туда, без правок кода.</summary>
+    [DataField]
+    public SoundSpecifier ChargeCryMaleSound = new SoundCollectionSpecifier("HalberdChargeCryMale");
+
+    /// <summary>Крик при старте рывка для персонажа женского пола — случайный из коллекции HalberdChargeCryFemale (Resources/Prototypes/_Duty/SoundCollections/halberd_charge_cries.yml). Новые варианты добавляются туда, без правок кода.</summary>
+    [DataField]
+    public SoundSpecifier ChargeCryFemaleSound = new SoundCollectionSpecifier("HalberdChargeCryFemale");
+
     // ── Состояние рывка (рантайм) ─────────────────────────────
 
     public bool IsCharging = false;
     public EntityUid? ChargeUser = null;
     public System.Numerics.Vector2 ChargeDirection = System.Numerics.Vector2.Zero;
     public System.Numerics.Vector2 ChargeStartPos = System.Numerics.Vector2.Zero;
+
+    /// <summary>Активный зацикленный звук рывка — нужно остановить вручную при StopCharge.</summary>
+    public EntityUid? ChargeAudioStream = null;
 }
 
 /// <summary>

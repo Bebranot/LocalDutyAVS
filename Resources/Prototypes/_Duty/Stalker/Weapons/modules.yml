@@ -1,0 +1,265 @@
+# Обвесы (модули) — порт из STALKER-14, Фаза 1 DutyAVS.
+# Работают: статы (отдача/скорострел/скорость пули), доп. режимы огня (авто-шептало/glock-switch), визуал.
+# НЕ работают пока: зум-скоупинг (scopeEffect сохранён в YAML, но поведения нет — Фаза 2).
+# Глушители НЕ портированы (пожертвованы).
+
+# ── База модуля ──────────────────────────────────────────────────────────────
+- type: entity
+  parent: BaseItem
+  id: STBaseWeaponModule
+  name: модуль оружия
+  description: Хитро сляпанная приспособа для создания вундервафли.
+  abstract: true
+  components:
+  - type: STWeaponModule
+  - type: Sprite
+    state: icon
+
+# ── Авто-шептало (доп. режим FullAuto) ───────────────────────────────────────
+- type: entity
+  parent: STBaseWeaponModule
+  id: STModuleAutoSear
+  name: авто-шептало
+  description: Делает оружие полностью автоматическим, если ствол это поддерживает. Ставится в пистолеты и некоторые автоматы.
+  suffix: "Duty, Stalker, модуль"
+  components:
+  - type: Tag
+    tags:
+    - STModuleAutoSear
+  - type: STWeaponModule
+    effect:
+      additionalAvailableModes:
+      - FullAuto
+  - type: Sprite
+    sprite: _Stalker/Objects/Weapons/Guns/Ammunition/Modules/autosear.rsi
+    scale: 0.6, 0.6
+
+- type: entity
+  parent: STBaseWeaponModule
+  id: STModuleGlockSwitch
+  name: Glock switch
+  description: Насадка для пистолета Glock, позволяющая вести полностью автоматический огонь. Несовместима с другим оружием.
+  suffix: "Duty, Stalker, модуль"
+  components:
+  - type: Tag
+    tags:
+    - STModuleGlockSwitch
+  - type: STWeaponModule
+    effect:
+      additionalAvailableModes:
+      - FullAuto
+  - type: Sprite
+    sprite: _Stalker/Objects/Weapons/Guns/Ammunition/Modules/autosear.rsi
+    scale: 0.6, 0.6
+
+# ── Грипсы ПП (снижение minAngle) ────────────────────────────────────────────
+- type: entity
+  abstract: true
+  parent: STBaseWeaponModule
+  id: STBaseModuleUnderbarrelSMG
+  name: рукоять
+  components:
+  - type: Sprite
+    sprite: _Stalker/Objects/Weapons/Guns/SMGs/Modules/smg_grips.rsi
+    scale: 0.6, 0.6
+  - type: Icon
+    sprite: _Stalker/Objects/Weapons/Guns/SMGs/Modules/smg_grips.rsi
+    scale: 0.6, 0.6
+
+- type: entity
+  parent: STBaseModuleUnderbarrelSMG
+  id: STModuleSMGGripT1
+  name: кустарная рукоять ПП
+  suffix: "Duty, Stalker, T1"
+  components:
+  - type: Tag
+    tags:
+    - STWeaponModuleSMGGrip
+  - type: STWeaponModule
+    effect:
+      minAngleModifier: 0.9
+  - type: Sprite
+    state: smg_grip_T1
+  - type: Icon
+    state: smg_grip_T1
+
+- type: entity
+  parent: STBaseModuleUnderbarrelSMG
+  id: STModuleSMGGripT2
+  name: заводская рукоять ПП
+  suffix: "Duty, Stalker, T2"
+  components:
+  - type: Tag
+    tags:
+    - STWeaponModuleSMGGrip
+  - type: STWeaponModule
+    effect:
+      minAngleModifier: 0.8
+  - type: Sprite
+    state: smg_grip_T2
+  - type: Icon
+    state: smg_grip_T2
+
+# ── Прицелы рифлов (статы; зум — Фаза 2) ─────────────────────────────────────
+- type: entity
+  abstract: true
+  parent: STBaseWeaponModule
+  id: STBaseModuleScopeRifles
+  name: прицел автомата
+  components:
+  - type: Sprite
+    sprite: _Stalker/Objects/Weapons/Guns/Rifles/Modules/scope.rsi
+    scale: 0.6, 0.6
+  - type: Icon
+    sprite: _Stalker/Objects/Weapons/Guns/Rifles/Modules/scope.rsi
+    scale: 0.6, 0.6
+  - type: STWeaponModule
+    scopeEffect:
+      delay: 0.3
+      requireWielding: true
+      useInHand: false
+
+- type: entity
+  parent: STBaseModuleScopeRifles
+  id: STModuleScopeRiflesT1Ru
+  name: кустарный прицел (РУ)
+  suffix: "Duty, Stalker, T1, RU"
+  components:
+  - type: Tag
+    tags:
+    - STWeaponModuleRifleScopeRu
+  - type: STWeaponModule
+    effect:
+      minAngleModifier: 0.9
+    scopeEffect:
+      delay: 0.3
+      zoom: 1.2
+      offset: 5
+  - type: Sprite
+    state: scope_T1_ru
+  - type: Icon
+    state: scope_T1_ru
+
+- type: entity
+  parent: STBaseModuleScopeRifles
+  id: STModuleScopeRiflesT1Nato
+  name: кустарный прицел (НАТО)
+  suffix: "Duty, Stalker, T1, NATO"
+  components:
+  - type: Tag
+    tags:
+    - STWeaponModuleRifleScopeNato
+  - type: STWeaponModule
+    effect:
+      minAngleModifier: 0.9
+    scopeEffect:
+      delay: 0.3
+      zoom: 1.2
+      offset: 5
+  - type: Sprite
+    state: scope_T1_nato
+  - type: Icon
+    state: scope_T1_nato
+
+- type: entity
+  parent: STBaseModuleScopeRifles
+  id: STModuleScopeRiflesT2Ru
+  name: прицел автомата (РУ)
+  suffix: "Duty, Stalker, T2, RU"
+  components:
+  - type: Tag
+    tags:
+    - STWeaponModuleRifleScopeRu
+  - type: STWeaponModule
+    effect:
+      minAngleModifier: 0.9
+    scopeEffect:
+      delay: 0.3
+      zoom: 1.2
+      offset: 6
+  - type: Sprite
+    state: scope_T2_ru
+  - type: Icon
+    state: scope_T2_ru
+
+- type: entity
+  parent: STBaseModuleScopeRifles
+  id: STModuleScopeRiflesT2Nato
+  name: прицел автомата (НАТО)
+  suffix: "Duty, Stalker, T2, NATO"
+  components:
+  - type: Tag
+    tags:
+    - STWeaponModuleRifleScopeNato
+  - type: STWeaponModule
+    effect:
+      minAngleModifier: 0.8
+    scopeEffect:
+      delay: 0.3
+      zoom: 1.2
+      offset: 6
+  - type: Sprite
+    state: scope_T2_nato
+  - type: Icon
+    state: scope_T2_nato
+
+# ── Снайперские прицелы (статы; зум — Фаза 2; type:Scope выкинут) ─────────────
+- type: entity
+  abstract: true
+  parent: STBaseWeaponModule
+  id: STBaseModuleSniperSight
+  name: снайперский прицел
+  components:
+  - type: Sprite
+    sprite: _Stalker/Objects/Weapons/Guns/Snipers/Modules/sniper_sights.rsi
+    scale: 0.6, 0.6
+  - type: Icon
+    sprite: _Stalker/Objects/Weapons/Guns/Snipers/Modules/sniper_sights.rsi
+    scale: 0.6, 0.6
+  - type: STWeaponModule
+    layer: scope
+    statePostfix: scope
+    scopeEffect:
+      delay: 0.4
+      requireWielding: true
+      useInHand: false
+
+- type: entity
+  parent: STBaseModuleSniperSight
+  id: STModuleSniperSightT1
+  name: кустарный снайперский прицел
+  suffix: "Duty, Stalker, T1"
+  components:
+  - type: Tag
+    tags:
+    - STWeaponModuleSniperSight
+  - type: STWeaponModule
+    effect:
+      minAngleModifier: 0.9
+    scopeEffect:
+      zoom: 1.65
+      offset: 13
+  - type: Sprite
+    state: sniper_sight_T1
+  - type: Icon
+    state: sniper_sight_T1
+
+- type: entity
+  parent: STBaseModuleSniperSight
+  id: STModuleSniperSightT2
+  name: заводской снайперский прицел
+  suffix: "Duty, Stalker, T2"
+  components:
+  - type: Tag
+    tags:
+    - STWeaponModuleSniperSight
+  - type: STWeaponModule
+    effect:
+      minAngleModifier: 0.7
+    scopeEffect:
+      zoom: 1.65
+      offset: 14
+  - type: Sprite
+    state: sniper_sight_T2
+  - type: Icon
+    state: sniper_sight_T2

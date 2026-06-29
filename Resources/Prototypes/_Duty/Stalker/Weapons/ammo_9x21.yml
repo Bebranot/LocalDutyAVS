@@ -1,0 +1,167 @@
+# Боеприпасы 9x21 — порт из STALKER-14. Mutant→Piercing.
+
+# ── Снаряды ──────────────────────────────────────────────────────────────────
+- type: entity
+  id: Bullet921PGJ
+  name: bullet (9x21 auto)
+  parent: STBasePistolBullet
+  categories: [ HideSpawnMenu ]
+  components:
+  - type: TimedDespawn
+    lifetime: 2
+  - type: Projectile
+    projectileClass: 2
+    damage:
+      types:
+        Piercing: 34
+  - type: StaminaDamageOnCollide
+    damage: 4
+
+- type: entity
+  id: Bullet921PEGJ
+  name: bullet (9х21 auto)
+  parent: Bullet921PGJ
+  categories: [ HideSpawnMenu ]
+  components:
+  - type: Projectile
+    projectileClass: 0
+    damage:
+      types:
+        Piercing: 95
+        Blunt: 10
+        Slash: 10
+
+- type: entity
+  id: Bullet921BTGJ
+  name: bullet (9х21 auto)
+  parent: Bullet921PGJ
+  categories: [ HideSpawnMenu ]
+  components:
+  - type: Projectile
+    projectileClass: 3
+    damage:
+      types:
+        Piercing: 33
+
+- type: entity
+  id: Bullet9217N42
+  name: bullet (9х21 auto)
+  parent: Bullet921PGJ
+  categories: [ HideSpawnMenu ]
+  components:
+  - type: Projectile
+    projectileClass: 4
+    damage:
+      types:
+        Piercing: 32
+
+# ── Патроны ──────────────────────────────────────────────────────────────────
+- type: entity
+  id: STCartridge921
+  name: cartridge (9х21 auto)
+  parent: BaseCartridge
+  abstract: true
+  components:
+  - type: Tag
+    tags:
+    - Cartridge
+    - STCartridge921
+  - type: CartridgeAmmo
+    deleteOnSpawn: true
+  - type: Sprite
+    sprite: _Stalker/Objects/Weapons/Guns/Ammunition/Casings/ammo_casing.rsi
+    layers:
+    - state: base
+      map: ["enum.AmmoVisualLayers.Base"]
+  - type: Appearance
+  - type: SpentAmmoVisuals
+    state: "base"
+
+- type: entity
+  id: STCartridge921PGJ
+  name: cartridge 9x21 P
+  suffix: "Stalker"
+  parent: STCartridge921
+  components:
+  - type: CartridgeAmmo
+    proto: Bullet921PGJ
+
+- type: entity
+  id: STCartridge921PEGJ
+  name: cartridge 9x21 PE
+  suffix: "Stalker"
+  parent: STCartridge921
+  components:
+  - type: CartridgeAmmo
+    proto: Bullet921PEGJ
+
+- type: entity
+  id: STCartridge921BTGJ
+  name: cartridge 9x21 BT
+  suffix: "Stalker"
+  parent: STCartridge921
+  components:
+  - type: CartridgeAmmo
+    proto: Bullet921BTGJ
+
+- type: entity
+  id: STCartridge9217N42
+  name: cartridge 9x21 7N42
+  suffix: "Stalker"
+  parent: STCartridge921
+  components:
+  - type: CartridgeAmmo
+    proto: Bullet9217N42
+
+# ── Магазины ─────────────────────────────────────────────────────────────────
+- type: entity
+  id: SR2MMag20
+  name: магазин СР-2М "Вереск" 9х21 (20)
+  description: Магазин 9x21 мм для СР-2М. Вместимость 20.
+  parent: BaseItem
+  suffix: "Duty, Stalker"
+  components:
+  - type: Tag
+    tags:
+    - MagazineSR2M
+  - type: BallisticAmmoProvider
+    mayTransfer: true
+    proto: STCartridge921PGJ
+    whitelist:
+      tags:
+      - STCartridge921
+    capacity: 20
+  - type: Item
+    size: Small
+    shape:
+    - 0,0,0,1
+  - type: ContainerContainer
+    containers:
+      ballistic-ammo: !type:Container
+  - type: Sprite
+    scale: 0.8, 0.8
+    sprite: _Stalker/Objects/Weapons/Guns/Ammunition/Magazines/919/pp-91.rsi
+    layers:
+    - state: base
+      map: ["enum.GunVisualLayers.Base"]
+    - state: mag-1
+      map: ["enum.GunVisualLayers.Mag"]
+  - type: MagazineVisuals
+    magState: mag
+    steps: 2
+    zeroVisible: false
+  - type: Appearance
+
+- type: entity
+  id: SR2MMag30
+  name: магазин СР-2М "Вереск" 9х21 (30)
+  description: Магазин 9x21 мм для СР-2М. Вместимость 30.
+  parent: SR2MMag20
+  components:
+  - type: BallisticAmmoProvider
+    mayTransfer: true
+    proto: STCartridge921PGJ
+    whitelist:
+      tags:
+      - STCartridge921
+    capacity: 30

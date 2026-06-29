@@ -22,6 +22,7 @@ public sealed partial class ChatSystem
         if (message.Length == 0)
             return;
 
+        var rawMessage = message;
         var language = _language.GetCurrentLanguage(source);
         message = TransformSpeech(source, message);
 
@@ -121,7 +122,7 @@ public sealed partial class ChatSystem
         {
             var resultMessage = FormattedMessage.EscapeText(accentMessage);
             var resultObfMessage = FormattedMessage.EscapeText(obfuscatedMessage);
-            RaiseLocalEvent(source, new EntitySpokeEvent(source, resultMessage, message, language, null, resultObfMessage), true);
+            RaiseLocalEvent(source, new EntitySpokeEvent(source, resultMessage, rawMessage, language, null, resultObfMessage), true);
         }
     }
 }

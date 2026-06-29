@@ -1,0 +1,234 @@
+# Боеприпасы 9x39 — порт из STALKER-14. Mutant→Piercing.
+
+# ── Снаряды ──────────────────────────────────────────────────────────────────
+- type: entity
+  parent: STBaseSPBullet
+  id: STBullet9x39
+  abstract: true
+  categories: [ HideSpawnMenu ]
+  components:
+  - type: TimedDespawn
+    lifetime: 6
+  - type: Projectile
+  - type: StaminaDamageOnCollide
+
+- type: entity
+  parent: STBullet9x39
+  id: STBullet9x39PSO
+  categories: [ HideSpawnMenu ]
+  components:
+  - type: Projectile
+    projectileClass: 0
+    damage:
+      types:
+        Blunt: 10
+        Slash: 10
+        Piercing: 110
+  - type: StaminaDamageOnCollide
+    damage: 30
+
+- type: entity
+  parent: STBullet9x39
+  id: STBullet9x39SP6Uch
+  categories: [ HideSpawnMenu ]
+  components:
+  - type: Projectile
+    projectileClass: 1
+    damage:
+      types:
+        Blunt: 5
+  - type: StaminaDamageOnCollide
+    damage: 10
+
+- type: entity
+  parent: STBullet9x39
+  id: STBullet9x39SP5
+  categories: [ HideSpawnMenu ]
+  components:
+  - type: Projectile
+    projectileClass: 2
+    damage:
+      types:
+        Piercing: 36
+  - type: StaminaDamageOnCollide
+    damage: 4
+
+- type: entity
+  parent: STBullet9x39
+  id: STBullet9x39PAB9
+  categories: [ HideSpawnMenu ]
+  components:
+  - type: Projectile
+    projectileClass: 3
+    damage:
+      types:
+        Piercing: 38
+  - type: StaminaDamageOnCollide
+    damage: 6
+
+- type: entity
+  parent: STBullet9x39
+  id: STBullet9x39SP6
+  categories: [ HideSpawnMenu ]
+  components:
+  - type: Projectile
+    projectileClass: 4
+    damage:
+      types:
+        Piercing: 40
+  - type: StaminaDamageOnCollide
+    damage: 8
+
+- type: entity
+  parent: STBullet9x39
+  id: STBullet9x39AA
+  categories: [ HideSpawnMenu ]
+  components:
+  - type: Projectile
+    projectileClass: 5
+    damage:
+      types:
+        Piercing: 42
+  - type: StaminaDamageOnCollide
+    damage: 10
+
+# ── Патроны ──────────────────────────────────────────────────────────────────
+- type: entity
+  parent: BaseCartridge
+  id: STCartridge9x39
+  abstract: true
+  components:
+  - type: Tag
+    tags:
+    - Cartridge
+    - STCartridge939
+  - type: CartridgeAmmo
+    deleteOnSpawn: true
+  - type: Sprite
+    sprite: Objects/Weapons/Guns/Ammunition/Casings/ammo_casing.rsi
+    layers:
+    - state: base
+      map: ["enum.AmmoVisualLayers.Base"]
+  - type: Appearance
+  - type: SpentAmmoVisuals
+    state: "base"
+
+- type: entity
+  parent: STCartridge9x39
+  id: STCartridge9x39PSO
+  name: cartridge 9x39 PSO
+  suffix: "Stalker"
+  components:
+  - type: CartridgeAmmo
+    proto: STBullet9x39PSO
+
+- type: entity
+  parent: STCartridge9x39
+  id: STCartridge9x39SP6Uch
+  name: cartridge 9x39 SP-6U
+  suffix: "Stalker"
+  components:
+  - type: CartridgeAmmo
+    proto: STBullet9x39SP6Uch
+
+- type: entity
+  parent: STCartridge9x39
+  id: STCartridge9x39SP5
+  name: cartridge 9x39 SP-5
+  suffix: "Stalker"
+  components:
+  - type: CartridgeAmmo
+    proto: STBullet9x39SP5
+
+- type: entity
+  parent: STCartridge9x39
+  id: STCartridge9x39PAB9
+  name: cartridge 9x39 PAB-9
+  suffix: "Stalker"
+  components:
+  - type: CartridgeAmmo
+    proto: STBullet9x39PAB9
+
+- type: entity
+  parent: STCartridge9x39
+  id: STCartridge9x39SP6
+  name: cartridge 9x39 SP-6
+  suffix: "Stalker"
+  components:
+  - type: CartridgeAmmo
+    proto: STBullet9x39SP6
+
+- type: entity
+  parent: STCartridge9x39
+  id: STCartridge9x39AA
+  name: cartridge 9x39 BP
+  suffix: "Stalker"
+  components:
+  - type: CartridgeAmmo
+    proto: STBullet9x39AA
+
+# ── Магазины ─────────────────────────────────────────────────────────────────
+- type: entity
+  id: Base939Mag10
+  name: magazine 9x39 (10)
+  suffix: "Duty, Stalker"
+  description: Магазин 9x39 для автоматов и специальных снайперских винтовок. Вместимость 10.
+  parent: BaseItem
+  components:
+  - type: Tag
+    tags:
+    - Magazine939
+  - type: BallisticAmmoProvider
+    mayTransfer: true
+    proto: STCartridge9x39SP5
+    whitelist:
+      tags:
+      - STCartridge939
+    capacity: 10
+  - type: Item
+    size: Small
+    shape:
+    - 0,0,0,0
+  - type: ContainerContainer
+    containers:
+      ballistic-ammo: !type:Container
+  - type: Sprite
+    scale: 0.8, 0.8
+    sprite: _Stalker/Objects/Weapons/Guns/Ammunition/Magazines/939/10.rsi
+    layers:
+    - state: base
+      map: ["enum.GunVisualLayers.Base"]
+    - state: mag-1
+      map: ["enum.GunVisualLayers.Mag"]
+  - type: MagazineVisuals
+    magState: mag
+    steps: 2
+    zeroVisible: false
+  - type: Appearance
+
+- type: entity
+  id: Magazine939x20
+  name: magazine 9x39 (20)
+  suffix: "Duty, Stalker"
+  description: Магазин 9x39, повышенная ёмкость. Вместимость 20.
+  parent: Base939Mag10
+  components:
+  - type: BallisticAmmoProvider
+    mayTransfer: true
+    proto: STCartridge9x39SP5
+    whitelist:
+      tags:
+      - STCartridge939
+    capacity: 20
+  - type: Item
+    size: Small
+    shape:
+    - 0,0,0,1
+  - type: Sprite
+    scale: 0.8, 0.8
+    sprite: _Stalker/Objects/Weapons/Guns/Ammunition/Magazines/939/20.rsi
+    layers:
+    - state: base
+      map: ["enum.GunVisualLayers.Base"]
+    - state: mag-1
+      map: ["enum.GunVisualLayers.Mag"]

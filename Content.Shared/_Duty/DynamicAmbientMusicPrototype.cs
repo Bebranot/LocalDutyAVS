@@ -75,9 +75,13 @@ public sealed class DynamicAmbientMusicPrototype : IPrototype
     [DataField]
     public float CombatLowHpThreshold = 10f;
 
-    /// <summary>Одиночный звук при смерти персонажа.</summary>
+    /// <summary>Список звуков при смерти персонажа. Рандомный выбор.</summary>
     [DataField]
-    public SoundSpecifier? DeathSound = null;
+    public List<SoundSpecifier> DeathSounds = new();
+
+    /// <summary>Список звуков при входе в критическое состояние (MobState.Critical). Рандомный выбор. КД 2 минуты, прерывается fadeout при резком выходе из крита.</summary>
+    [DataField]
+    public List<SoundSpecifier> CritEnterSounds = new();
 
     [DataField] public float CalmMinInterval = 5f;
     [DataField] public float CalmMaxInterval = 50f;
@@ -86,4 +90,10 @@ public sealed class DynamicAmbientMusicPrototype : IPrototype
     [DataField] public float StateTransitionPause = 1.5f;
     [DataField] public float CombatFadeOutDuration = 1.5f;
     [DataField] public float CombatFadeInDuration = 0.5f;
+
+    /// <summary>
+    /// Общий буст громкости (в dB) ко всем категориям динамической музыки/эмбиента.
+    /// Положительное = громче. Применяется поверх индивидуальных громкостей уровней.
+    /// </summary>
+    [DataField] public float VolumeBoostDb = 2f;
 }

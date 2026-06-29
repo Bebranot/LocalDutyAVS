@@ -1,0 +1,433 @@
+# Снайперские винтовки — порт из STALKER-14 (Фаза 1, ваниль-поведение).
+# Болтовки (Мосина, СКС) — на STBaseWeaponSniper (BallisticAmmoProvider в ствол).
+# Магазинные (СВД/Vepr/ВСС/ОСВ) — на STBaseWeaponRifle (ChamberMagazine).
+# Стрип: Scope (RMC14, зум в Фазе 2), FarGunshot, ParticleOnGunShot.
+
+# ── Мосина (болтовка, 7.62x54) ───────────────────────────────────────────────
+- type: entity
+  abstract: true
+  parent: STBaseWeaponSniper
+  id: STBaseWeaponSniperMosin
+  components:
+  - type: Clothing
+    sprite: _Stalker/Objects/Weapons/Guns/Snipers/Mosin.rsi
+  - type: STWeight
+    self: 4.5
+  - type: Item
+    sprite: _Stalker/Objects/Weapons/Guns/Snipers/Mosin.rsi
+  - type: Sprite
+    sprite: _Stalker/Objects/Weapons/Guns/Snipers/Mosin.rsi
+    layers:
+    - state: base
+      map: ["enum.GunVisualLayers.Base"]
+  - type: Gun
+    soundGunshot:
+      path: /Audio/Weapons/Guns/Gunshots/sniper.ogg
+      params:
+        volume: 0.7
+    minAngle: 50
+    maxAngle: 80
+    angleIncrease: 5
+    angleDecay: 25
+    fireRate: 0.6
+  - type: BallisticAmmoProvider
+    proto: STCartridge754FMJ
+    capacity: 5
+    whitelist:
+      tags:
+      - STCartridge754
+
+- type: entity
+  parent: STBaseWeaponSniperMosin
+  id: STWeaponSniperMosin
+  suffix: "Duty, Stalker"
+  name: Мосина
+  description: Легендарная болтовая винтовка Мосина под 7.62x54мм R. Медленная перезарядка и 5 патронов, но огромная останавливающая сила.
+
+# ── СКС (болтовка/самозарядка, 7.62x39) ──────────────────────────────────────
+- type: entity
+  abstract: true
+  parent: STBaseWeaponSniper
+  id: STBaseWeaponSniperSKS
+  components:
+  - type: STWeight
+    self: 3.75
+  - type: Clothing
+    sprite: _Stalker/Objects/Weapons/Guns/Snipers/sks.rsi
+  - type: Item
+    sprite: _Stalker/Objects/Weapons/Guns/Snipers/sks.rsi
+  - type: Sprite
+    sprite: _Stalker/Objects/Weapons/Guns/Snipers/sks.rsi
+    layers:
+    - state: base
+      map: ["enum.GunVisualLayers.Base"]
+  - type: Gun
+    soundGunshot:
+      path: /Audio/_Stalker/Effects/Guns/sks_shoot.ogg
+    minAngle: 50
+    maxAngle: 85
+    angleIncrease: 1.5
+    angleDecay: 30
+    fireRate: 2
+  - type: BallisticAmmoProvider
+    proto: STCartridge739FMJ
+    capacity: 10
+    whitelist:
+      tags:
+      - STCartridge739
+
+- type: entity
+  parent: STBaseWeaponSniperSKS
+  id: STWeaponSniperSKS
+  suffix: "Duty, Stalker"
+  name: СКС
+  description: Самозарядный карабин Симонова под 7.62x39мм с несъёмным магазином на 10 патронов. Мощный калибр по низкой цене.
+
+# ── СВД(С) (магазин, 7.62x54) ────────────────────────────────────────────────
+- type: entity
+  abstract: true
+  parent: STBaseWeaponRifle
+  id: STBaseWeaponRifleSVDS
+  components:
+  - type: STWeight
+    self: 4.8
+  - type: Clothing
+    sprite: _Stalker/Objects/Weapons/Guns/Snipers/SVDS/base.rsi
+  - type: Item
+    sprite: _Stalker/Objects/Weapons/Guns/Snipers/SVDS/base.rsi
+  - type: Sprite
+    sprite: _Stalker/Objects/Weapons/Guns/Snipers/SVDS/base.rsi
+  - type: Gun
+    soundGunshot:
+      path: /Audio/_Stalker/Effects/Guns/svd.ogg
+    minAngle: 50
+    maxAngle: 120
+    angleDecay: 60
+    angleIncrease: 2
+    fireRate: 1
+  - type: ItemSlots
+    slots:
+      gun_magazine:
+        name: Magazine
+        startingItem: 754Mag10
+        priority: 4
+        whitelist:
+          tags:
+          - Magazine754
+      gun_module_scope:
+        name: Scope
+        priority: 3
+        whitelist:
+          tags:
+          - STWeaponModuleSniperSight
+      gun_module_muzzle:
+        name: Muzzle
+        priority: 2
+        whitelist:
+          tags:
+          - STWeaponModuleSniperSilencer
+      gun_chamber:
+        name: Chamber
+        startingItem: STCartridge754FMJ
+        priority: 1
+        whitelist:
+          tags:
+          - STCartridge754
+
+- type: entity
+  parent: STBaseWeaponRifleSVDS
+  id: STWeaponSniperSVDS
+  suffix: "Duty, Stalker"
+  name: СВДС (Драгунова)
+  description: Модернизированная складная версия легендарной СВД под 7.62x54мм R. Любимица меткачей Зоны.
+
+- type: entity
+  parent: STBaseWeaponRifleSVDS
+  id: STWeaponSniperSVDSGrass
+  suffix: "Duty, Stalker"
+  name: СВДС (маскхалат)
+  description: СВДС с маскировочной сеткой и тонкой настройкой для максимальной скрытности.
+  components:
+  - type: Clothing
+    sprite: _Stalker/Objects/Weapons/Guns/Snipers/SVDS/srdcGrass.rsi
+  - type: Item
+    sprite: _Stalker/Objects/Weapons/Guns/Snipers/SVDS/srdcGrass.rsi
+  - type: Sprite
+    sprite: _Stalker/Objects/Weapons/Guns/Snipers/SVDS/srdcGrass.rsi
+
+- type: entity
+  parent: STBaseWeaponRifleSVDS
+  id: STWeaponSniperSVDSCovenant
+  suffix: "Duty, Stalker"
+  name: СВДС "Завет"
+  description: Кастомная СВДС снайперов фракции «Завет». Уникальный камуфляж и маркировки.
+  components:
+  - type: Clothing
+    sprite: _Stalker/Objects/Weapons/Guns/Snipers/SVDS/covenant.rsi
+  - type: Item
+    sprite: _Stalker/Objects/Weapons/Guns/Snipers/SVDS/covenant.rsi
+  - type: Sprite
+    sprite: _Stalker/Objects/Weapons/Guns/Snipers/SVDS/covenant.rsi
+
+- type: entity
+  parent: STBaseWeaponRifleSVDS
+  id: STWeaponSniperSVU
+  suffix: "Duty, Stalker"
+  name: СВУ
+  description: Булл-пап версия СВДС для городских операций. Короче ствол — меньше дальность, но удобнее в тесноте.
+  components:
+  - type: Clothing
+    sprite: _Stalker/Objects/Weapons/Guns/Snipers/SVU/base.rsi
+  - type: Item
+    sprite: _Stalker/Objects/Weapons/Guns/Snipers/SVU/base.rsi
+  - type: Sprite
+    sprite: _Stalker/Objects/Weapons/Guns/Snipers/SVU/base.rsi
+
+- type: entity
+  parent: STBaseWeaponRifleSVDS
+  id: STWeaponSniperSVUSeraphim
+  suffix: "Duty, Stalker"
+  name: СВУ серафимов
+  description: Элитная СВУ таинственной фракции «Серафимы». Белая отделка, продвинутые модификации.
+  components:
+  - type: Clothing
+    sprite: _Stalker/Objects/Weapons/Guns/Snipers/SVU/seraphim.rsi
+  - type: Item
+    sprite: _Stalker/Objects/Weapons/Guns/Snipers/SVU/seraphim.rsi
+  - type: Sprite
+    sprite: _Stalker/Objects/Weapons/Guns/Snipers/SVU/seraphim.rsi
+
+- type: entity
+  parent: STBaseWeaponRifleSVDS
+  id: STWeaponRifleSVDSWood
+  suffix: "Duty, Stalker"
+  name: Самоделка
+  description: Самодельная винтовка под магазин СВД. Кривая, но дико смертоносная.
+  components:
+  - type: STWeight
+    self: 4.8
+  - type: Clothing
+    sprite: _Stalker/Objects/Weapons/Guns/Snipers/SVDS/wood.rsi
+  - type: Item
+    sprite: _Stalker/Objects/Weapons/Guns/Snipers/SVDS/wood.rsi
+  - type: Sprite
+    sprite: _Stalker/Objects/Weapons/Guns/Snipers/SVDS/wood.rsi
+  - type: Gun
+    soundGunshot:
+      path: /Audio/_Stalker/Effects/Guns/svd.ogg
+    minAngle: 50
+    maxAngle: 120
+    angleDecay: 25
+    angleIncrease: 8
+    fireRate: 0.6
+
+# ── ВПО-129 "Vepr" (магазин, 7.62x54) ────────────────────────────────────────
+- type: entity
+  abstract: true
+  parent: STBaseWeaponRifle
+  id: STVBaseWeaponSniperVepr
+  components:
+  - type: STWeight
+    self: 3.2
+  - type: Clothing
+    sprite: _Stalker/Objects/Weapons/Guns/Snipers/VEPR/base.rsi
+  - type: Item
+    sprite: _Stalker/Objects/Weapons/Guns/Snipers/VEPR/base.rsi
+  - type: Sprite
+    sprite: _Stalker/Objects/Weapons/Guns/Snipers/VEPR/base.rsi
+  - type: Gun
+    soundGunshot:
+      path: /Audio/_Stalker/Effects/Guns/svd.ogg
+    minAngle: 50
+    maxAngle: 140
+    angleDecay: 65
+    angleIncrease: 2
+    fireRate: 0.65
+  - type: ItemSlots
+    slots:
+      gun_magazine:
+        name: Magazine
+        startingItem: Base754Mag5
+        priority: 4
+        whitelist:
+          tags:
+          - Magazine754
+      gun_module_scope:
+        name: Scope
+        priority: 3
+        whitelist:
+          tags:
+          - STWeaponModuleSniperSight
+      gun_module_muzzle:
+        name: Muzzle
+        priority: 2
+        whitelist:
+          tags:
+          - STWeaponModuleSniperSilencer
+      gun_chamber:
+        name: Chamber
+        startingItem: STCartridge754FMJ
+        priority: 1
+        whitelist:
+          tags:
+          - STCartridge754
+
+- type: entity
+  parent: STVBaseWeaponSniperVepr
+  id: STWeaponSniperVepr
+  suffix: "Duty, Stalker"
+  name: ВПО-129 "Vepr" 7.62x54
+  description: Гражданский охотничий карабин ВПО-129 на базе легендарного РПК под мощный 7.62x54мм R.
+
+- type: entity
+  parent: STVBaseWeaponSniperVepr
+  id: STWeaponSniperVeprSeraphim
+  suffix: "Duty, Stalker"
+  name: ВПО-129 "Серафим"
+  description: Тактический ВПО-129 с маркировками фракции «Серафимы». Белая отделка.
+  components:
+  - type: Clothing
+    sprite: _Stalker/Objects/Weapons/Guns/Snipers/VEPR/seraphim.rsi
+  - type: Item
+    sprite: _Stalker/Objects/Weapons/Guns/Snipers/VEPR/seraphim.rsi
+  - type: Sprite
+    sprite: _Stalker/Objects/Weapons/Guns/Snipers/VEPR/seraphim.rsi
+
+- type: entity
+  parent: STVBaseWeaponSniperVepr
+  id: STWeaponSniperVeprGrass
+  suffix: "Duty, Stalker"
+  name: ВПО-129 "Трава"
+  description: Мечта кустаря — ВПО-129 с маскировочной сеткой и растительностью для скрытности.
+  components:
+  - type: Clothing
+    sprite: _Stalker/Objects/Weapons/Guns/Snipers/VEPR/trava.rsi
+  - type: Item
+    sprite: _Stalker/Objects/Weapons/Guns/Snipers/VEPR/trava.rsi
+  - type: Sprite
+    sprite: _Stalker/Objects/Weapons/Guns/Snipers/VEPR/trava.rsi
+
+# ── ВСС "Винторез" (магазин, 9x39) ───────────────────────────────────────────
+- type: entity
+  abstract: true
+  parent: STBaseWeaponRifle
+  id: STBaseWeaponSniperVSS
+  components:
+  - type: STWeight
+    self: 2.6
+  - type: Clothing
+    sprite: _Stalker/Objects/Weapons/Guns/Snipers/VSS/base.rsi
+    equipDelay: 1.5
+  - type: Item
+    sprite: _Stalker/Objects/Weapons/Guns/Snipers/VSS/base.rsi
+    shape:
+    - 0,0,5,1
+  - type: Sprite
+    sprite: _Stalker/Objects/Weapons/Guns/Snipers/VSS/base.rsi
+  - type: Gun
+    soundGunshot:
+      path: /Audio/_Stalker/Effects/Guns/n_vintorez_shot.ogg
+      params:
+        volume: -10
+    minAngle: 50
+    maxAngle: 85
+    angleIncrease: 2
+    angleDecay: 20
+    fireRate: 6
+  - type: ItemSlots
+    slots:
+      gun_magazine:
+        name: Magazine
+        startingItem: Base939Mag10
+        priority: 3
+        whitelist:
+          tags:
+          - Magazine939
+      gun_module_scope:
+        name: Scope
+        priority: 2
+        whitelist:
+          tags:
+          - STWeaponModuleSniperSight
+      gun_chamber:
+        name: Chamber
+        startingItem: STCartridge9x39SP5
+        priority: 1
+        whitelist:
+          tags:
+          - STCartridge939
+
+- type: entity
+  parent: STBaseWeaponSniperVSS
+  id: STWeaponSniperVSS
+  suffix: "Duty, Stalker"
+  name: ВСС "Винторез"
+  description: Специальная снайперская винтовка для бесшумной и беспламенной стрельбы. Интегрированный глушитель и оптика, дозвуковой 9x39мм.
+
+- type: entity
+  parent: STBaseWeaponSniperVSS
+  id: STWeaponSniperVSSOracle
+  suffix: "Duty, Stalker"
+  name: ВСС "Оракул"
+  description: Тщательно доработанный «Винторез» с улучшенными характеристиками и следами бережного ухода.
+  components:
+  - type: Clothing
+    sprite: _Stalker/Objects/Weapons/Guns/Snipers/VSS/swamp.rsi
+  - type: Item
+    sprite: _Stalker/Objects/Weapons/Guns/Snipers/VSS/swamp.rsi
+  - type: Sprite
+    sprite: _Stalker/Objects/Weapons/Guns/Snipers/VSS/swamp.rsi
+
+# ── ОСВ-96 "Взломщик" (магазин, 12.7x108) ────────────────────────────────────
+- type: entity
+  abstract: true
+  parent: STBaseWeaponRifle
+  id: STBaseWeaponRifleOSV96
+  components:
+  - type: STWeight
+    self: 5
+  - type: Clothing
+    sprite: _Stalker/Objects/Weapons/Guns/Snipers/osv-96.rsi
+  - type: Item
+    sprite: _Stalker/Objects/Weapons/Guns/Snipers/osv-96.rsi
+  - type: Sprite
+    sprite: _Stalker/Objects/Weapons/Guns/Snipers/osv-96.rsi
+  - type: Gun
+    soundGunshot:
+      path: /Audio/_Stalker/Effects/Guns/osv96.ogg
+    minAngle: 50
+    maxAngle: 120
+    angleDecay: 60
+    angleIncrease: 2
+    fireRate: 0.4
+  - type: ItemSlots
+    slots:
+      gun_magazine:
+        name: Magazine
+        startingItem: 13x108Mag10
+        insertSound: /Audio/_Stalker/Weapons/Guns/RifleGen/MagIn/osv96_magin.ogg
+        ejectSound: /Audio/_Stalker/Weapons/Guns/RifleGen/MagOut/osv96_magout.ogg
+        priority: 3
+        whitelist:
+          tags:
+          - Magazine13x108
+      gun_module_muzzle:
+        name: Muzzle
+        priority: 2
+        whitelist:
+          tags:
+          - STWeaponModuleSniperSilencer
+      gun_chamber:
+        name: Chamber
+        startingItem: STCartridge13x108FMJ
+        priority: 1
+        whitelist:
+          tags:
+          - STCartridge13x108
+
+- type: entity
+  parent: STBaseWeaponRifleOSV96
+  id: STWeaponSniperOSV96
+  suffix: "Duty, Stalker"
+  name: ОСВ-96 "Взломщик"
+  description: Российская самозарядная крупнокалиберная снайперская винтовка под 12,7x108мм. Разработана в Туле в КБ приборостроения.

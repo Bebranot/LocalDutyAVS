@@ -1,0 +1,20 @@
+# _Duty: полоска контузии справа (под HP/голодом/жаждой).
+- type: alertCategory
+  id: Concussion
+
+- type: alert
+  id: Concussion
+  category: Concussion
+  minSeverity: 0
+  maxSeverity: 3
+  icons:
+  - sprite: /Textures/_Duty/Interface/flashbar.rsi
+    state: flash1
+  - sprite: /Textures/_Duty/Interface/flashbar.rsi
+    state: flash2
+  - sprite: /Textures/_Duty/Interface/flashbar.rsi
+    state: flash3
+  - sprite: /Textures/_Duty/Interface/flashbar.rsi
+    state: flash4
+  name: alerts-concussion-name
+  description: alerts-concussion-desc

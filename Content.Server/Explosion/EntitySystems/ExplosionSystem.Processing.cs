@@ -1,4 +1,5 @@
 using System.Numerics;
+using Content.Server._Duty.Concussion; // _Duty
 using Content.Shared.CCVar;
 using Content.Shared.Damage;
 using Content.Shared.Damage.Components;
@@ -23,6 +24,8 @@ namespace Content.Server.Explosion.EntitySystems;
 
 public sealed partial class ExplosionSystem
 {
+    [Dependency] private readonly ConcussionSystem _concussion = default!; // _Duty
+
     /// <summary>
     ///     Used to limit explosion processing time. See <see cref="MaxProcessingTime"/>.
     /// </summary>
@@ -445,6 +448,9 @@ public sealed partial class ExplosionSystem
 
                 // TODO EXPLOSIONS turn explosions into entities, and pass the the entity in as the damage origin.
                 _damageableSystem.TryChangeDamage((entity, damageable), damage, ignoreResistances: true, ignoreGlobalModifiers: true);
+
+                // _Duty: контузия (шкала + звон + затемнение) от близких взрывов, масштаб по урону.
+                _concussion.ApplyExplosionConcussion(entity, damage.GetTotal().Float());
 
                 if (_actorQuery.HasComp(entity))
                 {

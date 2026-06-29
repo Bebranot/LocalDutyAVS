@@ -1,0 +1,156 @@
+# Боеприпасы 7.62x39 — порт из STALKER-14, приведено к ванильной механике.
+# Стрипнуто: STWeight, STBulkBuyable, projectileClass (нет в нашем Projectile),
+# тип урона Mutant (нет у нас) и косметика "резинок" (ItemMapper/item_slot).
+
+# ── Снаряды ──────────────────────────────────────────────────────────────────
+- type: entity
+  id: Bullet739FMJ
+  name: bullet (7.62x39)
+  parent: BaseBullet
+  categories: [ HideSpawnMenu ]
+  components:
+  - type: TimedDespawn
+    lifetime: 6
+  - type: Projectile
+    damage:
+      types:
+        Piercing: 34
+  - type: StaminaDamageOnCollide
+    damage: 4
+
+- type: entity
+  id: Bullet739PC
+  name: bullet (7.62x39)
+  parent: Bullet739FMJ
+  categories: [ HideSpawnMenu ]
+  components:
+  - type: Projectile
+    damage:
+      types:
+        Piercing: 35
+
+- type: entity
+  id: Bullet739BP
+  name: bullet (7.62x39)
+  parent: Bullet739FMJ
+  categories: [ HideSpawnMenu ]
+  components:
+  - type: Projectile
+    damage:
+      types:
+        Piercing: 30
+
+# ── Патроны (гильза + снаряд) ────────────────────────────────────────────────
+- type: entity
+  id: BaseSTCartridge739
+  name: cartridge (7.62x39 rifle)
+  parent: BaseCartridge
+  abstract: true
+  components:
+  - type: Tag
+    tags:
+    - Cartridge
+    - STCartridge739
+  - type: CartridgeAmmo
+    deleteOnSpawn: true
+  - type: Sprite
+    sprite: Objects/Weapons/Guns/Ammunition/Casings/ammo_casing.rsi
+    layers:
+    - state: base
+      map: ["enum.AmmoVisualLayers.Base"]
+  - type: Appearance
+  - type: SpentAmmoVisuals
+    state: "base"
+
+- type: entity
+  id: STCartridge739FMJ
+  name: cartridge (7.62x39) FMJ
+  suffix: "Stalker"
+  parent: BaseSTCartridge739
+  components:
+  - type: CartridgeAmmo
+    proto: Bullet739FMJ
+
+- type: entity
+  id: STCartridge739PC
+  name: cartridge (7.62x39) PS
+  suffix: "Stalker"
+  parent: BaseSTCartridge739
+  components:
+  - type: CartridgeAmmo
+    proto: Bullet739PC
+
+- type: entity
+  id: STCartridge739BP
+  name: cartridge (7.62x39) BP
+  suffix: "Stalker"
+  parent: BaseSTCartridge739
+  components:
+  - type: CartridgeAmmo
+    proto: Bullet739BP
+
+# ── Магазины ─────────────────────────────────────────────────────────────────
+- type: entity
+  id: Base739Mag10
+  name: magazine 7.62x39 (10)
+  suffix: "Duty, Stalker"
+  description: Магазин 7.62x39 для АК. Вместимость 10.
+  parent: BaseItem
+  components:
+  - type: Tag
+    tags:
+    - Magazine739
+  - type: BallisticAmmoProvider
+    mayTransfer: true
+    proto: STCartridge739FMJ
+    whitelist:
+      tags:
+      - STCartridge739
+    capacity: 10
+  - type: Item
+    size: Small
+    shape:
+    - 0,0,0,0
+  - type: ContainerContainer
+    containers:
+      ballistic-ammo: !type:Container
+  - type: Sprite
+    scale: 0.8, 0.8
+    sprite: _Stalker/Objects/Weapons/Guns/Ammunition/Magazines/739/10.rsi
+    layers:
+    - state: base
+      map: ["enum.GunVisualLayers.Base"]
+    - state: mag-1
+      map: ["enum.GunVisualLayers.Mag"]
+  - type: MagazineVisuals
+    magState: mag
+    steps: 2
+    zeroVisible: false
+  - type: Appearance
+
+- type: entity
+  id: Magazine739x30
+  name: magazine 7.62x39 (30)
+  suffix: "Duty, Stalker"
+  description: Магазин 7.62x39 для АК. Вместимость 30.
+  parent: Base739Mag10
+  components:
+  - type: BallisticAmmoProvider
+    mayTransfer: true
+    proto: STCartridge739FMJ
+    whitelist:
+      tags:
+      - STCartridge739
+    capacity: 30
+  - type: Item
+    size: Small
+    shape:
+    - 0,0,0,1
+  - type: Sprite
+    scale: 0.8, 0.8
+    sprite: _Stalker/Objects/Weapons/Guns/Ammunition/Magazines/739/30.rsi
+    layers:
+    - state: base
+      map: ["enum.GunVisualLayers.Base"]
+    - state: mag-1
+      map: ["enum.GunVisualLayers.Mag"]

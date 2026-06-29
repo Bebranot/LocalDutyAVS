@@ -462,6 +462,9 @@ namespace Content.Server.Database
         public List<Trait> Traits { get; } = new();
         public List<Language> Languages { get; } = new(); // ADT Languages
 
+        // Duty HealthPhrases
+        public string? HealthPhrasesJson { get; set; } = null;
+
         public List<ProfileRoleLoadout> Loadouts { get; } = new();
 
         [Column("pref_unavailable")] public DbPreferenceUnavailableMode PreferenceUnavailable { get; set; }

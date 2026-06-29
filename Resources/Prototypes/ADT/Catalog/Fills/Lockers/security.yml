@@ -70,6 +70,7 @@
         prob: 0.5
       - id: BoxSyringe
       - id: BoxPillCanister
+      - id: HyposprayBrigmedic
       - id: BoxBodyBag
       - id: ClothingHandsGlovesNitrile
       - id: ChemistryBottleEpinephrine

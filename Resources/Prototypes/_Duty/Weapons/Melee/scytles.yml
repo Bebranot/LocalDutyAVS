@@ -1,0 +1,45 @@
+- type: entity
+  name: Clockwork scytle
+  parent: BaseItem
+  id: ClockworkScytle
+  description: For the sake of RaTwar!
+  suffix: Duty коса
+  components:
+  - type: MeleeWeapon
+    wideAnimationRotation: -135
+    attackRate: 1.4
+    range: 0.8
+    damage:
+      types:
+        Slash: 10
+  - type: Sharp
+  - type: DamageOtherOnHit
+    damage:
+      types:
+        Slash: 13
+        Piercing: 2
+  - type: Sprite
+    sprite: _Duty/Weapons/Melee/Scytles/Clockwork.rsi
+    state: icon
+  - type: StaminaDamageOnHit
+    damage: 15
+  - type: Item
+    size: Normal
+    sprite: _Duty/Weapons/Melee/Scytles/Clockwork.rsi
+  - type: Appearance
+  - type: Fixtures
+    fixtures:
+      fix1:
+        shape: !type:PhysShapeCircle
+          radius: 0.4
+        density: 5
+        mask:
+        - ItemMask
+        restitution: 0.3
+        friction: 0.2
+  - type: BoomerangItem
+    returnSpeed: 25
+    returnDelay: 0.6
+    spinStrength: -2000
+    flightSound:
+      path: /Audio/_Duty/Weapons/Melee/Scytles/ClockworkScytleFlight.ogg

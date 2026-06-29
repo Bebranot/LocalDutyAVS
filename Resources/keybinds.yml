@@ -22,6 +22,11 @@ binds:
   key: MouseRight
   canFocus: true
   priority: -1 # UIRightClick & EditorCancelPlace should fire first.
+- function: Aim # _Duty: прицеливание для двуручного огнестрела, висит на ПКМ ниже приоритетом чем UseSecondary
+  type: State
+  key: MouseRight
+  canFocus: true
+  priority: -2
 - function: ShowDebugMonitors
   type: Toggle
   key: F3

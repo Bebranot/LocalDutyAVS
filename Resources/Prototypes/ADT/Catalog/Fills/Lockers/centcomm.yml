@@ -10,6 +10,7 @@
     - id: MedkitCombatFilled
     - id: MedkitBruteFilled
     - id: WeaponDisabler
+    - id: DutyHypoBlueShield  
     #- id: ADTUnderwearBoxBlueshield
     - id: ADTClothingHeadsetAltBlueshield
     - id: ADTClothingHeadHatBeretBlueshield

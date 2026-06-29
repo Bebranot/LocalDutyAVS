@@ -253,6 +253,15 @@ public sealed partial class ChatSystem : SharedChatSystem
         if (string.IsNullOrEmpty(message))
             return;
 
+        // _Duty: под баффом морали персонаж всегда добавляет "!" в конце IC-фраз (речь/шёпот).
+        if ((desiredType == InGameICChatType.Speak || desiredType == InGameICChatType.Whisper)
+            && HasComp<Content.Shared._Duty.Weapons.MoraleBuff.MoraleBuffComponent>(source))
+        {
+            var trimmed = message.TrimEnd();
+            if (trimmed.Length > 0 && !trimmed.EndsWith("!"))
+                message = trimmed + "!";
+        }
+
         // This message may have a radio prefix, and should then be whispered to the resolved radio channel
         if (checkRadioPrefix && (language ?? _language.GetCurrentLanguage(source)).LanguageType is Generic gen) // ADT Tweaked
         {

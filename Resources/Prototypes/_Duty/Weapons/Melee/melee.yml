@@ -7,7 +7,7 @@
   parent: BaseItem
   id: DutySamodelBatNails
   description: Деревянная бита, утыканная ржавыми гвоздями. Страшновато выглядит.
-  suffix: Duty, Самодел
+  suffix: Duty Самодел
   components:
   - type: Sprite
     sprite: _Duty/Objects/Weapons/Melee/bat_nails.rsi
@@ -91,7 +91,7 @@
   suffix: Duty, Самодел
   components:
   - type: Sprite
-    sprite: _Duty/Objects/Weapons/Melee/metal_club.rsi
+    sprite: _Duty/Weapons/Melee/bebrabat.rsi
     state: icon
   - type: Item
     size: Normal

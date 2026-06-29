@@ -1,0 +1,139 @@
+# Боеприпасы .44 Remington Magnum (Mateba) — порт из STALKER-14.
+
+# ── Снаряды ──────────────────────────────────────────────────────────────────
+- type: entity
+  parent: STBaseLRBullet
+  id: BulletRemingtonMagnum
+  name: bullet (.44 remington magnum)
+  suffix: "Stalker"
+  categories: [ HideSpawnMenu ]
+  components:
+  - type: Projectile
+    projectileClass: 2
+    damage:
+      types:
+        Piercing: 30
+  - type: StaminaDamageOnCollide
+    damage: 10
+
+- type: entity
+  parent: BulletRemingtonMagnum
+  id: BulletRemingtonMagnumAP
+  name: bullet (.44 remington magnum armor-piercing)
+  suffix: "Stalker"
+  categories: [ HideSpawnMenu ]
+  components:
+  - type: Projectile
+    projectileClass: 3
+    damage:
+      types:
+        Piercing: 35
+  - type: StaminaDamageOnCollide
+    damage: 15
+
+# ── Патроны ──────────────────────────────────────────────────────────────────
+- type: entity
+  parent: BaseCartridge
+  id: BaseCartridgeRemingtonMagnum
+  name: cartridge (.44 remington magnum)
+  abstract: true
+  components:
+  - type: Tag
+    tags:
+    - Cartridge
+    - CartridgeRemingtonMagnum
+  - type: CartridgeAmmo
+    deleteOnSpawn: true
+  - type: Sprite
+    sprite: _Stalker/Objects/Weapons/Guns/Ammunition/Casings/ammo_casing.rsi
+    layers:
+    - state: base
+      map: ["enum.AmmoVisualLayers.Base"]
+  - type: Appearance
+  - type: SpentAmmoVisuals
+    state: "base"
+
+- type: entity
+  parent: BaseCartridgeRemingtonMagnum
+  id: CartridgeRemingtonMagnum
+  name: cartridge .44 remington magnum
+  suffix: "Stalker"
+  components:
+  - type: CartridgeAmmo
+    proto: BulletRemingtonMagnum
+
+- type: entity
+  parent: BaseCartridgeRemingtonMagnum
+  id: CartridgeRemingtonMagnumAP
+  name: cartridge .44 remington magnum AP
+  suffix: "Stalker"
+  components:
+  - type: CartridgeAmmo
+    proto: BulletRemingtonMagnumAP
+
+# ── Спидлоадеры ──────────────────────────────────────────────────────────────
+- type: entity
+  id: BaseSpeedLoaderRemingtonMagnum
+  name: спидлоадер (.44 remington magnum)
+  suffix: "Duty, Stalker"
+  parent: BaseItem
+  abstract: true
+  components:
+  - type: Tag
+    tags:
+    - SpeedLoaderRemingtonMagnum
+  - type: SpeedLoader
+  - type: BallisticAmmoProvider
+    whitelist:
+      tags:
+      - CartridgeRemingtonMagnum
+    capacity: 6
+  - type: ContainerContainer
+    containers:
+      ballistic-ammo: !type:Container
+
+- type: entity
+  parent: BaseSpeedLoaderRemingtonMagnum
+  id: SpeedLoaderRemingtonMagnum
+  components:
+  - type: BallisticAmmoProvider
+    proto: CartridgeRemingtonMagnum
+    whitelist:
+      tags:
+      - CartridgeRemingtonMagnum
+    capacity: 6
+  - type: Sprite
+    sprite: Objects/Weapons/Guns/Ammunition/SpeedLoaders/Magnum/magnum_speed_loader.rsi
+    layers:
+    - state: base
+      map: ["enum.GunVisualLayers.Base"]
+    - state: base-6
+      map: ["enum.GunVisualLayers.Mag"]
+  - type: MagazineVisuals
+    magState: base
+    steps: 7
+    zeroVisible: false
+  - type: Appearance
+
+- type: entity
+  parent: SpeedLoaderRemingtonMagnum
+  id: SpeedLoaderRemingtonMagnumAP
+  components:
+  - type: BallisticAmmoProvider
+    proto: CartridgeRemingtonMagnumAP
+    whitelist:
+      tags:
+      - CartridgeRemingtonMagnum
+    capacity: 6
+
+- type: entity
+  parent: SpeedLoaderRemingtonMagnum
+  id: SpeedLoaderRemingtonMagnumEmpty
+  suffix: "Duty, Stalker, Пустой"
+  components:
+  - type: BallisticAmmoProvider
+    proto: null
+    whitelist:
+      tags:
+      - CartridgeRemingtonMagnum
+    capacity: 6

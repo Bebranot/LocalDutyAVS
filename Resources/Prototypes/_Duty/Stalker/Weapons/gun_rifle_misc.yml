@@ -1,0 +1,900 @@
+# Прочие винтовки STALKER-14: 7.62x51 (FAL/M14/Galatz/SCAR-H), 9x39 (AS-VAL/Гроза),
+# SIG (5.56/7.62x39), VSV (5.45), ОЦ-14 Гроза, скины AK-104/AK-12/AK-15/РПК-16.
+# Scope (зум) стрипнут — Фаза 2. FarGunshot опущен (не портируем).
+
+# ══ 7.62x51 ══════════════════════════════════════════════════════════════════
+- type: entity
+  abstract: true
+  parent: STBaseWeaponRifle
+  id: STBaseWeaponRifleFAL
+  components:
+  - type: STWeight
+    self: 4.5
+  - type: Item
+    sprite: _Stalker/Objects/Weapons/Guns/Rifles/fal.rsi
+  - type: Sprite
+    sprite: _Stalker/Objects/Weapons/Guns/Rifles/fal.rsi
+  - type: Clothing
+    sprite: _Stalker/Objects/Weapons/Guns/Rifles/fal.rsi
+    equipDelay: 3
+  - type: Gun
+    fireRate: 3
+    soundGunshot:
+      path: /Audio/_Stalker/Effects/Guns/fal.ogg
+      params:
+        volume: -2
+    minAngle: 50
+    maxAngle: 120
+    angleIncrease: 5.5
+    angleDecay: 27.5
+    selectedMode: SemiAuto
+    availableModes:
+    - SemiAuto
+  - type: ItemSlots
+    slots:
+      gun_magazine:
+        name: Magazine
+        startingItem: Base751Mag10
+        insertSound: /Audio/_Stalker/Weapons/Guns/RifleGen/MagIn/rifle_magin.ogg
+        ejectSound: /Audio/_Stalker/Weapons/Guns/RifleGen/MagOut/rifle_magout.ogg
+        priority: 4
+        whitelist:
+          tags:
+          - Magazine751
+      gun_module_muzzle:
+        name: Muzzle
+        priority: 3
+        whitelist:
+          tags:
+          - STWeaponModuleRifleSilencerNato
+      gun_chamber:
+        name: Chamber
+        startingItem: Cartridge751M80
+        priority: 1
+        whitelist:
+          tags:
+          - STCartridge751
+  - type: STWeaponDamageFalloff
+    falloffMultiplier: 0.9
+  - type: STWeaponAccuracy
+    accuracyMultiplier: 1.2
+
+- type: entity
+  parent: STBaseWeaponRifleFAL
+  id: STWeaponRifleFAL
+  name: FN FAL
+  suffix: "Duty, Stalker"
+  description: Легендарная бельгийская винтовка под мощный 7.62x51 NATO. Каждый выстрел бьёт как кувалда.
+
+- type: entity
+  abstract: true
+  parent: STBaseWeaponRifle
+  id: STBaseWeaponRifleM14
+  components:
+  - type: STWeight
+    self: 4.5
+  - type: Clothing
+    sprite: _Stalker/Objects/Weapons/Guns/Rifles/m14.rsi
+  - type: Item
+    sprite: _Stalker/Objects/Weapons/Guns/Rifles/m14.rsi
+  - type: Sprite
+    sprite: _Stalker/Objects/Weapons/Guns/Rifles/m14.rsi
+  - type: Gun
+    fireRate: 4
+    soundGunshot:
+      path: /Audio/_Stalker/Effects/Guns/fal.ogg
+      params:
+        volume: -2
+    minAngle: 50
+    maxAngle: 100
+    angleIncrease: 4
+    angleDecay: 27.5
+  - type: ItemSlots
+    slots:
+      gun_magazine:
+        name: Magazine
+        startingItem: Base751Mag10
+        insertSound: /Audio/_Stalker/Weapons/Guns/RifleGen/MagIn/rifle_magin.ogg
+        ejectSound: /Audio/_Stalker/Weapons/Guns/RifleGen/MagOut/rifle_magout.ogg
+        priority: 4
+        whitelist:
+          tags:
+          - Magazine751
+      gun_module_muzzle:
+        name: Muzzle
+        priority: 3
+        whitelist:
+          tags:
+          - STWeaponModuleRifleSilencerNato
+      gun_chamber:
+        name: Chamber
+        startingItem: Cartridge751M80
+        priority: 1
+        whitelist:
+          tags:
+          - STCartridge751
+  - type: STWeaponDamageFalloff
+    falloffMultiplier: 0.9
+  - type: STWeaponAccuracy
+    accuracyMultiplier: 1.2
+
+- type: entity
+  parent: STBaseWeaponRifleM14
+  id: STWeaponRifleM14
+  name: M14
+  suffix: "Duty, Stalker"
+  description: Мощная американская винтовка под 7.62x51 NATO. Дальнобойная, но тяжёлая.
+
+- type: entity
+  abstract: true
+  parent: STBaseWeaponRifle
+  id: STBaseWeaponRifleGalatz
+  components:
+  - type: STWeight
+    self: 3.5
+  - type: Item
+    sprite: _Stalker/Objects/Weapons/Guns/Rifles/galatz.rsi
+  - type: Sprite
+    sprite: _Stalker/Objects/Weapons/Guns/Rifles/galatz.rsi
+  - type: Clothing
+    sprite: _Stalker/Objects/Weapons/Guns/Rifles/galatz.rsi
+  - type: Gun
+    fireRate: 3.5
+    selectedMode: SemiAuto
+    availableModes:
+    - SemiAuto
+    soundGunshot:
+      path: /Audio/_Stalker/Effects/Guns/sks_shoot.ogg
+      params:
+        volume: -2
+    minAngle: 55
+    maxAngle: 110
+    angleIncrease: 1
+    angleDecay: 7.5
+    projectileSpeed: 75
+  - type: ItemSlots
+    slots:
+      gun_magazine:
+        name: Magazine
+        startingItem: Base751Mag10
+        insertSound: /Audio/_Stalker/Weapons/Guns/RifleGen/MagIn/rifle_magin.ogg
+        ejectSound: /Audio/_Stalker/Weapons/Guns/RifleGen/MagOut/rifle_magout.ogg
+        priority: 4
+        whitelist:
+          tags:
+          - Magazine751
+      gun_module_muzzle:
+        name: Muzzle
+        priority: 3
+        whitelist:
+          tags:
+          - STWeaponModuleRifleSilencerNato
+      gun_module_scope:
+        name: Scope
+        priority: 2
+        whitelist:
+          tags:
+          - STWeaponModuleSniperSight
+      gun_chamber:
+        name: Chamber
+        startingItem: Cartridge751M80
+        priority: 1
+        whitelist:
+          tags:
+          - STCartridge751
+  - type: STWeaponDamageFalloff
+    falloffMultiplier: 0.7
+  - type: STWeaponAccuracy
+    accuracyMultiplier: 3
+
+- type: entity
+  parent: STBaseWeaponRifleGalatz
+  id: STWeaponRifleGalatz
+  name: galatz "Wanderer"
+  suffix: "Duty, Stalker"
+  description: Израильская марксманская винтовка под 7.62x51 NATO. Редкость в Зоне.
+
+- type: entity
+  abstract: true
+  parent: STBaseWeaponRifle
+  id: STBaseWeaponRifleSCARH
+  components:
+  - type: STWeight
+    self: 3.5
+  - type: Item
+    sprite: _Stalker/Objects/Weapons/Guns/Rifles/scar.rsi
+  - type: Sprite
+    sprite: _Stalker/Objects/Weapons/Guns/Rifles/scar.rsi
+  - type: Clothing
+    sprite: _Stalker/Objects/Weapons/Guns/Rifles/scar.rsi
+  - type: Gun
+    fireRate: 6.2
+    soundGunshot:
+      path: /Audio/_Stalker/Effects/Guns/scar.ogg
+    minAngle: 50
+    maxAngle: 100
+    angleIncrease: 1.3
+    selectedMode: FullAuto
+    availableModes:
+    - Burst
+    - SemiAuto
+    - FullAuto
+    angleDecay: 8.5
+  - type: ItemSlots
+    slots:
+      gun_magazine:
+        name: Magazine
+        startingItem: Base751Mag10
+        insertSound: /Audio/_Stalker/Weapons/Guns/RifleGen/MagIn/rifle_magin.ogg
+        ejectSound: /Audio/_Stalker/Weapons/Guns/RifleGen/MagOut/rifle_magout.ogg
+        priority: 4
+        whitelist:
+          tags:
+          - Magazine751
+      gun_module_muzzle:
+        name: Muzzle
+        priority: 3
+        whitelist:
+          tags:
+          - STWeaponModuleRifleSilencerNato
+      gun_module_scope:
+        name: Scope
+        priority: 2
+        whitelist:
+          tags:
+          - STWeaponModuleRifleScopeNato
+      gun_chamber:
+        name: Chamber
+        startingItem: Cartridge751M80
+        priority: 1
+        whitelist:
+          tags:
+          - STCartridge751
+  - type: STWeaponDamageFalloff
+    falloffMultiplier: 0.9
+  - type: STWeaponAccuracy
+    accuracyMultiplier: 1.2
+
+- type: entity
+  parent: STBaseWeaponRifleSCARH
+  id: STWeaponRifleSCARH
+  name: FN SCAR-H
+  suffix: "Duty, Stalker"
+  description: Бельгийская винтовка под 7.62x51 NATO. Мощная, но требовательна к уходу.
+
+- type: entity
+  parent: STBaseWeaponRifleSCARH
+  id: STWeaponRifleSCARHShort
+  name: FN SCAR-H CQC
+  suffix: "Duty, Stalker"
+  description: Короткоствольный SCAR-H для ближнего боя. Манёвреннее, но менее точный.
+  components:
+  - type: Clothing
+    sprite: _Stalker/Objects/Weapons/Guns/Rifles/_Skins/scar_short.rsi
+  - type: Item
+    sprite: _Stalker/Objects/Weapons/Guns/Rifles/_Skins/scar_short.rsi
+    shape:
+    - 0,0,4,1
+  - type: Sprite
+    sprite: _Stalker/Objects/Weapons/Guns/Rifles/_Skins/scar_short.rsi
+  - type: STWeaponDamageFalloff
+    falloffMultiplier: 5
+
+- type: entity
+  parent: STBaseWeaponRifleSCARH
+  id: STWeaponRifleARX160
+  name: beretta ARX-160
+  suffix: "Duty, Stalker"
+  description: Итальянская штурмовая винтовка. Легче, но слабее SCAR.
+  components:
+  - type: Clothing
+    sprite: _Stalker/Objects/Weapons/Guns/Rifles/ARX160.rsi
+  - type: Item
+    sprite: _Stalker/Objects/Weapons/Guns/Rifles/ARX160.rsi
+  - type: Sprite
+    sprite: _Stalker/Objects/Weapons/Guns/Rifles/ARX160.rsi
+    scale: 0.75, 0.75
+  - type: Gun
+    angleIncrease: 5
+    angleDecay: 29
+
+# ══ 9x39 (AS-VAL) ════════════════════════════════════════════════════════════
+- type: entity
+  abstract: true
+  parent: STBaseWeaponRifle
+  id: STBaseWeaponRifleASVAL
+  components:
+  - type: STWeight
+    self: 3
+  - type: Clothing
+    sprite: _Stalker/Objects/Weapons/Guns/Rifles/aval.rsi
+  - type: Item
+    sprite: _Stalker/Objects/Weapons/Guns/Rifles/aval.rsi
+  - type: Sprite
+    sprite: _Stalker/Objects/Weapons/Guns/Rifles/aval.rsi
+  - type: Gun
+    soundGunshot:
+      path: /Audio/_Stalker/Effects/Guns/val_shoot.ogg
+    minAngle: 55
+    maxAngle: 90
+    angleIncrease: 3
+    angleDecay: 15
+    fireRate: 10
+    selectedMode: FullAuto
+    availableModes:
+    - SemiAuto
+    - FullAuto
+  - type: ItemSlots
+    slots:
+      gun_magazine:
+        name: Magazine
+        startingItem: Base939Mag10
+        insertSound: /Audio/_Stalker/Weapons/Guns/RifleGen/MagIn/rifle_magin.ogg
+        ejectSound: /Audio/_Stalker/Weapons/Guns/RifleGen/MagOut/rifle_magout.ogg
+        priority: 4
+        whitelist:
+          tags:
+          - Magazine939
+      gun_module_scope:
+        name: Scope
+        priority: 2
+        whitelist:
+          tags:
+          - STWeaponModuleRifleScopeRu
+      gun_chamber:
+        name: Chamber
+        startingItem: STCartridge9x39SP5
+        priority: 1
+        whitelist:
+          tags:
+          - STCartridge939
+  - type: STWeaponDamageFalloff
+    falloffMultiplier: 0.5
+  - type: STWeaponAccuracy
+    accuracyMultiplier: 1.55
+
+- type: entity
+  parent: STBaseWeaponRifleASVAL
+  id: STWeaponRifleASVAL
+  name: AS-VAL
+  suffix: "Duty, Stalker"
+  description: Бесшумное оружие спецназа на базе ВСС «Винторез». Встроенный глушитель, патрон 9x39 с тяжёлой пулей.
+
+- type: entity
+  parent: STBaseWeaponRifleASVAL
+  id: STWeaponRifleASVALSelebra
+  name: AS-VAL "Selebra"
+  suffix: "Duty, Stalker"
+  description: Кастомный AS-VAL в камуфляже «Поиск». Для тихой и эффективной работы.
+  components:
+  - type: Clothing
+    sprite: _Stalker/Objects/Weapons/Guns/Rifles/_Skins/val_poisk.rsi
+  - type: Item
+    sprite: _Stalker/Objects/Weapons/Guns/Rifles/_Skins/val_poisk.rsi
+  - type: Sprite
+    sprite: _Stalker/Objects/Weapons/Guns/Rifles/_Skins/val_poisk.rsi
+
+# ══ SIG (5.56 / 7.62x39) ═════════════════════════════════════════════════════
+- type: entity
+  abstract: true
+  parent: STBaseWeaponRifle
+  id: STBaseWeaponRifleSIG
+  components:
+  - type: STWeight
+    self: 3.5
+  - type: Item
+    sprite: _Stalker/Objects/Weapons/Guns/Rifles/sig-550.rsi
+  - type: Sprite
+    sprite: _Stalker/Objects/Weapons/Guns/Rifles/sig-550.rsi
+  - type: Clothing
+    sprite: _Stalker/Objects/Weapons/Guns/Rifles/sig-550.rsi
+  - type: Gun
+    fireRate: 6
+    soundGunshot:
+      path: /Audio/_Stalker/Effects/Guns/n_sig550_shot.ogg
+      params:
+        volume: -2
+    minAngle: 40
+    maxAngle: 75
+    angleIncrease: 0.7
+    selectedMode: Burst
+    availableModes:
+    - Burst
+    - SemiAuto
+    - FullAuto
+  - type: ItemSlots
+    slots:
+      gun_magazine:
+        name: Magazine
+        startingItem: Base556Mag10
+        insertSound: /Audio/_Stalker/Weapons/Guns/RifleGen/MagIn/rifle_magin.ogg
+        ejectSound: /Audio/_Stalker/Weapons/Guns/RifleGen/MagOut/rifle_magout.ogg
+        priority: 4
+        whitelist:
+          tags:
+          - Magazine556
+      gun_module_muzzle:
+        name: Muzzle
+        priority: 3
+        whitelist:
+          tags:
+          - STWeaponModuleRifleSilencerNato
+      gun_module_scope:
+        name: Scope
+        priority: 2
+        whitelist:
+          tags:
+          - STWeaponModuleRifleScopeNato
+      gun_chamber:
+        name: Chamber
+        startingItem: Cartridge556FMJ
+        priority: 1
+        whitelist:
+          tags:
+          - STCartridge556
+  - type: STWeaponDamageFalloff
+    falloffMultiplier: 0.8
+  - type: STWeaponAccuracy
+    accuracyMultiplier: 1.45
+
+- type: entity
+  parent: STBaseWeaponRifleSIG
+  id: STWeaponRifleSIG550
+  name: SIG SG 550
+  suffix: "Duty, Stalker"
+  description: Швейцарская штурмовая винтовка. Высокая надёжность и точность.
+
+- type: entity
+  parent: STBaseWeaponRifleSIG
+  id: STWeaponRifleSIG550Black
+  name: SIG SG 550
+  suffix: "Duty, Stalker"
+  description: Швейцарская штурмовая винтовка под 5.56x45. Мягкая отдача, высокая точность.
+  components:
+  - type: Item
+    sprite: _Stalker/Objects/Weapons/Guns/Rifles/_Skins/sig-550-black.rsi
+  - type: Sprite
+    sprite: _Stalker/Objects/Weapons/Guns/Rifles/_Skins/sig-550-black.rsi
+  - type: Clothing
+    sprite: _Stalker/Objects/Weapons/Guns/Rifles/_Skins/sig-550-black.rsi
+  - type: Gun
+    soundGunshot:
+      path: /Audio/_Stalker/Effects/Guns/t_sig550_shot.ogg
+
+- type: entity
+  parent: STBaseWeaponRifleSIG
+  id: STWeaponRifleSIG739
+  name: SIG-739 "Precision"
+  suffix: "Duty, Stalker"
+  description: Кастомный снайперский вариант под советский 7.62x39. Идеален для дальнего боя.
+  components:
+  - type: STWeight
+    self: 5
+  - type: Item
+    sprite: _Stalker/Objects/Weapons/Guns/Rifles/_Skins/sigsniper.rsi
+  - type: Sprite
+    sprite: _Stalker/Objects/Weapons/Guns/Rifles/_Skins/sigsniper.rsi
+  - type: Clothing
+    sprite: _Stalker/Objects/Weapons/Guns/Rifles/_Skins/sigsniper.rsi
+  - type: Gun
+    fireRate: 3
+    selectedMode: SemiAuto
+    availableModes:
+    - SemiAuto
+    soundGunshot:
+      path: /Audio/_Stalker/Effects/Guns/sks_shoot.ogg
+    minAngle: 40
+    maxAngle: 100
+    angleIncrease: 2
+    angleDecay: 45
+  - type: ItemSlots
+    slots:
+      gun_magazine:
+        name: Magazine
+        startingItem: Base739Mag10
+        insertSound: /Audio/_Stalker/Weapons/Guns/RifleGen/MagIn/rifle_magin.ogg
+        ejectSound: /Audio/_Stalker/Weapons/Guns/RifleGen/MagOut/rifle_magout.ogg
+        priority: 4
+        whitelist:
+          tags:
+          - Magazine739
+      gun_module_muzzle:
+        name: Muzzle
+        priority: 3
+        whitelist:
+          tags:
+          - STWeaponModuleRifleSilencerNato
+      gun_chamber:
+        name: Chamber
+        startingItem: STCartridge739FMJ
+        priority: 1
+        whitelist:
+          tags:
+          - STCartridge739
+  - type: STWeaponDamageFalloff
+    falloffMultiplier: 0.2
+  - type: STWeaponAccuracy
+    accuracyMultiplier: 3
+
+# ══ VSV (5.45, метро) ════════════════════════════════════════════════════════
+- type: entity
+  parent: STBaseWeaponRifle
+  id: STMetroWeaponRifleVSV
+  name: ВСВ "Глухарь"
+  suffix: "Duty, Stalker"
+  description: Точный и мощный автомат для средней дистанции. Стреляет тише других.
+  components:
+  - type: STWeight
+    self: 2.5
+  - type: Clothing
+    sprite: _Stalker/Objects/Weapons/Guns/Rifles/vsv.rsi
+  - type: Item
+    sprite: _Stalker/Objects/Weapons/Guns/Rifles/vsv.rsi
+  - type: Sprite
+    sprite: _Stalker/Objects/Weapons/Guns/Rifles/vsv.rsi
+  - type: Gun
+    soundGunshot:
+      path: /Audio/_Stalker/Effects/Guns/val_shoot.ogg
+    minAngle: 50
+    maxAngle: 95
+    angleIncrease: 1
+    angleDecay: 15
+    selectedMode: FullAuto
+    availableModes:
+    - SemiAuto
+    - FullAuto
+    fireRate: 6.5
+  - type: ItemSlots
+    slots:
+      gun_magazine:
+        name: Magazine
+        startingItem: Base545Mag10
+        insertSound: /Audio/_Stalker/Weapons/Guns/RifleGen/MagIn/rifle_magin.ogg
+        ejectSound: /Audio/_Stalker/Weapons/Guns/RifleGen/MagOut/rifle_magout.ogg
+        priority: 4
+        whitelist:
+          tags:
+          - Magazine545
+      gun_module_scope:
+        name: Scope
+        priority: 2
+        whitelist:
+          tags:
+          - STWeaponModuleRifleScopeRu
+      gun_chamber:
+        name: Chamber
+        startingItem: STCartridge545FMJ
+        priority: 1
+        whitelist:
+          tags:
+          - STCartridge545
+  - type: STWeaponDamageFalloff
+    falloffMultiplier: 0.5
+  - type: STWeaponAccuracy
+    accuracyMultiplier: 1.55
+
+# ══ ОЦ-14 Гроза (5.45 + 9x39) ════════════════════════════════════════════════
+- type: entity
+  abstract: true
+  parent: STBaseWeaponRifle
+  id: STBaseWeaponRifleOC14
+  components:
+  - type: STWeight
+    self: 3.5
+  - type: Clothing
+    sprite: _Stalker/Objects/Weapons/Guns/Rifles/groza.rsi
+  - type: Item
+    sprite: _Stalker/Objects/Weapons/Guns/Rifles/groza.rsi
+  - type: Sprite
+    sprite: _Stalker/Objects/Weapons/Guns/Rifles/groza.rsi
+  - type: Gun
+    fireRate: 6
+    burstFireRate: 10
+    burstCooldown: 0.25
+    soundGunshot:
+      path: /Audio/_Stalker/Effects/Guns/n_groza_shot.ogg
+      params:
+        volume: -2
+    minAngle: 40
+    maxAngle: 75
+    angleIncrease: 1
+    selectedMode: Burst
+    availableModes:
+    - Burst
+    - SemiAuto
+    - FullAuto
+  - type: ItemSlots
+    slots:
+      gun_magazine:
+        name: Magazine
+        startingItem: Base545Mag10
+        insertSound: /Audio/_Stalker/Weapons/Guns/RifleGen/MagIn/rifle_magin.ogg
+        ejectSound: /Audio/_Stalker/Weapons/Guns/RifleGen/MagOut/rifle_magout.ogg
+        priority: 4
+        whitelist:
+          tags:
+          - Magazine545
+      gun_module_muzzle:
+        name: Muzzle
+        priority: 3
+        whitelist:
+          tags:
+          - STWeaponModuleRifleSilencerRu
+      gun_module_scope:
+        name: Scope
+        priority: 2
+        whitelist:
+          tags:
+          - STWeaponModuleRifleScopeRu
+      gun_chamber:
+        name: Chamber
+        startingItem: STCartridge545FMJ
+        priority: 1
+        whitelist:
+          tags:
+          - STCartridge545
+  - type: STWeaponDamageFalloff
+    falloffMultiplier: 0.8
+  - type: STWeaponAccuracy
+    accuracyMultiplier: 1.45
+
+- type: entity
+  parent: STBaseWeaponRifleOC14
+  id: STWeaponRifleOC14
+  name: OC-14 «Groza»
+  suffix: "Duty, Stalker"
+  description: Компактный и надёжный автоматно-гранатомётный комплекс. Любимец военных сталкеров.
+
+- type: entity
+  parent: STBaseWeaponRifleOC14
+  id: STWeaponRifleOC14Alt
+  name: OC-14 «Groza»
+  suffix: "Duty, Stalker"
+  description: Автоматно-гранатомётный комплекс, унифицированный с АК.
+  components:
+  - type: Item
+    sprite: _Stalker/Objects/Weapons/Guns/Rifles/_Skins/groza-alt.rsi
+  - type: Sprite
+    sprite: _Stalker/Objects/Weapons/Guns/Rifles/_Skins/groza-alt.rsi
+  - type: Clothing
+    sprite: _Stalker/Objects/Weapons/Guns/Rifles/_Skins/groza-alt.rsi
+  - type: Gun
+    soundGunshot:
+      path: /Audio/_Stalker/Effects/Guns/groza_shoot.ogg
+
+- type: entity
+  parent: STBaseWeaponRifleOC14
+  id: STWeaponRifleOC14939
+  name: OC-14 «Groza» 9x39
+  suffix: "Duty, Stalker"
+  description: Вариант ОЦ-14 под 9x39 — пробивает бронежилеты и укрытия.
+  components:
+  - type: ItemSlots
+    slots:
+      gun_magazine:
+        name: Magazine
+        startingItem: Base939Mag10
+        insertSound: /Audio/_Stalker/Weapons/Guns/RifleGen/MagIn/rifle_magin.ogg
+        ejectSound: /Audio/_Stalker/Weapons/Guns/RifleGen/MagOut/rifle_magout.ogg
+        priority: 4
+        whitelist:
+          tags:
+          - Magazine939
+      gun_chamber:
+        name: Chamber
+        startingItem: STCartridge9x39SP5
+        priority: 1
+        whitelist:
+          tags:
+          - STCartridge939
+
+# ══ Скины AK (АК-104 739, АК-12/АК-15/РПК-16) ════════════════════════════════
+- type: entity
+  name: АК-104
+  suffix: "Duty, Stalker"
+  parent: STBaseWeaponRifle
+  id: STWeaponRifleStalkerAK104
+  description: "«Сотая» серия Калашникова: полимерная фурнитура и боковая планка под прицелы."
+  components:
+  - type: STWeight
+    self: 5
+  - type: Clothing
+    sprite: _Stalker/Objects/Weapons/Guns/Rifles/_Skins/ak104.rsi
+  - type: Sprite
+    sprite: _Stalker/Objects/Weapons/Guns/Rifles/_Skins/ak104.rsi
+  - type: Item
+    sprite: _Stalker/Objects/Weapons/Guns/Rifles/_Skins/ak104.rsi
+  - type: Gun
+    soundGunshot:
+      path: /Audio/_Stalker/Effects/Guns/103_shoot.ogg
+    minAngle: 50
+    maxAngle: 100
+    angleIncrease: 1.8
+    angleDecay: 8
+    fireRate: 7
+  - type: ItemSlots
+    slots:
+      gun_magazine:
+        name: Magazine
+        startingItem: Base739Mag10
+        insertSound: /Audio/_Stalker/Weapons/Guns/RifleGen/MagIn/rifle_magin.ogg
+        ejectSound: /Audio/_Stalker/Weapons/Guns/RifleGen/MagOut/rifle_magout.ogg
+        priority: 4
+        whitelist:
+          tags:
+          - Magazine739
+      gun_module_muzzle:
+        name: Muzzle
+        priority: 3
+        whitelist:
+          tags:
+          - STWeaponModuleRifleSilencerRu
+      gun_module_scope:
+        name: Scope
+        priority: 2
+        whitelist:
+          tags:
+          - STWeaponModuleRifleScopeRu
+      gun_chamber:
+        name: Chamber
+        startingItem: STCartridge739FMJ
+        priority: 1
+        whitelist:
+          tags:
+          - STCartridge739
+  - type: STWeaponDamageFalloff
+    falloffMultiplier: 1.2
+  - type: STWeaponAccuracy
+    accuracyMultiplier: 0.9
+
+- type: entity
+  name: АК-12
+  suffix: "Duty, Stalker"
+  parent: STBaseWeaponRifle
+  id: STWeaponRifleStalkerAK12
+  description: "Вершина развития системы АК: продуманная эргономика, повышенная точность и кучность."
+  components:
+  - type: STWeight
+    self: 4.5
+  - type: Clothing
+    sprite: _Stalker/Objects/Weapons/Guns/Rifles/_Skins/ak12.rsi
+  - type: Sprite
+    sprite: _Stalker/Objects/Weapons/Guns/Rifles/_Skins/ak12.rsi
+    scale: 0.7, 0.7
+  - type: Item
+    sprite: _Stalker/Objects/Weapons/Guns/Rifles/_Skins/ak12.rsi
+  - type: Gun
+    soundGunshot:
+      path: /Audio/_Stalker/Effects/Guns/ak.ogg
+    minAngle: 48
+    maxAngle: 95
+    angleIncrease: 0.8
+    fireRate: 7
+  - type: ItemSlots
+    slots:
+      gun_magazine:
+        name: Magazine
+        startingItem: Base545Mag10
+        insertSound: /Audio/_Stalker/Weapons/Guns/RifleGen/MagIn/rifle_magin.ogg
+        ejectSound: /Audio/_Stalker/Weapons/Guns/RifleGen/MagOut/rifle_magout.ogg
+        priority: 4
+        whitelist:
+          tags:
+          - Magazine545
+      gun_module_muzzle:
+        name: Muzzle
+        priority: 3
+        whitelist:
+          tags:
+          - STWeaponModuleRifleSilencerRu
+      gun_module_scope:
+        name: Scope
+        priority: 2
+        whitelist:
+          tags:
+          - STWeaponModuleRifleScopeRu
+      gun_chamber:
+        name: Chamber
+        startingItem: STCartridge545FMJ
+        priority: 1
+        whitelist:
+          tags:
+          - STCartridge545
+  - type: STWeaponAccuracy
+    accuracyMultiplier: 1.2
+  - type: STWeaponDamageFalloff
+    falloffMultiplier: 0.8
+
+- type: entity
+  name: АК-12 серафимов
+  parent: STWeaponRifleStalkerAK12
+  id: STWeaponRifleStalkerAK12Sera
+  suffix: "Duty, Stalker"
+  components:
+  - type: Clothing
+    sprite: _Stalker/Objects/Weapons/Guns/Rifles/_Skins/ak12sera.rsi
+  - type: Sprite
+    sprite: _Stalker/Objects/Weapons/Guns/Rifles/_Skins/ak12sera.rsi
+    scale: 0.7, 0.7
+  - type: Item
+    sprite: _Stalker/Objects/Weapons/Guns/Rifles/_Skins/ak12sera.rsi
+
+- type: entity
+  name: АК-15
+  parent: STWeaponRifleStalkerAK12
+  id: STWeaponRifleStalkerAK15
+  suffix: "Duty, Stalker"
+  description: Пик развития системы АК под 7.62x39.
+  components:
+  - type: Clothing
+    sprite: _Stalker/Objects/Weapons/Guns/Rifles/_Skins/ak15.rsi
+  - type: Sprite
+    sprite: _Stalker/Objects/Weapons/Guns/Rifles/_Skins/ak15.rsi
+    scale: 1, 1
+  - type: Item
+    sprite: _Stalker/Objects/Weapons/Guns/Rifles/_Skins/ak15.rsi
+  - type: Gun
+    fireRate: 8
+    soundGunshot:
+      path: /Audio/_Stalker/Effects/Guns/203_Sound.ogg
+    minAngle: 48
+    maxAngle: 93
+  - type: ItemSlots
+    slots:
+      gun_magazine:
+        name: Magazine
+        startingItem: Base739Mag10
+        insertSound: /Audio/_Stalker/Weapons/Guns/RifleGen/MagIn/rifle_magin.ogg
+        ejectSound: /Audio/_Stalker/Weapons/Guns/RifleGen/MagOut/rifle_magout.ogg
+        priority: 4
+        whitelist:
+          tags:
+          - Magazine739
+      gun_chamber:
+        name: Chamber
+        startingItem: STCartridge739FMJ
+        priority: 1
+        whitelist:
+          tags:
+          - STCartridge739
+
+- type: entity
+  name: РПК-16
+  parent: STWeaponRifleStalkerAK12
+  id: STWeaponRifleStalkerRPK16
+  suffix: "Duty, Stalker"
+  description: Вариация АК-12 под ручной пулемёт.
+  components:
+  - type: Clothing
+    sprite: _Stalker/Objects/Weapons/Guns/Rifles/_Skins/rpk16.rsi
+  - type: Sprite
+    sprite: _Stalker/Objects/Weapons/Guns/Rifles/_Skins/rpk16.rsi
+    scale: 0.7, 0.7
+  - type: Item
+    sprite: _Stalker/Objects/Weapons/Guns/Rifles/_Skins/rpk16.rsi
+  - type: Gun
+    soundGunshot:
+      path: /Audio/_Stalker/Effects/Guns/ak.ogg
+    minAngle: 48
+    maxAngle: 95
+    angleIncrease: 0.8
+    fireRate: 9
+  - type: STWeight
+    self: 5
+  - type: STWeaponAccuracy
+    accuracyMultiplier: 1.3
+
+- type: entity
+  name: РПК-16 "Осень"
+  parent: STWeaponRifleStalkerRPK16
+  id: STWeaponRifleStalkerRPK16Camo
+  suffix: "Duty, Stalker"
+  description: РПК-16 в осеннем камуфляже.
+  components:
+  - type: Clothing
+    sprite: _Stalker/Objects/Weapons/Guns/Rifles/_Skins/rpk16camo.rsi
+  - type: Sprite
+    sprite: _Stalker/Objects/Weapons/Guns/Rifles/_Skins/rpk16camo.rsi
+    scale: 0.7, 0.7
+  - type: Item
+    sprite: _Stalker/Objects/Weapons/Guns/Rifles/_Skins/rpk16camo.rsi

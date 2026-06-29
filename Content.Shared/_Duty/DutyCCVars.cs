@@ -57,6 +57,10 @@ public sealed class DutyCCVars
     public static readonly CVarDef<float> DynamicAmbientMusicVolumeDeath =
         CVarDef.Create("duty.ambient_music_volume_death", 1f, CVar.ARCHIVE | CVar.CLIENTONLY);
 
+    /// <summary>Громкость звука входа в крит (CritEnterSound). Громче остальных по умолчанию.</summary>
+    public static readonly CVarDef<float> DynamicAmbientMusicVolumeCritEnter =
+        CVarDef.Create("duty.ambient_music_volume_crit_enter", 1.4f, CVar.ARCHIVE | CVar.CLIENTONLY);
+
     /// <summary>Доп. усиление critmode-музыки (dB), поверх boost из yml.</summary>
     public static readonly CVarDef<float> DynamicAmbientMusicCritExtraBoostDb =
         CVarDef.Create("duty.ambient_music_crit_extra_boost_db", 2.5f, CVar.ARCHIVE | CVar.CLIENTONLY);
@@ -68,30 +72,6 @@ public sealed class DutyCCVars
     /// <summary>Длительность плавного duck / восстановления (сек).</summary>
     public static readonly CVarDef<float> CritAudioDuckFadeSeconds =
         CVarDef.Create("duty.crit_audio_duck_fade_seconds", 1.5f, CVar.ARCHIVE | CVar.CLIENTONLY);
-
-    /// <summary>
-    /// Секретный API-ключ OpenRouter для NPC-бармена.
-    /// </summary>
-    public static readonly CVarDef<string> BarmanOpenRouterApiKey =
-        CVarDef.Create("duty.barman_openrouter_api_key", string.Empty, CVar.SERVERONLY);
-
-    /// <summary>
-    /// Включена ли долговременная память NPC-бармена.
-    /// </summary>
-    public static readonly CVarDef<bool> BarmanMemoryEnabled =
-        CVarDef.Create("duty.barman_memory_enabled", true, CVar.SERVERONLY);
-
-    /// <summary>
-    /// Путь до sqlite-файла памяти Билли.
-    /// </summary>
-    public static readonly CVarDef<string> BarmanMemoryDbPath =
-        CVarDef.Create("duty.barman_memory_db_path", "Data/barman_memory.db", CVar.SERVERONLY);
-
-    /// <summary>
-    /// Разрешены ли голоса +1/-1 для ответов Билли.
-    /// </summary>
-    public static readonly CVarDef<bool> BarmanFeedbackEnabled =
-        CVarDef.Create("duty.barman_feedback_enabled", true, CVar.SERVERONLY);
 
     // ── Health Phrases ────────────────────────────────────────────────────────
 
@@ -124,4 +104,18 @@ public sealed class DutyCCVars
     /// </summary>
     public static readonly CVarDef<float> HealthPhrasesWhisperMax =
         CVarDef.Create("duty.health_phrases_whisper_max", 300f, CVar.ARCHIVE | CVar.REPLICATED);
+
+    // ── Контузия (оглушение от выстрелов и взрывов) ───────────────────────────
+
+    /// <summary>
+    /// Включена ли система контузии (серверная логика: набор шкалы, импульсы, алерт).
+    /// </summary>
+    public static readonly CVarDef<bool> ConcussionEnabled =
+        CVarDef.Create("duty.concussion_enabled", true, CVar.SERVERONLY);
+
+    /// <summary>
+    /// Включены ли визуально-звуковые эффекты контузии (затемнение экрана, звон в ушах).
+    /// </summary>
+    public static readonly CVarDef<bool> ConcussionEffectsEnabled =
+        CVarDef.Create("duty.concussion_effects_enabled", true, CVar.ARCHIVE | CVar.CLIENTONLY);
 }

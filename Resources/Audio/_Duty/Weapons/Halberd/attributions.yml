@@ -1,0 +1,11 @@
+- files:
+  - HalberdCharge.ogg
+  license: "CC0-1.0"
+  copyright: "Заглушка (placeholder), временно используется largethud.ogg (Made by philRacoIndie freesound.org, modified by brainfood1183 (github)). В будущем будет заменено на звук громких сапог."
+
+- files:
+  - HalberdChargeCryMale.ogg
+  - HalberdChargeCryFemale.ogg
+  license: "CC-BY-SA-3.0"
+  copyright: "Заглушка (placeholder), временно используются malescream_2.ogg/femalescream_2.ogg (/tg/station). Будут заменены на отдельные звуки 'charge callouts' пользователем."
+  source: "https://github.com/tgstation/tgstation/commit/3d049e69fe71a0be2133005e65ea469135d648c8"

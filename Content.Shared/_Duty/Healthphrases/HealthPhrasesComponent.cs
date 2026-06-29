@@ -1,46 +1,49 @@
 using System.Linq;
-using Robust.Shared.GameStates;
 using Robust.Shared.Serialization;
 
 namespace Content.Shared._Duty.HealthPhrases;
 
-[RegisterComponent, AutoGenerateComponentState, NetworkedComponent]
+[RegisterComponent]
 public sealed partial class HealthPhrasesComponent : Component
 {
-    [ViewVariables(VVAccess.ReadWrite), AutoNetworkedField]
+    // Custom*-списки используются только сервером (HealthPhrasesSystem.PickPhrase) для выбора
+    // текста попап/шёпота; сам текст уже приходит клиенту отдельным popup/chat-
+    // сообщением. Репликация самих списков всем клиентам в PVS не нужна и раскрывает
+    // приватный текст игрока всем вокруг, поэтому [AutoNetworkedField] здесь не используется.
+    [ViewVariables(VVAccess.ReadWrite)]
     public List<string> CustomPopup70 = new();
 
-    [ViewVariables(VVAccess.ReadWrite), AutoNetworkedField]
+    [ViewVariables(VVAccess.ReadWrite)]
     public List<string> CustomWhisper70 = new();
 
-    [ViewVariables(VVAccess.ReadWrite), AutoNetworkedField]
+    [ViewVariables(VVAccess.ReadWrite)]
     public List<string> CustomPopup55 = new();
 
-    [ViewVariables(VVAccess.ReadWrite), AutoNetworkedField]
+    [ViewVariables(VVAccess.ReadWrite)]
     public List<string> CustomWhisper55 = new();
 
-    [ViewVariables(VVAccess.ReadWrite), AutoNetworkedField]
+    [ViewVariables(VVAccess.ReadWrite)]
     public List<string> CustomPopup40 = new();
 
-    [ViewVariables(VVAccess.ReadWrite), AutoNetworkedField]
+    [ViewVariables(VVAccess.ReadWrite)]
     public List<string> CustomWhisper40 = new();
 
-    [ViewVariables(VVAccess.ReadWrite), AutoNetworkedField]
+    [ViewVariables(VVAccess.ReadWrite)]
     public List<string> CustomPopup25 = new();
 
-    [ViewVariables(VVAccess.ReadWrite), AutoNetworkedField]
+    [ViewVariables(VVAccess.ReadWrite)]
     public List<string> CustomWhisper25 = new();
 
-    [ViewVariables(VVAccess.ReadWrite), AutoNetworkedField]
+    [ViewVariables(VVAccess.ReadWrite)]
     public List<string> CustomPopup10 = new();
 
-    [ViewVariables(VVAccess.ReadWrite), AutoNetworkedField]
+    [ViewVariables(VVAccess.ReadWrite)]
     public List<string> CustomWhisper10 = new();
 
-    [ViewVariables(VVAccess.ReadWrite), AutoNetworkedField]
+    [ViewVariables(VVAccess.ReadWrite)]
     public List<string> CustomPopup5 = new();
 
-    [ViewVariables(VVAccess.ReadWrite), AutoNetworkedField]
+    [ViewVariables(VVAccess.ReadWrite)]
     public List<string> CustomWhisper5 = new();
 
     [ViewVariables(VVAccess.ReadOnly)]

@@ -2,7 +2,7 @@
  # id: Vulpkanin
   #name: species-name-vulpkanin
   #roundStart: true
-  #sponsorOnly: true # Corvax-Sponsors
+  #sponsorOnly: false #Duty - ХАЛЯВА # Corvax-Sponsors
   #prototype: MobVulpkanin
   #sprites: MobVulpkaninSprites
   #defaultSkinTone: "#eb943d"

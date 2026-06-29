@@ -1,0 +1,538 @@
+# Боеприпасы 9x19 — порт из STALKER-14. Mutant→Piercing.
+
+# ── Снаряды ──────────────────────────────────────────────────────────────────
+- type: entity
+  id: Bullet919PSOGJ
+  name: bullet (9х19 auto)
+  parent: STBasePistolBullet
+  categories: [ HideSpawnMenu ]
+  components:
+  - type: TimedDespawn
+    lifetime: 2
+  - type: Projectile
+    projectileClass: 1
+    damage:
+      types:
+        Piercing: 23
+  - type: StaminaDamageOnCollide
+    damage: 1
+
+- type: entity
+  id: Bullet919PST
+  name: bullet (9х19 auto)
+  parent: Bullet919PSOGJ
+  categories: [ HideSpawnMenu ]
+  components:
+  - type: Projectile
+    projectileClass: 2
+    damage:
+      types:
+        Piercing: 24
+
+- type: entity
+  id: Bullet919RIP
+  name: bullet (9х19 auto)
+  parent: Bullet919PSOGJ
+  categories: [ HideSpawnMenu ]
+  components:
+  - type: Projectile
+    projectileClass: 0
+    damage:
+      types:
+        Piercing: 45
+        Blunt: 5
+        Slash: 5
+
+- type: entity
+  id: Bullet919PBM
+  name: bullet (9х19 auto)
+  parent: Bullet919PSOGJ
+  categories: [ HideSpawnMenu ]
+  components:
+  - type: Projectile
+    projectileClass: 3
+    damage:
+      types:
+        Piercing: 26
+
+# ── Патроны ──────────────────────────────────────────────────────────────────
+- type: entity
+  id: STCartridge919
+  name: cartridge (9х19 auto)
+  parent: BaseCartridge
+  abstract: true
+  components:
+  - type: Tag
+    tags:
+    - Cartridge
+    - STCartridge919
+  - type: CartridgeAmmo
+    deleteOnSpawn: true
+  - type: Sprite
+    sprite: _Stalker/Objects/Weapons/Guns/Ammunition/Casings/ammo_casing.rsi
+    layers:
+    - state: base
+      map: ["enum.AmmoVisualLayers.Base"]
+  - type: Appearance
+  - type: SpentAmmoVisuals
+    state: "base"
+
+- type: entity
+  id: STCartridge919PSOGJ
+  name: cartridge 9x19 PSO
+  suffix: "Stalker"
+  parent: STCartridge919
+  components:
+  - type: CartridgeAmmo
+    proto: Bullet919PSOGJ
+
+- type: entity
+  id: STCartridge919PST
+  name: cartridge 9x19 PST
+  suffix: "Stalker"
+  parent: STCartridge919
+  components:
+  - type: CartridgeAmmo
+    proto: Bullet919PST
+
+- type: entity
+  id: STCartridge919RIP
+  name: cartridge 9x19 RIP
+  suffix: "Stalker"
+  parent: STCartridge919
+  components:
+  - type: CartridgeAmmo
+    proto: Bullet919RIP
+
+- type: entity
+  id: STCartridge919PBM
+  name: cartridge 9x19 PBM
+  suffix: "Stalker"
+  parent: STCartridge919
+  components:
+  - type: CartridgeAmmo
+    proto: Bullet919PBM
+
+# ── Магазины ─────────────────────────────────────────────────────────────────
+- type: entity
+  id: BaseMP5Mag
+  name: магазин МП-5 9x19 (35)
+  description: Магазин 9x19 мм для МП-5. Вместимость 35.
+  parent: BaseItem
+  suffix: "Duty, Stalker"
+  components:
+  - type: Tag
+    tags:
+    - MagazineMP5
+  - type: BallisticAmmoProvider
+    mayTransfer: true
+    proto: STCartridge919PSOGJ
+    whitelist:
+      tags:
+      - STCartridge919
+    capacity: 35
+  - type: Item
+    size: Small
+    shape:
+    - 0,0,0,1
+  - type: ContainerContainer
+    containers:
+      ballistic-ammo: !type:Container
+  - type: Sprite
+    scale: 0.8, 0.8
+    sprite: _Stalker/Objects/Weapons/Guns/Ammunition/Magazines/919/35mp5.rsi
+    layers:
+    - state: base
+      map: ["enum.GunVisualLayers.Base"]
+    - state: mag-1
+      map: ["enum.GunVisualLayers.Mag"]
+  - type: MagazineVisuals
+    magState: mag
+    steps: 2
+    zeroVisible: false
+  - type: Appearance
+
+- type: entity
+  id: MP5Mag50
+  name: магазин МП-5 9x19 (50)
+  description: Магазин на MP-5 9x19. Вместимость 50.
+  parent: BaseMP5Mag
+  components:
+  - type: BallisticAmmoProvider
+    mayTransfer: true
+    proto: STCartridge919PSOGJ
+    whitelist:
+      tags:
+      - STCartridge919
+    capacity: 50
+  - type: Sprite
+    sprite: _Stalker/Objects/Weapons/Guns/Ammunition/Magazines/919/glock/33.rsi
+    layers:
+    - state: base
+      map: ["enum.GunVisualLayers.Base"]
+    - state: mag-1
+      map: ["enum.GunVisualLayers.Mag"]
+
+- type: entity
+  id: BaseGlockMag10
+  name: магазин Glock 9x19 (10)
+  description: Магазин на Glock 9x19. Вместимость 10.
+  parent: BaseMP5Mag
+  components:
+  - type: Tag
+    tags:
+    - MagazineGlock
+  - type: BallisticAmmoProvider
+    mayTransfer: true
+    proto: STCartridge919PSOGJ
+    whitelist:
+      tags:
+      - STCartridge919
+    capacity: 10
+  - type: Item
+    size: Small
+    shape:
+    - 0,0,0,0
+  - type: Sprite
+    scale: 0.8, 0.8
+    sprite: _Stalker/Objects/Weapons/Guns/Ammunition/Magazines/919/glock/10.rsi
+    layers:
+    - state: base
+      map: ["enum.GunVisualLayers.Base"]
+    - state: mag-1
+      map: ["enum.GunVisualLayers.Mag"]
+
+- type: entity
+  id: GlockMag17
+  name: магазин Glock 9x19 (17)
+  description: Магазин на Glock 9x19. Вместимость 17.
+  parent: BaseGlockMag10
+  components:
+  - type: BallisticAmmoProvider
+    mayTransfer: true
+    proto: STCartridge919PSOGJ
+    whitelist:
+      tags:
+      - STCartridge919
+    capacity: 17
+  - type: Sprite
+    scale: 0.8, 0.8
+    sprite: _Stalker/Objects/Weapons/Guns/Ammunition/Magazines/919/glock/17.rsi
+    layers:
+    - state: base
+      map: ["enum.GunVisualLayers.Base"]
+    - state: mag-1
+      map: ["enum.GunVisualLayers.Mag"]
+
+- type: entity
+  id: GlockMag24
+  name: магазин Glock 9x19 (24)
+  description: Магазин на Glock 9x19. Вместимость 24.
+  parent: BaseGlockMag10
+  components:
+  - type: BallisticAmmoProvider
+    mayTransfer: true
+    proto: STCartridge919PSOGJ
+    whitelist:
+      tags:
+      - STCartridge919
+    capacity: 24
+  - type: Item
+    size: Small
+    shape:
+    - 0,0,0,1
+  - type: Sprite
+    scale: 0.8, 0.8
+    sprite: _Stalker/Objects/Weapons/Guns/Ammunition/Magazines/919/glock/24.rsi
+    layers:
+    - state: base
+      map: ["enum.GunVisualLayers.Base"]
+    - state: mag-1
+      map: ["enum.GunVisualLayers.Mag"]
+
+- type: entity
+  id: GlockMag33
+  name: магазин Glock 9x19 (33)
+  description: Магазин на Glock 9x19. Вместимость 33.
+  parent: BaseGlockMag10
+  components:
+  - type: BallisticAmmoProvider
+    mayTransfer: true
+    proto: STCartridge919PSOGJ
+    whitelist:
+      tags:
+      - STCartridge919
+    capacity: 33
+  - type: Item
+    size: Small
+    shape:
+    - 0,0,0,1
+  - type: Sprite
+    scale: 0.8, 0.8
+    sprite: _Stalker/Objects/Weapons/Guns/Ammunition/Magazines/919/glock/33.rsi
+    layers:
+    - state: base
+      map: ["enum.GunVisualLayers.Base"]
+    - state: mag-1
+      map: ["enum.GunVisualLayers.Mag"]
+
+- type: entity
+  id: BaseGSH-18Mag10
+  name: магазин ГШ-18 9x19 (10)
+  description: Магазин на ГШ-18 9x19. Вместимость 10.
+  parent: BaseMP5Mag
+  components:
+  - type: Tag
+    tags:
+    - MagazineGSH-18
+  - type: BallisticAmmoProvider
+    mayTransfer: true
+    proto: STCartridge919PSOGJ
+    whitelist:
+      tags:
+      - STCartridge919
+    capacity: 10
+  - type: Item
+    size: Small
+    shape:
+    - 0,0,0,0
+  - type: Sprite
+    scale: 0.8, 0.8
+    sprite: _Stalker/Objects/Weapons/Guns/Ammunition/Magazines/919/gsh-18/10.rsi
+    layers:
+    - state: base
+      map: ["enum.GunVisualLayers.Base"]
+    - state: mag-1
+      map: ["enum.GunVisualLayers.Mag"]
+  - type: MagazineVisuals
+    magState: mag
+    steps: 5
+    zeroVisible: false
+
+- type: entity
+  id: GSH-18Mag18
+  name: магазин ГШ-18 9x19 (18)
+  description: Магазин на ГШ-18 9x19. Вместимость 18.
+  parent: BaseGSH-18Mag10
+  components:
+  - type: BallisticAmmoProvider
+    mayTransfer: true
+    proto: STCartridge919PSOGJ
+    whitelist:
+      tags:
+      - STCartridge919
+    capacity: 18
+  - type: Item
+    size: Small
+    shape:
+    - 0,0,0,1
+  - type: Sprite
+    scale: 0.8, 0.8
+    sprite: _Stalker/Objects/Weapons/Guns/Ammunition/Magazines/919/gsh-18/18.rsi
+    layers:
+    - state: base
+      map: ["enum.GunVisualLayers.Base"]
+    - state: mag-1
+      map: ["enum.GunVisualLayers.Mag"]
+
+- type: entity
+  id: VityazMag
+  name: магазин ПП-19-01 9x19 (30)
+  description: Магазин 9x19 мм для Витязь. Вместимость 30.
+  parent: BaseMP5Mag
+  components:
+  - type: Tag
+    tags:
+    - MagazineVityaz
+  - type: BallisticAmmoProvider
+    mayTransfer: true
+    proto: STCartridge919PSOGJ
+    whitelist:
+      tags:
+      - STCartridge919
+    capacity: 30
+  - type: Item
+    size: Small
+    shape:
+    - 0,0,0,1
+  - type: Sprite
+    scale: 0.8, 0.8
+    sprite: _Stalker/Objects/Weapons/Guns/Ammunition/Magazines/919/vityaz.rsi
+    layers:
+    - state: base
+      map: ["enum.GunVisualLayers.Base"]
+    - state: mag-1
+      map: ["enum.GunVisualLayers.Mag"]
+
+- type: entity
+  id: BizonMag919
+  name: шнековый магазин 9x19 "Бизон" (64)
+  description: Шнековый магазин на Бизон под 9х19. Вместимость 64.
+  parent: VityazMag
+  components:
+  - type: Tag
+    tags:
+    - MagazineBizon919
+  - type: BallisticAmmoProvider
+    mayTransfer: true
+    proto: STCartridge919PSOGJ
+    whitelist:
+      tags:
+      - STCartridge919
+    capacity: 64
+  - type: Item
+    size: Normal
+    shape:
+    - 0,0,1,1
+  - type: Sprite
+    scale: 0.8, 0.8
+    sprite: _Stalker/Objects/Weapons/Guns/Ammunition/Magazines/919/bizon.rsi
+    layers:
+    - state: base
+      map: ["enum.GunVisualLayers.Base"]
+    - state: mag-1
+      map: ["enum.GunVisualLayers.Mag"]
+
+- type: entity
+  id: BaseTEC9Mag
+  name: магазин TEC-9 9x19 (20)
+  description: Магазин 9x19 для TEC-9. Вместимость 20.
+  parent: BaseMP5Mag
+  components:
+  - type: Tag
+    tags:
+    - MagazineTEC
+  - type: BallisticAmmoProvider
+    mayTransfer: true
+    proto: STCartridge919PSOGJ
+    whitelist:
+      tags:
+      - STCartridge919
+    capacity: 20
+  - type: Item
+    size: Small
+    shape:
+    - 0,0,0,0
+  - type: Sprite
+    sprite: _Stalker/Objects/Weapons/Guns/Ammunition/Magazines/919/tec9.rsi
+    layers:
+    - state: base
+      map: ["enum.GunVisualLayers.Base"]
+    - state: mag-1
+      map: ["enum.GunVisualLayers.Mag"]
+
+- type: entity
+  id: MP40Mag
+  name: магазин MP-40 9x19 (30)
+  description: Магазин 9x19 мм для MP-40. Вместимость 30.
+  parent: BaseMP5Mag
+  components:
+  - type: Tag
+    tags:
+    - MagazineMP40
+  - type: BallisticAmmoProvider
+    mayTransfer: true
+    proto: STCartridge919PSOGJ
+    whitelist:
+      tags:
+      - STCartridge919
+    capacity: 30
+  - type: Item
+    size: Small
+    shape:
+    - 0,0,0,1
+  - type: Sprite
+    scale: 0.8, 0.8
+    sprite: _Stalker/Objects/Weapons/Guns/Ammunition/Magazines/919/vityaz.rsi
+    layers:
+    - state: base
+      map: ["enum.GunVisualLayers.Base"]
+    - state: mag-1
+      map: ["enum.GunVisualLayers.Mag"]
+
+- type: entity
+  id: PP91Mag
+  name: магазин ПП-91 9x19 (30)
+  description: Магазин 9x19 мм для ПП-91 "Кедр". Вместимость 30.
+  parent: BaseMP5Mag
+  components:
+  - type: Tag
+    tags:
+    - MagazinePP91
+  - type: BallisticAmmoProvider
+    mayTransfer: true
+    proto: STCartridge919PSOGJ
+    whitelist:
+      tags:
+      - STCartridge919
+    capacity: 30
+  - type: Item
+    size: Small
+    shape:
+    - 0,0,0,1
+  - type: Sprite
+    scale: 0.8, 0.8
+    sprite: _Stalker/Objects/Weapons/Guns/Ammunition/Magazines/919/pp-91.rsi
+    layers:
+    - state: base
+      map: ["enum.GunVisualLayers.Base"]
+    - state: mag-1
+      map: ["enum.GunVisualLayers.Mag"]
+
+- type: entity
+  id: P90Mag
+  name: магазин P90 9x19 (50)
+  description: Магазин 9x19 мм для P90. Вместимость 50.
+  parent: BaseMP5Mag
+  components:
+  - type: Tag
+    tags:
+    - P90Magazin
+  - type: BallisticAmmoProvider
+    mayTransfer: true
+    proto: STCartridge919PSOGJ
+    whitelist:
+      tags:
+      - STCartridge919
+    capacity: 50
+  - type: Item
+    size: Small
+    shape:
+    - 0,0,0,1
+  - type: Sprite
+    scale: 0.8, 0.8
+    sprite: _Stalker/Objects/Weapons/Guns/Ammunition/Magazines/919/p90.rsi
+    layers:
+    - state: base
+      map: ["enum.GunVisualLayers.Base"]
+    - state: mag-1
+      map: ["enum.GunVisualLayers.Mag"]
+
+- type: entity
+  id: LP08Drum
+  name: барабан Люгера 9x19 (32)
+  description: Барабан для Люгера. Вместимость 32.
+  parent: BaseMP5Mag
+  components:
+  - type: Tag
+    tags:
+    - LugerMagazin
+  - type: BallisticAmmoProvider
+    mayTransfer: true
+    proto: STCartridge919PSOGJ
+    whitelist:
+      tags:
+      - STCartridge919
+    capacity: 32
+  - type: Item
+    size: Normal
+    shape:
+    - 0,0,0,1
+  - type: Sprite
+    scale: 0.7, 0.7
+    sprite: _Stalker/Objects/Weapons/Guns/Ammunition/Magazines/919/luger_drum.rsi
+    layers:
+    - state: base
+      map: ["enum.GunVisualLayers.Base"]
+    - state: mag-1
+      map: ["enum.GunVisualLayers.Mag"]

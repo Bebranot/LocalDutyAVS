@@ -1,0 +1,33 @@
+# _Duty: бафф морали — иконка-статус и визуальный эффект над головой.
+
+# ── Иконка-статус (справа, под здоровьем) ────────────────────
+- type: alert
+  id: DutyMoraleBuff
+  icons:
+  - sprite: /Textures/_Duty/Interface/morale_buff.rsi
+    state: icon
+  name: alerts-morale-buff-name
+  description: alerts-morale-buff-desc
+
+# ── Визуальный эффект над головой (восклицательный знак, ~3с) ──
+# Спавнится на каждую цель баффа и привязывается к ней (следует за персонажем).
+# icon2 рисуется ПОВЕРХ buff (верхний слой).
+- type: entity
+  id: DutyMoraleBuffVisual
+  name: morale
+  categories: [ HideSpawnMenu ]
+  save: false
+  components:
+  - type: Transform
+    noRot: true
+  - type: Sprite
+    sprite: /Textures/_Duty/Interface/morale_buff.rsi
+    state: icon
+    drawdepth: Effects
+    noRot: true
+    offset: 0, 1
+  - type: TimedDespawn
+    lifetime: 3
+  - type: Tag
+    tags:
+    - HideContextMenu

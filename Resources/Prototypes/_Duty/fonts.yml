@@ -2,3 +2,8 @@
 - type: font
   id: Underdog
   path: /Fonts/Duty/Underdog/Underdog-Regular.ttf
+
+# Рукописный шрифт (Google Fonts, OFL) — надпись эффекта Лазаруса. Поддерживает кириллицу.
+- type: font
+  id: Caveat
+  path: /Fonts/Duty/Caveat/Caveat-Regular.ttf

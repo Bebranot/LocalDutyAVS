@@ -10,7 +10,7 @@ using Content.Shared._RMC14.Weapons.Ranged;
 namespace Content.Shared.Weapons.Ranged.Components;
 
 [RegisterComponent, NetworkedComponent, AutoGenerateComponentState(fieldDeltas: true), AutoGenerateComponentPause]
-[Access(typeof(SharedGunSystem), typeof(RMCSelectiveFireSystem))] // ADT TWEAK
+[Access(typeof(SharedGunSystem), typeof(RMCSelectiveFireSystem), typeof(Content.Shared._Duty.Aiming.SharedAimingSystem))] // ADT TWEAK // _Duty: прицеливание клэмпит итоговые углы разброса
 public sealed partial class GunComponent : Component
 {
     #region Sound

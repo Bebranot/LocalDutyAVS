@@ -1,0 +1,134 @@
+# Боеприпасы 12.7x55 (АШ-12 / РШ-12) — порт из STALKER-14.
+
+# ── Снаряды ──────────────────────────────────────────────────────────────────
+- type: entity
+  id: Bullet1255PS12A
+  name: bullet (12,7x55)
+  parent: STBaseSPBullet
+  categories: [ HideSpawnMenu ]
+  components:
+  - type: TimedDespawn
+    lifetime: 4
+  - type: Projectile
+    projectileClass: 1
+    damage:
+      types:
+        Blunt: 6
+        Slash: 6
+        Piercing: 44.5
+  - type: StaminaDamageOnCollide
+    damage: 5
+
+- type: entity
+  id: Bullet1255TP
+  name: bullet (12,7x55)
+  parent: Bullet1255PS12A
+  categories: [ HideSpawnMenu ]
+  components:
+  - type: Projectile
+    projectileClass: 2
+    damage:
+      types:
+        Blunt: 6.5
+        Slash: 6.5
+        Piercing: 54
+
+- type: entity
+  id: Bullet1255BP
+  name: bullet (12,7x55)
+  parent: Bullet1255PS12A
+  categories: [ HideSpawnMenu ]
+  components:
+  - type: Projectile
+    projectileClass: 4
+    damage:
+      types:
+        Piercing: 65
+
+# ── Патроны ──────────────────────────────────────────────────────────────────
+- type: entity
+  id: BaseSTCartridge1255
+  name: cartridge (12,7x55)
+  parent: BaseCartridge
+  abstract: true
+  components:
+  - type: Tag
+    tags:
+    - Cartridge
+    - STCartridge1255
+  - type: CartridgeAmmo
+    deleteOnSpawn: true
+  - type: Sprite
+    sprite: _Stalker/Objects/Weapons/Guns/Ammunition/Casings/ammo_casing.rsi
+    layers:
+    - state: base
+      map: ["enum.AmmoVisualLayers.Base"]
+  - type: Appearance
+  - type: SpentAmmoVisuals
+    state: "base"
+
+- type: entity
+  id: STCartridge1255PS12A
+  name: cartridge 12.7x55 PS12A
+  suffix: "Stalker"
+  parent: BaseSTCartridge1255
+  components:
+  - type: CartridgeAmmo
+    proto: Bullet1255PS12A
+
+- type: entity
+  id: STCartridge1255TP
+  name: cartridge 12.7x55 TP
+  suffix: "Stalker"
+  parent: BaseSTCartridge1255
+  components:
+  - type: CartridgeAmmo
+    proto: Bullet1255TP
+
+- type: entity
+  id: STCartridge1255BP
+  name: cartridge 12.7x55 BP
+  suffix: "Stalker"
+  parent: BaseSTCartridge1255
+  components:
+  - type: CartridgeAmmo
+    proto: Bullet1255BP
+
+# ── Магазины ─────────────────────────────────────────────────────────────────
+- type: entity
+  id: AS12Mag
+  name: магазин АШ-12 (20)
+  description: Магазин 12,7x55 для АШ-12. Вместимость 20.
+  parent: BaseItem
+  suffix: "Duty, Stalker"
+  components:
+  - type: Tag
+    tags:
+    - MagazineAS12
+  - type: BallisticAmmoProvider
+    mayTransfer: true
+    proto: STCartridge1255PS12A
+    whitelist:
+      tags:
+      - STCartridge1255
+    capacity: 20
+  - type: Item
+    size: Small
+    shape:
+    - 0,0,0,1
+  - type: ContainerContainer
+    containers:
+      ballistic-ammo: !type:Container
+  - type: Sprite
+    scale: 0.8, 0.8
+    sprite: _Stalker/Objects/Weapons/Guns/Ammunition/Magazines/919/pp-91.rsi
+    layers:
+    - state: base
+      map: ["enum.GunVisualLayers.Base"]
+    - state: mag-1
+      map: ["enum.GunVisualLayers.Mag"]
+  - type: MagazineVisuals
+    magState: mag
+    steps: 2
+    zeroVisible: false
+  - type: Appearance

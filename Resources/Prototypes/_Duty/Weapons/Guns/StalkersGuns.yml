@@ -321,7 +321,7 @@
 # ── Сайга-12 ─────────────────────────────────────────────────
 - type: entity
   name: Сайга-12
-  parent: [BaseItem, BaseGunWieldable, BaseSecurityContraband]
+  parent: [BaseItem, BaseWeaponRifle, BaseSecurityContraband]
   id: DutyGunSaiga12
   description: Самозарядный дробовик на базе АК. Опустошителен на близкой дистанции.
   suffix: Duty, Огнестрел

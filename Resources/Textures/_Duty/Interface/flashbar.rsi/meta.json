@@ -1,0 +1,23 @@
+{
+  "version": 1,
+  "license": "CC0-1.0",
+  "copyright": "Created by EmoGarbage404 (github) for Space Station 14, edited for LocalDuty",
+  "size": {
+    "x": 32,
+    "y": 32
+  },
+  "states": [
+    {
+      "name": "flash1"
+    },
+    {
+      "name": "flash2"
+    },
+    {
+      "name": "flash3"
+    },
+    {
+      "name": "flash4"
+    }
+  ]
+}

@@ -10,6 +10,8 @@ using Content.Shared.Damage.Systems;
 using Content.Shared.FixedPoint;
 using Content.Shared.Hands;
 using Content.Shared.Hands.EntitySystems;
+using Content.Shared.Humanoid;
+using Content.Shared.Movement.Systems;
 using Content.Shared.Physics;
 using Content.Shared.Popups;
 using Content.Shared.Stunnable;
@@ -23,6 +25,7 @@ using Robust.Shared.Maths;
 using Robust.Shared.Physics;
 using Robust.Shared.Physics.Components;
 using Robust.Shared.Physics.Systems;
+using Robust.Shared.Prototypes;
 using Robust.Shared.Random;
 using Robust.Shared.Timing;
 
@@ -30,6 +33,8 @@ namespace Content.Server._Duty.Weapons.Halberd;
 
 public sealed class HalberdChargeSystem : EntitySystem
 {
+    private static readonly EntProtoId HalberdChargeHitSlowdownEffect = "HalberdChargeHitSlowdownStatusEffect";
+
     [Dependency] private readonly SharedActionsSystem _actions = default!;
     [Dependency] private readonly SharedHandsSystem _hands = default!;
     [Dependency] private readonly SharedStunSystem _stun = default!;
@@ -42,6 +47,9 @@ public sealed class HalberdChargeSystem : EntitySystem
     [Dependency] private readonly SharedTransformSystem _transform = default!;
     [Dependency] private readonly IRobustRandom _random = default!;
     [Dependency] private readonly SharedAudioSystem _audio = default!;
+    [Dependency] private readonly MovementModStatusSystem _movementMod = default!;
+
+    private readonly HashSet<EntityUid> _chargeIntersecting = new();
 
     public override void Initialize()
     {
@@ -55,6 +63,10 @@ public sealed class HalberdChargeSystem : EntitySystem
 
         // Резист во время рывка — перехватываем урон до его применения
         SubscribeLocalEvent<HalberdChargeResistComponent, BeforeDamageChangedEvent>(OnBeforeDamage);
+
+        // Прерываем рывок если игрок ложится во время рывка (бинд "легание", лужи и т.д.).
+        // HalberdChargeResistComponent вешается на юзера только на время рывка — используем его как маркер.
+        SubscribeLocalEvent<HalberdChargeResistComponent, KnockDownAttemptEvent>(OnChargingKnockDownAttempt);
 
         // Не дропать алебарду при стане
         SubscribeLocalEvent<HalberdChargeComponent, KnockDownAttemptEvent>(OnKnockDownAttempt);
@@ -93,20 +105,58 @@ public sealed class HalberdChargeSystem : EntitySystem
 
     private void OnWielded(EntityUid uid, HalberdChargeComponent comp, ItemWieldedEvent args)
     {
-        // AddAction с существующим ChargeActionEntity просто привязывает его к юзеру
-        // кулдаун в ActionComponent сохраняется автоматически
+        // AddAction с существующим ChargeActionEntity просто привязывает его к юзеру.
+        // Но после unwield ChargeActionEntity занулён (см. OnUnwielded) — AddAction создаёт с нуля.
+        // Поэтому кулдаун восстанавливается вручную из comp.ChargeCooldownEnd ниже.
         _actions.AddAction(args.User, ref comp.ChargeActionEntity, comp.ChargeActionId);
+
+        // Восстанавливаем кулдаун, если он ещё не истёк на момент повторного wield (баг с ресетом при выбросе/подъёме).
+        var curTime = _timing.CurTime;
+        if (comp.ChargeCooldownEnd > curTime && comp.ChargeActionEntity.HasValue)
+            _actions.SetCooldown(comp.ChargeActionEntity.Value, curTime, comp.ChargeCooldownEnd);
     }
 
     private void OnUnwielded(EntityUid uid, HalberdChargeComponent comp, ItemUnwieldedEvent args)
     {
-        // Убираем action при unwield/выброске
+        // Сохраняем время окончания кулдауна до удаления Action, иначе он потеряется при пересоздании.
+        if (comp.ChargeActionEntity.HasValue
+            && _actions.GetAction(comp.ChargeActionEntity.Value) is { } actionEnt
+            && actionEnt.Comp.Cooldown is { } cooldown)
+        {
+            comp.ChargeCooldownEnd = cooldown.End;
+        }
+
+        // убираем action при unwield/выброске
         _actions.RemoveAction(comp.ChargeActionEntity);
         comp.ChargeActionEntity = null;
 
         // Прерываем рывок если он шёл
         if (comp.IsCharging)
             StopCharge(uid, comp, ChargeEndReason.Miss);
+    }
+
+    // ── Легание во время рывка ────────────────────────
+
+    private void OnChargingKnockDownAttempt(Entity<HalberdChargeResistComponent> ent, ref KnockDownAttemptEvent args)
+    {
+        // Игрок ложится (бинд/лужа/чужой stun) во время активного рывка.
+        // Алебарду не дропаем, рывок прерываем — IC-реплика "БЛЯТЬ!!" есть, но без вскрика-звука и без удара в стену.
+        args.Drop = false;
+
+        var halberdUid = FindChargingHalberd(ent.Owner);
+        if (halberdUid is { } uid && TryComp<HalberdChargeComponent>(uid, out var comp) && comp.IsCharging)
+            StopCharge(uid, comp, ChargeEndReason.KnockedDown);
+    }
+
+    private EntityUid? FindChargingHalberd(EntityUid user)
+    {
+        foreach (var held in _hands.EnumerateHeld(user))
+        {
+            if (TryComp<HalberdChargeComponent>(held, out var comp) && comp.IsCharging && comp.ChargeUser == user)
+                return held;
+        }
+
+        return null;
     }
 
     // ── Резист ────────────────────────────────────────────────
@@ -175,9 +225,16 @@ public sealed class HalberdChargeSystem : EntitySystem
         comp.ChargeDirection = direction;
         comp.ChargeStartPos = userPos;
 
-        // Звук и крик старта
-        _audio.PlayPvs(new SoundPathSpecifier("/Audio/Voice/Human/malescream_2.ogg"), user);
-        _chat.TrySendInGameICMessage(user, "АААААА!!!", InGameICChatType.Speak, false);
+        // Звук и крик старта — звук подбирается по полу персонажа
+        var crySound = CompOrNull<HumanoidAppearanceComponent>(user)?.Sex == Sex.Female
+            ? comp.ChargeCryFemaleSound
+            : comp.ChargeCryMaleSound;
+        _audio.PlayPvs(crySound, user);
+        _chat.TrySendInGameICMessage(user, Loc.GetString("halberd-charge-cry-start"), InGameICChatType.Speak, false);
+
+        // Зацикленный звук рывка (заглушка — звук шагов) — играет всю длительность рывка, стоится вручную в StopCharge.
+        var chargeAudio = _audio.PlayPvs(comp.ChargeLoopSound, user);
+        comp.ChargeAudioStream = chargeAudio?.Entity;
 
         // Резист
         var resist = EnsureComp<HalberdChargeResistComponent>(user);
@@ -231,10 +288,10 @@ public sealed class HalberdChargeSystem : EntitySystem
 
         // Проверяем коллизии — только Hard тела (жидкости, декали игнорируются)
         var box = new Box2(userPos - new Vector2(0.45f, 0.45f), userPos + new Vector2(0.45f, 0.45f));
-        var intersecting = new HashSet<EntityUid>();
-        _lookup.GetEntitiesIntersecting(Transform(user).MapID, box, intersecting, LookupFlags.Dynamic | LookupFlags.Static);
+        _chargeIntersecting.Clear();
+        _lookup.GetEntitiesIntersecting(Transform(user).MapID, box, _chargeIntersecting, LookupFlags.Dynamic | LookupFlags.Static);
 
-        foreach (var target in intersecting)
+        foreach (var target in _chargeIntersecting)
         {
             if (target == user || target == halberdUid)
                 continue;
@@ -274,7 +331,7 @@ public sealed class HalberdChargeSystem : EntitySystem
         _damageable.TryChangeDamage(target, damage, origin: user);
 
         _audio.PlayPvs(new SoundPathSpecifier("/Audio/Weapons/slash.ogg"), user);
-        _chat.TrySendInGameICMessage(user, "НААА!!!", InGameICChatType.Speak, false);
+        _chat.TrySendInGameICMessage(user, Loc.GetString("halberd-charge-cry-hit"), InGameICChatType.Speak, false);
     }
 
     // ── Завершение рывка ──────────────────────────────────────
@@ -286,23 +343,43 @@ public sealed class HalberdChargeSystem : EntitySystem
         comp.IsCharging = false;
         comp.ChargeUser = null;
 
+        // Останавливаем зацикленный звук рывка
+        _audio.Stop(comp.ChargeAudioStream);
+        comp.ChargeAudioStream = null;
+
         RestoreChargePhysics(user);
 
         // Убираем резист
         RemCompDeferred<HalberdChargeResistComponent>(user);
 
-        // Звуки по ситуации
+        // Реакция по ситуации
         switch (reason)
         {
             case ChargeEndReason.Wall:
                 _audio.PlayPvs(new SoundPathSpecifier("/Audio/Effects/metal_slam1.ogg"), user);
-                var cry = _random.Pick(new[] { "СУКА!!", "БЛЯТЬ!!!" });
+                var cry = Loc.GetString(_random.Pick(new[] { "halberd-charge-cry-wall-1", "halberd-charge-cry-wall-2" }));
                 _chat.TrySendInGameICMessage(user, cry, InGameICChatType.Speak, false);
+                _stun.TryKnockdown(user, TimeSpan.FromSeconds(comp.KnockdownOnHitWall), true);
+                break;
+
+            case ChargeEndReason.HitEntity:
+                // Попадание в моба — персонаж остаётся на ногах, но замедляется. Алебарда остаётся в руках.
+                _movementMod.TryAddMovementSpeedModDuration(
+                    user,
+                    HalberdChargeHitSlowdownEffect,
+                    TimeSpan.FromSeconds(comp.HitSlowdownDuration),
+                    comp.HitSlowdownSpeedModifier);
+                break;
+
+            case ChargeEndReason.Miss:
+                _stun.TryKnockdown(user, TimeSpan.FromSeconds(comp.KnockdownOnMiss), true);
+                break;
+
+            case ChargeEndReason.KnockedDown:
+                // Игрока уже укладывает исходное событие (легание/лужа/чужой stun) — повторный стан не нужен.
+                _chat.TrySendInGameICMessage(user, Loc.GetString("halberd-charge-cry-knockdown"), InGameICChatType.Speak, false);
                 break;
         }
-
-        // Стан 2 сек во всех случаях
-        _stun.TryKnockdown(user, TimeSpan.FromSeconds(2f), true);
 
         // Кулдаун на action (кулдаун хранится в ActionComponent и не теряется при unwield/wield)
         if (comp.ChargeActionEntity.HasValue)
@@ -375,4 +452,5 @@ public enum ChargeEndReason
     HitEntity,
     Wall,
     Miss,
+    KnockedDown,
 }

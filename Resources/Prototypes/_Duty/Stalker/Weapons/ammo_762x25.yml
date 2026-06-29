@@ -1,0 +1,230 @@
+# Боеприпасы 7.62x25 (TT) — порт из STALKER-14. Mutant→Piercing.
+
+# ── Снаряды ──────────────────────────────────────────────────────────────────
+- type: entity
+  id: Bullet725PGL
+  name: bullet (7.62х25)
+  parent: STBasePistolBullet
+  categories: [ HideSpawnMenu ]
+  components:
+  - type: TimedDespawn
+    lifetime: 2
+  - type: Projectile
+    projectileClass: 1
+    damage:
+      types:
+        Piercing: 20
+  - type: StaminaDamageOnCollide
+    damage: 1
+
+- type: entity
+  id: Bullet725PTGJ
+  name: bullet (7.62х25)
+  parent: Bullet725PGL
+  categories: [ HideSpawnMenu ]
+  components:
+  - type: Projectile
+    projectileClass: 2
+    damage:
+      types:
+        Piercing: 22
+
+- type: entity
+  id: Bullet725LRNPC
+  name: bullet (7.62х25)
+  parent: Bullet725PGL
+  categories: [ HideSpawnMenu ]
+  components:
+  - type: Projectile
+    projectileClass: 0
+    damage:
+      types:
+        Piercing: 45
+        Blunt: 10
+        Slash: 10
+
+- type: entity
+  id: Bullet725PSTGJ
+  name: bullet (7.62х25)
+  parent: Bullet725PGL
+  categories: [ HideSpawnMenu ]
+  components:
+  - type: Projectile
+    projectileClass: 3
+    damage:
+      types:
+        Piercing: 24
+
+# ── Патроны ──────────────────────────────────────────────────────────────────
+- type: entity
+  id: BaseSTCartridge725
+  name: cartridge (7,62x25)
+  parent: BaseCartridge
+  abstract: true
+  components:
+  - type: Tag
+    tags:
+    - Cartridge
+    - STCartridge725
+  - type: CartridgeAmmo
+    deleteOnSpawn: true
+  - type: Sprite
+    sprite: _Stalker/Objects/Weapons/Guns/Ammunition/Casings/ammo_casing.rsi
+    layers:
+    - state: base
+      map: ["enum.AmmoVisualLayers.Base"]
+  - type: Appearance
+  - type: SpentAmmoVisuals
+    state: "base"
+
+- type: entity
+  id: STCartridge725PGL
+  name: cartridge 7.62x25 P
+  suffix: "Stalker"
+  parent: BaseSTCartridge725
+  components:
+  - type: CartridgeAmmo
+    proto: Bullet725PGL
+
+- type: entity
+  id: STCartridge725PTGJ
+  name: cartridge 7.62x25 PT
+  suffix: "Stalker"
+  parent: BaseSTCartridge725
+  components:
+  - type: CartridgeAmmo
+    proto: Bullet725PTGJ
+
+- type: entity
+  id: STCartridge725LRNPC
+  name: cartridge 7.62x25 LRN
+  suffix: "Stalker"
+  parent: BaseSTCartridge725
+  components:
+  - type: CartridgeAmmo
+    proto: Bullet725LRNPC
+
+- type: entity
+  id: STCartridge725PSTGJ
+  name: cartridge 7.62x25 PST
+  suffix: "Stalker"
+  parent: BaseSTCartridge725
+  components:
+  - type: CartridgeAmmo
+    proto: Bullet725PSTGJ
+
+# ── Магазины ─────────────────────────────────────────────────────────────────
+- type: entity
+  id: BasePPSHMag
+  name: магазин ППШ (35)
+  description: Магазин для ППШ-41. Вместимость 35.
+  parent: BaseItem
+  suffix: "Duty, Stalker"
+  components:
+  - type: Tag
+    tags:
+    - MagazinePPSh
+  - type: BallisticAmmoProvider
+    mayTransfer: true
+    proto: STCartridge725PGL
+    whitelist:
+      tags:
+      - STCartridge725
+    capacity: 35
+  - type: Item
+    size: Small
+    shape:
+    - 0,0,0,1
+  - type: ContainerContainer
+    containers:
+      ballistic-ammo: !type:Container
+  - type: Sprite
+    scale: 0.8, 0.8
+    sprite: _Stalker/Objects/Weapons/Guns/Ammunition/Magazines/725/ppsh_magazine.rsi
+    layers:
+    - state: base
+      map: ["enum.GunVisualLayers.Base"]
+    - state: mag-1
+      map: ["enum.GunVisualLayers.Mag"]
+  - type: MagazineVisuals
+    magState: mag
+    steps: 2
+    zeroVisible: false
+  - type: Appearance
+
+- type: entity
+  id: PPSHDrum
+  name: барабан ППШ (71)
+  description: Барабан для ППШ-41. Вместимость 71.
+  parent: BasePPSHMag
+  components:
+  - type: Item
+    size: Normal
+    shape:
+    - 0,0,1,1
+  - type: Sprite
+    scale: 0.7, 0.7
+    sprite: _Stalker/Objects/Weapons/Guns/Ammunition/Magazines/725/ppsh_drum.rsi
+    layers:
+    - state: base
+      map: ["enum.GunVisualLayers.Base"]
+    - state: mag-1
+      map: ["enum.GunVisualLayers.Mag"]
+  - type: BallisticAmmoProvider
+    mayTransfer: true
+    proto: STCartridge725PGL
+    whitelist:
+      tags:
+      - STCartridge725
+    capacity: 71
+
+- type: entity
+  id: BasePPSMag
+  name: магазин ППС (35)
+  description: Магазин для ППС-43. Вместимость 35.
+  parent: BasePPSHMag
+  components:
+  - type: Tag
+    tags:
+    - MagazinePPS
+  - type: Sprite
+    scale: 0.8, 0.8
+    sprite: _Stalker_EN/Objects/Weapons/Guns/Ammunition/Magazines/725/pps_magazine.rsi
+    layers:
+    - state: base
+      map: ["enum.GunVisualLayers.Base"]
+    - state: mag-1
+      map: ["enum.GunVisualLayers.Mag"]
+
+- type: entity
+  id: TTMag
+  name: магазин ТТ 7,62x25 (8)
+  description: Магазин 7,62x25 для ТТ. Вместимость 8.
+  parent: BasePPSHMag
+  components:
+  - type: Tag
+    tags:
+    - MagazineTT
+  - type: Item
+    size: Small
+    shape:
+    - 0,0,0,0
+  - type: Sprite
+    scale: 0.6, 0.6
+    sprite: _Stalker/Objects/Weapons/Guns/Ammunition/Magazines/725/tt_mag.rsi
+    layers:
+    - state: base
+      map: ["enum.GunVisualLayers.Base"]
+    - state: mag-0
+      map: ["enum.GunVisualLayers.Mag"]
+  - type: BallisticAmmoProvider
+    mayTransfer: true
+    proto: STCartridge725PGL
+    whitelist:
+      tags:
+      - STCartridge725
+    capacity: 8
+  - type: MagazineVisuals
+    magState: mag
+    steps: 7
+    zeroVisible: false

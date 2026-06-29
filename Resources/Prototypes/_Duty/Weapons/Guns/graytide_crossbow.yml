@@ -6,7 +6,7 @@
   suffix: Duty
   components:
   - type: Sprite
-    sprite: _Duty/Weapons/MakeshiftCrossbow.rsi
+    sprite: _Duty/Weapons/Guns/MakeshiftCrossbow.rsi
     state: icon
   - type: Item
     size: Normal

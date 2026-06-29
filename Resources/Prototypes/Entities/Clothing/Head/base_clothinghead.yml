@@ -115,6 +115,7 @@
   id: ClothingHeadEVAHelmetBase
   name: base space helmet
   components:
+  - type: ConcussionProtection # _Duty: гермошлем гасит контузию
 # SlotBlocker blocked until UI change
 #  - type: SlotBlock
 #    slots: [ears, eyes, mask]
@@ -161,6 +162,7 @@
   name: base hardsuit helmet
   categories: [ HideSpawnMenu ]
   components:
+  - type: ConcussionProtection # _Duty: шлем скафандра гасит контузию
 # SlotBlocker blocked until UI change
 #  - type: SlotBlock
 #    slots: [ears, eyes, mask]

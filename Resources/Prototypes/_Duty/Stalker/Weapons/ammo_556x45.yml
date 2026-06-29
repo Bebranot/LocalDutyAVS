@@ -1,0 +1,224 @@
+# Боеприпасы 5.56x45 — порт из STALKER-14. Mutant→Piercing, без косметики резинок.
+
+# ── Снаряды ──────────────────────────────────────────────────────────────────
+- type: entity
+  id: Bullet556FMJ
+  name: bullet (5.56x45)
+  parent: STBaseLRBullet
+  categories: [ HideSpawnMenu ]
+  components:
+  - type: TimedDespawn
+    lifetime: 4
+  - type: Projectile
+    projectileClass: 2
+    damage:
+      types:
+        Piercing: 27
+  - type: StaminaDamageOnCollide
+    damage: 2
+
+- type: entity
+  id: Bullet556M855
+  name: bullet (5.56x45)
+  parent: Bullet556FMJ
+  categories: [ HideSpawnMenu ]
+  components:
+  - type: Projectile
+    projectileClass: 3
+    damage:
+      types:
+        Piercing: 29
+
+- type: entity
+  id: Bullet556M856
+  name: bullet (5.56x45)
+  parent: Bullet556FMJ
+  categories: [ HideSpawnMenu ]
+  components:
+  - type: Projectile
+    projectileClass: 4
+    damage:
+      types:
+        Piercing: 27
+
+- type: entity
+  id: Bullet556Warmag
+  name: bullet (5.56x45)
+  parent: Bullet556FMJ
+  categories: [ HideSpawnMenu ]
+  components:
+  - type: Projectile
+    projectileClass: 0
+    damage:
+      types:
+        Piercing: 65
+        Blunt: 10
+        Slash: 10
+
+- type: entity
+  id: Bullet556M995
+  name: bullet (5.56x45)
+  parent: Bullet556FMJ
+  categories: [ HideSpawnMenu ]
+  components:
+  - type: Projectile
+    projectileClass: 5
+    damage:
+      types:
+        Piercing: 25
+
+- type: entity
+  id: Bullet556SSAAP
+  name: bullet (5.56x45)
+  parent: Bullet556FMJ
+  categories: [ HideSpawnMenu ]
+  components:
+  - type: Projectile
+    projectileClass: 6
+    damage:
+      types:
+        Piercing: 18
+  - type: StaminaDamageOnCollide
+    damage: 0
+
+# ── Патроны ──────────────────────────────────────────────────────────────────
+- type: entity
+  id: BaseCartridge556
+  name: cartridge (5.56x45)
+  parent: BaseCartridge
+  abstract: true
+  components:
+  - type: Tag
+    tags:
+    - Cartridge
+    - STCartridge556
+  - type: CartridgeAmmo
+    deleteOnSpawn: true
+  - type: Sprite
+    sprite: Objects/Weapons/Guns/Ammunition/Casings/ammo_casing.rsi
+    layers:
+    - state: base
+      map: ["enum.AmmoVisualLayers.Base"]
+  - type: Appearance
+  - type: SpentAmmoVisuals
+    state: "base"
+
+- type: entity
+  id: Cartridge556FMJ
+  name: cartridge (5.56x45) FMJ
+  suffix: "Stalker"
+  parent: BaseCartridge556
+  components:
+  - type: CartridgeAmmo
+    proto: Bullet556FMJ
+
+- type: entity
+  id: Cartridge556M855
+  name: cartridge (5.56x45) M855
+  suffix: "Stalker"
+  parent: BaseCartridge556
+  components:
+  - type: CartridgeAmmo
+    proto: Bullet556M855
+
+- type: entity
+  id: Cartridge556M856
+  name: cartridge (5.56x45) M856
+  suffix: "Stalker"
+  parent: BaseCartridge556
+  components:
+  - type: CartridgeAmmo
+    proto: Bullet556M856
+
+- type: entity
+  id: Cartridge556Warmag
+  name: cartridge (5.56x45) Warmag
+  suffix: "Stalker"
+  parent: BaseCartridge556
+  components:
+  - type: CartridgeAmmo
+    proto: Bullet556Warmag
+
+- type: entity
+  id: Cartridge556M995
+  name: cartridge (5.56x45) M995
+  suffix: "Stalker"
+  parent: BaseCartridge556
+  components:
+  - type: CartridgeAmmo
+    proto: Bullet556M995
+
+- type: entity
+  id: Cartridge556SSAAP
+  name: cartridge (5.56x45) SSA AP
+  suffix: "Stalker"
+  parent: BaseCartridge556
+  components:
+  - type: CartridgeAmmo
+    proto: Bullet556SSAAP
+
+# ── Магазины ─────────────────────────────────────────────────────────────────
+- type: entity
+  id: Base556Mag10
+  name: magazine 5.56x45 (10)
+  suffix: "Duty, Stalker"
+  description: Магазин 5.56x45 для штурмовых винтовок. Вместимость 10.
+  parent: BaseItem
+  components:
+  - type: Tag
+    tags:
+    - Magazine556
+  - type: BallisticAmmoProvider
+    mayTransfer: true
+    proto: Cartridge556FMJ
+    whitelist:
+      tags:
+      - STCartridge556
+    capacity: 10
+  - type: Item
+    size: Small
+    shape:
+    - 0,0,0,0
+  - type: ContainerContainer
+    containers:
+      ballistic-ammo: !type:Container
+  - type: Sprite
+    scale: 0.8, 0.8
+    sprite: _Stalker/Objects/Weapons/Guns/Ammunition/Magazines/556/10.rsi
+    layers:
+    - state: base
+      map: ["enum.GunVisualLayers.Base"]
+    - state: mag-1
+      map: ["enum.GunVisualLayers.Mag"]
+  - type: MagazineVisuals
+    magState: mag
+    steps: 2
+    zeroVisible: false
+  - type: Appearance
+
+- type: entity
+  id: Magazine556x30
+  name: magazine 5.56x45 (30)
+  suffix: "Duty, Stalker"
+  description: Магазин 5.56x45 для штурмовых винтовок. Вместимость 30.
+  parent: Base556Mag10
+  components:
+  - type: BallisticAmmoProvider
+    mayTransfer: true
+    proto: Cartridge556FMJ
+    whitelist:
+      tags:
+      - STCartridge556
+    capacity: 30
+  - type: Item
+    size: Small
+    shape:
+    - 0,0,0,1
+  - type: Sprite
+    scale: 0.8, 0.8
+    sprite: _Stalker/Objects/Weapons/Guns/Ammunition/Magazines/556/30.rsi
+    layers:
+    - state: base
+      map: ["enum.GunVisualLayers.Base"]
+    - state: mag-1
+      map: ["enum.GunVisualLayers.Mag"]

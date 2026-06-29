@@ -2,6 +2,7 @@
 //
 // SPDX-License-Identifier: MIT
 
+using Content.Client.Lobby.UI;
 using Content.Client.Resources;
 using Robust.Client.Graphics;
 using Robust.Client.ResourceManagement;
@@ -18,7 +19,7 @@ namespace Content.Client.Stylesheets;
 /// </summary>
 public static class StyleLobbyDuty
 {
-    public const string LobbyButtonDuty = "LobbyButtonDuty";
+    public const string LobbyButtonDuty = StyleLobbyDuty_Const.LobbyButtonDuty;
 
     public static StyleRule[] GetRules(IResourceCache resCache)
     {

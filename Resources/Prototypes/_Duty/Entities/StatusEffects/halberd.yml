@@ -1,0 +1,8 @@
+# Duty: Замедление при попадании алебардой ОСЩ во время рывка.
+# Персонаж не падает (не KnockedDown), но замедляется на N секунд.
+# Наследуется от ванильного StatusEffectSlowdown (Resources/Prototypes/Entities/StatusEffects/movement.yml).
+
+- type: entity
+  parent: StatusEffectSlowdown
+  id: HalberdChargeHitSlowdownStatusEffect
+  name: hit by halberd charge slowdown

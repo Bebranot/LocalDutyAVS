@@ -140,7 +140,9 @@ public sealed class RadioSystem : EntitySystem
             : message;
 
         // ADT Languages start
-        var languageEncodedContent = _language.ObfuscateMessage(messageSource, content, gen.Replacement, gen.ObfuscateSyllables, gen.ReplaceEntireMessage);
+        var languageEncodedContent = gen.PassThroughObfuscation
+            ? content
+            : _language.ObfuscateMessage(messageSource, content, gen.Replacement, gen.ObfuscateSyllables, gen.ReplaceEntireMessage);
 
         if (gen.Color != null)
         {

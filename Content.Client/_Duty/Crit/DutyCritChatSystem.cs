@@ -25,7 +25,7 @@ public sealed class DutyCritChatSystem : EntitySystem
     /// <summary>
     /// Подменяет <see cref="ChatMessage.WrappedMessage"/> для дальних IC-сообщений в крите.
     /// </summary>
-    public void ProcessIncomingMessage(ChatMessage msg)
+    public void ProcessIncomingMessage(ref ChatMessage msg)
     {
         if (_state.CurrentState is not GameplayState)
             return;
@@ -67,7 +67,6 @@ public sealed class DutyCritChatSystem : EntitySystem
     {
         var posA = _xform.GetWorldPosition(a);
         var posB = _xform.GetWorldPosition(b);
-        var diff = posA - posB;
-        return Math.Max(Math.Abs(diff.X), Math.Abs(diff.Y));
+        return (posA - posB).Length();
     }
 }

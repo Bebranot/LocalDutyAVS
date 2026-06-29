@@ -824,7 +824,7 @@ public sealed partial class ChatUIController : UIController
 
     public void ProcessChatMessage(ChatMessage msg, bool speechBubble = true)
     {
-        _dutyCritChat?.ProcessIncomingMessage(msg); 
+        _dutyCritChat?.ProcessIncomingMessage(ref msg);
 
         // color the name unless it's something like "the old man"
         if ((msg.Channel == ChatChannel.Local || msg.Channel == ChatChannel.Whisper) && _chatNameColorsEnabled)

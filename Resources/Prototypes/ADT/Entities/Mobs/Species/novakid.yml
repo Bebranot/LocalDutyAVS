@@ -8,10 +8,10 @@
   - type: HumanoidAppearance
     species: NovakidSpecies
   - type: Hunger
-    baseDecayRate: 0.025
+    baseDecayRate: 0.03
     lastAuthoritativeHungerValue: 400
     thresholds:
-      Overfed: 400
+      Overfed: 500
       Okay: 300
       Peckish: 200
       Starving: 100
@@ -32,7 +32,7 @@
   - type: Explosive
     explosionType: Default
     maxIntensity: 2.5
-    intensitySlope: 1
+    intensitySlope: 0.6
     totalIntensity: 10
     canCreateVacuum: false
   - type: ExplodeOnTrigger
@@ -91,8 +91,8 @@
       types:
         Heat: 5
   - type: Temperature
-    heatDamageThreshold: 650
-    coldDamageThreshold: 193  #starting temperature damage treshold
+    heatDamageThreshold: 1600
+    coldDamageThreshold: 195  #starting temperature damage treshold
     currentTemperature: 410.15
     specificHeat: 46
     coldDamage:
@@ -100,7 +100,7 @@
         Cold : 0.5 #per second, scales with temperature & other constants
     heatDamage:
       types:
-        Heat : 0.2 #per second, scales with temperature & other constants.
+        Heat : 0.1 #per second, scales with temperature & other constants.
   - type: TemperatureSpeed
     thresholds:
       273: 0.75
@@ -116,7 +116,7 @@
   - type: Barotrauma
     damage:
       types:
-        Blunt: 0.02 # Супер пониженный дамаг от давления
+        Blunt: 0 # Как они вылезли из звезды, если умирают от давления? Тип когда звезда взорвалась, выделилось много тепла, что спасёт их от переохлаждения. Это тупизм, по-этому я поставил нолик - ДК
   - type: Reactive
     groups:
       Flammable: [ Touch ]
@@ -136,7 +136,7 @@
       - !type:HealthChange
         damage:
           types:
-            Heat: 0.45 # Повышенный дамаг от водички и моющего средства. Пшик-пшик
+            Heat: 0.80 # Повышенный дамаг от водички и моющего средства. Пшик-пшик
       - !type:PopupMessage
         type: Local
         visualType: Large

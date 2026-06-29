@@ -1,0 +1,7 @@
+# Duty: Кратковременное обездвиживание после выхода из прицеливания лёжа (AimingComponent).
+# Наследуется от ванильного StatusEffectSlowdown (Resources/Prototypes/Entities/StatusEffects/movement.yml).
+
+- type: entity
+  parent: StatusEffectSlowdown
+  id: AimRecoveryImmobilizeStatusEffect
+  name: aim recovery immobilize

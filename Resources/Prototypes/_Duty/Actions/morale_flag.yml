@@ -1,0 +1,19 @@
+# _Duty: способность «Поднять и помахать флагом» для алебарды ОСЩ
+
+- type: entity
+  parent: BaseAction
+  id: ActionDutyMoraleFlag
+  name: Поднять и помахать флагом
+  description: Высоко поднимите алебарду-флаг и взмахните им, поднимая боевой дух себе и союзникам рядом. Требует алебарду, взятую в две руки.
+  suffix: Duty
+  components:
+  - type: Action
+    useDelay: 120 # должно совпадать с MoraleFlagComponent.Cooldown
+    icon:
+      # Кнопка не умеет слоить спрайты — state "icon" это сведённый композит buff + icon2 (icon2 поверх).
+      sprite: _Duty/Actions/MoraleBuff.rsi
+      state: icon
+    itemIconStyle: NoItem
+    priority: -1
+  - type: InstantAction
+    event: !type:MoraleFlagActionEvent {}

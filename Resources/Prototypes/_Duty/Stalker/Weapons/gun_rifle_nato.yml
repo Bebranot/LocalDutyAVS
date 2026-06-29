@@ -1,0 +1,574 @@
+# Западные винтовки (5.56x45 NATO + пара 5.45 на базе AK-74M) — порт из STALKER-14.
+# Scope (зум) убран — Фаза 2. Burst поддерживается нашим Gun.
+
+# ── M16 ──────────────────────────────────────────────────────────────────────
+- type: entity
+  abstract: true
+  parent: STBaseWeaponRifle
+  id: STBaseWeaponRifleM16
+  components:
+  - type: STWeight
+    self: 3
+  - type: Item
+    sprite: _Stalker_EN/Objects/Weapons/Guns/Rifles/m16/inhand.rsi
+  - type: Sprite
+    sprite: _Stalker_EN/Objects/Weapons/Guns/Rifles/m16/icon.rsi
+  - type: Clothing
+    sprite: _Stalker_EN/Objects/Weapons/Guns/Rifles/m16/inhand.rsi
+  - type: Gun
+    fireRate: 6
+    burstFireRate: 10
+    burstCooldown: 0.25
+    soundGunshot:
+      path: /Audio/_Stalker/Effects/Guns/m4.ogg
+      params:
+        volume: -2
+    minAngle: 40
+    maxAngle: 75
+    angleIncrease: 1
+    selectedMode: Burst
+    availableModes:
+    - Burst
+    - SemiAuto
+  - type: ItemSlots
+    slots:
+      gun_magazine:
+        name: Magazine
+        startingItem: Base556Mag10
+        insertSound: /Audio/_Stalker/Weapons/Guns/RifleGen/MagIn/rifle_magin.ogg
+        ejectSound: /Audio/_Stalker/Weapons/Guns/RifleGen/MagOut/rifle_magout.ogg
+        priority: 4
+        whitelist:
+          tags:
+          - Magazine556
+      gun_module_muzzle:
+        name: Muzzle
+        priority: 3
+        whitelist:
+          tags:
+          - STWeaponModuleRifleSilencerNato
+      gun_chamber:
+        name: Chamber
+        startingItem: Cartridge556FMJ
+        priority: 1
+        whitelist:
+          tags:
+          - STCartridge556
+  - type: STWeaponDamageFalloff
+    falloffMultiplier: 0.8
+  - type: STWeaponAccuracy
+    accuracyMultiplier: 1.5
+
+- type: entity
+  parent: STBaseWeaponRifleM16
+  id: STWeaponRifleM16
+  name: M16
+  suffix: "Duty, Stalker"
+  description: Легендарная американская винтовка эпохи Вьетнама. Попадает в Зону через военные склады и чёрный рынок.
+
+# ── M4 (+ HK416, LR-300, SCAR-L) ─────────────────────────────────────────────
+- type: entity
+  abstract: true
+  parent: STBaseWeaponRifle
+  id: STBaseWeaponRifleM4
+  components:
+  - type: STWeight
+    self: 2.8
+  - type: Item
+    sprite: _Stalker_EN/Objects/Weapons/Guns/Rifles/m4/inhand.rsi
+  - type: Sprite
+    sprite: _Stalker_EN/Objects/Weapons/Guns/Rifles/m4/icon.rsi
+  - type: Clothing
+    sprite: _Stalker_EN/Objects/Weapons/Guns/Rifles/m4/inhand.rsi
+    equipDelay: 2
+  - type: Gun
+    fireRate: 6.5
+    soundGunshot:
+      path: /Audio/_Stalker/Effects/Guns/m4.ogg
+      params:
+        volume: -2
+    minAngle: 52
+    maxAngle: 95
+    angleIncrease: 1.33
+    selectedMode: FullAuto
+    availableModes:
+    - Burst
+    - SemiAuto
+    - FullAuto
+  - type: ContainerContainer
+    containers:
+      gun_magazine: !type:ContainerSlot {}
+      gun_auto_sear: !type:ContainerSlot {}
+      gun_module_muzzle: !type:ContainerSlot {}
+      gun_module_scope: !type:ContainerSlot {}
+      gun_chamber: !type:ContainerSlot {}
+  - type: ItemSlots
+    slots:
+      gun_magazine:
+        name: Magazine
+        startingItem: Base556Mag10
+        insertSound: /Audio/_Stalker/Weapons/Guns/RifleGen/MagIn/rifle_magin.ogg
+        ejectSound: /Audio/_Stalker/Weapons/Guns/RifleGen/MagOut/rifle_magout.ogg
+        priority: 5
+        whitelist:
+          tags:
+          - Magazine556
+      gun_auto_sear:
+        name: Insides
+        priority: 4
+        whitelist:
+          tags:
+          - STModuleAutoSear
+      gun_module_muzzle:
+        name: Muzzle
+        priority: 3
+        whitelist:
+          tags:
+          - STWeaponModuleRifleSilencerNato
+      gun_module_scope:
+        name: Scope
+        priority: 2
+        whitelist:
+          tags:
+          - STWeaponModuleRifleScopeNato
+      gun_chamber:
+        name: Chamber
+        startingItem: Cartridge556FMJ
+        priority: 1
+        whitelist:
+          tags:
+          - STCartridge556
+  - type: STWeaponDamageFalloff
+    falloffMultiplier: 0.8
+  - type: STWeaponAccuracy
+    accuracyMultiplier: 1.45
+
+- type: entity
+  parent: STBaseWeaponRifleM4
+  id: STWeaponRifleM4
+  name: Colt M4 "Cobra"
+  suffix: "Duty, Stalker"
+  description: Американская штурмовая винтовка, икона современных войн. В Зоне — у западных наёмников.
+
+- type: entity
+  parent: STBaseWeaponRifleM4
+  id: STWeaponRifleHK416
+  name: HK416
+  suffix: "Duty, Stalker"
+  description: Немецкий апгрейд M4 с газовой системой G36. Оружие профессионалов Зоны.
+  components:
+  - type: STWeight
+    self: 3.8
+  - type: Item
+    sprite: _Stalker/Objects/Weapons/Guns/Rifles/hk416.rsi
+  - type: Sprite
+    sprite: _Stalker/Objects/Weapons/Guns/Rifles/hk416.rsi
+  - type: Clothing
+    sprite: _Stalker/Objects/Weapons/Guns/Rifles/hk416.rsi
+  - type: Gun
+    fireRate: 7.5
+    soundGunshot:
+      path: /Audio/_Stalker/Effects/Guns/m4.ogg
+      params:
+        volume: -2
+    minAngle: 50
+    maxAngle: 90
+    angleIncrease: 1.5
+
+- type: entity
+  parent: STBaseWeaponRifleM4
+  id: STWeaponRifleLR300v1
+  name: LR-300
+  suffix: "Duty, Stalker"
+  description: Лёгкая винтовка с дальностью эффективного огня до 300 метров. Высокая точность, но чувствительна к загрязнению.
+  components:
+  - type: Item
+    sprite: _Stalker/Objects/Weapons/Guns/Rifles/lr-300.rsi
+  - type: Sprite
+    sprite: _Stalker/Objects/Weapons/Guns/Rifles/lr-300.rsi
+  - type: Clothing
+    sprite: _Stalker/Objects/Weapons/Guns/Rifles/lr-300.rsi
+  - type: Gun
+    soundGunshot:
+      path: /Audio/_Stalker/Effects/Guns/t_lr300_shot.ogg
+
+- type: entity
+  parent: STBaseWeaponRifleM4
+  id: STWeaponRifleLR300v2
+  name: LR-300
+  suffix: "Duty, Stalker"
+  description: Новая ступень развития семейства М-16. Ровный спуск, высокая эргономика, малый вес.
+  components:
+  - type: Item
+    sprite: _Stalker/Objects/Weapons/Guns/Rifles/_Skins/lr-300-alt.rsi
+  - type: Sprite
+    sprite: _Stalker/Objects/Weapons/Guns/Rifles/_Skins/lr-300-alt.rsi
+  - type: Clothing
+    sprite: _Stalker/Objects/Weapons/Guns/Rifles/_Skins/lr-300-alt.rsi
+  - type: Gun
+    soundGunshot:
+      path: /Audio/_Stalker/Effects/Guns/n_lr300_shot.ogg
+
+- type: entity
+  parent: STBaseWeaponRifleM4
+  id: STWeaponRifleSCARL
+  name: SCAR-L
+  suffix: "Duty, Stalker"
+  description: Бельгийская винтовка под 5.56 NATO. Редкость в Зоне, у западных наёмников.
+  components:
+  - type: STWeight
+    self: 3.8
+  - type: Item
+    sprite: _Stalker/Objects/Weapons/Guns/Rifles/_Skins/scar_l.rsi
+  - type: Sprite
+    sprite: _Stalker/Objects/Weapons/Guns/Rifles/_Skins/scar_l.rsi
+  - type: Clothing
+    sprite: _Stalker/Objects/Weapons/Guns/Rifles/_Skins/scar_l.rsi
+  - type: Gun
+    fireRate: 7
+    soundGunshot:
+      path: /Audio/_Stalker/Effects/Guns/scar.ogg
+    minAngle: 40
+    maxAngle: 80
+    angleIncrease: 1.2
+
+# ── G36 (+ Alt, Covenant, AUG) ───────────────────────────────────────────────
+- type: entity
+  abstract: true
+  parent: STBaseWeaponRifle
+  id: STBaseWeaponRifleG36
+  components:
+  - type: STWeight
+    self: 3.4
+  - type: Item
+    sprite: _Stalker/Objects/Weapons/Guns/Rifles/g36.rsi
+  - type: Sprite
+    sprite: _Stalker/Objects/Weapons/Guns/Rifles/g36.rsi
+  - type: Clothing
+    sprite: _Stalker/Objects/Weapons/Guns/Rifles/g36.rsi
+    equipDelay: 2
+  - type: Gun
+    fireRate: 7.5
+    soundGunshot:
+      path: /Audio/_Stalker/Effects/Guns/n_g36_shot.ogg
+      params:
+        volume: -2
+    minAngle: 50
+    maxAngle: 90
+    angleIncrease: 0.9
+    selectedMode: FullAuto
+    availableModes:
+    - Burst
+    - SemiAuto
+    - FullAuto
+  - type: ItemSlots
+    slots:
+      gun_magazine:
+        name: Magazine
+        startingItem: Base556Mag10
+        insertSound: /Audio/_Stalker/Weapons/Guns/RifleGen/MagIn/rifle_magin.ogg
+        ejectSound: /Audio/_Stalker/Weapons/Guns/RifleGen/MagOut/rifle_magout.ogg
+        priority: 4
+        whitelist:
+          tags:
+          - Magazine556
+      gun_module_muzzle:
+        name: Muzzle
+        priority: 3
+        whitelist:
+          tags:
+          - STWeaponModuleRifleSilencerNato
+      gun_chamber:
+        name: Chamber
+        startingItem: Cartridge556FMJ
+        priority: 1
+        whitelist:
+          tags:
+          - STCartridge556
+  - type: MagazineVisuals
+    magState: mag
+    steps: 6
+    zeroVisible: true
+  - type: STWeaponDamageFalloff
+    falloffMultiplier: 0.8
+  - type: STWeaponAccuracy
+    accuracyMultiplier: 1.5
+
+- type: entity
+  parent: STBaseWeaponRifleG36
+  id: STWeaponRifleG36
+  name: HK G-36
+  suffix: "Duty, Stalker"
+  description: Первоклассный образец современного оружия — лёгкий, надёжный, эргономичный.
+
+- type: entity
+  parent: STBaseWeaponRifleG36
+  id: STWeaponRifleG36Alt
+  name: HK G-36
+  suffix: "Duty, Stalker"
+  description: Немецкая штурмовая винтовка, первоклассный образец современного оружия.
+  components:
+  - type: Item
+    sprite: _Stalker/Objects/Weapons/Guns/Rifles/_Skins/g36-alt.rsi
+  - type: Sprite
+    sprite: _Stalker/Objects/Weapons/Guns/Rifles/_Skins/g36-alt.rsi
+  - type: Clothing
+    sprite: _Stalker/Objects/Weapons/Guns/Rifles/_Skins/g36-alt.rsi
+
+- type: entity
+  parent: STBaseWeaponRifleG36
+  id: STWeaponRifleG36Covenant
+  name: HK G-36 "Prophet"
+  suffix: "Duty, Stalker"
+  description: Кастомный G-36 с метками Ковенанта. Оружие фанатиков Зоны.
+  components:
+  - type: Item
+    sprite: _Stalker/Objects/Weapons/Guns/Rifles/_Skins/covenant_g36.rsi
+  - type: Sprite
+    sprite: _Stalker/Objects/Weapons/Guns/Rifles/_Skins/covenant_g36.rsi
+  - type: Clothing
+    sprite: _Stalker/Objects/Weapons/Guns/Rifles/_Skins/covenant_g36.rsi
+
+- type: entity
+  parent: STBaseWeaponRifleG36
+  id: STWeaponRifleAUG
+  name: AUG
+  suffix: "Duty, Stalker"
+  description: Австрийская штурмовая винтовка со встроенным прицелом.
+  components:
+  - type: Item
+    sprite: _Stalker/Objects/Weapons/Guns/Rifles/aug.rsi
+  - type: Sprite
+    sprite: _Stalker/Objects/Weapons/Guns/Rifles/aug.rsi
+    scale: 0.7, 0.7
+  - type: Clothing
+    sprite: _Stalker/Objects/Weapons/Guns/Rifles/aug.rsi
+  - type: MagazineVisuals
+    magState: mag
+    steps: 1
+    zeroVisible: true
+
+# ── Galil ────────────────────────────────────────────────────────────────────
+- type: entity
+  parent: STBaseWeaponRifle
+  id: STWeaponRifleGalil
+  name: galil ARM
+  suffix: "Duty, Stalker"
+  description: Израильская винтовка для суровых условий. Надёжна как верблюд.
+  components:
+  - type: STWeight
+    self: 4.5
+  - type: Item
+    sprite: _Stalker/Objects/Weapons/Guns/Rifles/galil.rsi
+  - type: Sprite
+    sprite: _Stalker/Objects/Weapons/Guns/Rifles/galil.rsi
+  - type: Clothing
+    sprite: _Stalker/Objects/Weapons/Guns/Rifles/galil.rsi
+  - type: Gun
+    fireRate: 7.4
+    soundGunshot:
+      path: /Audio/_Stalker/Effects/Guns/sks_shoot.ogg
+      params:
+        volume: -2
+    minAngle: 50
+    maxAngle: 100
+    angleIncrease: 1.2
+    selectedMode: FullAuto
+    availableModes:
+    - Burst
+    - SemiAuto
+    - FullAuto
+  - type: ItemSlots
+    slots:
+      gun_magazine:
+        name: Magazine
+        startingItem: Base556Mag10
+        insertSound: /Audio/_Stalker/Weapons/Guns/RifleGen/MagIn/rifle_magin.ogg
+        ejectSound: /Audio/_Stalker/Weapons/Guns/RifleGen/MagOut/rifle_magout.ogg
+        priority: 4
+        whitelist:
+          tags:
+          - Magazine556
+      gun_module_muzzle:
+        name: Muzzle
+        priority: 3
+        whitelist:
+          tags:
+          - STWeaponModuleRifleSilencerNato
+      gun_chamber:
+        name: Chamber
+        startingItem: Cartridge556FMJ
+        priority: 1
+        whitelist:
+          tags:
+          - STCartridge556
+  - type: STWeaponDamageFalloff
+    falloffMultiplier: 0.8
+  - type: STWeaponAccuracy
+    accuracyMultiplier: 1.5
+
+# ── L85 (+ Strawberry) ───────────────────────────────────────────────────────
+- type: entity
+  abstract: true
+  parent: STBaseWeaponRifle
+  id: STBaseWeaponRifleL85
+  components:
+  - type: STWeight
+    self: 4.2
+  - type: Item
+    sprite: _Stalker/Objects/Weapons/Guns/Rifles/l85.rsi
+  - type: Sprite
+    sprite: _Stalker/Objects/Weapons/Guns/Rifles/l85.rsi
+  - type: Clothing
+    sprite: _Stalker/Objects/Weapons/Guns/Rifles/l85.rsi
+  - type: Gun
+    fireRate: 6
+    soundGunshot:
+      path: /Audio/_Stalker/Effects/Guns/l85.ogg
+      params:
+        volume: -2
+    minAngle: 40
+    maxAngle: 75
+    angleIncrease: 1.25
+    selectedMode: Burst
+    availableModes:
+    - Burst
+    - FullAuto
+  - type: ItemSlots
+    slots:
+      gun_magazine:
+        name: Magazine
+        startingItem: Base556Mag10
+        insertSound: /Audio/_Stalker/Weapons/Guns/RifleGen/MagIn/rifle_magin.ogg
+        ejectSound: /Audio/_Stalker/Weapons/Guns/RifleGen/MagOut/rifle_magout.ogg
+        priority: 4
+        whitelist:
+          tags:
+          - Magazine556
+      gun_module_muzzle:
+        name: Muzzle
+        priority: 3
+        whitelist:
+          tags:
+          - STWeaponModuleRifleSilencerNato
+      gun_chamber:
+        name: Chamber
+        startingItem: Cartridge556FMJ
+        priority: 1
+        whitelist:
+          tags:
+          - STCartridge556
+  - type: STWeaponDamageFalloff
+    falloffMultiplier: 0.8
+  - type: STWeaponAccuracy
+    accuracyMultiplier: 1.5
+
+- type: entity
+  parent: STBaseWeaponRifleL85
+  id: STWeaponRifleL85
+  name: L85
+  suffix: "Duty, Stalker"
+  description: Британская винтовка с 4-кратным прицелом и высокой точностью первого выстрела.
+  components:
+  - type: Gun
+    soundGunshot:
+      path: /Audio/_Stalker/Effects/Guns/n_l85_shot.ogg
+
+- type: entity
+  parent: STBaseWeaponRifleL85
+  id: STWeaponRifleL85WhiteStrawberry
+  name: L85 (Raspberry Tea)
+  suffix: "Duty, Stalker"
+  description: Экзотическая версия в малиновом камуфляже.
+  components:
+  - type: Clothing
+    sprite: _Stalker/Objects/Weapons/Guns/Rifles/_Skins/l85_straberry.rsi
+  - type: Item
+    sprite: _Stalker/Objects/Weapons/Guns/Rifles/_Skins/l85_straberry.rsi
+  - type: Sprite
+    sprite: _Stalker/Objects/Weapons/Guns/Rifles/_Skins/l85_straberry.rsi
+
+# ── FN F2000 ─────────────────────────────────────────────────────────────────
+- type: entity
+  parent: STBaseWeaponRifle
+  id: STWeaponRifleF2000
+  name: FN-F2000
+  suffix: "Duty, Stalker"
+  description: Футуристичная модульная система с 40-мм гранатомётом. Эргономична и надёжна.
+  components:
+  - type: STWeight
+    self: 4
+  - type: Item
+    sprite: _Stalker/Objects/Weapons/Guns/Rifles/fn-f2000.rsi
+  - type: Sprite
+    sprite: _Stalker/Objects/Weapons/Guns/Rifles/fn-f2000.rsi
+  - type: Clothing
+    sprite: _Stalker/Objects/Weapons/Guns/Rifles/fn-f2000.rsi
+  - type: Gun
+    fireRate: 12
+    soundGunshot:
+      path: /Audio/_Stalker/Effects/Guns/n_fn2000_shot.ogg
+      params:
+        volume: -2
+    minAngle: 45
+    maxAngle: 85
+    angleIncrease: 0.6
+  - type: ItemSlots
+    slots:
+      gun_magazine:
+        name: Magazine
+        startingItem: Base556Mag10
+        insertSound: /Audio/_Stalker/Weapons/Guns/RifleGen/MagIn/rifle_magin.ogg
+        ejectSound: /Audio/_Stalker/Weapons/Guns/RifleGen/MagOut/rifle_magout.ogg
+        priority: 4
+        whitelist:
+          tags:
+          - Magazine556
+      gun_chamber:
+        name: Chamber
+        startingItem: Cartridge556FMJ
+        priority: 1
+        whitelist:
+          tags:
+          - STCartridge556
+  - type: STWeaponDamageFalloff
+    falloffMultiplier: 0.8
+  - type: STWeaponAccuracy
+    accuracyMultiplier: 1.5
+
+# ── Abakan / AEK-971 (5.45, на базе AK-74M) ──────────────────────────────────
+- type: entity
+  name: AN-94 «Абакан»
+  suffix: "Duty, Stalker"
+  parent: STWeaponRifleAK74M
+  id: STWeaponRifleStalkerAbakan
+  description: Оружие элитных войск. Подвижная ствольная коробка снижает отдачу, повышая точность.
+  components:
+  - type: Clothing
+    sprite: _Stalker/Objects/Weapons/Guns/Rifles/abakan.rsi
+  - type: Item
+    sprite: _Stalker/Objects/Weapons/Guns/Rifles/abakan.rsi
+  - type: Sprite
+    sprite: _Stalker/Objects/Weapons/Guns/Rifles/abakan.rsi
+  - type: Gun
+    soundGunshot:
+      path: /Audio/_Stalker/Effects/Guns/n_abakan_shot.ogg
+    fireRate: 8.5
+
+- type: entity
+  name: AEK-971
+  suffix: "Duty, Stalker"
+  parent: STWeaponRifleAK74M
+  id: STWeaponRifleStalkerAek971
+  description: Советский автомат со сбалансированной автоматикой.
+  components:
+  - type: Clothing
+    sprite: _Stalker/Objects/Weapons/Guns/Rifles/aek971.rsi
+  - type: Item
+    sprite: _Stalker/Objects/Weapons/Guns/Rifles/aek971.rsi
+  - type: Sprite
+    sprite: _Stalker/Objects/Weapons/Guns/Rifles/aek971.rsi
+  - type: Gun
+    soundGunshot:
+      path: /Audio/_Stalker/Effects/Guns/aek971.ogg
+    fireRate: 9

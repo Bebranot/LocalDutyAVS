@@ -11,7 +11,7 @@
     shape:
     - 0,0,3,2
   - type: Clothing
-    sprite: Objects/Weapons/Guns/Rifles/ak.rsi
+    sprite: Objects/Weapons/Guns/Riflesz/ak.rsi
     quickEquip: false
     slots:
     - Back

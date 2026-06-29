@@ -2,14 +2,14 @@
   name: Storn Maker Revolver
   parent: BaseItem
   id: WeaponPistolStormMaker
-  description: Старое оружие с земли, убившее куча людей. Имеет бесконечный боезапас.
+  description: Старый револьвер. Странно, но барабан заварен.
   suffix: Duty
   components:
   - type: Sprite
-    sprite: _Duty/Weapons/StormMaker.rsi
+    sprite: _Duty/Weapons/Guns/StormMaker.rsi
     state: icon
   - type: Clothing
-    sprite: _Duty/Weapons/StormMaker.rsi
+    sprite: _Duty/Weapons/Guns/StormMaker.rsi
     quickEquip: false
     slots:
     - Belt

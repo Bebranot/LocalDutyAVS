@@ -1,0 +1,47 @@
+{
+  "version": 1,
+  "license": "CC-BY-SA-3.0",
+  "copyright": "sprites by CaramelKitten [P99] and Wassuy (Peter Poley) [HiPower]",
+  "size": {
+    "x": 32,
+    "y": 32
+  },
+  "states": [
+    {
+      "name": "red_p99_15"
+    },
+    {
+      "name": "green_p99_15"
+    },
+    {
+      "name": "blue_p99_15"
+    },
+    {
+      "name": "red_hipower_13"
+    },
+    {
+      "name": "green_hipower_13"
+    },
+    {
+      "name": "blue_hipower_13"
+    },
+    {
+      "name": "red_MPL_32"
+    },
+    {
+      "name": "blue_MPL_32"
+    },
+    {
+      "name": "green_MPL_32"
+    },
+    {
+      "name": "red_uzi_32"
+    },
+    {
+      "name": "blue_uzi_32"
+    },
+    {
+      "name": "green_uzi_32"
+    }
+  ]
+}

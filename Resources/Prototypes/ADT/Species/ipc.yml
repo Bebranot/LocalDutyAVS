@@ -10,7 +10,7 @@
   dollPrototype: MobIPCDummy
   skinColoration: Hues
   shortDesc: species-short-desc-ipc
-  sponsorOnly: false
+  sponsorOnly: false #Duty - ХАЛЯВА
   minAge: 1
   maxAge: 55
   oldAge: 50

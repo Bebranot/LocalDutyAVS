@@ -157,6 +157,8 @@ public abstract partial class SharedChatSystem
 
         // optional override params > general params for all sounds in set > individual sound params
         var param = audioParams ?? proto.GeneralParams ?? sound.Params;
+        // _Duty: убираем рандомизацию питча ("ускорение"/изменение тона) у всех звуков эмоций (крики и пр.)
+        param = param.WithVariation(null);
         _audio.PlayPvs(sound, uid, param);
         return true;
     }

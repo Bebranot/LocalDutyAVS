@@ -39,8 +39,7 @@ public sealed class DynamicAmbientMusicSystem : EntitySystem
     [Dependency] private readonly SharedAudioSystem _audio = default!;
     [Dependency] private readonly IResourceCache _resourceCache = default!;
     [Dependency] private readonly IAudioManager _audioManager = default!;
-
-    private ContentAudioSystem _contentAudio = default!;
+    [Dependency] private readonly ContentAudioSystem _contentAudio = default!;
 
     private bool _wasInCombat;
     private bool _wasInCombatLow;
@@ -55,6 +54,11 @@ public sealed class DynamicAmbientMusicSystem : EntitySystem
     private TimeSpan _critNextEndTime;
     private bool _critCrossfadeStarted;
     private bool _critPlaying;
+
+    private EntityUid? _critEnterStream;
+    private TimeSpan _critEnterReadyTime = TimeSpan.Zero;
+    private static readonly TimeSpan CritEnterCooldown = TimeSpan.FromMinutes(2);
+    private const float CritEnterFadeOutDuration = 0.5f;
 
     private TimeSpan _nextTrackTime = TimeSpan.Zero;
     private bool _trackPlaying;
@@ -72,22 +76,31 @@ public sealed class DynamicAmbientMusicSystem : EntitySystem
 
     private const string PrototypeId = "DutyAmbientMusic";
 
+    private Action<float> _onMasterVolumeChanged = default!;
+    private Action<float> _onAnyVolumeChanged = default!;
+    private readonly Dictionary<DutyAmbientMusicLevel, Action<float>> _onLevelVolumeChanged = new();
+
     public override void Initialize()
     {
         base.Initialize();
 
-        _contentAudio = EntityManager.System<ContentAudioSystem>();
+        _onMasterVolumeChanged = _ => UpdateMasterGain();
+        _onAnyVolumeChanged = _ => OnAnyVolumeChanged();
 
         _config.OnValueChanged(DutyCCVars.DynamicAmbientMusicEnabled, OnEnabledChanged, true);
         _config.OnValueChanged(DutyCCVars.DynamicAmbientMusicPeacefulDisabled, OnPeacefulDisabledChanged, true);
         _config.OnValueChanged(DutyCCVars.DynamicAmbientMusicCombatDisabled, OnCombatDisabledChanged, true);
-        _config.OnValueChanged(CCVars.AudioMasterVolume, _ => UpdateMasterGain(), true);
+        _config.OnValueChanged(CCVars.AudioMasterVolume, _onMasterVolumeChanged, true);
 
         foreach (DutyAmbientMusicLevel level in Enum.GetValues<DutyAmbientMusicLevel>())
-            _config.OnValueChanged(DutyAmbientMusicCVar.GetVolumeCVar(level), _ => OnAnyVolumeChanged(), true);
+        {
+            Action<float> handler = _ => OnAnyVolumeChanged();
+            _onLevelVolumeChanged[level] = handler;
+            _config.OnValueChanged(DutyAmbientMusicCVar.GetVolumeCVar(level), handler, true);
+        }
 
-        _config.OnValueChanged(DutyCCVars.DynamicAmbientMusicVolume, _ => OnAnyVolumeChanged(), true);
-        _config.OnValueChanged(DutyCCVars.DynamicAmbientMusicCritExtraBoostDb, _ => OnAnyVolumeChanged(), true);
+        _config.OnValueChanged(DutyCCVars.DynamicAmbientMusicVolume, _onAnyVolumeChanged, true);
+        _config.OnValueChanged(DutyCCVars.DynamicAmbientMusicCritExtraBoostDb, _onAnyVolumeChanged, true);
 
         SubscribeNetworkEvent<RoundRestartCleanupEvent>(OnRoundRestart);
 
@@ -99,8 +112,24 @@ public sealed class DynamicAmbientMusicSystem : EntitySystem
         base.Shutdown();
         UnsubscribeConfig();
         StopCurrent(immediate: true);
+        DeleteCritReverbChain();
         _critDuck = 0f;
         UpdateMasterGain(force: true);
+    }
+
+    private void DeleteCritReverbChain()
+    {
+        if (_critAuxUid != null)
+        {
+            EntityManager.DeleteEntity(_critAuxUid.Value);
+            _critAuxUid = null;
+        }
+
+        if (_critEffectUid != null)
+        {
+            EntityManager.DeleteEntity(_critEffectUid.Value);
+            _critEffectUid = null;
+        }
     }
 
     private void UnsubscribeConfig()
@@ -108,12 +137,14 @@ public sealed class DynamicAmbientMusicSystem : EntitySystem
         _config.UnsubValueChanged(DutyCCVars.DynamicAmbientMusicEnabled, OnEnabledChanged);
         _config.UnsubValueChanged(DutyCCVars.DynamicAmbientMusicPeacefulDisabled, OnPeacefulDisabledChanged);
         _config.UnsubValueChanged(DutyCCVars.DynamicAmbientMusicCombatDisabled, OnCombatDisabledChanged);
-        _config.UnsubValueChanged(CCVars.AudioMasterVolume, _ => UpdateMasterGain());
-        _config.UnsubValueChanged(DutyCCVars.DynamicAmbientMusicVolume, _ => OnAnyVolumeChanged());
-        _config.UnsubValueChanged(DutyCCVars.DynamicAmbientMusicCritExtraBoostDb, _ => OnAnyVolumeChanged());
+        _config.UnsubValueChanged(CCVars.AudioMasterVolume, _onMasterVolumeChanged);
+        _config.UnsubValueChanged(DutyCCVars.DynamicAmbientMusicVolume, _onAnyVolumeChanged);
+        _config.UnsubValueChanged(DutyCCVars.DynamicAmbientMusicCritExtraBoostDb, _onAnyVolumeChanged);
 
-        foreach (DutyAmbientMusicLevel level in Enum.GetValues<DutyAmbientMusicLevel>())
-            _config.UnsubValueChanged(DutyAmbientMusicCVar.GetVolumeCVar(level), _ => OnAnyVolumeChanged());
+        foreach (var (level, handler) in _onLevelVolumeChanged)
+            _config.UnsubValueChanged(DutyAmbientMusicCVar.GetVolumeCVar(level), handler);
+
+        _onLevelVolumeChanged.Clear();
     }
 
     private void OnEnabledChanged(bool value)
@@ -142,6 +173,13 @@ public sealed class DynamicAmbientMusicSystem : EntitySystem
         _critStreamNext = null;
         _critDuck = 0f;
         _currentLevel = null;
+        if (_critEnterStream != null)
+        {
+            _audio.Stop(_critEnterStream);
+            _critEnterStream = null;
+        }
+        _critEnterReadyTime = TimeSpan.Zero;
+        DeleteCritReverbChain();
         UpdateMasterGain(force: true);
     }
 
@@ -185,6 +223,7 @@ public sealed class DynamicAmbientMusicSystem : EntitySystem
             if (_lastMobState != MobState.Dead)
             {
                 StopCurrent(immediate: false);
+                StopCritStreams();
                 PlayDeathSound();
             }
             _lastMobState = mobState;
@@ -215,6 +254,7 @@ public sealed class DynamicAmbientMusicSystem : EntitySystem
                 _critPlaying = false;
                 _critCrossfadeStarted = false;
                 _critStreamNext = null;
+                PlayCritEnterSound();
             }
             _lastMobState = mobState;
             _wasInCombat = false;
@@ -227,14 +267,7 @@ public sealed class DynamicAmbientMusicSystem : EntitySystem
         if (_lastMobState == MobState.Critical)
         {
             StopCurrent(immediate: false);
-            if (_critStreamNext != null)
-            {
-                ClearCritReverb(_critStreamNext);
-                _audio.Stop(_critStreamNext);
-                _critStreamNext = null;
-            }
-            _critPlaying = false;
-            _critCrossfadeStarted = false;
+            StopCritStreams();
             _trackPlaying = false;
             _nextTrackTime = TimeSpan.Zero;
         }
@@ -281,7 +314,7 @@ public sealed class DynamicAmbientMusicSystem : EntitySystem
         {
             if (_currentStream != null)
             {
-                _contentAudio.FadeOut(_currentStream, duration: proto?.CombatFadeOutDuration ?? 1.5f);
+                SafeFadeOut(_currentStream, proto?.CombatFadeOutDuration ?? 1.5f);
                 _currentStream = null;
                 _currentType = DutyMusicType.None;
                 _currentLevel = null;
@@ -433,7 +466,7 @@ public sealed class DynamicAmbientMusicSystem : EntitySystem
             _critCrossfadeStarted = true;
 
             if (_currentStream != null)
-                _contentAudio.FadeOut(_currentStream, duration: (float)Math.Max(timeLeft, 0.5));
+                SafeFadeOut(_currentStream, (float)Math.Max(timeLeft, 0.5));
 
             var next = _random.Pick(proto.TracksMobCritical);
             _critStreamNext = _audio.PlayGlobal(next.Sound, Filter.Local(), false,
@@ -467,11 +500,56 @@ public sealed class DynamicAmbientMusicSystem : EntitySystem
     private void PlayDeathSound()
     {
         var proto = GetProto();
-        if (proto?.DeathSound == null || GetVolumeLinear(DutyAmbientMusicLevel.Death) <= 0f)
+        if (proto == null || proto.DeathSounds.Count == 0 || GetVolumeLinear(DutyAmbientMusicLevel.Death) <= 0f)
             return;
 
-        _audio.PlayGlobal(proto.DeathSound, Filter.Local(), false,
+        var sound = _random.Pick(proto.DeathSounds);
+        _audio.PlayGlobal(sound, Filter.Local(), false,
             AudioParams.Default.WithVolume(GetVolumeDb(DutyAmbientMusicLevel.Death)));
+    }
+
+    private void PlayCritEnterSound()
+    {
+        var proto = GetProto();
+        if (proto == null || proto.CritEnterSounds.Count == 0 || GetVolumeLinear(DutyAmbientMusicLevel.CritEnter) <= 0f)
+            return;
+
+        if (_timing.CurTime < _critEnterReadyTime)
+            return;
+
+        _critEnterReadyTime = _timing.CurTime + CritEnterCooldown;
+
+        var sound = _random.Pick(proto.CritEnterSounds);
+        _critEnterStream = _audio.PlayGlobal(sound, Filter.Local(), false,
+            AudioParams.Default.WithVolume(GetVolumeDb(DutyAmbientMusicLevel.CritEnter)))?.Entity;
+    }
+
+    private void StopCritEnterSound()
+    {
+        if (_critEnterStream == null)
+            return;
+
+        SafeFadeOut(_critEnterStream, CritEnterFadeOutDuration);
+        _critEnterStream = null;
+    }
+
+    /// <summary>
+    /// Полностью гасит крит-музыку (включая поток кроссфейда и звук входа) и сбрасывает флаги.
+    /// Вызывается при выходе из крита и при смерти — иначе при смерти посреди кроссфейда
+    /// второй крит-поток оставался играть "осиротевшим".
+    /// </summary>
+    private void StopCritStreams()
+    {
+        if (_critStreamNext != null)
+        {
+            ClearCritReverb(_critStreamNext);
+            _audio.Stop(_critStreamNext);
+            _critStreamNext = null;
+        }
+
+        _critPlaying = false;
+        _critCrossfadeStarted = false;
+        StopCritEnterSound();
     }
 
     private void UpdateHealthMusic(EntityUid player)
@@ -485,7 +563,7 @@ public sealed class DynamicAmbientMusicSystem : EntitySystem
             if (_currentStream != null)
             {
                 var proto = GetProto();
-                _contentAudio.FadeOut(_currentStream, duration: proto?.CalmFadeOutDuration ?? 3.5f);
+                SafeFadeOut(_currentStream, proto?.CalmFadeOutDuration ?? 3.5f);
                 _currentStream = null;
                 _currentType = DutyMusicType.None;
                 _currentLevel = null;
@@ -609,6 +687,19 @@ public sealed class DynamicAmbientMusicSystem : EntitySystem
         }
     }
 
+    /// <summary>
+    /// Безопасный фейд-аут: не дёргает <see cref="ContentAudioSystem.FadeOut"/> на уже исчезнувшем
+    /// потоке (иначе Resolve логирует ошибку "Can't resolve AudioComponent" со стектрейсом —
+    /// одноразовые звуки, например звук входа в крит, доигрывают и удаляются, а ссылка остаётся).
+    /// </summary>
+    private void SafeFadeOut(EntityUid? stream, float duration)
+    {
+        if (stream == null || !Exists(stream.Value) || !HasComp<AudioComponent>(stream.Value))
+            return;
+
+        _contentAudio.FadeOut(stream, duration: duration);
+    }
+
     private void StopCurrent(bool immediate = false)
     {
         if (_currentStream == null)
@@ -624,7 +715,7 @@ public sealed class DynamicAmbientMusicSystem : EntitySystem
             var duration = _currentType == DutyMusicType.Combat
                 ? proto?.CombatFadeOutDuration ?? 1.5f
                 : proto?.CalmFadeOutDuration ?? 3.5f;
-            _contentAudio.FadeOut(_currentStream, duration: duration);
+            SafeFadeOut(_currentStream, duration);
         }
 
         _currentStream = null;
@@ -657,10 +748,14 @@ public sealed class DynamicAmbientMusicSystem : EntitySystem
     {
         var db = VolumeFromLinear(GetVolumeLinear(level));
 
+        var proto = GetProto();
+
+        // Общий буст ко всем категориям динамической музыки/эмбиента.
+        db += proto?.VolumeBoostDb ?? 0f;
+
         if (level != DutyAmbientMusicLevel.MobCritical)
             return db;
 
-        var proto = GetProto();
         db += proto?.MobCritVolumeBoost ?? 0f;
         db += _config.GetCVar(DutyCCVars.DynamicAmbientMusicCritExtraBoostDb);
         return db;
@@ -686,7 +781,7 @@ public sealed class DynamicAmbientMusicSystem : EntitySystem
         {
             proto.TracksVeryGood, proto.TracksGood, proto.TracksMedium,
             proto.TracksBelowMedium, proto.TracksAwful, proto.TracksCritical,
-            proto.CombatTracks, proto.CombatLowTracks
+            proto.CombatTracks, proto.CombatLowTracks, proto.DeathSounds, proto.CritEnterSounds
         };
 
         foreach (var list in allLists)
@@ -714,14 +809,6 @@ public sealed class DynamicAmbientMusicSystem : EntitySystem
             }
         }
 
-        if (proto.DeathSound is SoundPathSpecifier deathPath)
-        {
-            try { _resourceCache.GetResource<AudioResource>(deathPath.Path); }
-            catch (Exception e)
-            {
-                Logger.Warning($"[DynamicAmbientMusic] Не удалось предзагрузить звук смерти '{deathPath.Path}': {e.Message}");
-            }
-        }
     }
 
     private MobState GetMobState(EntityUid player)

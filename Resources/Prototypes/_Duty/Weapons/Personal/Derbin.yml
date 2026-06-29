@@ -1,0 +1,90 @@
+- type: entity
+  name: Artifact scytle
+  parent: BaseItem
+  id: ArtifactScytle
+  description: Anime
+  suffix: Duty derbin коса
+  components:
+  - type: ItemToggle
+    soundFailToActivate:
+      path: /Audio/Machines/button.ogg
+      params:
+        variation: 0.250
+    soundActivate:
+      path: /Audio/Magic/staff_change.ogg
+    soundDeactivate:
+      path: /Audio/Magic/Eldritch/voidblink.ogg
+  - type: ComponentToggler
+    components:
+    - type: Sharp
+    - type: DisarmMalus
+      malus: 0.6
+    - type: Execution
+      doAfterDuration: 7.0
+  - type: ItemToggleSize
+    activatedSize: Ginormous
+  - type: ItemToggleMeleeWeapon
+    activatedSoundOnHit:
+      path: /Audio/Weapons/bladeslice2.ogg
+      params:
+        variation: 0.250
+    activatedSoundOnHitNoDamage:
+      path: /Audio/Weapons/slash.ogg
+      params:
+        variation: 0.250
+        volume: -10
+    activatedSoundOnSwing:
+      path: /Audio/Weapons/punchmiss.ogg
+      params:
+        variation: 0.125
+    activatedDamage:
+      types:
+        Slash: 15
+        Structural: 15
+  - type: MeleeWeapon
+    range: 2.5
+    animation: WeaponArcSlash
+    attackRate: 1
+    damage:
+      types:
+        Blunt: 5
+  - type: UseDelay
+    delay: 3.0
+  - type: Reflect
+    reflectProb: 0.5
+    reflects:
+      - Energy
+  - type: Tool
+    qualities:
+    - Slicing
+
+  - type: Sprite
+    sprite: _Duty/Weapons/Melee/Scytles/ArtifactScytle.rsi
+    scale: 0.7,0.7
+    layers:
+    - state: folded
+      map: ["unfoldedLayer"]
+    - state: unfolded
+      map: ["foldedLayer"]
+      visible: false
+
+  - type: Item
+    size: Large
+    sprite: _Duty/Weapons/Melee/Scytles/ArtifactScytleParts.rsi
+  - type: ToggleableVisuals
+    spriteLayer: unfolded
+    inhandVisuals:
+      left:
+      - state: inhand-left
+      right:
+      - state: inhand-right
+  - type: GenericVisualizer
+    visuals:
+      enum.ToggleableVisuals.Enabled:
+        unfoldedLayer:
+          True: {visible: false}
+          False: {visible: true}
+        foldedLayer:
+          True: {visible: true}
+          False: {visible: false}
+  - type: Appearance
