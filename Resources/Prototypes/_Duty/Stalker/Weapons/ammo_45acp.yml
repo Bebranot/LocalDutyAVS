@@ -13,7 +13,7 @@
     projectileClass: 1
     damage:
       types:
-        Piercing: 24
+        Piercing: 16
 
 - type: entity
   id: Bullet45ACPMFMJ
@@ -25,7 +25,7 @@
     projectileClass: 2
     damage:
       types:
-        Piercing: 25
+        Piercing: 17
 
 - type: entity
   id: Bullet45ACPHydroshock
@@ -37,9 +37,9 @@
     projectileClass: 1
     damage:
       types:
-        Blunt: 10
-        Slash: 10
-        Piercing: 50
+        Blunt: 4
+        Slash: 4
+        Piercing: 18
 
 - type: entity
   id: Bullet45ACPRIP
@@ -51,9 +51,9 @@
     projectileClass: 0
     damage:
       types:
-        Piercing: 52
-        Blunt: 7
-        Slash: 7
+        Piercing: 18
+        Blunt: 4
+        Slash: 4
 
 - type: entity
   id: Bullet45ACPAP
@@ -65,7 +65,7 @@
     projectileClass: 3
     damage:
       types:
-        Piercing: 28
+        Piercing: 18
 
 # ── Патроны ──────────────────────────────────────────────────────────────────
 - type: entity

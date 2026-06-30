@@ -14,7 +14,7 @@
   - type: Projectile
     damage:
       types:
-        Piercing: 34
+        Piercing: 21
   - type: StaminaDamageOnCollide
     damage: 4
 
@@ -27,7 +27,7 @@
   - type: Projectile
     damage:
       types:
-        Piercing: 35
+        Piercing: 22
 
 - type: entity
   id: Bullet739BP
@@ -38,7 +38,7 @@
   - type: Projectile
     damage:
       types:
-        Piercing: 30
+        Piercing: 23
 
 # ── Патроны (гильза + снаряд) ────────────────────────────────────────────────
 - type: entity

@@ -13,7 +13,7 @@
     projectileClass: 1
     damage:
       types:
-        Piercing: 23
+        Piercing: 15
   - type: StaminaDamageOnCollide
     damage: 1
 
@@ -27,7 +27,7 @@
     projectileClass: 2
     damage:
       types:
-        Piercing: 24
+        Piercing: 16
 
 - type: entity
   id: Bullet919RIP
@@ -39,9 +39,9 @@
     projectileClass: 0
     damage:
       types:
-        Piercing: 45
-        Blunt: 5
-        Slash: 5
+        Piercing: 16
+        Blunt: 3
+        Slash: 3
 
 - type: entity
   id: Bullet919PBM
@@ -53,7 +53,7 @@
     projectileClass: 3
     damage:
       types:
-        Piercing: 26
+        Piercing: 17
 
 # ── Патроны ──────────────────────────────────────────────────────────────────
 - type: entity

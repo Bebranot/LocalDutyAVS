@@ -34,6 +34,18 @@ public sealed class ConcussionSystem : SharedConcussionSystem
     private const float RingMinDb = -18f;
     private const float RingMaxDb = 4f;
 
+    // ── Watchdog против «залипшего» писка ────────────────────────────────────
+    // Баг (наблюдался после агост-переселений): уровень «замораживается» (dt≤0 в
+    // GetCurrentLevel из-за LastUpdate в будущем) → писк висит на одной громкости вечно.
+    // Если играющий звон не МЕНЯЕТ уровень дольше таймаута — принудительно глушим.
+    // Нормальное затухание постоянно двигает уровень, поэтому легитимный звон не режется.
+    private static readonly TimeSpan RingFrozenTimeout = TimeSpan.FromSeconds(15);
+    private const float RingFrozenEpsilon = 0.5f;
+
+    private EntityUid? _ringWatchdogEntity;
+    private float _ringWatchdogLevel;
+    private TimeSpan _ringWatchdogTime;
+
     private bool EffectsEnabled => _cfg.GetCVar(DutyCCVars.ConcussionEffectsEnabled);
 
     public override void Initialize()
@@ -115,6 +127,23 @@ public sealed class ConcussionSystem : SharedConcussionSystem
         if (level < comp.RingStartLevel && _ringStream == null)
             return; // ещё не дотянули до старта звона
 
+        // Watchdog: пока писк играет, следим что уровень реально шевелится.
+        if (_ringStream != null)
+        {
+            if (player != _ringWatchdogEntity
+                || MathF.Abs(level - _ringWatchdogLevel) > RingFrozenEpsilon)
+            {
+                _ringWatchdogEntity = player;
+                _ringWatchdogLevel = level;
+                _ringWatchdogTime = Timing.CurTime;
+            }
+            else if (Timing.CurTime - _ringWatchdogTime >= RingFrozenTimeout)
+            {
+                StopRing(); // уровень заморожен 15с — глушим залипший звон
+                return;
+            }
+        }
+
         var db = LevelToDb(level, comp);
 
         if (_ringStream == null)
@@ -124,6 +153,11 @@ public sealed class ConcussionSystem : SharedConcussionSystem
                 Filter.Local(),
                 false,
                 AudioParams.Default.WithLoop(true).WithVolume(db))?.Entity;
+
+            // Старт отсчёта watchdog от текущего состояния.
+            _ringWatchdogEntity = player;
+            _ringWatchdogLevel = level;
+            _ringWatchdogTime = Timing.CurTime;
         }
         else if (TryComp<AudioComponent>(_ringStream, out var audioComp))
         {

@@ -13,9 +13,9 @@
     projectileClass: 1
     damage:
       types:
-        Blunt: 6
-        Slash: 6
-        Piercing: 44.5
+        Blunt: 4
+        Slash: 4
+        Piercing: 38
   - type: StaminaDamageOnCollide
     damage: 5
 
@@ -29,9 +29,9 @@
     projectileClass: 2
     damage:
       types:
-        Blunt: 6.5
-        Slash: 6.5
-        Piercing: 54
+        Blunt: 4
+        Slash: 4
+        Piercing: 42
 
 - type: entity
   id: Bullet1255BP
@@ -43,7 +43,7 @@
     projectileClass: 4
     damage:
       types:
-        Piercing: 65
+        Piercing: 48
 
 # ── Патроны ──────────────────────────────────────────────────────────────────
 - type: entity
