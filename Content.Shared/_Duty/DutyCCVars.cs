@@ -118,4 +118,13 @@ public sealed class DutyCCVars
     /// </summary>
     public static readonly CVarDef<bool> ConcussionEffectsEnabled =
         CVarDef.Create("duty.concussion_effects_enabled", true, CVar.ARCHIVE | CVar.CLIENTONLY);
+
+    // ── Реалистичный бег (выносливость + замедление от ХП/брони/оружия) ─────────
+
+    /// <summary>
+    /// Включена ли система реалистичного бега: расход выносливости, замедление спринта
+    /// от ХП, занятых слотов и оружия в руках. Выключение возвращает ванильный спринт.
+    /// </summary>
+    public static readonly CVarDef<bool> SprintEnabled =
+        CVarDef.Create("duty.sprint_enabled", true, CVar.SERVER | CVar.REPLICATED);
 }

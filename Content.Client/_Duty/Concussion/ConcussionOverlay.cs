@@ -1,3 +1,4 @@
+using System.Numerics;
 using Content.Shared.CCVar;
 using Content.Shared._Duty.Concussion;
 using Robust.Client.Graphics;
@@ -27,6 +28,18 @@ public sealed class ConcussionOverlay : Overlay
     /// <summary>Качание/мутность экрана для головокружения — переиспользуем ванильный «Drunk».</summary>
     private static readonly ProtoId<ShaderPrototype> DizzyShader = "Drunk";
     private readonly ShaderInstance _dizzyShader;
+
+    /// <summary>Тонирование экрана по шкале — «вымывание» цвета (порт color_tint из Goob).</summary>
+    private static readonly ProtoId<ShaderPrototype> TintShader = "DutyColorTint";
+    private readonly ShaderInstance _tintShader;
+
+    // ── Тинт (обесцвечивание/тонирование) — ПОДКРУТКА ЗДЕСЬ ──────────────────
+    /// <summary>Цвет, к которому тянем картинку. Малонасыщенный = в основном обесцвечивает + чуть темнит.</summary>
+    private static readonly Color TintColor = new(0.50f, 0.42f, 0.40f);
+    /// <summary>Сила тинта на полной шкале (0..1).</summary>
+    private const float TintMaxAmount = 0.5f;
+    /// <summary>С какой доли шкалы тинт начинает проявляться.</summary>
+    private const float TintStartFraction = 0.2f;
 
     public override OverlaySpace Space => OverlaySpace.WorldSpace;
 
@@ -65,6 +78,7 @@ public sealed class ConcussionOverlay : Overlay
         IoCManager.InjectDependencies(this);
         _concussion = _entMan.System<SharedConcussionSystem>();
         _dizzyShader = _proto.Index(DizzyShader).InstanceUnique();
+        _tintShader = _proto.Index(TintShader).InstanceUnique();
         _cfg.OnValueChanged(CCVars.ReducedMotion, b => _reducedMotion = b, invokeImmediately: true);
     }
 
@@ -141,15 +155,26 @@ public sealed class ConcussionOverlay : Overlay
         return DizzyPeak * _dizzyIntensity * env;
     }
 
-    private float BaselineAlpha()
+    /// <summary>Текущая заполненность шкалы контузии (0..1) у локального игрока.</summary>
+    private float CurrentNorm()
     {
         var player = _player.LocalEntity;
         if (player == null || !_entMan.TryGetComponent(player, out ConcussionComponent? comp))
             return 0f;
 
-        var norm = comp.MaxLevel <= 0f ? 0f : _concussion.GetCurrentLevel(comp) / comp.MaxLevel;
+        return comp.MaxLevel <= 0f ? 0f : _concussion.GetCurrentLevel(comp) / comp.MaxLevel;
+    }
+
+    private float BaselineAlpha()
+    {
         // Приглушение начинается с ~10% шкалы и доходит до 0.40 на максимуме.
-        return Math.Clamp((norm - 0.1f) / 0.9f, 0f, 1f) * 0.40f;
+        return Math.Clamp((CurrentNorm() - 0.1f) / 0.9f, 0f, 1f) * 0.40f;
+    }
+
+    /// <summary>Сила тонирования по шкале: «вымывание» цвета растёт с контузией.</summary>
+    private float TintAmount()
+    {
+        return Math.Clamp((CurrentNorm() - TintStartFraction) / (1f - TintStartFraction), 0f, 1f) * TintMaxAmount;
     }
 
     protected override bool BeforeDraw(in OverlayDrawArgs args)
@@ -162,7 +187,7 @@ public sealed class ConcussionOverlay : Overlay
         if (args.Viewport.Eye != eyeComp.Eye)
             return false;
 
-        return GetAlpha() > 0.001f || DizzyPower() > 0.001f;
+        return GetAlpha() > 0.001f || DizzyPower() > 0.001f || TintAmount() > 0.001f;
     }
 
     private float GetAlpha()
@@ -174,7 +199,19 @@ public sealed class ConcussionOverlay : Overlay
     {
         var handle = args.WorldHandle;
 
-        // Сначала качание/мутность (шейдер по скриншоту экрана), затем затемнение поверх.
+        // 1. Тонирование экрана по шкале (вымывание цвета). Сэмплит скриншот экрана.
+        var tint = TintAmount();
+        if (tint > 0.001f && ScreenTexture != null)
+        {
+            _tintShader.SetParameter("SCREEN_TEXTURE", ScreenTexture);
+            _tintShader.SetParameter("tint_color", new Vector3(TintColor.R, TintColor.G, TintColor.B));
+            _tintShader.SetParameter("tint_amount", tint);
+            handle.UseShader(_tintShader);
+            handle.DrawRect(args.WorldBounds, Color.White);
+            handle.UseShader(null);
+        }
+
+        // 2. Качание/мутность (Drunk). Во время 3-сек головокружения перекрывает тинт — это ок.
         var dizzy = DizzyPower();
         if (dizzy > 0.001f && ScreenTexture != null)
         {

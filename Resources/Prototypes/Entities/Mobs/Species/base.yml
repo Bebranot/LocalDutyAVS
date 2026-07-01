@@ -10,6 +10,7 @@
   abstract: true
   components:
   - type: Concussion # _Duty: шкала контузии от выстрелов/взрывов
+  - type: DutyStamina # _Duty: пул выносливости для реалистичного бега
   - type: Sprite
     layers:
     - map: [ "enum.HumanoidVisualLayers.Chest" ]

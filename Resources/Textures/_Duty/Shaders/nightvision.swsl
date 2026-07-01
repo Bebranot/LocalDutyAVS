@@ -1,0 +1,41 @@
+// _Duty: зелёный тинт ночного зрения (порт nightvision из Afgan14).
+// Картинка переводится в яркость, тёмные участки усиливаются, всё тонируется в tint (зелёный),
+// добавляется лёгкий шум. Используется оверлеем ПНВ поверх полностью-светлой сцены.
+light_mode unshaded;
+
+uniform sampler2D SCREEN_TEXTURE;
+uniform highp vec3 tint; // цвет тинта
+uniform highp float luminance_threshold; // 0..1
+uniform highp float noise_amount; // 0..1
+
+lowp float rand (lowp vec2 n) {
+  return 0.5 + 0.5 * fract (sin (dot (n.xy, vec2 (12.9898, 78.233)))* 43758.5453);
+}
+
+void fragment() {
+
+    highp vec4 color = zTextureSpec(SCREEN_TEXTURE, FRAGCOORD.xy * SCREEN_PIXEL_SIZE);
+
+    // яркость по luminance
+    highp float grey = dot(color.rgb, vec3(0.298, 0.5882, 0.1137));
+
+    // локальный порог
+    highp float threshold = grey * luminance_threshold;
+
+    // усиление тёмных участков
+    if (grey < threshold) {
+        grey += (threshold - grey) * 0.5;
+        if (grey > 1.0) {
+            grey = 1.0;
+        }
+    }
+
+    // тонирование в цвет ночного зрения
+    color.rgb = mix(color.rgb, tint, grey);
+
+    // немного шума для реализма
+    lowp float noise = rand(FRAGCOORD.xy + TIME) * noise_amount / 10.0;
+    color.rgb += noise;
+
+    COLOR = color;
+}
