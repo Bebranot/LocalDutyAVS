@@ -5,6 +5,7 @@ using Content.Shared.CCVar;
 using Content.Shared.CombatMode;
 using Content.Shared.Damage;
 using Content.Shared.Damage.Components;
+using Content.Shared.Damage.Systems;
 using Content.Shared.Duty.Audio;
 using Content.Shared.GameTicking;
 using Content.Shared.Mobs;
@@ -36,6 +37,7 @@ public sealed class DynamicAmbientMusicSystem : EntitySystem
     [Dependency] private readonly IRobustRandom _random = default!;
     [Dependency] private readonly IGameTiming _timing = default!;
     [Dependency] private readonly IStateManager _stateManager = default!;
+    [Dependency] private readonly DamageableSystem _damageable = default!;
     [Dependency] private readonly SharedAudioSystem _audio = default!;
     [Dependency] private readonly IResourceCache _resourceCache = default!;
     [Dependency] private readonly IAudioManager _audioManager = default!;
@@ -835,7 +837,7 @@ public sealed class DynamicAmbientMusicSystem : EntitySystem
 
         if (maxHp <= 0f)
             return 100f;
-        return Math.Clamp(100f * (1f - damageable.TotalDamage.Float() / maxHp), 0f, 100f);
+        return Math.Clamp(100f * (1f - _damageable.GetTotalDamage((player, damageable)).Float() / maxHp), 0f, 100f);
     }
 
     private HealthMusicState GetHealthState(EntityUid player)

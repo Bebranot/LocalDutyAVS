@@ -132,7 +132,7 @@ public sealed class MoraleFlagSystem : EntitySystem
         {
             if (target == user)
                 continue;
-            if (!HasComp<HumanoidAppearanceComponent>(target))
+            if (!HasComp<HumanoidProfileComponent>(target))
                 continue;
             if (!_mobState.IsAlive(target))
                 continue;

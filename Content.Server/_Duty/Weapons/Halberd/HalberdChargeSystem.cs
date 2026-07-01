@@ -226,7 +226,7 @@ public sealed class HalberdChargeSystem : EntitySystem
         comp.ChargeStartPos = userPos;
 
         // Звук и крик старта — звук подбирается по полу персонажа
-        var crySound = CompOrNull<HumanoidAppearanceComponent>(user)?.Sex == Sex.Female
+        var crySound = CompOrNull<HumanoidProfileComponent>(user)?.Sex == Sex.Female
             ? comp.ChargeCryFemaleSound
             : comp.ChargeCryMaleSound;
         _audio.PlayPvs(crySound, user);
