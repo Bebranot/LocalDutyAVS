@@ -14,7 +14,7 @@
   - type: Projectile
     damage:
       types:
-        Piercing: 21
+        Piercing: 34
   - type: StaminaDamageOnCollide
     damage: 4
 
@@ -27,7 +27,7 @@
   - type: Projectile
     damage:
       types:
-        Piercing: 22
+        Piercing: 35
 
 - type: entity
   id: Bullet739BP
@@ -38,7 +38,7 @@
   - type: Projectile
     damage:
       types:
-        Piercing: 23
+        Piercing: 30
 
 # ── Патроны (гильза + снаряд) ────────────────────────────────────────────────
 - type: entity
@@ -93,7 +93,7 @@
 - type: entity
   id: Base739Mag10
   name: magazine 7.62x39 (10)
-  suffix: "Магазин, Stalker"
+  suffix: "Duty, Stalker"
   description: Магазин 7.62x39 для АК. Вместимость 10.
   parent: BaseItem
   components:
@@ -131,7 +131,7 @@
 - type: entity
   id: Magazine739x30
   name: magazine 7.62x39 (30)
-  suffix: "Магазин, Stalker"
+  suffix: "Duty, Stalker"
   description: Магазин 7.62x39 для АК. Вместимость 30.
   parent: Base739Mag10
   components:

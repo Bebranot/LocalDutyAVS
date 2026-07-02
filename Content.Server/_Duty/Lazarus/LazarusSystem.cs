@@ -65,7 +65,7 @@ public sealed class LazarusSystem : EntitySystem
     private void OnPlayerSpawn(PlayerSpawnCompleteEvent ev)
     {
         // Только гуманоиды — как и в системе реплик боли.
-        if (!HasComp<HumanoidAppearanceComponent>(ev.Mob))
+        if (!HasComp<HumanoidProfileComponent>(ev.Mob))
             return;
 
         EnsureComp<LazarusComponent>(ev.Mob);
@@ -111,7 +111,7 @@ public sealed class LazarusSystem : EntitySystem
             if (!TryGetCritRange(thresholds, out var critThreshold, out var deadThreshold))
                 continue;
 
-            var total = damageable.TotalDamage;
+            var total = _damageable.GetTotalDamage((uid, damageable));
 
             // Доля диапazона "крит → смерть", оставшаяся до гибели.
             // 1.0 — только что в крите; 0.0 — на пороге смерти.
@@ -243,12 +243,12 @@ public sealed class LazarusSystem : EntitySystem
     /// </summary>
     private void HealToTarget(EntityUid uid, DamageableComponent damageable, FixedPoint2 target)
     {
-        var current = damageable.TotalDamage;
+        var current = _damageable.GetTotalDamage((uid, damageable));
         if (current <= target || current <= 0)
             return;
 
         var factor = (float)(target.Float() / current.Float());
-        var scaled = damageable.Damage * factor;
+        var scaled = _damageable.GetAllDamage((uid, damageable)) * factor;
         _damageable.SetDamage((uid, damageable), scaled);
     }
 
@@ -261,7 +261,7 @@ public sealed class LazarusSystem : EntitySystem
         foreach (var (reagent, quantity) in lazarus.InjectedReagents)
             solution.AddReagent(reagent, quantity);
 
-        _bloodstream.TryAddToChemicals(uid, solution);
+        _bloodstream.TryAddToBloodstream(uid, solution);
     }
 
     /// <summary>

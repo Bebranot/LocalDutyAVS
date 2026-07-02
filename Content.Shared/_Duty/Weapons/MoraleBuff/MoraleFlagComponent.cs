@@ -47,7 +47,9 @@ public sealed partial class MoraleFlagComponent : Component
     [DataField]
     public EntProtoId VisualEffect = "DutyMoraleBuffVisual";
 
-    /// <summary>Звук взмаха флагом при активации.</summary>
+    /// <summary>
+    /// Звук активации. ЗАГЛУШКА — заменить на финальный ассет, когда будет путь/файл.
+    /// </summary>
     [DataField]
-    public SoundSpecifier? Sound = new SoundPathSpecifier("/Audio/_Duty/Effects/waveflag.ogg");
+    public SoundSpecifier? Sound = new SoundPathSpecifier("/Audio/Items/airhorn.ogg");
 }

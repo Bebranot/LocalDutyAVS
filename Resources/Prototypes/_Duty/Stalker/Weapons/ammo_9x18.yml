@@ -13,7 +13,7 @@
     projectileClass: 1
     damage:
       types:
-        Piercing: 13
+        Piercing: 22
   - type: StaminaDamageOnCollide
     damage: 1
 
@@ -27,7 +27,7 @@
     projectileClass: 2
     damage:
       types:
-        Piercing: 14
+        Piercing: 25
 
 - type: entity
   id: Bullet918SP7
@@ -39,9 +39,9 @@
     projectileClass: 0
     damage:
       types:
-        Piercing: 15
-        Blunt: 3
-        Slash: 3
+        Piercing: 40
+        Blunt: 5
+        Slash: 5
 
 - type: entity
   id: Bullet918PBM
@@ -53,7 +53,7 @@
     projectileClass: 3
     damage:
       types:
-        Piercing: 15
+        Piercing: 25
 
 # ── Патроны ──────────────────────────────────────────────────────────────────
 - type: entity
@@ -119,7 +119,7 @@
   name: магазин ПМм 9x18 (10)
   description: Магазин 9x18 мм для ПМм. Вместимость 10.
   parent: BaseItem
-  suffix: "Магазин, Stalker"
+  suffix: "Duty, Stalker"
   components:
   - type: Tag
     tags:

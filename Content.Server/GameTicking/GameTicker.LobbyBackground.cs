@@ -1,3 +1,5 @@
+using Content.Shared.GameTicking.Prototypes;
+using Robust.Shared.Prototypes;
 using Robust.Shared.Utility;
 
 namespace Content.Server.GameTicking;
@@ -5,7 +7,7 @@ namespace Content.Server.GameTicking;
 public sealed partial class GameTicker
 {
     [ViewVariables]
-    public string? LobbyBackground { get; private set; }
+    public ProtoId<LobbyBackgroundPrototype>? LobbyBackground { get; private set; }
 
     private void InitializeLobbyBackground()
     {

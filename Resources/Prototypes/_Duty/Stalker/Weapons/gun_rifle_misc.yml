@@ -63,7 +63,7 @@
   parent: STBaseWeaponRifleFAL
   id: STWeaponRifleFAL
   name: FN FAL
-  suffix: "Автомат, Stalker"
+  suffix: "Duty, Stalker"
   description: Легендарная бельгийская винтовка под мощный 7.62x51 NATO. Каждый выстрел бьёт как кувалда.
 
 - type: entity
@@ -122,7 +122,7 @@
   parent: STBaseWeaponRifleM14
   id: STWeaponRifleM14
   name: M14
-  suffix: "Автомат, Stalker"
+  suffix: "Duty, Stalker"
   description: Мощная американская винтовка под 7.62x51 NATO. Дальнобойная, но тяжёлая.
 
 - type: entity
@@ -191,7 +191,7 @@
   parent: STBaseWeaponRifleGalatz
   id: STWeaponRifleGalatz
   name: galatz "Wanderer"
-  suffix: "Автомат, Stalker"
+  suffix: "Duty, Stalker"
   description: Израильская марксманская винтовка под 7.62x51 NATO. Редкость в Зоне.
 
 - type: entity
@@ -259,14 +259,14 @@
   parent: STBaseWeaponRifleSCARH
   id: STWeaponRifleSCARH
   name: FN SCAR-H
-  suffix: "Автомат, Stalker"
+  suffix: "Duty, Stalker"
   description: Бельгийская винтовка под 7.62x51 NATO. Мощная, но требовательна к уходу.
 
 - type: entity
   parent: STBaseWeaponRifleSCARH
   id: STWeaponRifleSCARHShort
   name: FN SCAR-H CQC
-  suffix: "Автомат, Stalker"
+  suffix: "Duty, Stalker"
   description: Короткоствольный SCAR-H для ближнего боя. Манёвреннее, но менее точный.
   components:
   - type: Clothing
@@ -284,7 +284,7 @@
   parent: STBaseWeaponRifleSCARH
   id: STWeaponRifleARX160
   name: beretta ARX-160
-  suffix: "Автомат, Stalker"
+  suffix: "Duty, Stalker"
   description: Итальянская штурмовая винтовка. Легче, но слабее SCAR.
   components:
   - type: Clothing
@@ -357,14 +357,14 @@
   parent: STBaseWeaponRifleASVAL
   id: STWeaponRifleASVAL
   name: AS-VAL
-  suffix: "Автомат, Stalker"
+  suffix: "Duty, Stalker"
   description: Бесшумное оружие спецназа на базе ВСС «Винторез». Встроенный глушитель, патрон 9x39 с тяжёлой пулей.
 
 - type: entity
   parent: STBaseWeaponRifleASVAL
   id: STWeaponRifleASVALSelebra
   name: AS-VAL "Selebra"
-  suffix: "Автомат, Stalker"
+  suffix: "Duty, Stalker"
   description: Кастомный AS-VAL в камуфляже «Поиск». Для тихой и эффективной работы.
   components:
   - type: Clothing
@@ -441,14 +441,14 @@
   parent: STBaseWeaponRifleSIG
   id: STWeaponRifleSIG550
   name: SIG SG 550
-  suffix: "Автомат, Stalker"
+  suffix: "Duty, Stalker"
   description: Швейцарская штурмовая винтовка. Высокая надёжность и точность.
 
 - type: entity
   parent: STBaseWeaponRifleSIG
   id: STWeaponRifleSIG550Black
   name: SIG SG 550
-  suffix: "Автомат, Stalker"
+  suffix: "Duty, Stalker"
   description: Швейцарская штурмовая винтовка под 5.56x45. Мягкая отдача, высокая точность.
   components:
   - type: Item
@@ -465,7 +465,7 @@
   parent: STBaseWeaponRifleSIG
   id: STWeaponRifleSIG739
   name: SIG-739 "Precision"
-  suffix: "Автомат, Stalker"
+  suffix: "Duty, Stalker"
   description: Кастомный снайперский вариант под советский 7.62x39. Идеален для дальнего боя.
   components:
   - type: STWeight
@@ -521,7 +521,7 @@
   parent: STBaseWeaponRifle
   id: STMetroWeaponRifleVSV
   name: ВСВ "Глухарь"
-  suffix: "Автомат, Stalker"
+  suffix: "Duty, Stalker"
   description: Точный и мощный автомат для средней дистанции. Стреляет тише других.
   components:
   - type: STWeight
@@ -642,14 +642,14 @@
   parent: STBaseWeaponRifleOC14
   id: STWeaponRifleOC14
   name: OC-14 «Groza»
-  suffix: "Автомат, Stalker"
+  suffix: "Duty, Stalker"
   description: Компактный и надёжный автоматно-гранатомётный комплекс. Любимец военных сталкеров.
 
 - type: entity
   parent: STBaseWeaponRifleOC14
   id: STWeaponRifleOC14Alt
   name: OC-14 «Groza»
-  suffix: "Автомат, Stalker"
+  suffix: "Duty, Stalker"
   description: Автоматно-гранатомётный комплекс, унифицированный с АК.
   components:
   - type: Item
@@ -666,7 +666,7 @@
   parent: STBaseWeaponRifleOC14
   id: STWeaponRifleOC14939
   name: OC-14 «Groza» 9x39
-  suffix: "Автомат, Stalker"
+  suffix: "Duty, Stalker"
   description: Вариант ОЦ-14 под 9x39 — пробивает бронежилеты и укрытия.
   components:
   - type: ItemSlots
@@ -691,7 +691,7 @@
 # ══ Скины AK (АК-104 739, АК-12/АК-15/РПК-16) ════════════════════════════════
 - type: entity
   name: АК-104
-  suffix: "Автомат, Stalker"
+  suffix: "Duty, Stalker"
   parent: STBaseWeaponRifle
   id: STWeaponRifleStalkerAK104
   description: "«Сотая» серия Калашникова: полимерная фурнитура и боковая планка под прицелы."
@@ -749,7 +749,7 @@
 
 - type: entity
   name: АК-12
-  suffix: "Автомат, Stalker"
+  suffix: "Duty, Stalker"
   parent: STBaseWeaponRifle
   id: STWeaponRifleStalkerAK12
   description: "Вершина развития системы АК: продуманная эргономика, повышенная точность и кучность."
@@ -809,7 +809,7 @@
   name: АК-12 серафимов
   parent: STWeaponRifleStalkerAK12
   id: STWeaponRifleStalkerAK12Sera
-  suffix: "Автомат, Stalker"
+  suffix: "Duty, Stalker"
   components:
   - type: Clothing
     sprite: _Stalker/Objects/Weapons/Guns/Rifles/_Skins/ak12sera.rsi
@@ -823,7 +823,7 @@
   name: АК-15
   parent: STWeaponRifleStalkerAK12
   id: STWeaponRifleStalkerAK15
-  suffix: "Автомат, Stalker"
+  suffix: "Duty, Stalker"
   description: Пик развития системы АК под 7.62x39.
   components:
   - type: Clothing
@@ -862,7 +862,7 @@
   name: РПК-16
   parent: STWeaponRifleStalkerAK12
   id: STWeaponRifleStalkerRPK16
-  suffix: "Автомат, Stalker"
+  suffix: "Duty, Stalker"
   description: Вариация АК-12 под ручной пулемёт.
   components:
   - type: Clothing
@@ -888,7 +888,7 @@
   name: РПК-16 "Осень"
   parent: STWeaponRifleStalkerRPK16
   id: STWeaponRifleStalkerRPK16Camo
-  suffix: "Автомат, Stalker"
+  suffix: "Duty, Stalker"
   description: РПК-16 в осеннем камуфляже.
   components:
   - type: Clothing

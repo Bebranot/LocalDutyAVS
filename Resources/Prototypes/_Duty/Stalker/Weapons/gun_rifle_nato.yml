@@ -63,7 +63,7 @@
   parent: STBaseWeaponRifleM16
   id: STWeaponRifleM16
   name: M16
-  suffix: "Автомат, Stalker"
+  suffix: "Duty, Stalker"
   description: Легендарная американская винтовка эпохи Вьетнама. Попадает в Зону через военные склады и чёрный рынок.
 
 # ── M4 (+ HK416, LR-300, SCAR-L) ─────────────────────────────────────────────
@@ -147,14 +147,14 @@
   parent: STBaseWeaponRifleM4
   id: STWeaponRifleM4
   name: Colt M4 "Cobra"
-  suffix: "Автомат, Stalker"
+  suffix: "Duty, Stalker"
   description: Американская штурмовая винтовка, икона современных войн. В Зоне — у западных наёмников.
 
 - type: entity
   parent: STBaseWeaponRifleM4
   id: STWeaponRifleHK416
   name: HK416
-  suffix: "Автомат, Stalker"
+  suffix: "Duty, Stalker"
   description: Немецкий апгрейд M4 с газовой системой G36. Оружие профессионалов Зоны.
   components:
   - type: STWeight
@@ -179,7 +179,7 @@
   parent: STBaseWeaponRifleM4
   id: STWeaponRifleLR300v1
   name: LR-300
-  suffix: "Автомат, Stalker"
+  suffix: "Duty, Stalker"
   description: Лёгкая винтовка с дальностью эффективного огня до 300 метров. Высокая точность, но чувствительна к загрязнению.
   components:
   - type: Item
@@ -196,7 +196,7 @@
   parent: STBaseWeaponRifleM4
   id: STWeaponRifleLR300v2
   name: LR-300
-  suffix: "Автомат, Stalker"
+  suffix: "Duty, Stalker"
   description: Новая ступень развития семейства М-16. Ровный спуск, высокая эргономика, малый вес.
   components:
   - type: Item
@@ -213,7 +213,7 @@
   parent: STBaseWeaponRifleM4
   id: STWeaponRifleSCARL
   name: SCAR-L
-  suffix: "Автомат, Stalker"
+  suffix: "Duty, Stalker"
   description: Бельгийская винтовка под 5.56 NATO. Редкость в Зоне, у западных наёмников.
   components:
   - type: STWeight
@@ -298,14 +298,14 @@
   parent: STBaseWeaponRifleG36
   id: STWeaponRifleG36
   name: HK G-36
-  suffix: "Автомат, Stalker"
+  suffix: "Duty, Stalker"
   description: Первоклассный образец современного оружия — лёгкий, надёжный, эргономичный.
 
 - type: entity
   parent: STBaseWeaponRifleG36
   id: STWeaponRifleG36Alt
   name: HK G-36
-  suffix: "Автомат, Stalker"
+  suffix: "Duty, Stalker"
   description: Немецкая штурмовая винтовка, первоклассный образец современного оружия.
   components:
   - type: Item
@@ -319,7 +319,7 @@
   parent: STBaseWeaponRifleG36
   id: STWeaponRifleG36Covenant
   name: HK G-36 "Prophet"
-  suffix: "Автомат, Stalker"
+  suffix: "Duty, Stalker"
   description: Кастомный G-36 с метками Ковенанта. Оружие фанатиков Зоны.
   components:
   - type: Item
@@ -333,7 +333,7 @@
   parent: STBaseWeaponRifleG36
   id: STWeaponRifleAUG
   name: AUG
-  suffix: "Автомат, Stalker"
+  suffix: "Duty, Stalker"
   description: Австрийская штурмовая винтовка со встроенным прицелом.
   components:
   - type: Item
@@ -353,7 +353,7 @@
   parent: STBaseWeaponRifle
   id: STWeaponRifleGalil
   name: galil ARM
-  suffix: "Автомат, Stalker"
+  suffix: "Duty, Stalker"
   description: Израильская винтовка для суровых условий. Надёжна как верблюд.
   components:
   - type: STWeight
@@ -467,7 +467,7 @@
   parent: STBaseWeaponRifleL85
   id: STWeaponRifleL85
   name: L85
-  suffix: "Автомат, Stalker"
+  suffix: "Duty, Stalker"
   description: Британская винтовка с 4-кратным прицелом и высокой точностью первого выстрела.
   components:
   - type: Gun
@@ -478,7 +478,7 @@
   parent: STBaseWeaponRifleL85
   id: STWeaponRifleL85WhiteStrawberry
   name: L85 (Raspberry Tea)
-  suffix: "Автомат, Stalker"
+  suffix: "Duty, Stalker"
   description: Экзотическая версия в малиновом камуфляже.
   components:
   - type: Clothing
@@ -493,7 +493,7 @@
   parent: STBaseWeaponRifle
   id: STWeaponRifleF2000
   name: FN-F2000
-  suffix: "Автомат, Stalker"
+  suffix: "Duty, Stalker"
   description: Футуристичная модульная система с 40-мм гранатомётом. Эргономична и надёжна.
   components:
   - type: STWeight
@@ -539,7 +539,7 @@
 # ── Abakan / AEK-971 (5.45, на базе AK-74M) ──────────────────────────────────
 - type: entity
   name: AN-94 «Абакан»
-  suffix: "Автомат, Stalker"
+  suffix: "Duty, Stalker"
   parent: STWeaponRifleAK74M
   id: STWeaponRifleStalkerAbakan
   description: Оружие элитных войск. Подвижная ствольная коробка снижает отдачу, повышая точность.
@@ -557,7 +557,7 @@
 
 - type: entity
   name: AEK-971
-  suffix: "Автомат, Stalker"
+  suffix: "Duty, Stalker"
   parent: STWeaponRifleAK74M
   id: STWeaponRifleStalkerAek971
   description: Советский автомат со сбалансированной автоматикой.

@@ -7,6 +7,7 @@ using Content.Shared.Chat;
 using Content.Shared.FixedPoint;
 using Content.Shared._Duty.HealthPhrases;
 using Content.Shared.Damage.Components;
+using Content.Shared.Damage.Systems;
 using Content.Shared.GameTicking;
 using Content.Shared.Humanoid;
 using Content.Shared.Mobs.Components;
@@ -29,6 +30,7 @@ public sealed class HealthPhrasesSystem : EntitySystem
     [Dependency] private readonly IConfigurationManager _cfg = default!;
     [Dependency] private readonly IConsoleHost _console = default!;
     [Dependency] private readonly IPlayerManager _playerManager = default!;
+    [Dependency] private readonly DamageableSystem _damageable = default!;
 
     private bool _enabled;
     private float _popupMin;
@@ -57,7 +59,7 @@ public sealed class HealthPhrasesSystem : EntitySystem
 
     private void OnPlayerSpawn(PlayerSpawnCompleteEvent ev)
     {
-        if (!HasComp<HumanoidAppearanceComponent>(ev.Mob))
+        if (!HasComp<HumanoidProfileComponent>(ev.Mob))
             return;
 
         var comp = EnsureComp<HealthPhrasesComponent>(ev.Mob);
@@ -85,7 +87,7 @@ public sealed class HealthPhrasesSystem : EntitySystem
             return;
 
         var now = _timing.CurTime;
-        var query = EntityQueryEnumerator<HealthPhrasesComponent, DamageableComponent, HumanoidAppearanceComponent, MobStateComponent>();
+        var query = EntityQueryEnumerator<HealthPhrasesComponent, DamageableComponent, HumanoidProfileComponent, MobStateComponent>();
 
         while (query.MoveNext(out var uid, out var phrases, out var damageable, out var humanoid, out var mobState))
         {
@@ -108,7 +110,7 @@ public sealed class HealthPhrasesSystem : EntitySystem
             if (critThreshold <= 0)
                 continue;
 
-            var hpPercent = Math.Clamp(1f - (float)(damageable.TotalDamage / critThreshold), 0f, 1f);
+            var hpPercent = Math.Clamp(1f - (float)(_damageable.GetTotalDamage((uid, damageable)) / critThreshold), 0f, 1f);
             var level = GetHpLevel(hpPercent);
             if (level == HpLevel.None)
                 continue;
@@ -263,7 +265,7 @@ public sealed class HealthPhrasesSystem : EntitySystem
 
         if (!TryComp<DamageableComponent>(mob, out var damageable) ||
             !TryComp<MobThresholdsComponent>(mob, out var thresholds) ||
-            !TryComp<HumanoidAppearanceComponent>(mob, out var humanoid))
+            !TryComp<HumanoidProfileComponent>(mob, out var humanoid))
         {
             shell.WriteError("Сущность не подходит для системы фраз.");
             return;
@@ -281,7 +283,7 @@ public sealed class HealthPhrasesSystem : EntitySystem
             return;
         }
 
-        var hpPercent = Math.Clamp(1f - (float)(damageable.TotalDamage / critThreshold), 0f, 1f);
+        var hpPercent = Math.Clamp(1f - (float)(_damageable.GetTotalDamage((mob.Value, damageable)) / critThreshold), 0f, 1f);
         var level = GetHpLevel(hpPercent);
 
         if (level == HpLevel.None)

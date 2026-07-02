@@ -11,7 +11,6 @@ using Content.Shared.FixedPoint;
 using Content.Shared.Hands;
 using Content.Shared.Hands.EntitySystems;
 using Content.Shared.Humanoid;
-using Content.Shared.Interaction.Events;
 using Content.Shared.Movement.Systems;
 using Content.Shared.Physics;
 using Content.Shared.Popups;
@@ -75,11 +74,6 @@ public sealed class HalberdChargeSystem : EntitySystem
         // Алебарда не выпадает никогда кроме дизарма
         SubscribeLocalEvent<HalberdChargeComponent, DropAttemptEvent>(OnDropAttempt);
         SubscribeLocalEvent<HalberdChargeComponent, DisarmedEvent>(OnDisarmed);
-
-        // Запрет атак (ЛКМ/ПКМ) во время рывка (резист-маркер висит ровно на время рывка)
-        // и ещё PostChargeAttackBlock секунд после (отдельный таймерный маркер).
-        SubscribeLocalEvent<HalberdChargeResistComponent, AttackAttemptEvent>(OnChargeAttackAttempt);
-        SubscribeLocalEvent<HalberdNoAttackComponent, AttackAttemptEvent>(OnPostChargeAttackAttempt);
     }
 
     public override void Update(float frameTime)
@@ -94,27 +88,6 @@ public sealed class HalberdChargeSystem : EntitySystem
 
             UpdateCharge(uid, comp, frameTime);
         }
-
-        // Снимаем пост-рывковый запрет атак по истечении таймера.
-        var now = _timing.CurTime;
-        var noAttackQuery = EntityQueryEnumerator<HalberdNoAttackComponent>();
-        while (noAttackQuery.MoveNext(out var uid, out var noAttack))
-        {
-            if (now >= noAttack.Until)
-                RemCompDeferred<HalberdNoAttackComponent>(uid);
-        }
-    }
-
-    // ── Запрет атак во время/после рывка ──────────────────────
-
-    private void OnChargeAttackAttempt(EntityUid uid, HalberdChargeResistComponent comp, AttackAttemptEvent args)
-    {
-        args.Cancel();
-    }
-
-    private void OnPostChargeAttackAttempt(EntityUid uid, HalberdNoAttackComponent comp, AttackAttemptEvent args)
-    {
-        args.Cancel();
     }
 
     // ── Инициализация ─────────────────────────────────────────
@@ -253,7 +226,7 @@ public sealed class HalberdChargeSystem : EntitySystem
         comp.ChargeStartPos = userPos;
 
         // Звук и крик старта — звук подбирается по полу персонажа
-        var crySound = CompOrNull<HumanoidAppearanceComponent>(user)?.Sex == Sex.Female
+        var crySound = CompOrNull<HumanoidProfileComponent>(user)?.Sex == Sex.Female
             ? comp.ChargeCryFemaleSound
             : comp.ChargeCryMaleSound;
         _audio.PlayPvs(crySound, user);
@@ -378,10 +351,6 @@ public sealed class HalberdChargeSystem : EntitySystem
 
         // Убираем резист
         RemCompDeferred<HalberdChargeResistComponent>(user);
-
-        // Запрещаем атаки ещё PostChargeAttackBlock секунд после рывка.
-        var noAttack = EnsureComp<HalberdNoAttackComponent>(user);
-        noAttack.Until = _timing.CurTime + TimeSpan.FromSeconds(comp.PostChargeAttackBlock);
 
         // Реакция по ситуации
         switch (reason)

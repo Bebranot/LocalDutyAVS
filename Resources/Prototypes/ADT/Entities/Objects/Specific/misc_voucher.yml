@@ -45,6 +45,8 @@
     kits:
     - DutyWeaponHalberdBlueshield
     - WeaponSaberRevBlueshield
+    - WeaponDrozdBlueshield
+    - WeaponTonfaBlueshield
     typeDropPlace: ThisPlace
     typeDrop: Rocket
 

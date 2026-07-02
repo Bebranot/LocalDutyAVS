@@ -64,10 +64,6 @@ public sealed partial class HalberdChargeComponent : Component
     [DataField]
     public float HitSlowdownSpeedModifier = 0.5f;
 
-    /// <summary>Сколько секунд после окончания рывка ещё нельзя атаковать (ЛКМ/ПКМ).</summary>
-    [DataField]
-    public float PostChargeAttackBlock = 3f;
-
     /// <summary>Звук рывка — зацикленный, играет всё время чарджа, останавливается вручную. Заглушка — звук шагов поставит пользователь позже.</summary>
     [DataField]
     public SoundSpecifier ChargeLoopSound = new SoundPathSpecifier("/Audio/_Duty/Weapons/Halberd/HalberdCharge.ogg", AudioParams.Default.WithLoop(true));
@@ -105,15 +101,4 @@ public sealed partial class HalberdChargeResistComponent : Component
     public bool HadCanCollide;
 
     public bool CanCollideBefore;
-}
-
-/// <summary>
-/// Временный компонент-маркер, вешается на пользователя на <see cref="HalberdChargeComponent.PostChargeAttackBlock"/>
-/// секунд после рывка. Пока висит — атаки (ЛКМ/ПКМ) запрещены. Снимается в Update по <see cref="Until"/>.
-/// </summary>
-[RegisterComponent]
-public sealed partial class HalberdNoAttackComponent : Component
-{
-    /// <summary>Момент, до которого атаки заблокированы (сравнивается с CurTime в Update).</summary>
-    public TimeSpan Until;
 }

@@ -55,14 +55,14 @@
 - type: entity
   parent: STBaseWeaponSMGMP5
   id: STWeaponSMGMP5
-  suffix: "Пистолет-пулемёт, Stalker"
+  suffix: "Duty, Stalker"
   name: H&K MP-5
   description: Легендарный пистолет-пулемёт Heckler & Koch MP-5 под патрон 9x19мм Парабеллум. Точный и надёжный.
 
 - type: entity
   parent: STBaseWeaponSMGMP5
   id: STWeaponSMGMP5Celebra
-  suffix: "Пистолет-пулемёт, Stalker"
+  suffix: "Duty, Stalker"
   name: H&K MP-5 "Celebra"
   description: Кастомная версия MP-5 с раскраской фракции «Поиск».
   components:
@@ -78,7 +78,7 @@
   abstract: true
   parent: STBaseWeaponSMGMP5
   id: STBaseWeaponSMGVector9
-  suffix: "Пистолет-пулемёт, Stalker"
+  suffix: "Duty, Stalker"
   components:
   - type: STWeight
     self: 2
@@ -191,7 +191,7 @@
 - type: entity
   parent: STBaseWeaponSMGMP40
   id: STWeaponSMGMP40
-  suffix: "Пистолет-пулемёт, Stalker"
+  suffix: "Duty, Stalker"
   name: MP-40
   description: Культовый немецкий пистолет-пулемёт MP-40 под 9x19мм Парабеллум. Прост и надёжен.
 
@@ -199,7 +199,7 @@
 - type: entity
   parent: STBaseWeaponSMGMP40
   id: STWeaponSMGMP40ruust
-  suffix: "Пистолет-пулемёт, Stalker"
+  suffix: "Duty, Stalker"
   name: MP-40 ржавый
   description: ФОМОЧКА, ТЫ ЧЕГО????
   components:
@@ -266,14 +266,14 @@
 - type: entity
   parent: STBaseWeaponSMGPP19
   id: STWeaponSMGPP19
-  suffix: "Пистолет-пулемёт, Stalker"
+  suffix: "Duty, Stalker"
   name: ПП-19 "Бизон"
   description: Современный российский ПП-19 Бизон под 9x18мм Макаров. Шнековый магазин на 64 патрона.
 
 - type: entity
   parent: STBaseWeaponSMGPP19
   id: STWeaponSMGPP19919
-  suffix: "Пистолет-пулемёт, Stalker"
+  suffix: "Duty, Stalker"
   name: ПП-19 "Бизон" 9x19
   description: ПП-19 Бизон в исполнении под 9x19мм Парабеллум.
   components:
@@ -366,7 +366,7 @@
 - type: entity
   parent: STBaseWeaponSMGPP1901
   id: STWeaponSMGPP1901
-  suffix: "Пистолет-пулемёт, Stalker"
+  suffix: "Duty, Stalker"
   name: ПП-19-01 "Витязь"
   description: Современный российский ПП под 9x19мм Парабеллум. Полимерное цевьё и складной приклад.
 
@@ -426,14 +426,14 @@
 - type: entity
   parent: STBaseWeaponSMGPP91
   id: STWeaponSMGPP91
-  suffix: "Пистолет-пулемёт, Stalker"
+  suffix: "Duty, Stalker"
   name: ПП-91 "Кедр"
   description: Компактный ПП-91 "Кедр" под 9x19. Простая схема со свободным затвором.
 
 - type: entity
   parent: STBaseWeaponSMGPP91
   id: STWeaponSMGPP91Anomaly
-  suffix: "Пистолет-пулемёт, Stalker"
+  suffix: "Duty, Stalker"
   name: ПП-91 "Кедр" аномальный
   description: Аномально изменённый ПП-91 с невозможными характеристиками — лёгкий, скорострельный, сверхточный.
   components:
@@ -506,7 +506,7 @@
 - type: entity
   parent: STBaseWeaponSMGPPS43
   id: STWeaponSMGPPS43
-  suffix: "Пистолет-пулемёт, Stalker"
+  suffix: "Duty, Stalker"
   name: ППС-43
   description: Культовый советский ППС-43 под 7.62x25мм Токарев. Легендарная надёжность и высокий темп.
 
@@ -560,7 +560,7 @@
 - type: entity
   parent: STBaseWeaponSMGPPSh41
   id: STWeaponSMGPPSh41
-  suffix: "Пистолет-пулемёт, Stalker"
+  suffix: "Duty, Stalker"
   name: ППШ-41
   description: Культовый советский ППШ-41 под 7.62x25мм Токарев. Надёжный и скорострельный.
 
@@ -619,7 +619,7 @@
 - type: entity
   parent: STBaseWeaponSMGViper
   id: STWeaponSMGVZ61
-  suffix: "Пистолет-пулемёт, Stalker"
+  suffix: "Duty, Stalker"
   name: vz. 61 "Скорпион"
   description: Компактный чехословацкий ПП vz. 61 "Скорпион" под 9x18мм.
 
@@ -685,7 +685,7 @@
 - type: entity
   parent: STBaseWeaponSMGThompson
   id: STWeaponSMGThompson
-  suffix: "Пистолет-пулемёт, Stalker"
+  suffix: "Duty, Stalker"
   name: Thompson
   description: Культовый "Томми-ган" под .45 ACP. Барабанный магазин и две рукояти делают его узнаваемым.
 
@@ -743,7 +743,7 @@
 - type: entity
   parent: STBaseWeaponSMGFNP90
   id: STWeaponSMGFNP90
-  suffix: "Пистолет-пулемёт, Stalker"
+  suffix: "Duty, Stalker"
   name: FN P90 PDW
   description: Персональное оружие самообороны FN P90. Компоновка булл-пап и магазин на 50 патронов сверху.
 
@@ -751,7 +751,7 @@
 - type: entity
   parent: STBaseWeaponSMG
   id: STWeaponSMGStalkerCP2Veresk
-  suffix: "Пистолет-пулемёт, Stalker"
+  suffix: "Duty, Stalker"
   name: СР-2 "Вереск"
   description: Компактный ПП под мощный бронебойный 9x21мм. Эта версия — кустарная переделка под 9х19 Парабеллум.
   components:
@@ -809,7 +809,7 @@
 - type: entity
   parent: STBaseWeaponSMG
   id: STWeaponSMGStalkerCP2Veresk921
-  suffix: "Пистолет-пулемёт, Stalker"
+  suffix: "Duty, Stalker"
   name: СР-2М "Вереск" 9х21
   description: Компактный ПП под мощный бронебойный 9x21мм. Оригинальный калибр.
   components:

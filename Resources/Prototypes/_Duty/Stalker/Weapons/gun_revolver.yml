@@ -7,7 +7,7 @@
 - type: entity
   parent: STBaseWeaponRevolver
   id: STWeaponRevolverChiappaRhino60DS
-  suffix: "Револьвер, Stalker"
+  suffix: "Duty, Stalker"
   name: Chiappa Rhino 60DS
   description: Шестизарядный револьвер с инновационным дизайном под .45 ACP. Низкая отдача и малый разброс.
   components:
@@ -47,7 +47,7 @@
 - type: entity
   parent: STBaseWeaponRevolver
   id: STWeaponRevolverDanWesson715
-  suffix: "Револьвер, Stalker"
+  suffix: "Duty, Stalker"
   name: Dan Wesson 715
   description: Шестизарядный высокоточный и надёжный револьвер под .45 ACP. Самый дорогой и редкий в Зоне.
   components:
@@ -87,7 +87,7 @@
 - type: entity
   parent: STBaseWeaponRevolver
   id: WeaponGameRevolverMateba
-  suffix: "Револьвер, Stalker"
+  suffix: "Duty, Stalker"
   name: Матеба
   description: Культовый револьвер карательных отрядов. Использует .44 Remington Magnum.
   components:
@@ -114,7 +114,7 @@
 - type: entity
   parent: WeaponGameRevolverMateba
   id: WeaponRevolverJoker
-  suffix: "Револьвер, Stalker"
+  suffix: "Duty, Stalker"
   name: Матеба "Джокер"
   description: Модифицированный «Матеба Авторевольвер» аномальщиков — джокер в рукаве. Использует .44 Remington Magnum.
   components:
@@ -135,7 +135,7 @@
 - type: entity
   parent: STBaseWeaponRevolver
   id: STWeaponRevolverRH12
-  suffix: "Револьвер, Stalker"
+  suffix: "Duty, Stalker"
   name: Револьвер Штурмовой 12,7x55
   description: Револьвер тульского КБП — побочный продукт программы «Выхлоп», как и штурмовой автомат АШ-12.
   components:
@@ -183,7 +183,7 @@
 - type: entity
   parent: STBaseWeaponRevolver
   id: STWeaponRevolverRugerRedhawk
-  suffix: "Револьвер, Stalker"
+  suffix: "Duty, Stalker"
   name: Ruger Redhawk .45 ACP
   description: Восьмизарядный надёжный револьвер под .45 ACP. Хорошая точность и малая отдача.
   components:
@@ -223,7 +223,7 @@
 - type: entity
   parent: STBaseWeaponRevolver
   id: STWeaponRevolverSWModel325
-  suffix: "Револьвер, Stalker"
+  suffix: "Duty, Stalker"
   name: S&W Model 325
   description: Шестизарядный популярный револьвер под .45 ACP. Ствол ~4 дюйма — удобство ношения и хорошая точность.
   components:
@@ -261,7 +261,7 @@
 - type: entity
   parent: STBaseWeaponRevolver
   id: STWeaponRevolverSWModel625
-  suffix: "Револьвер, Stalker"
+  suffix: "Duty, Stalker"
   name: S&W Model 625
   description: Шестизарядный классический револьвер под .45 ACP. Низкая отдача и хорошая скорострельность.
   components:
@@ -301,7 +301,7 @@
 - type: entity
   parent: STBaseWeaponRevolver
   id: STWeaponRevolverSWPC325TR
-  suffix: "Револьвер, Stalker"
+  suffix: "Duty, Stalker"
   name: S&W PC 325 TR
   description: Восьмизарядный револьвер для опытных стрелков под .45 ACP. Большой разброс — стрелять не торопясь.
   components:
@@ -339,7 +339,7 @@
 - type: entity
   parent: STBaseWeaponRevolver
   id: STWeaponRevolverTaurusJudge
-  suffix: "Револьвер, Stalker"
+  suffix: "Duty, Stalker"
   name: Taurus Judge .45 ACP
   description: Пятизарядный револьвер — самый дешёвый и худший, с плохой калибровкой под .45 ACP.
   components:
@@ -379,7 +379,7 @@
 - type: entity
   parent: STBaseWeaponRevolver
   id: STWeaponRevolverTaurusTracker455
-  suffix: "Револьвер, Stalker"
+  suffix: "Duty, Stalker"
   name: Taurus Tracker 455
   description: Пятизарядный револьвер — надёжнее, но скорострельность хуже. Низкий разброс при большой отдаче.
   components:

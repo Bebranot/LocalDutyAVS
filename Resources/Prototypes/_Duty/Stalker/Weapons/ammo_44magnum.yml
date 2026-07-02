@@ -12,7 +12,7 @@
     projectileClass: 2
     damage:
       types:
-        Piercing: 36
+        Piercing: 30
   - type: StaminaDamageOnCollide
     damage: 10
 
@@ -27,7 +27,7 @@
     projectileClass: 3
     damage:
       types:
-        Piercing: 40
+        Piercing: 35
   - type: StaminaDamageOnCollide
     damage: 15
 
@@ -75,7 +75,7 @@
 - type: entity
   id: BaseSpeedLoaderRemingtonMagnum
   name: спидлоадер (.44 remington magnum)
-  suffix: "Магазин, Stalker"
+  suffix: "Duty, Stalker"
   parent: BaseItem
   abstract: true
   components:
@@ -129,7 +129,7 @@
 - type: entity
   parent: SpeedLoaderRemingtonMagnum
   id: SpeedLoaderRemingtonMagnumEmpty
-  suffix: "Магазин, Stalker, Пустой"
+  suffix: "Duty, Stalker, Пустой"
   components:
   - type: BallisticAmmoProvider
     proto: null

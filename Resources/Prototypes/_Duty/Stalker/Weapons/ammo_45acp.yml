@@ -13,7 +13,7 @@
     projectileClass: 1
     damage:
       types:
-        Piercing: 16
+        Piercing: 24
 
 - type: entity
   id: Bullet45ACPMFMJ
@@ -25,7 +25,7 @@
     projectileClass: 2
     damage:
       types:
-        Piercing: 17
+        Piercing: 25
 
 - type: entity
   id: Bullet45ACPHydroshock
@@ -37,9 +37,9 @@
     projectileClass: 1
     damage:
       types:
-        Blunt: 4
-        Slash: 4
-        Piercing: 18
+        Blunt: 10
+        Slash: 10
+        Piercing: 50
 
 - type: entity
   id: Bullet45ACPRIP
@@ -51,9 +51,9 @@
     projectileClass: 0
     damage:
       types:
-        Piercing: 18
-        Blunt: 4
-        Slash: 4
+        Piercing: 52
+        Blunt: 7
+        Slash: 7
 
 - type: entity
   id: Bullet45ACPAP
@@ -65,7 +65,7 @@
     projectileClass: 3
     damage:
       types:
-        Piercing: 18
+        Piercing: 28
 
 # ── Патроны ──────────────────────────────────────────────────────────────────
 - type: entity
@@ -138,7 +138,7 @@
 - type: entity
   id: STSpeedLoader45ACP
   name: спидлоадер (.45 ACP)
-  suffix: "Магазин, Stalker"
+  suffix: "Duty, Stalker"
   parent: BaseItem
   components:
   - type: Tag
@@ -173,7 +173,7 @@
   name: магазин ПП Томпсона (40)
   description: Магазин для "Томми гана". Вместимость 40.
   parent: BaseItem
-  suffix: "Магазин, Stalker"
+  suffix: "Duty, Stalker"
   components:
   - type: Tag
     tags:

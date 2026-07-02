@@ -22,10 +22,10 @@ public sealed partial class DutyCritTrack
 }
 
 [Prototype("dynamicAmbientMusic")]
-public sealed class DynamicAmbientMusicPrototype : IPrototype
+public sealed partial class DynamicAmbientMusicPrototype : IPrototype
 {
     [IdDataField]
-    public string ID { get; } = default!;
+    public string ID { get; private set; } = default!;
 
     /// <summary>Очень хорошее состояние: 90–100% HP.</summary>
     [DataField(required: true)]

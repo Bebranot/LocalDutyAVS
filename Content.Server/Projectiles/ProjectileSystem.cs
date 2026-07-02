@@ -4,6 +4,7 @@ using Content.Server.Effects;
 using Content.Server.Weapons.Ranged.Systems;
 using Content.Shared._Duty.Aiming;
 using Content.Shared.Camera;
+using Content.Shared.Damage;
 using Content.Shared.Damage.Components;
 using Content.Shared.Damage.Systems;
 using Content.Shared.Database;
@@ -60,7 +61,7 @@ public sealed class ProjectileSystem : SharedProjectileSystem
         var damageRequired = _destructibleSystem.DestroyedAt(target);
         if (TryComp<DamageableComponent>(target, out var damageableComponent))
         {
-            damageRequired -= damageableComponent.TotalDamage;
+            damageRequired -= _damageableSystem.GetTotalDamage((target, damageableComponent));
             damageRequired = FixedPoint2.Max(damageRequired, FixedPoint2.Zero);
         }
         var deleted = Deleted(target);
@@ -76,47 +77,11 @@ public sealed class ProjectileSystem : SharedProjectileSystem
                 LogImpact.Medium,
                 $"Projectile {ToPrettyString(uid):projectile} shot by {ToPrettyString(component.Shooter!.Value):user} hit {otherName:target} and dealt {damage:damage} damage");
 
-            // If penetration is to be considered, we need to do some checks to see if the projectile should stop.
-            if (component.PenetrationThreshold != 0)
-            {
-                // If a damage type is required, stop the bullet if the hit entity doesn't have that type.
-                if (component.PenetrationDamageTypeRequirement != null)
-                {
-                    var stopPenetration = false;
-                    foreach (var requiredDamageType in component.PenetrationDamageTypeRequirement)
-                    {
-                        if (!damage.DamageDict.Keys.Contains(requiredDamageType))
-                        {
-                            stopPenetration = true;
-                            break;
-                        }
-                    }
-                    if (stopPenetration)
-                        component.ProjectileSpent = true;
-                }
-
-                // If the object won't be destroyed, it "tanks" the penetration hit.
-                if (damage.GetTotal() < damageRequired)
-                {
-                    component.ProjectileSpent = true;
-                }
-
-                if (!component.ProjectileSpent)
-                {
-                    component.PenetrationAmount += damageRequired;
-                    // The projectile has dealt enough damage to be spent.
-                    if (component.PenetrationAmount >= component.PenetrationThreshold)
-                    {
-                        component.ProjectileSpent = true;
-                    }
-                }
-            }
-            // _Duty: прицельное прошивание (стрельба лёжа) — пуля проходит сквозь живые цели и
-            // тратится только после исчерпания лимита пробитий. Учёт целей/урона — в AimPenetrationSystem.
-            else if (!TryComp<AimPenetrationComponent>(uid, out var aimPen) || aimPen.Hits >= aimPen.MaxTargets)
-            {
-                component.ProjectileSpent = true;
-            }
+            component.ProjectileSpent = !TryPenetrate((uid, component), damage, damageRequired);
+        }
+        else
+        {
+            component.ProjectileSpent = true;
         }
 
         if (!deleted)
@@ -134,5 +99,46 @@ public sealed class ProjectileSystem : SharedProjectileSystem
         {
             RaiseNetworkEvent(new ImpactEffectEvent(component.ImpactEffect, GetNetCoordinates(xform.Coordinates)), Filter.Pvs(xform.Coordinates, entityMan: EntityManager));
         }
+    }
+
+    private bool TryPenetrate(Entity<ProjectileComponent> projectile, DamageSpecifier damage, FixedPoint2 damageRequired)
+    {
+        // If penetration is to be considered, we need to do some checks to see if the projectile should stop.
+        if (projectile.Comp.PenetrationThreshold == 0)
+        {
+            // _Duty: прицельное прошивание (стрельба лёжа) — пуля проходит сквозь живые цели и
+            // тратится только после исчерпания лимита пробитий. Учёт целей/урона — в AimPenetrationSystem.
+            return TryComp<AimPenetrationComponent>(projectile.Owner, out var aimPen) && aimPen.Hits < aimPen.MaxTargets;
+        }
+
+        // If a damage type is required, stop the bullet if the hit entity doesn't have that type.
+        if (projectile.Comp.PenetrationDamageTypeRequirement != null)
+        {
+            foreach (var requiredDamageType in projectile.Comp.PenetrationDamageTypeRequirement)
+            {
+                if (damage.DamageDict.Keys.Contains(requiredDamageType))
+                    continue;
+
+                return false;
+            }
+        }
+
+        // If the object won't be destroyed, it "tanks" the penetration hit.
+        if (damage.GetTotal() < damageRequired)
+        {
+            return false;
+        }
+
+        if (!projectile.Comp.ProjectileSpent)
+        {
+            projectile.Comp.PenetrationAmount += damageRequired;
+            // The projectile has dealt enough damage to be spent.
+            if (projectile.Comp.PenetrationAmount >= projectile.Comp.PenetrationThreshold)
+            {
+                return false;
+            }
+        }
+
+        return true;
     }
 }

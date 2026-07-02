@@ -13,7 +13,7 @@
     projectileClass: 2
     damage:
       types:
-        Piercing: 16
+        Piercing: 34
   - type: StaminaDamageOnCollide
     damage: 4
 
@@ -27,9 +27,9 @@
     projectileClass: 0
     damage:
       types:
-        Piercing: 20
-        Blunt: 3
-        Slash: 3
+        Piercing: 95
+        Blunt: 10
+        Slash: 10
 
 - type: entity
   id: Bullet921BTGJ
@@ -41,7 +41,7 @@
     projectileClass: 3
     damage:
       types:
-        Piercing: 17
+        Piercing: 33
 
 - type: entity
   id: Bullet9217N42
@@ -53,7 +53,7 @@
     projectileClass: 4
     damage:
       types:
-        Piercing: 18
+        Piercing: 32
 
 # ── Патроны ──────────────────────────────────────────────────────────────────
 - type: entity
@@ -119,7 +119,7 @@
   name: магазин СР-2М "Вереск" 9х21 (20)
   description: Магазин 9x21 мм для СР-2М. Вместимость 20.
   parent: BaseItem
-  suffix: "Магазин, Stalker"
+  suffix: "Duty, Stalker"
   components:
   - type: Tag
     tags:

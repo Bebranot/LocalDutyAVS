@@ -89,25 +89,9 @@ public sealed class ConcussionSystem : SharedConcussionSystem
         if (!_concussionQuery.TryComp(uid, out var comp))
             return;
 
-        // Уровень шкалы ДО прироста — по нему решаем «любой взрыв при высокой шкале».
-        var levelBefore = GetCurrentLevel(comp);
-
         var refDmg = comp.BlastReferenceDamage <= 0f ? 1f : comp.BlastReferenceDamage;
         var amount = Math.Clamp(comp.BlastAmount * (totalDamage / refDmg), 0f, comp.BlastMaxAmount);
         ApplyToEntity(uid, comp, amount, ConcussionImpulseType.Blast);
-
-        // Головокружение: крупный взрыв (≥ DizzyBlastDamage) ИЛИ любой взрыв при шкале ≥ порога.
-        var bigBlast = totalDamage >= comp.DizzyBlastDamage;
-        var highBar = comp.MaxLevel > 0f
-                      && levelBefore / comp.MaxLevel >= comp.DizzyNearbyLevelFraction;
-
-        if ((bigBlast || highBar) && TryComp<ActorComponent>(uid, out var actor))
-        {
-            // Защита слуха/головы ослабляет головокружение (как и остальной эффект).
-            var strength = 1f - GetProtection(uid);
-            if (strength > 0.1f)
-                RaiseNetworkEvent(new ConcussionImpulseEvent(ConcussionImpulseType.Dizzy, strength), actor.PlayerSession);
-        }
     }
 
     private void ApplyToEntity(EntityUid uid, ConcussionComponent comp, float baseAmount, ConcussionImpulseType type)

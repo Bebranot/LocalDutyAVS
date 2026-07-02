@@ -66,5 +66,5 @@
   parent: STBaseWeaponRifleAKM
   id: STWeaponRifleAKM
   name: AKM "Zone Legend"
-  suffix: "Автомат, Stalker"
+  suffix: "Duty, Stalker"
   description: Модернизация автомата Калашникова под патрон 7.62x39мм. Символ надёжности Зоны — от новичков до ветеранов.

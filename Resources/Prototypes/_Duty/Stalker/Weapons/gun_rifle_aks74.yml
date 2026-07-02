@@ -62,14 +62,14 @@
   parent: STBaseWeaponRifleAKS74
   id: STWeaponRifleAKS74
   name: AKS-74
-  suffix: "Автомат, Stalker"
+  suffix: "Duty, Stalker"
   description: Классический складной автомат под 5.45x39мм. Основное оружие военных и сталкеров Зоны.
 
 - type: entity
   parent: STBaseWeaponRifleAKS74
   id: STWeaponRifleAK74M
   name: AK-74M "Modern"
-  suffix: "Автомат, Stalker"
+  suffix: "Duty, Stalker"
   description: Современная модификация с полимерной фурнитурой и планкой под оптику.
   components:
   - type: Gun
@@ -92,7 +92,7 @@
   parent: STBaseWeaponRifleAKS74
   id: STWeaponRifleSaiga545
   name: saiga 5.45 "Hunter"
-  suffix: "Автомат, Stalker"
+  suffix: "Duty, Stalker"
   description: Гражданская версия АК-74М с фиксированным прикладом. Популярна у сталкеров за надёжность.
   components:
   - type: Clothing
@@ -118,7 +118,7 @@
   parent: STWeaponRifleSaiga545
   id: STWeaponRifleSaiga545Auto
   name: saiga 5.45 "Hunter"
-  suffix: "Автомат, Stalker"
+  suffix: "Duty, Stalker"
   description: Гражданская версия АК-74М с фиксированным прикладом. Популярна у сталкеров за надёжность.
   components:
   - type: Gun
@@ -135,7 +135,7 @@
   parent: STBaseWeaponRifleAKS74
   id: STWeaponRifleA545
   name: A-545 "Balalaika"
-  suffix: "Автомат, Stalker"
+  suffix: "Duty, Stalker"
   description: Автомат со сбалансированной системой отдачи. Редкость в Зоне.
   components:
   - type: Clothing
@@ -157,7 +157,7 @@
   parent: STBaseWeaponRifleAKS74
   id: STWeaponRifleAKS74Green
   name: AKS-74 (Forest)
-  suffix: "Автомат, Stalker"
+  suffix: "Duty, Stalker"
   description: Вариант с зелёной полимерной фурнитурой. Для операций в лесных зонах.
   components:
   - type: Clothing

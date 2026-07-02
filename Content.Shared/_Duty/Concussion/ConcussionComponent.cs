@@ -29,12 +29,12 @@ public sealed partial class ConcussionComponent : Component
 
     /// <summary>Скорость затухания шкалы (единиц в секунду).</summary>
     [DataField]
-    public float DecayPerSecond = 3f;
+    public float DecayPerSecond = 4f;
 
     // ── Детекция выстрелов ──────────────────────────────────────────────────
     /// <summary>Базовый прирост шкалы от одного выстрела рядом (в эпицентре).</summary>
     [DataField]
-    public float ShotAmount = 2.5f;
+    public float ShotAmount = 0.5f;
 
     /// <summary>Радиус (тайлы), в котором выстрел вообще влияет.</summary>
     [DataField]
@@ -42,7 +42,7 @@ public sealed partial class ConcussionComponent : Component
 
     /// <summary>Минимальный множитель прироста на краю радиуса (фолл-офф не падает в ноль).</summary>
     [DataField]
-    public float ShotMinFalloff = 0.25f;
+    public float ShotMinFalloff = 0.15f;
 
     // ── Детекция взрывов ────────────────────────────────────────────────────
     /// <summary>Базовый прирост от взрыва (при эталонном уроне).</summary>
@@ -56,15 +56,6 @@ public sealed partial class ConcussionComponent : Component
     /// <summary>Кап прироста от одного взрыва.</summary>
     [DataField]
     public float BlastMaxAmount = 60f;
-
-    // ── Головокружение (dizzy, качание/мутность экрана) ─────────────────────
-    /// <summary>Урон взрыва, при котором головокружение гарантированно (большой взрыв).</summary>
-    [DataField]
-    public float DizzyBlastDamage = 35f;
-
-    /// <summary>Доля заполнения шкалы (0..1), при которой ЛЮБОЙ взрыв рядом вызывает головокружение.</summary>
-    [DataField]
-    public float DizzyNearbyLevelFraction = 0.65f;
 
     // ── Представление ───────────────────────────────────────────────────────
     /// <summary>Ниже этого значения шкала считается «нулевой» (бар скрывается через 5с).</summary>
@@ -82,18 +73,6 @@ public sealed partial class ConcussionComponent : Component
     /// <summary>С какого уровня шкалы начинает звенеть в ушах.</summary>
     [DataField]
     public float RingStartLevel = 25f;
-
-    // ── «Ватность» звука (low-pass) ──────────────────────────────────────────
-    /// <summary>С какого уровня шкалы звук начинает глохнуть (low-pass).</summary>
-    [DataField]
-    public float MuffleStartLevel = 15f;
-
-    /// <summary>
-    /// Максимальная окклюзия (low-pass) на пике шкалы. Движок мапит её в фильтр как
-    /// cutoff = exp(-occlusion): ~1.5 — заметно «ватно», ~2.5 — как вата в ушах.
-    /// </summary>
-    [DataField]
-    public float MuffleMaxOcclusion = 2.5f;
 
     // ── Серверная служебка (не сетится) ─────────────────────────────────────
     /// <summary>Последняя показанная стадия алерта (серверный кэш, чтобы не спамить ShowAlert).</summary>
