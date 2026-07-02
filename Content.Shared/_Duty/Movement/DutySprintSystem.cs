@@ -43,6 +43,7 @@ public sealed class DutySprintSystem : EntitySystem
     [Dependency] private readonly InventorySystem _inventory = default!;
     [Dependency] private readonly MobStateSystem _mobState = default!;
     [Dependency] private readonly MobThresholdSystem _mobThreshold = default!;
+    [Dependency] private readonly DamageableSystem _damageable = default!;
     [Dependency] private readonly MovementSpeedModifierSystem _movementSpeed = default!;
     [Dependency] private readonly SharedHandsSystem _hands = default!;
     [Dependency] private readonly SharedPopupSystem _popup = default!;
@@ -185,13 +186,13 @@ public sealed class DutySprintSystem : EntitySystem
 
     private float GetHpFactor(EntityUid uid)
     {
-        if (!TryComp<DamageableComponent>(uid, out var dmg) || dmg.TotalDamage <= 0)
+        if (!TryComp<DamageableComponent>(uid, out var dmg) || _damageable.GetTotalDamage((uid, dmg)) <= 0)
             return 1f;
 
         if (!_mobThreshold.TryGetThresholdForState(uid, MobState.Critical, out var threshold) || threshold <= 0)
             return 1f;
 
-        var frac = Math.Clamp((dmg.TotalDamage / threshold.Value).Float(), 0f, 1f);
+        var frac = Math.Clamp((_damageable.GetTotalDamage((uid, dmg)) / threshold.Value).Float(), 0f, 1f);
         return float.Lerp(1f, HpMinFactor, frac);
     }
 

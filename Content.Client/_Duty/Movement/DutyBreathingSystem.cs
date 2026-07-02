@@ -101,7 +101,7 @@ public sealed class DutyBreathingSystem : EntitySystem
             || !comp.Breathing)
             return false;
 
-        var female = TryComp<HumanoidAppearanceComponent>(player, out var humanoid)
+        var female = TryComp<HumanoidProfileComponent>(player, out var humanoid)
                      && humanoid.Sex == Sex.Female;
         sound = female ? comp.FemaleBreathSound : comp.MaleBreathSound;
         return true;
