@@ -1,0 +1,5 @@
+# _Duty: экранный шейдер стимулятора Fury-16 (виньетка + искажение).
+- type: shader
+  id: FuryVision
+  kind: source
+  path: "/Textures/Shaders/_Duty/fury.swsl"

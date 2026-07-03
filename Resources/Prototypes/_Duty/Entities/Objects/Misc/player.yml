@@ -35,8 +35,688 @@
 #  Обновить список:  py -3 Content.Tools/gen_playerdk_tracks.py
 # ══════════════════════════════════════════════════════════════
 
+# --------- CRYSIS
+- type: dutyTrack
+  id: redzed_terror_reid_ramirez_type_beat_venom
+  name: "(FREE) REDZED x TERROR REID x RAMIREZ Type Beat - VENOM Boombap Oldschool Instru"
+  category: "Кризис: Третий Путь"
+  path:
+    path: "/Audio/_Duty/Ambient/CrysisThirdWay/(FREE) REDZED x TERROR REID x RAMIREZ Type Beat - VENOM Boombap Oldschool Instru.ogg"
+
+- type: dutyTrack
+  id: aarktica_you_have_cured_a_million_ghosts
+  name: "Aarktica - You Have Cured a Million Ghosts From Roaming in My Head"
+  category: "Кризис: Третий Путь"
+  path:
+    path: "/Audio/_Duty/Ambient/CrysisThirdWay/Aarktica - You Have Cured a Million Ghosts From Roaming in My Head.ogg"
+
+- type: dutyTrack
+  id: adaptacia_ya_ybivay_seba
+  name: "Адаптация - Я убиваю себя"
+  category: "Кризис: Третий Путь"
+  path:
+    path: "/Audio/_Duty/Ambient/CrysisThirdWay/adaptacia_ya_ybivay_seba.ogg"
+
+- type: dutyTrack
+  id: adaptacia_ya_ybivay_seba_n
+  name: "Адаптация - Я убиваю себя (н)"
+  category: "Кризис: Третий Путь"
+  path:
+    path: "/Audio/_Duty/Ambient/CrysisThirdWay/adaptacia_ya_ybivay_seba_n.ogg"
+
+- type: dutyTrack
+  id: amelia_frank_ostansa
+  name: "Amelia Frank - Останься"
+  category: "Кризис: Третий Путь"
+  path:
+    path: "/Audio/_Duty/Ambient/CrysisThirdWay/Amelia_Frank_-_ostansa.ogg"
+
+- type: dutyTrack
+  id: ave_plague_king_plague
+  name: "ave plague king plague"
+  category: "Кризис: Третий Путь"
+  path:
+    path: "/Audio/_Duty/Ambient/CrysisThirdWay/ave plague king plague.ogg"
+
+- type: dutyTrack
+  id: benny_benassi_i_love_my_sex
+  name: "Benny Benassi - I Love My Sex"
+  category: "Кризис: Третий Путь"
+  path:
+    path: "/Audio/_Duty/Ambient/CrysisThirdWay/Benny Benassi - I Love My Sex.ogg"
+
+- type: dutyTrack
+  id: boombapoldschool_type_instrumental_2020_redzed
+  name: "BoombapOldschool Type Instrumental 2020 - REDZED"
+  category: "Кризис: Третий Путь"
+  path:
+    path: "/Audio/_Duty/Ambient/CrysisThirdWay/BoombapOldschool Type Instrumental 2020 - REDZED.ogg"
+
+- type: dutyTrack
+  id: boyarsky_yedy
+  name: "Боярский - Еду"
+  category: "Кризис: Третий Путь"
+  path:
+    path: "/Audio/_Duty/Ambient/CrysisThirdWay/Boyarsky - yedy.ogg"
+
+- type: dutyTrack
+  id: chi_li_serdce
+  name: "Чили - Сердце"
+  category: "Кризис: Третий Путь"
+  path:
+    path: "/Audio/_Duty/Ambient/CrysisThirdWay/Chi-Li_serdce.ogg"
+
+- type: dutyTrack
+  id: chi_li_serdce2
+  name: "Чили - Сердце 2"
+  category: "Кризис: Третий Путь"
+  path:
+    path: "/Audio/_Duty/Ambient/CrysisThirdWay/Chi-Li_serdce2.ogg"
+
+- type: dutyTrack
+  id: daytov_odinohestvo
+  name: "Дайтов - Одиночество"
+  category: "Кризис: Третий Путь"
+  path:
+    path: "/Audio/_Duty/Ambient/CrysisThirdWay/Daytov - odinohestvo.ogg"
+
+- type: dutyTrack
+  id: egorbez_better_off_alone_hardstyle_remix
+  name: "egorbez - Better Off Alone [HARDSTYLE REMIX]"
+  category: "Кризис: Третий Путь"
+  path:
+    path: "/Audio/_Duty/Ambient/CrysisThirdWay/egorbez - Better Off Alone [HARDSTYLE REMIX].ogg"
+
+- type: dutyTrack
+  id: egorbez_muzika_dlya_veherinki
+  name: "egorbez - Музыка для вечеринки"
+  category: "Кризис: Третий Путь"
+  path:
+    path: "/Audio/_Duty/Ambient/CrysisThirdWay/egorbez - muzika dlya veherinki.ogg"
+
+- type: dutyTrack
+  id: egorbez_non_stop_house_phonk
+  name: "egorbez - NON-STOP [HOUSE PHONK]"
+  category: "Кризис: Третий Путь"
+  path:
+    path: "/Audio/_Duty/Ambient/CrysisThirdWay/egorbez - NON-STOP [HOUSE PHONK].ogg"
+
+- type: dutyTrack
+  id: egorgez_10
+  name: "egorgez - 10"
+  category: "Кризис: Третий Путь"
+  path:
+    path: "/Audio/_Duty/Ambient/CrysisThirdWay/egorgez - 10.ogg"
+
+- type: dutyTrack
+  id: egorgez_12
+  name: "egorgez - 12"
+  category: "Кризис: Третий Путь"
+  path:
+    path: "/Audio/_Duty/Ambient/CrysisThirdWay/egorgez - 12.ogg"
+
+- type: dutyTrack
+  id: egorgez_2
+  name: "egorgez - 2"
+  category: "Кризис: Третий Путь"
+  path:
+    path: "/Audio/_Duty/Ambient/CrysisThirdWay/egorgez - 2.ogg"
+
+- type: dutyTrack
+  id: egorgez_8
+  name: "egorgez - 8"
+  category: "Кризис: Третий Путь"
+  path:
+    path: "/Audio/_Duty/Ambient/CrysisThirdWay/egorgez - 8.ogg"
+
+- type: dutyTrack
+  id: egorgez_9
+  name: "egorgez - 9"
+  category: "Кризис: Третий Путь"
+  path:
+    path: "/Audio/_Duty/Ambient/CrysisThirdWay/egorgez - 9.ogg"
+
+- type: dutyTrack
+  id: egorgez_do_tla
+  name: "egorgez - До тла"
+  category: "Кризис: Третий Путь"
+  path:
+    path: "/Audio/_Duty/Ambient/CrysisThirdWay/egorgez - do tla.ogg"
+
+- type: dutyTrack
+  id: egorgez_goni
+  name: "egorgez - Гони"
+  category: "Кризис: Третий Путь"
+  path:
+    path: "/Audio/_Duty/Ambient/CrysisThirdWay/egorgez - goni.ogg"
+
+- type: dutyTrack
+  id: egorgez_gryst
+  name: "egorgez - Грусть"
+  category: "Кризис: Третий Путь"
+  path:
+    path: "/Audio/_Duty/Ambient/CrysisThirdWay/egorgez - gryst.ogg"
+
+- type: dutyTrack
+  id: egorgez_hhh
+  name: "egorgez - hhh"
+  category: "Кризис: Третий Путь"
+  path:
+    path: "/Audio/_Duty/Ambient/CrysisThirdWay/egorgez - hhh.ogg"
+
+- type: dutyTrack
+  id: egorgez_intro
+  name: "egorgez - Интро"
+  category: "Кризис: Третий Путь"
+  path:
+    path: "/Audio/_Duty/Ambient/CrysisThirdWay/egorgez - intro.ogg"
+
+- type: dutyTrack
+  id: egorgez_kah
+  name: "egorgez - Как"
+  category: "Кризис: Третий Путь"
+  path:
+    path: "/Audio/_Duty/Ambient/CrysisThirdWay/egorgez - kah.ogg"
+
+- type: dutyTrack
+  id: egorgez_mdm
+  name: "egorgez - мдм"
+  category: "Кризис: Третий Путь"
+  path:
+    path: "/Audio/_Duty/Ambient/CrysisThirdWay/egorgez - mdm.ogg"
+
+- type: dutyTrack
+  id: egorgez_rape_me
+  name: "egorgez - Rape me"
+  category: "Кризис: Третий Путь"
+  path:
+    path: "/Audio/_Duty/Ambient/CrysisThirdWay/egorgez - rape me.ogg"
+
+- type: dutyTrack
+  id: egorgez_sick_brains
+  name: "egorgez - Sick Brains"
+  category: "Кризис: Третий Путь"
+  path:
+    path: "/Audio/_Duty/Ambient/CrysisThirdWay/egorgez - Sick Brains.ogg"
+
+- type: dutyTrack
+  id: egorgez_symrak
+  name: "egorgez - Сумрак"
+  category: "Кризис: Третий Путь"
+  path:
+    path: "/Audio/_Duty/Ambient/CrysisThirdWay/egorgez - symrak.ogg"
+
+- type: dutyTrack
+  id: egorgez_vethaya_vesna_grob_cover
+  name: "egorgez - Ветхая весна (ГрОб cover)"
+  category: "Кризис: Третий Путь"
+  path:
+    path: "/Audio/_Duty/Ambient/CrysisThirdWay/egorgez - Vethaya vesna (grob cover).ogg"
+
+- type: dutyTrack
+  id: egorgez_za_dedov
+  name: "egorgez - За дедов"
+  category: "Кризис: Третий Путь"
+  path:
+    path: "/Audio/_Duty/Ambient/CrysisThirdWay/egorgez - za dedov.ogg"
+
+- type: dutyTrack
+  id: egorgez_5
+  name: "egorgez - 5"
+  category: "Кризис: Третий Путь"
+  path:
+    path: "/Audio/_Duty/Ambient/CrysisThirdWay/egorgez -5.ogg"
+
+- type: dutyTrack
+  id: egorgez_65
+  name: "egorgez - 65"
+  category: "Кризис: Третий Путь"
+  path:
+    path: "/Audio/_Duty/Ambient/CrysisThirdWay/egorgez -65.ogg"
+
+- type: dutyTrack
+  id: egorgez_vethnya_pethal
+  name: "egorgez - Ветхая печаль"
+  category: "Кризис: Третий Путь"
+  path:
+    path: "/Audio/_Duty/Ambient/CrysisThirdWay/egorgez -vethnya_pethal.ogg"
+
+- type: dutyTrack
+  id: egorgez_vintovka
+  name: "egorgez - Винтовка"
+  category: "Кризис: Третий Путь"
+  path:
+    path: "/Audio/_Duty/Ambient/CrysisThirdWay/egorgez_vintovka.ogg"
+
+- type: dutyTrack
+  id: hanna_agyzarova_otel
+  name: "Жанна Агузарова - Отель"
+  category: "Кризис: Третий Путь"
+  path:
+    path: "/Audio/_Duty/Ambient/CrysisThirdWay/Hanna Agyzarova - otel.ogg"
+
+- type: dutyTrack
+  id: idm_ego
+  name: "I.D.M. - Эго"
+  category: "Кризис: Третий Путь"
+  path:
+    path: "/Audio/_Duty/Ambient/CrysisThirdWay/I.D.M. - ego.ogg"
+
+- type: dutyTrack
+  id: idm_ylici
+  name: "I.D.M. - Улицы"
+  category: "Кризис: Третий Путь"
+  path:
+    path: "/Audio/_Duty/Ambient/CrysisThirdWay/I.D.M. - ylici.ogg"
+
+- type: dutyTrack
+  id: kino_skazka
+  name: "КИНО - Сказка"
+  category: "Кризис: Третий Путь"
+  path:
+    path: "/Audio/_Duty/Ambient/CrysisThirdWay/KINO_-_Skazka.ogg"
+
+- type: dutyTrack
+  id: kino_nam_s_toboy
+  name: "КИНО - Нам с тобой"
+  category: "Кризис: Третий Путь"
+  path:
+    path: "/Audio/_Duty/Ambient/CrysisThirdWay/KINO_nam_s_toboy.ogg"
+
+- type: dutyTrack
+  id: kino_sledi_za_soboi
+  name: "КИНО - Следи за собой"
+  category: "Кризис: Третий Путь"
+  path:
+    path: "/Audio/_Duty/Ambient/CrysisThirdWay/KINO_sledi_za_soboi.ogg"
+
+- type: dutyTrack
+  id: kryg
+  name: "Круг"
+  category: "Кризис: Третий Путь"
+  path:
+    path: "/Audio/_Duty/Ambient/CrysisThirdWay/Kryg.ogg"
+
+- type: dutyTrack
+  id: kryg2
+  name: "Круг 2"
+  category: "Кризис: Третий Путь"
+  path:
+    path: "/Audio/_Duty/Ambient/CrysisThirdWay/Kryg2.ogg"
+
+- type: dutyTrack
+  id: kult_odinocestva_smert
+  name: "Культ одиночества - Смерть"
+  category: "Кризис: Третий Путь"
+  path:
+    path: "/Audio/_Duty/Ambient/CrysisThirdWay/kult_odinocestva_smert.ogg"
+
+- type: dutyTrack
+  id: kult_odinocestva_teni
+  name: "Культ одиночества - Тени"
+  category: "Кризис: Третий Путь"
+  path:
+    path: "/Audio/_Duty/Ambient/CrysisThirdWay/kult_odinocestva_teni.ogg"
+
+- type: dutyTrack
+  id: marshal_liven
+  name: "Маршал - Ливень"
+  category: "Кризис: Третий Путь"
+  path:
+    path: "/Audio/_Duty/Ambient/CrysisThirdWay/Marshal_-_liven.ogg"
+
+- type: dutyTrack
+  id: michael_simmonds_ave_maria
+  name: "Michael Simmonds - Ave Maria"
+  category: "Кризис: Третий Путь"
+  path:
+    path: "/Audio/_Duty/Ambient/CrysisThirdWay/Michael Simmonds - Ave Maria.ogg"
+
+- type: dutyTrack
+  id: michael_simmonds_ave_maria2
+  name: "Michael Simmonds - Ave Maria 2"
+  category: "Кризис: Третий Путь"
+  path:
+    path: "/Audio/_Duty/Ambient/CrysisThirdWay/Michael Simmonds - Ave Maria2.ogg"
+
+- type: dutyTrack
+  id: mirash_gde_ya
+  name: "Мираж - Где я"
+  category: "Кризис: Третий Путь"
+  path:
+    path: "/Audio/_Duty/Ambient/CrysisThirdWay/Mirash - gde ya.ogg"
+
+- type: dutyTrack
+  id: mizzery_13
+  name: "Mizzery - 13"
+  category: "Кризис: Третий Путь"
+  path:
+    path: "/Audio/_Duty/Ambient/CrysisThirdWay/Mizzery - 13.ogg"
+
+- type: dutyTrack
+  id: mizzery_14
+  name: "Mizzery - 14"
+  category: "Кризис: Третий Путь"
+  path:
+    path: "/Audio/_Duty/Ambient/CrysisThirdWay/Mizzery - 14.ogg"
+
+- type: dutyTrack
+  id: mizzery_post_anxiety
+  name: "Mizzery - Post Anxiety"
+  category: "Кризис: Третий Путь"
+  path:
+    path: "/Audio/_Duty/Ambient/CrysisThirdWay/Mizzery - Post_Anxiety.ogg"
+
+- type: dutyTrack
+  id: mizzery_alienation
+  name: "Mizzery - Alienation"
+  category: "Кризис: Третий Путь"
+  path:
+    path: "/Audio/_Duty/Ambient/CrysisThirdWay/Mizzery-Alienation.ogg"
+
+- type: dutyTrack
+  id: mizzery_daydreaming
+  name: "Mizzery - Daydreaming"
+  category: "Кризис: Третий Путь"
+  path:
+    path: "/Audio/_Duty/Ambient/CrysisThirdWay/Mizzery-Daydreaming.ogg"
+
+- type: dutyTrack
+  id: mizzery_elevator
+  name: "Mizzery - Elevator"
+  category: "Кризис: Третий Путь"
+  path:
+    path: "/Audio/_Duty/Ambient/CrysisThirdWay/Mizzery-Elevator.ogg"
+
+- type: dutyTrack
+  id: mizzery_feeling_tired
+  name: "Mizzery - Feeling Tired"
+  category: "Кризис: Третий Путь"
+  path:
+    path: "/Audio/_Duty/Ambient/CrysisThirdWay/Mizzery-Feeling_Tired.ogg"
+
+- type: dutyTrack
+  id: mizzery_hour_of_sunshine
+  name: "Mizzery - Hour of Sunshine"
+  category: "Кризис: Третий Путь"
+  path:
+    path: "/Audio/_Duty/Ambient/CrysisThirdWay/Mizzery-Hour_of_Sunshine.ogg"
+
+- type: dutyTrack
+  id: mizzery_purple_clouds
+  name: "Mizzery - Purple Clouds"
+  category: "Кризис: Третий Путь"
+  path:
+    path: "/Audio/_Duty/Ambient/CrysisThirdWay/Mizzery-Purple_Clouds.ogg"
+
+- type: dutyTrack
+  id: mizzery_rewind_and_go
+  name: "Mizzery - Rewind And Go"
+  category: "Кризис: Третий Путь"
+  path:
+    path: "/Audio/_Duty/Ambient/CrysisThirdWay/Mizzery-Rewind_And_Go.ogg"
+
+- type: dutyTrack
+  id: mizzery_serenity
+  name: "Mizzery - Serenity"
+  category: "Кризис: Третий Путь"
+  path:
+    path: "/Audio/_Duty/Ambient/CrysisThirdWay/Mizzery-Serenity.ogg"
+
+- type: dutyTrack
+  id: mizzery_the_life_beyond
+  name: "Mizzery - The Life Beyond"
+  category: "Кризис: Третий Путь"
+  path:
+    path: "/Audio/_Duty/Ambient/CrysisThirdWay/Mizzery-The_Life_Beyond.ogg"
+
+- type: dutyTrack
+  id: mizzery_tommorow
+  name: "Mizzery - Tomorrow"
+  category: "Кризис: Третий Путь"
+  path:
+    path: "/Audio/_Duty/Ambient/CrysisThirdWay/Mizzery-Tommorow.ogg"
+
+- type: dutyTrack
+  id: mizzery_yet_another_day
+  name: "Mizzery - Yet Another Day"
+  category: "Кризис: Третий Путь"
+  path:
+    path: "/Audio/_Duty/Ambient/CrysisThirdWay/Mizzery-Yet_Another_Day.ogg"
+
+- type: dutyTrack
+  id: nekuda_disquiet
+  name: "НЕКУДА - Disquiet"
+  category: "Кризис: Третий Путь"
+  path:
+    path: "/Audio/_Duty/Ambient/CrysisThirdWay/NEKUDA - Disquiet.ogg"
+
+- type: dutyTrack
+  id: nekuda_intro
+  name: "НЕКУДА - Intro"
+  category: "Кризис: Третий Путь"
+  path:
+    path: "/Audio/_Duty/Ambient/CrysisThirdWay/NEKUDA - Intro.ogg"
+
+- type: dutyTrack
+  id: nekuda_juvelines_kissing
+  name: "НЕКУДА - Juvelines Kissing"
+  category: "Кризис: Третий Путь"
+  path:
+    path: "/Audio/_Duty/Ambient/CrysisThirdWay/NEKUDA - Juvelines Kissing.ogg"
+
+- type: dutyTrack
+  id: nekuda_stolen_harmony
+  name: "НЕКУДА - Stolen Harmony"
+  category: "Кризис: Третий Путь"
+  path:
+    path: "/Audio/_Duty/Ambient/CrysisThirdWay/NEKUDA - Stolen Harmony.ogg"
+
+- type: dutyTrack
+  id: ostrova
+  name: "Острова"
+  category: "Кризис: Третий Путь"
+  path:
+    path: "/Audio/_Duty/Ambient/CrysisThirdWay/ostrova.ogg"
+
+- type: dutyTrack
+  id: otmena_vsego_horoshego
+  name: "Отмена - Всего хорошего"
+  category: "Кризис: Третий Путь"
+  path:
+    path: "/Audio/_Duty/Ambient/CrysisThirdWay/Otmena - vsego horoshego.ogg"
+
+- type: dutyTrack
+  id: otravlenna_gorod
+  name: "ОТРАВЛЕННА - Город"
+  category: "Кризис: Третий Путь"
+  path:
+    path: "/Audio/_Duty/Ambient/CrysisThirdWay/OTRAVLENNA - gorod.ogg"
+
+- type: dutyTrack
+  id: peremotka_vo_sne
+  name: "Перемотка - Во сне"
+  category: "Кризис: Третий Путь"
+  path:
+    path: "/Audio/_Duty/Ambient/CrysisThirdWay/Peremotka_-_vo_sne.ogg"
+
+- type: dutyTrack
+  id: permsky_kray_hudshii_den
+  name: "ПЕРМСКИЙ КРАЙ - Худший день"
+  category: "Кризис: Третий Путь"
+  path:
+    path: "/Audio/_Duty/Ambient/CrysisThirdWay/PERMSKY KRAY - hudshii den.ogg"
+
+- type: dutyTrack
+  id: permsky_kray_liza
+  name: "ПЕРМСКИЙ КРАЙ - Лиза"
+  category: "Кризис: Третий Путь"
+  path:
+    path: "/Audio/_Duty/Ambient/CrysisThirdWay/PERMSKY KRAY - Liza.ogg"
+
+- type: dutyTrack
+  id: permsky_kray_sdelano_v_rossii
+  name: "ПЕРМСКИЙ КРАЙ - Сделано в России"
+  category: "Кризис: Третий Путь"
+  path:
+    path: "/Audio/_Duty/Ambient/CrysisThirdWay/PERMSKY KRAY - sdelano v rossii.ogg"
+
+- type: dutyTrack
+  id: polytence_cedia
+  name: "Полотенце - Ацедия"
+  category: "Кризис: Третий Путь"
+  path:
+    path: "/Audio/_Duty/Ambient/CrysisThirdWay/Polytence - Acedia.ogg"
+
+- type: dutyTrack
+  id: post_punk_x_new_wave_type_instrumental_nihilism
+  name: "POST PUNK x NEW WAVE TYPE INSTRUMENTAL - nihilism (prod. ROLVND)"
+  category: "Кризис: Третий Путь"
+  path:
+    path: "/Audio/_Duty/Ambient/CrysisThirdWay/POST PUNK x NEW WAVE TYPE INSTRUMENTAL - nihilism (prod. ROLVND).ogg"
+
+- type: dutyTrack
+  id: postgoth_sad
+  name: "PostGoth - Sad"
+  category: "Кризис: Третий Путь"
+  path:
+    path: "/Audio/_Duty/Ambient/CrysisThirdWay/PostGoth - Sad.ogg"
+
+- type: dutyTrack
+  id: real_cr1me_barir
+  name: "real cr1me - Барьер"
+  category: "Кризис: Третий Путь"
+  path:
+    path: "/Audio/_Duty/Ambient/CrysisThirdWay/real cr1me - barir.ogg"
+
+- type: dutyTrack
+  id: redzed_am_i_not_a_man_instrumental
+  name: "REDZED - Am I Not a Man (Instrumental)"
+  category: "Кризис: Третий Путь"
+  path:
+    path: "/Audio/_Duty/Ambient/CrysisThirdWay/REDZED - Am I Not a Man (Instrumental).ogg"
+
+- type: dutyTrack
+  id: romantik_m_spasatelnyi_krug_igor_talkov_cover
+  name: "Романтик м - Спасательный круг (Игорь Тальков cover)"
+  category: "Кризис: Третий Путь"
+  path:
+    path: "/Audio/_Duty/Ambient/CrysisThirdWay/romantik m - spasatelnyi krug (igor talkov cover).ogg"
+
+- type: dutyTrack
+  id: sektor_gaza_punk
+  name: "Сектор Газа - Панк"
+  category: "Кризис: Третий Путь"
+  path:
+    path: "/Audio/_Duty/Ambient/CrysisThirdWay/Sektor_gaza_punk.ogg"
+
+- type: dutyTrack
+  id: sewerslvt_the_last_thing_she_sent_me
+  name: "Sewerslvt - the last thing she sent me"
+  category: "Кризис: Третий Путь"
+  path:
+    path: "/Audio/_Duty/Ambient/CrysisThirdWay/Sewerslvt - the last thing she sent me.ogg"
+
+- type: dutyTrack
+  id: shoegazer_flight
+  name: "Shoegazer - Flight"
+  category: "Кризис: Третий Путь"
+  path:
+    path: "/Audio/_Duty/Ambient/CrysisThirdWay/Shoegazer - Flight.ogg"
+
+- type: dutyTrack
+  id: timo_maas_first_day
+  name: "Timo Maas - First Day"
+  category: "Кризис: Третий Путь"
+  path:
+    path: "/Audio/_Duty/Ambient/CrysisThirdWay/Timo Maas - First Day.ogg"
+
+- type: dutyTrack
+  id: towa_new_city
+  name: "Towa - NEW CITY"
+  category: "Кризис: Третий Путь"
+  path:
+    path: "/Audio/_Duty/Ambient/CrysisThirdWay/Towa - NEW CITY.ogg"
+
+- type: dutyTrack
+  id: triangle_la_valse_des_flammes
+  name: "Triangle - La valse des flammes"
+  category: "Кризис: Третий Путь"
+  path:
+    path: "/Audio/_Duty/Ambient/CrysisThirdWay/Triangle - La valse des flammes.ogg"
+
+- type: dutyTrack
+  id: twodaysound_motilek
+  name: "TWODAYSOUND - Мотылёк"
+  category: "Кризис: Третий Путь"
+  path:
+    path: "/Audio/_Duty/Ambient/CrysisThirdWay/TWODAYSOUND_motilek.ogg"
+
+- type: dutyTrack
+  id: unost_groma_kyry
+  name: "Юность грома - Куры"
+  category: "Кризис: Третий Путь"
+  path:
+    path: "/Audio/_Duty/Ambient/CrysisThirdWay/Unost_groma_kyry.ogg"
+
+- type: dutyTrack
+  id: varshavanka
+  name: "Варшавянка"
+  category: "Кризис: Третий Путь"
+  path:
+    path: "/Audio/_Duty/Ambient/CrysisThirdWay/Varshavanka.ogg"
+
+- type: dutyTrack
+  id: vyrval
+  name: "Вырвал"
+  category: "Кризис: Третий Путь"
+  path:
+    path: "/Audio/_Duty/Ambient/CrysisThirdWay/vyrval.ogg"
+
+- type: dutyTrack
+  id: ylica_vostok_nahi_dni
+  name: "Улица восток - Наши дни"
+  category: "Кризис: Третий Путь"
+  path:
+    path: "/Audio/_Duty/Ambient/CrysisThirdWay/Ylica vostok_-_nahi_dni.ogg"
+
+- type: dutyTrack
+  id: zapad81_medal
+  name: "Запад81 - Медаль"
+  category: "Кризис: Третий Путь"
+  path:
+    path: "/Audio/_Duty/Ambient/CrysisThirdWay/Zapad81_-_medal.ogg"
+
+- type: dutyTrack
+  id: zapad81_tak_i_nado
+  name: "Запад81 - Так и надо"
+  category: "Кризис: Третий Путь"
+  path:
+    path: "/Audio/_Duty/Ambient/CrysisThirdWay/Zapad81_-_tak_i_nado.ogg"
+
+- type: dutyTrack
+  id: zapad81_v_dab
+  name: "Запад81 - В даб"
+  category: "Кризис: Третий Путь"
+  path:
+    path: "/Audio/_Duty/Ambient/CrysisThirdWay/Zapad81_-_v_dab.ogg"
+
+- type: dutyTrack
+  id: zveri_dlya_tebya
+  name: "Звери - Для тебя"
+  category: "Кризис: Третий Путь"
+  path:
+    path: "/Audio/_Duty/Ambient/CrysisThirdWay/Zveri_-_dlya_tebya.ogg"
+
+- type: dutyTrack
+  id: ezbez_vso_sloshno
+  name: "egorbez - Всё сложно"
+  category: "Кризис: Третий Путь"
+  path:
+    path: "/Audio/_Duty/Ambient/CrysisThirdWay/егорbez - vso sloshno.ogg"
 
 # ── Категория: Decaying Winter ───────────────────────────────────────
+
 
 - type: dutyTrack
   id: dpk_2b8fd475bbf9e2
