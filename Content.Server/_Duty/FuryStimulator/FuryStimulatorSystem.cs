@@ -1,5 +1,6 @@
 using Content.Server.Explosion.EntitySystems;
 using Content.Shared._Duty.FuryStimulator;
+using Content.Shared.Camera;
 using Content.Shared.Damage.Events;
 using Content.Shared.Damage.Systems;
 using Content.Shared.FixedPoint;
@@ -23,10 +24,10 @@ using Robust.Shared.Timing;
 namespace Content.Server._Duty.FuryStimulator;
 
 /// <summary>
-/// _Duty: авторитетная логика стимулятора Fury-16 — убывание вещества, стейт-машина стадий,
-/// баффы/дебаффы через штатные системы (движение — в Shared, урон/боль/оружие — тут),
-/// pop-up атмосфера, персональная музыка с crossfade и передоз (гиб без урона окружающим).
-/// Общая предсказываемая математика — в <see cref="SharedFuryStimulatorSystem"/>.
+/// _Duty: авторитетная логика Fury-16 — таймер из 4 фаз (Ввод → Разгон → Пик → Спад),
+/// баффы/дебаффы через штатные системы, pop-up атмосфера, персональная музыка на каждую фазу
+/// с crossfade (fade 0.5 c) и передоз (гиб без урона окружающим).
+/// Общая предсказываемая математика и таблицы силы по фазам — в <see cref="SharedFuryStimulatorSystem"/>.
 /// </summary>
 public sealed class FuryStimulatorSystem : SharedFuryStimulatorSystem
 {
@@ -39,11 +40,7 @@ public sealed class FuryStimulatorSystem : SharedFuryStimulatorSystem
     [Dependency] private readonly GibbingSystem _gib = default!;
     [Dependency] private readonly SharedPopupSystem _popup = default!;
     [Dependency] private readonly ExplosionSystem _explosion = default!;
-
-    private const float InjectMin = 45f;
-    private const float InjectMax = 50f;
-    private const float HoldMin = 5f;
-    private const float HoldMax = 10f;
+    [Dependency] private readonly SharedCameraRecoilSystem _recoil = default!;
 
     private static readonly string[] WarningPopups =
         { "fury-popup-warn-1", "fury-popup-warn-2", "fury-popup-warn-3" };
@@ -58,44 +55,26 @@ public sealed class FuryStimulatorSystem : SharedFuryStimulatorSystem
         SubscribeLocalEvent<FuryStimulatorComponent, BeforeStaminaDamageEvent>(OnBeforeStamina);
         SubscribeLocalEvent<FuryStimulatorComponent, DidEquipHandEvent>(OnUserEquippedHand);
 
-        // Маркеры на оружии снимают себя при выпадении из рук (восстановление ванильных стволов).
         SubscribeLocalEvent<FuryGunPenaltyComponent, GotUnequippedHandEvent>(OnGunUnequipped);
         SubscribeLocalEvent<FuryMeleeBonusComponent, GotUnequippedHandEvent>(OnMeleeUnequipped);
 
-        // Инъектор.
         SubscribeLocalEvent<FuryStimulatorInjectorComponent, UseInHandEvent>(OnInjectorUse);
         SubscribeLocalEvent<FuryStimulatorInjectorComponent, AfterInteractEvent>(OnInjectorAfterInteract);
     }
 
     // ── Ввод дозы ─────────────────────────────────────────────
 
-    /// <summary>Ввести дозу Fury-16 в организм цели. Повторный ввод сверх безопасного порога — передоз.</summary>
+    /// <summary>Ввести дозу Fury-16. Повторный ввод во время действия — передоз.</summary>
     public void Inject(EntityUid target, EntityUid? source = null)
     {
-        var isNew = !HasComp<FuryStimulatorComponent>(target);
-        var comp = EnsureComp<FuryStimulatorComponent>(target);
-
-        var dose = _random.NextFloat(InjectMin, InjectMax);
-
-        if (isNew)
+        if (TryComp<FuryStimulatorComponent>(target, out var existing))
         {
-            comp.Metabolism = dose;
-            // Фиксированная фаза ввода: вещество не убывает 5–10 секунд.
-            comp.HoldUntil = _timing.CurTime + TimeSpan.FromSeconds(_random.NextFloat(HoldMin, HoldMax));
-        }
-        else
-        {
-            comp.Metabolism += dose;
-        }
-
-        if (comp.Metabolism > OverdoseThreshold)
-        {
-            Overdose((target, comp));
+            Overdose((target, existing));
             return;
         }
 
-        UpdateStage((target, comp));
-        Dirty(target, comp);
+        var comp = AddComp<FuryStimulatorComponent>(target);
+        StartPhase((target, comp), FuryStage.Intro);
     }
 
     private void Overdose(Entity<FuryStimulatorComponent> ent)
@@ -104,7 +83,6 @@ public sealed class FuryStimulatorSystem : SharedFuryStimulatorSystem
 
         _audio.PlayPvs(ent.Comp.OverdoseSound, uid);
 
-        // По умолчанию интенсивность 0 — окружающие не получают урона (только гиб самого носителя).
         if (ent.Comp.OverdoseExplosionIntensity > 0f)
         {
             _explosion.QueueExplosion(
@@ -120,7 +98,36 @@ public sealed class FuryStimulatorSystem : SharedFuryStimulatorSystem
         _gib.Gib(uid);
     }
 
-    // ── Тик ───────────────────────────────────────────────────
+    // ── Таймер фаз ────────────────────────────────────────────
+
+    private float DurationFor(FuryStimulatorComponent comp, FuryStage stage) => stage switch
+    {
+        FuryStage.Intro => comp.IntroDuration,
+        FuryStage.RampUp => comp.RampDuration,
+        FuryStage.Peak => comp.PeakDuration,
+        FuryStage.Decline => comp.DeclineDuration,
+        _ => 0f,
+    };
+
+    private static FuryStage NextStage(FuryStage stage) => stage switch
+    {
+        FuryStage.Intro => FuryStage.RampUp,
+        FuryStage.RampUp => FuryStage.Peak,
+        FuryStage.Peak => FuryStage.Decline,
+        _ => FuryStage.None,
+    };
+
+    private void StartPhase(Entity<FuryStimulatorComponent> ent, FuryStage stage)
+    {
+        var comp = ent.Comp;
+        var old = comp.Stage;
+
+        comp.Stage = stage;
+        comp.PhaseEnd = _timing.CurTime + TimeSpan.FromSeconds(DurationFor(comp, stage));
+
+        OnStageChanged(ent, old, stage);
+        Dirty(ent);
+    }
 
     public override void Update(float frameTime)
     {
@@ -130,89 +137,77 @@ public sealed class FuryStimulatorSystem : SharedFuryStimulatorSystem
         var query = EntityQueryEnumerator<FuryStimulatorComponent>();
         while (query.MoveNext(out var uid, out var comp))
         {
-            // Фаза ввода держит уровень; после — убывание.
-            if (now >= comp.HoldUntil)
-                comp.Metabolism -= comp.DecayPerSecond * frameTime;
-
-            if (comp.Metabolism <= 0f)
+            if (now >= comp.PhaseEnd)
             {
-                comp.Metabolism = 0f;
-                RemCompDeferred<FuryStimulatorComponent>(uid);
-                continue;
+                var next = NextStage(comp.Stage);
+                if (next == FuryStage.None)
+                {
+                    RemCompDeferred<FuryStimulatorComponent>(uid);
+                    continue;
+                }
+
+                StartPhase((uid, comp), next);
             }
 
-            UpdateStage((uid, comp));
-
-            if ((comp.Stage == FuryStage.Intro || comp.Stage == FuryStage.Washout) && now >= comp.NextPopup)
+            if ((comp.Stage == FuryStage.Intro || comp.Stage == FuryStage.Decline) && now >= comp.NextPopup)
             {
                 _popup.PopupEntity(Loc.GetString(_random.Pick(WarningPopups)), uid, uid, PopupType.LargeCaution);
                 comp.NextPopup = now + TimeSpan.FromSeconds(_random.NextFloat(comp.PopupIntervalMin, comp.PopupIntervalMax));
             }
 
             FadeMusic(comp, frameTime);
-            Dirty(uid, comp);
         }
     }
 
-    // ── Стадии ────────────────────────────────────────────────
-
-    private void UpdateStage(Entity<FuryStimulatorComponent> ent)
+    private void OnStageChanged(Entity<FuryStimulatorComponent> ent, FuryStage old, FuryStage @new)
     {
+        var uid = ent.Owner;
         var comp = ent.Comp;
-        var newStage = LevelToStage(comp.Metabolism);
-        if (newStage == comp.Stage)
-            return;
 
-        var old = comp.Stage;
-        comp.Stage = newStage;
-
-        // Скорость (движение считается в Shared через Stage).
-        _movement.RefreshMovementSpeedModifiers(ent);
-
-        // Оружие в руках: обновить/навесить/снять маркеры под новую силу баффа.
+        _movement.RefreshMovementSpeedModifiers(uid);
         RefreshWeaponEffects(ent);
-
-        // Музыка.
         UpdateMusic(ent);
 
-        // Атмосферный pop-up пика.
-        if (newStage == FuryStage.Peak && old != FuryStage.Peak)
-            _popup.PopupEntity(Loc.GetString("fury-popup-peak"), ent, ent, PopupType.Large);
+        // Разовый мощный резкий толчок камеры в самом начале действия (укол).
+        if (@new == FuryStage.Intro && old == FuryStage.None && comp.IntroKickStrength > 0f)
+            _recoil.KickCamera(uid, _random.NextAngle().ToVec() * comp.IntroKickStrength);
 
-        // Запланировать тревожные pop-up при входе в стадии разогрева/выхода.
-        var enteringWarn = newStage is FuryStage.Intro or FuryStage.Washout;
-        var wasWarn = old is FuryStage.Intro or FuryStage.Washout;
-        if (enteringWarn && !wasWarn)
+        if (@new == FuryStage.Peak && old != FuryStage.Peak)
+            _popup.PopupEntity(Loc.GetString("fury-popup-peak"), uid, uid, PopupType.Large);
+
+        // Тревожные pop-up на вводе и спаде.
+        var warnNow = @new is FuryStage.Intro or FuryStage.Decline;
+        var warnOld = old is FuryStage.Intro or FuryStage.Decline;
+        if (warnNow && !warnOld)
             comp.NextPopup = _timing.CurTime + TimeSpan.FromSeconds(_random.NextFloat(comp.PopupIntervalMin, comp.PopupIntervalMax));
-
-        Dirty(ent);
     }
 
     // ── Эффекты оружия в руках ────────────────────────────────
 
     private void RefreshWeaponEffects(Entity<FuryStimulatorComponent> ent)
     {
-        var factor = StageFactor(ent.Comp.Stage);
+        var buffFactor = BuffFactor(ent.Comp.Stage);
+        var gunFactor = GunFactor(ent.Comp.Stage);
 
         // Безоружные атаки (у моба свой MeleeWeaponComponent).
-        ApplyMeleeMarker(ent.Owner, factor, ent.Comp);
+        ApplyMeleeMarker(ent.Owner, buffFactor, ent.Comp);
 
         foreach (var item in _hands.EnumerateHeld(ent.Owner))
         {
-            ApplyGunMarker(item, factor, ent.Comp);
-            ApplyMeleeMarker(item, factor, ent.Comp);
+            ApplyGunMarker(item, gunFactor, ent.Comp);
+            ApplyMeleeMarker(item, buffFactor, ent.Comp);
         }
     }
 
-    private void ApplyGunMarker(EntityUid item, float factor, FuryStimulatorComponent comp)
+    private void ApplyGunMarker(EntityUid item, float gunFactor, FuryStimulatorComponent comp)
     {
         if (!HasComp<GunComponent>(item))
             return;
 
-        if (factor > 0f)
+        if (gunFactor > 0f)
         {
             var pen = EnsureComp<FuryGunPenaltyComponent>(item);
-            pen.Factor = factor;
+            pen.Factor = gunFactor;
             Dirty(item, pen);
             comp.AffectedWeapons.Add(item);
             _gun.RefreshModifiers(item);
@@ -224,15 +219,15 @@ public sealed class FuryStimulatorSystem : SharedFuryStimulatorSystem
         }
     }
 
-    private void ApplyMeleeMarker(EntityUid item, float factor, FuryStimulatorComponent comp)
+    private void ApplyMeleeMarker(EntityUid item, float buffFactor, FuryStimulatorComponent comp)
     {
         if (!HasComp<MeleeWeaponComponent>(item))
             return;
 
-        if (factor > 0f)
+        if (buffFactor > 0f)
         {
             var bonus = EnsureComp<FuryMeleeBonusComponent>(item);
-            bonus.Factor = factor;
+            bonus.Factor = buffFactor;
             Dirty(item, bonus);
             comp.AffectedWeapons.Add(item);
         }
@@ -244,12 +239,8 @@ public sealed class FuryStimulatorSystem : SharedFuryStimulatorSystem
 
     private void OnUserEquippedHand(Entity<FuryStimulatorComponent> ent, ref DidEquipHandEvent args)
     {
-        var factor = StageFactor(ent.Comp.Stage);
-        if (factor <= 0f)
-            return;
-
-        ApplyGunMarker(args.Equipped, factor, ent.Comp);
-        ApplyMeleeMarker(args.Equipped, factor, ent.Comp);
+        ApplyGunMarker(args.Equipped, GunFactor(ent.Comp.Stage), ent.Comp);
+        ApplyMeleeMarker(args.Equipped, BuffFactor(ent.Comp.Stage), ent.Comp);
     }
 
     private void OnGunUnequipped(Entity<FuryGunPenaltyComponent> ent, ref GotUnequippedHandEvent args)
@@ -268,7 +259,7 @@ public sealed class FuryStimulatorSystem : SharedFuryStimulatorSystem
 
     private void OnBeforeDamage(Entity<FuryStimulatorComponent> ent, ref BeforeDamageChangedEvent args)
     {
-        var factor = StageFactor(ent.Comp.Stage);
+        var factor = BuffFactor(ent.Comp.Stage);
         if (factor <= 0f)
             return;
 
@@ -278,18 +269,19 @@ public sealed class FuryStimulatorSystem : SharedFuryStimulatorSystem
 
     private void OnBeforeStamina(Entity<FuryStimulatorComponent> ent, ref BeforeStaminaDamageEvent args)
     {
-        // Неуязвимость к боли на пике/спаде: гасим только урон стамины, восстановление (отрицательное) не трогаем.
-        if (args.Value > 0f && StageFactor(ent.Comp.Stage) > 0f)
+        // Неуязвимость к боли — только пик/спад. Гасим лишь урон стамины, восстановление не трогаем.
+        if (args.Value > 0f && IsPainImmune(ent.Comp.Stage))
             args.Cancelled = true;
     }
 
-    // ── Музыка (персональная, crossfade) ──────────────────────
+    // ── Музыка (персональная, crossfade, fade 0.5 c) ──────────
 
     private (int Track, SoundSpecifier? Sound) MusicFor(FuryStimulatorComponent comp, FuryStage stage) => stage switch
     {
-        FuryStage.Intro or FuryStage.Washout => (0, comp.MusicIntro),
-        FuryStage.Peak => (1, comp.MusicPeak),
-        FuryStage.Decline => (2, comp.MusicDecline),
+        FuryStage.Intro => (0, comp.MusicIntro),
+        FuryStage.RampUp => (1, comp.MusicRamp),
+        FuryStage.Peak => (2, comp.MusicPeak),
+        FuryStage.Decline => (3, comp.MusicDecline),
         _ => (-1, null),
     };
 
@@ -379,10 +371,9 @@ public sealed class FuryStimulatorSystem : SharedFuryStimulatorSystem
         var comp = ent.Comp;
         var uid = ent.Owner;
 
-        // Сбрасываем стадию до None, чтобы обновление скорости ниже вернуло ваниль.
+        // Сброс фазы, чтобы обновление скорости вернуло ваниль.
         comp.Stage = FuryStage.None;
 
-        // Глушим музыку.
         if (comp.MusicStream != null)
         {
             Del(comp.MusicStream);
@@ -395,7 +386,6 @@ public sealed class FuryStimulatorSystem : SharedFuryStimulatorSystem
             comp.MusicStreamFading = null;
         }
 
-        // Снимаем все маркеры оружия — даже если руки уже опустели (гиб/смерть).
         foreach (var weapon in comp.AffectedWeapons)
         {
             if (!Exists(weapon))
@@ -413,7 +403,6 @@ public sealed class FuryStimulatorSystem : SharedFuryStimulatorSystem
 
         comp.AffectedWeapons.Clear();
 
-        // Возвращаем скорость к ванильной (Stage уже None).
         if (Exists(uid))
             _movement.RefreshMovementSpeedModifiers(uid);
     }

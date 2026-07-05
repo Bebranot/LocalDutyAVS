@@ -4,107 +4,114 @@ using Robust.Shared.GameStates;
 namespace Content.Shared._Duty.FuryStimulator;
 
 /// <summary>
-/// _Duty: вешается на моба, в организме которого есть стимулятор Fury-16.
-/// Хранит скрытый уровень вещества и текущую стадию. Сервер — авторитет, пишет <see cref="Metabolism"/>
-/// и <see cref="Stage"/>; клиент читает их для визуала (оверлей, тряска экрана).
-/// Логика убывания/стадий/баффов — в <c>FuryStimulatorSystem</c> (сервер), общее — в
-/// <c>SharedFuryStimulatorSystem</c>.
+/// _Duty: вешается на моба под действием стимулятора Fury-16.
+/// Модель таймерная: фазы (<see cref="FuryStage"/>) сменяются по фиксированным длительностям.
+/// Сервер — авторитет, пишет <see cref="Stage"/>; клиент читает её для визуала (оверлей, тряска).
+/// Логика фаз/баффов — в <c>FuryStimulatorSystem</c> (сервер), общее — в <c>SharedFuryStimulatorSystem</c>.
 /// </summary>
 [RegisterComponent, NetworkedComponent, AutoGenerateComponentState]
 [Access(typeof(SharedFuryStimulatorSystem))]
 public sealed partial class FuryStimulatorComponent : Component
 {
-    /// <summary>Текущее количество вещества в организме. Убывает со временем, авторитетно на сервере.</summary>
-    [ViewVariables, AutoNetworkedField]
-    public float Metabolism;
-
-    /// <summary>Текущая стадия, вычисленная из <see cref="Metabolism"/>. Читается клиентом для визуала.</summary>
+    /// <summary>Текущая фаза. Читается клиентом для визуала.</summary>
     [ViewVariables, AutoNetworkedField]
     public FuryStage Stage = FuryStage.None;
 
     // ── Серверные поля (не сетевые) ───────────────────────────
 
-    /// <summary>
-    /// Пока сейчас &gt; текущего времени — вещество не убывает (фиксированная фаза ввода 5–10 с).
-    /// </summary>
+    /// <summary>Момент времени, когда текущая фаза закончится и наступит следующая.</summary>
     [ViewVariables]
-    public TimeSpan HoldUntil;
+    public TimeSpan PhaseEnd;
 
-    /// <summary>Время следующего тревожного pop-up (стадии Intro/Washout).</summary>
+    /// <summary>Время следующего тревожного pop-up (фазы ввода/спада).</summary>
     [ViewVariables]
     public TimeSpan NextPopup;
 
     /// <summary>
-    /// Оружие/сам моб, на которые сейчас навешаны маркеры Fury (ган-дебафф, мили-бафф).
-    /// Отслеживаем явно, чтобы гарантированно снять их при смерти/передозе, даже если руки
-    /// уже опустели (защита от утечек). Серверное поле.
+    /// Оружие/сам моб, на которые сейчас навешаны маркеры Fury. Отслеживаем явно, чтобы
+    /// гарантированно снять их при смерти/передозе даже с пустыми руками (защита от утечек).
     /// </summary>
     [ViewVariables]
     public readonly HashSet<EntityUid> AffectedWeapons = new();
 
-    // ── Музыка (серверная, персональная для игрока; сетевые — сами аудио-сущности) ──
+    // ── Музыка (серверная, персональная; сетевые — сами аудио-сущности) ──
 
-    /// <summary>Текущий (проявляющийся) музыкальный стрим.</summary>
     [ViewVariables]
     public EntityUid? MusicStream;
 
-    /// <summary>Затухающий музыкальный стрим (crossfade).</summary>
     [ViewVariables]
     public EntityUid? MusicStreamFading;
 
-    /// <summary>Заглушка (индекс трека), под который сейчас играет музыка, чтобы не перезапускать зря.</summary>
+    /// <summary>Индекс трека, который сейчас играет, чтобы не перезапускать зря.</summary>
     [ViewVariables]
     public int MusicTrack = -1;
 
-    /// <summary>Текущая громкость проявляющегося стрима (0..1).</summary>
     [ViewVariables]
     public float MusicGain;
 
-    /// <summary>Текущая громкость затухающего стрима (0..1).</summary>
     [ViewVariables]
     public float MusicGainFading;
 
-    // ── Тюнинг ────────────────────────────────────────────────
+    // ── Длительности фаз (сек) ────────────────────────────────
 
-    /// <summary>Скорость убывания вещества, ед/сек.</summary>
     [DataField]
-    public float DecayPerSecond = 1f;
+    public float IntroDuration = 5f;
+
+    [DataField]
+    public float RampDuration = 25f;
+
+    [DataField]
+    public float PeakDuration = 35f;
+
+    [DataField]
+    public float DeclineDuration = 15f;
+
+    /// <summary>
+    /// Сила разового резкого толчка камеры в начале фазы ввода (укол). 0 = выкл.
+    /// Движок клампит магнитуду толчка до 1.
+    /// </summary>
+    [DataField]
+    public float IntroKickStrength = 1f;
+
+    // ── Тюнинг ────────────────────────────────────────────────
 
     /// <summary>Целевая громкость музыки (линейная, 0..1).</summary>
     [DataField]
     public float MusicVolume = 1f;
 
-    /// <summary>Скорость fade музыки, ед. громкости в секунду.</summary>
+    /// <summary>Скорость fade музыки, ед. громкости/сек. 2.0 = полный fade за 0.5 c.</summary>
     [DataField]
-    public float MusicFadeSpeed = 0.6f;
+    public float MusicFadeSpeed = 2f;
 
-    /// <summary>Минимальный/максимальный интервал между тревожными pop-up (сек).</summary>
     [DataField]
     public float PopupIntervalMin = 3f;
 
     [DataField]
     public float PopupIntervalMax = 6f;
 
-    // ── Аудио-заглушки ────────────────────────────────────────
-    // TODO _Duty: временно указывают на существующие треки проекта. Замени пути на реальные
-    // PATH_SOUND_1/2/3, когда будут файлы (одна строка на каждый; или переопредели в прототипе).
+    // ── Музыка фаз (4 разных трека) ───────────────────────────
 
-    /// <summary>PATH_SOUND_1 — «разогрев» (Intro/Washout).</summary>
+    /// <summary>Фаза 1 «Ввод».</summary>
     [DataField]
     public SoundSpecifier MusicIntro =
-        new SoundPathSpecifier("/Audio/_Duty/Ambient/AmbientPeace/mogott.ogg");
+        new SoundPathSpecifier("/Audio/_Duty/Effects/Fury-16/phase1.ogg");
 
-    /// <summary>PATH_SOUND_2 — пик (Peak).</summary>
+    /// <summary>Фаза 2 «Разгон».</summary>
+    [DataField]
+    public SoundSpecifier MusicRamp =
+        new SoundPathSpecifier("/Audio/_Duty/Effects/Fury-16/phase2.ogg");
+
+    /// <summary>Фаза 3 «Пик».</summary>
     [DataField]
     public SoundSpecifier MusicPeak =
-        new SoundPathSpecifier("/Audio/_Duty/Ambient/AmbientPeace/DSM/Countsman/countsman_1.ogg");
+        new SoundPathSpecifier("/Audio/_Duty/Effects/Fury-16/phase3.ogg");
 
-    /// <summary>PATH_SOUND_3 — спад (Decline).</summary>
+    /// <summary>Фаза 4 «Спад».</summary>
     [DataField]
     public SoundSpecifier MusicDecline =
-        new SoundPathSpecifier("/Audio/_Duty/Ambient/AmbientPeace/PortBalreska/balreska_1.ogg");
+        new SoundPathSpecifier("/Audio/_Duty/Effects/Fury-16/phase4.ogg");
 
-    /// <summary>Звук передозировки (взрыв/гиб).</summary>
+    /// <summary>Звук передозировки (гиб).</summary>
     [DataField]
     public SoundSpecifier OverdoseSound =
         new SoundPathSpecifier("/Audio/Effects/gib1.ogg");
@@ -112,13 +119,11 @@ public sealed partial class FuryStimulatorComponent : Component
     // ── Передозировка ─────────────────────────────────────────
 
     /// <summary>
-    /// Интенсивность взрыва при передозе. 0 = без AoE-урона по окружающим (только гиб самого игрока).
-    /// По просьбе: окружающие не должны получать урон, поэтому по умолчанию 0.
+    /// Интенсивность взрыва при передозе. 0 = без AoE-урона по окружающим (только гиб носителя).
     /// </summary>
     [DataField]
     public float OverdoseExplosionIntensity;
 
-    /// <summary>Тип взрыва (если <see cref="OverdoseExplosionIntensity"/> &gt; 0).</summary>
     [DataField]
     public string OverdoseExplosionType = "Default";
 }
