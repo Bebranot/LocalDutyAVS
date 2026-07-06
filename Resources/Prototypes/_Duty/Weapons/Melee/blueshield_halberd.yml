@@ -4,7 +4,7 @@
   parent: BaseItem
   id: DutyBSOHalberd
   description: A special plasma halberd made for the station's Blueshield officer.
-  suffix: Duty
+  suffix: Duty, Оружие ближнего боя
   components:
   - type: Sharp
   - type: Execution
@@ -58,7 +58,7 @@
   id: DutyWeaponCaseHalberdBS
   name: weapon case
   description: A weapon case containing a plasma halberd for the Blueshield officer.
-  suffix: Duty Halberd BS
+  suffix: Duty, Ящик, Halberd BS
   parent: [ BaseStorageItem, BaseBagOpenClose ]
   components:
   - type: Sprite

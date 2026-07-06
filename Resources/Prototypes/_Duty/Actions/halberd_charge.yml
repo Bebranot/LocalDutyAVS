@@ -5,7 +5,7 @@
   id: ActionDutyHalberdCharge
   name: Рывок алебардой
   description: Совершите стремительный рывок в указанном направлении. Сбивает с ног всё на пути. Требует wielded алебарду.
-  suffix: Duty
+  suffix: Duty, Экшен
   components:
   - type: Action
     useDelay: 25

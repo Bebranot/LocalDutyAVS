@@ -63,6 +63,6 @@
 - type: entity
   parent: STBaseWeaponRifleAH12
   id: STWeaponRifleAH12
-  suffix: "Duty, Stalker"
+  suffix: "Stalker, STWeapon, Огнестрел"
   name: АШ-12 "Охотник на мутантов"
   description: Российский тяжёлый штурмовой автомат под 12.7x55мм. Применяется в Зоне против бронированных мутантов и защищённых целей. Характерный «хлопок» слышен за сотни метров.

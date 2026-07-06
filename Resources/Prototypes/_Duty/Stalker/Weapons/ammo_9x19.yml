@@ -13,7 +13,7 @@
     projectileClass: 1
     damage:
       types:
-        Piercing: 23
+        Piercing: 15
   - type: StaminaDamageOnCollide
     damage: 1
 
@@ -27,7 +27,7 @@
     projectileClass: 2
     damage:
       types:
-        Piercing: 24
+        Piercing: 15
 
 - type: entity
   id: Bullet919RIP
@@ -39,9 +39,9 @@
     projectileClass: 0
     damage:
       types:
-        Piercing: 45
-        Blunt: 5
-        Slash: 5
+        Piercing: 12
+        Blunt: 2
+        Slash: 2
 
 - type: entity
   id: Bullet919PBM
@@ -53,7 +53,7 @@
     projectileClass: 3
     damage:
       types:
-        Piercing: 26
+        Piercing: 16
 
 # ── Патроны ──────────────────────────────────────────────────────────────────
 - type: entity
@@ -80,7 +80,7 @@
 - type: entity
   id: STCartridge919PSOGJ
   name: cartridge 9x19 PSO
-  suffix: "Stalker"
+  suffix: "Stalker, STWeapon, Огнестрел"
   parent: STCartridge919
   components:
   - type: CartridgeAmmo
@@ -89,7 +89,7 @@
 - type: entity
   id: STCartridge919PST
   name: cartridge 9x19 PST
-  suffix: "Stalker"
+  suffix: "Stalker, STWeapon, Огнестрел"
   parent: STCartridge919
   components:
   - type: CartridgeAmmo
@@ -98,7 +98,7 @@
 - type: entity
   id: STCartridge919RIP
   name: cartridge 9x19 RIP
-  suffix: "Stalker"
+  suffix: "Stalker, STWeapon, Огнестрел"
   parent: STCartridge919
   components:
   - type: CartridgeAmmo
@@ -107,7 +107,7 @@
 - type: entity
   id: STCartridge919PBM
   name: cartridge 9x19 PBM
-  suffix: "Stalker"
+  suffix: "Stalker, STWeapon, Огнестрел"
   parent: STCartridge919
   components:
   - type: CartridgeAmmo
@@ -119,7 +119,7 @@
   name: магазин МП-5 9x19 (35)
   description: Магазин 9x19 мм для МП-5. Вместимость 35.
   parent: BaseItem
-  suffix: "Duty, Stalker"
+  suffix: "Stalker, STWeapon, Огнестрел"
   components:
   - type: Tag
     tags:

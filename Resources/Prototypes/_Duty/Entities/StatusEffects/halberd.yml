@@ -5,4 +5,5 @@
 - type: entity
   parent: StatusEffectSlowdown
   id: HalberdChargeHitSlowdownStatusEffect
+  suffix: Duty, Статус-эффект
   name: hit by halberd charge slowdown

@@ -21,7 +21,7 @@
   id: STModuleAutoSear
   name: авто-шептало
   description: Делает оружие полностью автоматическим, если ствол это поддерживает. Ставится в пистолеты и некоторые автоматы.
-  suffix: "Duty, Stalker, модуль"
+  suffix: "Stalker, STWeapon, Огнестрел, модуль"
   components:
   - type: Tag
     tags:
@@ -39,7 +39,7 @@
   id: STModuleGlockSwitch
   name: Glock switch
   description: Насадка для пистолета Glock, позволяющая вести полностью автоматический огонь. Несовместима с другим оружием.
-  suffix: "Duty, Stalker, модуль"
+  suffix: "Stalker, STWeapon, Огнестрел, модуль"
   components:
   - type: Tag
     tags:
@@ -70,7 +70,7 @@
   parent: STBaseModuleUnderbarrelSMG
   id: STModuleSMGGripT1
   name: кустарная рукоять ПП
-  suffix: "Duty, Stalker, T1"
+  suffix: "Stalker, STWeapon, Огнестрел, T1"
   components:
   - type: Tag
     tags:
@@ -87,7 +87,7 @@
   parent: STBaseModuleUnderbarrelSMG
   id: STModuleSMGGripT2
   name: заводская рукоять ПП
-  suffix: "Duty, Stalker, T2"
+  suffix: "Stalker, STWeapon, Огнестрел, T2"
   components:
   - type: Tag
     tags:
@@ -123,7 +123,7 @@
   parent: STBaseModuleScopeRifles
   id: STModuleScopeRiflesT1Ru
   name: кустарный прицел (РУ)
-  suffix: "Duty, Stalker, T1, RU"
+  suffix: "Stalker, STWeapon, Огнестрел, T1, RU"
   components:
   - type: Tag
     tags:
@@ -144,7 +144,7 @@
   parent: STBaseModuleScopeRifles
   id: STModuleScopeRiflesT1Nato
   name: кустарный прицел (НАТО)
-  suffix: "Duty, Stalker, T1, NATO"
+  suffix: "Stalker, STWeapon, Огнестрел, T1, NATO"
   components:
   - type: Tag
     tags:
@@ -165,7 +165,7 @@
   parent: STBaseModuleScopeRifles
   id: STModuleScopeRiflesT2Ru
   name: прицел автомата (РУ)
-  suffix: "Duty, Stalker, T2, RU"
+  suffix: "Stalker, STWeapon, Огнестрел, T2, RU"
   components:
   - type: Tag
     tags:
@@ -186,7 +186,7 @@
   parent: STBaseModuleScopeRifles
   id: STModuleScopeRiflesT2Nato
   name: прицел автомата (НАТО)
-  suffix: "Duty, Stalker, T2, NATO"
+  suffix: "Stalker, STWeapon, Огнестрел, T2, NATO"
   components:
   - type: Tag
     tags:
@@ -228,7 +228,7 @@
   parent: STBaseModuleSniperSight
   id: STModuleSniperSightT1
   name: кустарный снайперский прицел
-  suffix: "Duty, Stalker, T1"
+  suffix: "Stalker, STWeapon, Огнестрел, T1"
   components:
   - type: Tag
     tags:
@@ -248,7 +248,7 @@
   parent: STBaseModuleSniperSight
   id: STModuleSniperSightT2
   name: заводской снайперский прицел
-  suffix: "Duty, Stalker, T2"
+  suffix: "Stalker, STWeapon, Огнестрел, T2"
   components:
   - type: Tag
     tags:

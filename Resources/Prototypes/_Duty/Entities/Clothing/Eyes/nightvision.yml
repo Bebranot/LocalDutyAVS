@@ -2,6 +2,7 @@
 - type: entity
   parent: [ClothingEyesBase, BaseMajorContraband]
   id: DutyClothingEyesNightVision
+  suffix: Duty, Одежда
   name: очки ночного видения
   description: Тактические очки ночного видения. Усиливают остаточный свет, превращая тьму в зелёный полумрак. Слепят при яркой вспышке.
   components:

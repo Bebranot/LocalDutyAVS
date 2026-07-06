@@ -3,7 +3,7 @@
   parent: BaseItem
   id: Decimator
   description: and Thy punisment, is dead.
-  suffix: Duty
+  suffix: Duty, Оружие ближнего боя
   components:
   - type: Sprite
     sprite: _Duty/Weapons/Melee/Decimator.rsi

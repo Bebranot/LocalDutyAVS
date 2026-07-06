@@ -3,7 +3,7 @@
   parent: BaseStructure
   name: Statue Of great botanist
   description: Statue of the great botanist, who win a competition in iceberg salat planting.
-  suffix: "[Duty]"
+  suffix: "Duty, Статуя"
   components:
   - type: Sprite
     noRot: true

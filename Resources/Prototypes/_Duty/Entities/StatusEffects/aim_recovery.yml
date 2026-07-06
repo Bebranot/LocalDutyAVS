@@ -4,4 +4,5 @@
 - type: entity
   parent: StatusEffectSlowdown
   id: AimRecoveryImmobilizeStatusEffect
+  suffix: Duty, Статус-эффект
   name: aim recovery immobilize

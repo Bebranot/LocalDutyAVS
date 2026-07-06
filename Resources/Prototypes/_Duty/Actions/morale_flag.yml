@@ -5,7 +5,7 @@
   id: ActionDutyMoraleFlag
   name: Поднять и помахать флагом
   description: Высоко поднимите алебарду-флаг и взмахните им, поднимая боевой дух себе и союзникам рядом. Требует алебарду, взятую в две руки.
-  suffix: Duty
+  suffix: Duty, Экшен
   components:
   - type: Action
     useDelay: 120 # должно совпадать с MoraleFlagComponent.Cooldown

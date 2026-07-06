@@ -5,6 +5,7 @@
   parent: BaseItem
   description: Специально разработанный гипоспрей для полевых медиков.
   id: Hypospraynikitafuji1515
+  suffix: Duty, Предмет
   components:
   - type: Sprite
     sprite: _DeadSpace/Sponsor/nikitafuji1515/hypo.rsi

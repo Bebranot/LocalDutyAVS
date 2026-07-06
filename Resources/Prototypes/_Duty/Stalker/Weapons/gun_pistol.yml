@@ -6,7 +6,7 @@
 - type: entity
   parent: STBaseWeaponPistol
   id: WeaponPistolStalkerAPS
-  suffix: "Duty, Stalker"
+  suffix: "Stalker, STWeapon, Огнестрел"
   name: АПС
   description: Автоматический Пистолет Стечкина под 9х18 и собственный магазин на 20 патронов.
   components:
@@ -80,7 +80,7 @@
 - type: entity
   parent: STBaseWeaponPistol
   id: WeaponPistolGSH18
-  suffix: "Duty, Stalker"
+  suffix: "Stalker, STWeapon, Огнестрел"
   name: ГШ-18
   description: Пистолет ГШ-18, разработанный в тульском КБП. Поставляется с разными магазинами.
   components:
@@ -138,7 +138,7 @@
 - type: entity
   parent: STBaseWeaponPistol
   id: WeaponPistolStalkerGlock
-  suffix: "Duty, Stalker"
+  suffix: "Stalker, STWeapon, Огнестрел"
   name: Glock-17
   description: Один из самых популярных пистолетов в США под 9x19.
   components:
@@ -194,7 +194,7 @@
 - type: entity
   parent: [ STBaseWeaponPistol, BaseGunWieldable ]
   id: WeaponPistolStalkerLP08
-  suffix: "Duty, Stalker"
+  suffix: "Stalker, STWeapon, Огнестрел"
   name: Люгер
   description: Люгер 9x19 — компактный, быстрый и готов к приключениям.
   components:
@@ -258,7 +258,7 @@
 - type: entity
   parent: STBaseWeaponPistol
   id: WeaponPistolStalkerPM
-  suffix: "Duty, Stalker"
+  suffix: "Stalker, STWeapon, Огнестрел"
   name: ПМм
   description: Распространённый в Зоне советский пистолет. Доступное и неприхотливое оружие новичка.
   components:
@@ -358,7 +358,7 @@
 - type: entity
   parent: STBaseWeaponPistol
   id: WeaponStalkerPistolTec9
-  suffix: "Duty, Stalker"
+  suffix: "Stalker, STWeapon, Огнестрел"
   name: TEC-9
   description: Самозарядный пистолет, разработанный в Швеции в 1980-х.
   components:
@@ -414,7 +414,7 @@
 - type: entity
   parent: STBaseWeaponPistol
   id: WeaponPistolStalkerTT
-  suffix: "Duty, Stalker"
+  suffix: "Stalker, STWeapon, Огнестрел"
   name: Тульский Токарев
   description: Легендарный пистолет калибра 7.62х25, разработанный в СССР.
   components:

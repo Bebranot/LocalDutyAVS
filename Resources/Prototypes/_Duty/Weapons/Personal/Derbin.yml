@@ -3,7 +3,7 @@
   parent: BaseItem
   id: ArtifactScytle
   description: Anime
-  suffix: Duty derbin коса
+  suffix: Duty, Оружие ближнего боя, derbin коса
   components:
   - type: ItemToggle
     soundFailToActivate:

@@ -7,7 +7,7 @@
   parent: BaseItem
   id: DutySamodelBatNails
   description: Деревянная бита, утыканная ржавыми гвоздями. Страшновато выглядит.
-  suffix: Duty Самодел
+  suffix: Duty, Оружие ближнего боя, Самодел
   components:
   - type: Sprite
     sprite: _Duty/Objects/Weapons/Melee/bat_nails.rsi
@@ -48,7 +48,7 @@
   parent: BaseItem
   id: DutySamodelPipe
   description: Кусок металлической трубы. Тяжёлая, надёжная, и очень больно бьёт.
-  suffix: Duty, Самодел
+  suffix: Duty, Оружие ближнего боя, Самодел
   components:
   - type: Sprite
     sprite: _Duty/Objects/Weapons/Melee/metal_pipe.rsi
@@ -88,7 +88,7 @@
   parent: BaseItem
   id: DutySamodelClub
   description: Тяжёлая металлическая дубина. Используется в паре со щитом — медленно, но крайне болезненно.
-  suffix: Duty, Самодел
+  suffix: Duty, Оружие ближнего боя, Самодел
   components:
   - type: Sprite
     sprite: _Duty/Weapons/Melee/bebrabat.rsi
@@ -123,7 +123,7 @@
   parent: BaseItem
   id: DutySamodelShield
   description: Сварганен из дверной панели и болтов. Замедляет владельца, но обеспечивает серьёзную защиту. Ударьте по нему другим предметом — и рядом раздастся боевой клич!
-  suffix: Duty, Самодел
+  suffix: Duty, Оружие ближнего боя, Самодел
   components:
   - type: Sprite
     sprite: _Duty/Objects/Weapons/Melee/RiotShield.rsi

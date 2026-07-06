@@ -45,6 +45,7 @@
   name: Soggy Moss
   parent: [FoodProduceBase, BaseItem]
   id: FoodMoss
+  suffix: Duty, Растение
   description: Its very wet, and looks gross
   components:
   - type: FlavorProfile
@@ -117,6 +118,7 @@
   parent: SeedBase
   name: packet of Moss Spores
   id: MossSeeds
+  suffix: Duty, Растение
   components:
     - type: Seed
       seedId: MagnificentMoss
@@ -236,6 +238,7 @@
   name: Electro Cabbage
   parent: [FoodProduceBase, BaseItem]
   id: FoodElectroCabbage
+  suffix: Duty, Растение
   description: crackling with lightnings. Better not to eat.
   components:
   - type: FlavorProfile
@@ -276,6 +279,7 @@
   parent: SeedBase
   name: packet of electro cabbage seeds
   id: ElectroCabbageSeeds
+  suffix: Duty, Растение
   components:
     - type: Seed
       seedId: ElectroCabbage
@@ -286,7 +290,7 @@
 - type: entity
   id: CabbageGenerator
   description: Um... its """"Generator""""
-  suffix: Generator
+  suffix: Duty, Генератор
   name: Cabbage generator
   parent: [ BaseGenerator ]
   placement:
@@ -354,6 +358,7 @@
 - type: entity
   parent: [ BasePowerCell ]
   id: CabbageBattery
+  suffix: Duty, Батарея
   name: Cabbage battery
   description: Its... very creatively.
   components:

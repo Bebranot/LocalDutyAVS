@@ -10,7 +10,7 @@
   name: плеер "Duty"
   parent: BaseItem
   description: Карманный плеер с подборкой музыки от Duty. Слушай и радуйся жизни.
-  suffix: Duty
+  suffix: Duty, Предмет
   components:
   - type: Sprite
     sprite: _Duty/PocketPlayer.rsi
