@@ -1,0 +1,23 @@
+- type: marking
+  id: HumanFoxTail1
+  bodyPart: Tail
+  groupWhitelist: [Human]
+  sprites:
+  - sprite: _Duty/Mobs/Customization/Human/fox_tails.rsi
+    state: hum_fox_tail1
+
+- type: marking
+  id: HumanFoxTail2
+  bodyPart: Tail
+  groupWhitelist: [Human]
+  sprites:
+  - sprite: _Duty/Mobs/Customization/Human/fox_tails.rsi
+    state: hum_fox_tail2
+
+- type: marking
+  id: HumanFoxTail3
+  bodyPart: Tail
+  groupWhitelist: [Human]
+  sprites:
+  - sprite: _Duty/Mobs/Customization/Human/fox_tails.rsi
+    state: hum_fox_tail3

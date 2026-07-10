@@ -1,0 +1,39 @@
+- type: marking
+  id: IPC_Beholder
+  bodyPart: HeadTop
+  groupWhitelist: [Ipc]
+  coloring:
+    default:
+      type:
+        !type:EyeColoring
+          negative: true
+  sprites:
+  - sprite: ADT/Mobs/Customization/augments/headaugs.rsi
+    state: beholder
+
+- type: marking
+  id: IPC_Terminator
+  bodyPart: HeadTop
+  groupWhitelist: [Ipc]
+  sponsorOnly: false
+  coloring:
+    default:
+      type:
+        !type:EyeColoring
+          negative: true
+  sprites:
+  - sprite: ADT/Mobs/Customization/augments/headaugs.rsi
+    state: terminator
+
+- type: marking
+  id: IPC_Iron_jaw
+  bodyPart: HeadTop
+  groupWhitelist: [Ipc]
+  coloring:
+    default:
+      type:
+        !type:EyeColoring
+          negative: true
+  sprites:
+  - sprite: ADT/Mobs/Customization/augments/headaugs.rsi
+    state: iron_jaw

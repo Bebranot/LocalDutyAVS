@@ -79,7 +79,6 @@
       types:
         Blunt: 10
   - type: Damageable
-    damageContainer: Biological
     damageModifierSet: glass # эм... не знаю что ещё сюда поставить
   - type: Destructible
     thresholds:
@@ -94,7 +93,6 @@
             volume: 2
       - !type:SpillBehavior
         solution: food
-        transferForensics: true
       - !type:DoActsBehavior
         acts: [ "Destruction" ]
   - type: Fixtures
@@ -128,12 +126,12 @@
 
 - type: reagent
   id: MossJuice
-  name: Сфагмиум
+  name: reagent-name-moss-juice
   group: Botanical
-  desc: Вещество, добытое из целебного мха. Хорошо удобряет растения, и содержит в себе некоторые медикаменты, получаемые путём обработки в центрифуге
+  desc: reagent-desc-moss-juice
   flavor: Moss
   color: "#0f3300"
-  physicalDesc: Гнилой
+  physicalDesc: reagent-physical-desc-moss-juice
   plantMetabolism:
     - !type:PlantAdjustNutrition
       amount: 2
@@ -141,7 +139,7 @@
       probability: 0.03
       amount: -1
   metabolisms:
-    Drink:
+    Digestion:
       effects:
       - !type:HealthChange
         damage:
@@ -156,14 +154,14 @@
 
 - type: reagent
   id: MossTea
-  name: Мховый чай
+  name: reagent-name-moss-tea
   group: Botanical
-  desc: Чай, ужасный на вкус но исцеляющий ранения. Худший напиток, что может предложить бармен
+  desc: reagent-desc-moss-tea
   flavor: MossTea
   color: "#386326"
-  physicalDesc: Густой
+  physicalDesc: reagent-physical-desc-moss-tea
   metabolisms:
-    Drink:
+    Digestion:
       effects:
       - !type:SatiateThirst
         factor: 3
@@ -270,7 +268,6 @@
   - type: Electrified
     shockDamage: 5
     requirePower: false
-    ignoreInsulation: false
   - type: Tag
     tags:
     - ElectroCabbageTag
@@ -323,7 +320,6 @@
   - type: Anchorable
   - type: Pullable
   - type: Damageable
-    damageContainer: Biological
     damageModifierSet: Wood # ну, я не слишком знаю какой множитель поставить ДЛЯ ГЕНЕРАТОРА ИЗ КАПУСТЫ
   - type: PacifismDangerousAttack
   - type: Destructible
@@ -416,7 +412,7 @@
         icon:
           sprite: _Duty/Specific/Hydroponics/ElectroCabbage.rsi
           state: icon
-      doAfter: 6
+        doAfter: 6
   - node: done
     entity: CabbageBattery
 

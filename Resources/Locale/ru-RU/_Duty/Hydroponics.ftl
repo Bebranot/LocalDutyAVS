@@ -8,6 +8,14 @@ ent-MossSeeds = Пакет семян (целебный мох)
 seeds-MagnificentMoss-name = Целебный мох
 seeds-MagnificentMoss-display-name = Водянистый мох
 
+reagent-name-moss-juice = Сфагмиум
+reagent-desc-moss-juice = Вещество, добытое из целебного мха. Хорошо удобряет растения, и содержит в себе некоторые медикаменты, получаемые путём обработки в центрифуге
+reagent-physical-desc-moss-juice = Гнилой
+
+reagent-name-moss-tea = Мховый чай
+reagent-desc-moss-tea = Чай, ужасный на вкус но исцеляющий ранения. Худший напиток, что может предложить бармен
+reagent-physical-desc-moss-tea = Густой
+
 
 ent-FoodElectroCabbage = Кочан гром-капусты
     .desc = Для своих габаритов, это невероятно мощный источник энергии. Из-за высокого содержания кислот производит и хранит электричество, взамен на съедобность.

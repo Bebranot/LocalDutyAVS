@@ -20,6 +20,8 @@ using Robust.Shared.Audio.Systems;
 using Robust.Shared.Containers;
 using Robust.Shared.Timing;
 using Content.Server.Body.Systems;
+using Content.Shared.Mobs; // _Duty
+using Content.Shared._Duty.HealthAnalyzer; // _Duty
 
 namespace Content.Server.Medical;
 
@@ -112,7 +114,12 @@ public sealed class HealthAnalyzerSystem : EntitySystem
             _audio.PlayPvs(uid.Comp.ScanningEndSound, uid);
 
         OpenUserInterface(args.User, uid);
-        BeginAnalyzingEntity(uid, args.Target.Value);
+        BeginAnalyzingEntity(uid, args.Target.Value, args.User);
+
+        // _Duty: сразу запускаем эмбиент-звук состояния цели у сканирующего
+        var uiState = GetHealthAnalyzerUiState(args.Target.Value);
+        RaiseNetworkEvent(new HealthAnalyzerAudioEvent(uiState.MobState ?? MobState.Alive, true), args.User);
+
         args.Handled = true;
     }
 
@@ -123,6 +130,10 @@ public sealed class HealthAnalyzerSystem : EntitySystem
     {
         if (uid.Comp.ScannedEntity is { } patient)
             _toggle.TryDeactivate(uid.Owner);
+
+        // _Duty
+        if (uid.Comp.ScannerUser is { } scannerUser)
+            RaiseNetworkEvent(new HealthAnalyzerStopAudioEvent(), scannerUser);
     }
 
     /// <summary>
@@ -132,6 +143,10 @@ public sealed class HealthAnalyzerSystem : EntitySystem
     {
         if (!args.Activated && ent.Comp.ScannedEntity is { } patient)
             StopAnalyzingEntity(ent, patient);
+
+        // _Duty
+        if (!args.Activated && ent.Comp.ScannerUser is { } scannerUser)
+            RaiseNetworkEvent(new HealthAnalyzerStopAudioEvent(), scannerUser);
     }
 
     /// <summary>
@@ -141,6 +156,10 @@ public sealed class HealthAnalyzerSystem : EntitySystem
     {
         if (uid.Comp.ScannedEntity is { } patient)
             _toggle.TryDeactivate(uid.Owner);
+
+        // _Duty
+        if (uid.Comp.ScannerUser is { } scannerUser)
+            RaiseNetworkEvent(new HealthAnalyzerStopAudioEvent(), scannerUser);
     }
 
     private void OpenUserInterface(EntityUid user, EntityUid analyzer)
@@ -156,10 +175,11 @@ public sealed class HealthAnalyzerSystem : EntitySystem
     /// </summary>
     /// <param name="healthAnalyzer">The health analyzer that should receive the updates</param>
     /// <param name="target">The entity to start analyzing</param>
-    private void BeginAnalyzingEntity(Entity<HealthAnalyzerComponent> healthAnalyzer, EntityUid target)
+    private void BeginAnalyzingEntity(Entity<HealthAnalyzerComponent> healthAnalyzer, EntityUid target, EntityUid user)
     {
         //Link the health analyzer to the scanned entity
         healthAnalyzer.Comp.ScannedEntity = target;
+        healthAnalyzer.Comp.ScannerUser = user; // _Duty
 
         _toggle.TryActivate(healthAnalyzer.Owner);
 
@@ -173,8 +193,14 @@ public sealed class HealthAnalyzerSystem : EntitySystem
     /// <param name="target">The entity to analyze</param>
     private void StopAnalyzingEntity(Entity<HealthAnalyzerComponent> healthAnalyzer, EntityUid target)
     {
+        var scannerUser = healthAnalyzer.Comp.ScannerUser; // _Duty
+
         //Unlink the analyzer
         healthAnalyzer.Comp.ScannedEntity = null;
+        healthAnalyzer.Comp.ScannerUser = null; // _Duty
+
+        if (scannerUser is { } user)
+            RaiseNetworkEvent(new HealthAnalyzerStopAudioEvent(), user); // _Duty
 
         _toggle.TryDeactivate(healthAnalyzer.Owner);
 
@@ -189,6 +215,10 @@ public sealed class HealthAnalyzerSystem : EntitySystem
     /// <param name="target">The entity to analyze</param>
     private void PauseAnalyzingEntity(Entity<HealthAnalyzerComponent> healthAnalyzer, EntityUid target)
     {
+        // _Duty
+        if (healthAnalyzer.Comp.ScannerUser is { } scannerUser)
+            RaiseNetworkEvent(new HealthAnalyzerStopAudioEvent(), scannerUser);
+
         if (!healthAnalyzer.Comp.IsAnalyzerActive)
             return;
 
@@ -216,6 +246,10 @@ public sealed class HealthAnalyzerSystem : EntitySystem
             HealthAnalyzerUiKey.Key,
             new HealthAnalyzerScannedUserMessage(uiState)
         );
+
+        // _Duty: обновляем эмбиент-звук состояния у сканирующего
+        if (TryComp<HealthAnalyzerComponent>(healthAnalyzer, out var analyzer) && analyzer.ScannerUser is { } scannerUser)
+            RaiseNetworkEvent(new HealthAnalyzerAudioEvent(uiState.MobState ?? MobState.Alive), scannerUser);
     }
 
     /// <summary>
@@ -249,6 +283,11 @@ public sealed class HealthAnalyzerSystem : EntitySystem
         if (TryComp<UnrevivableComponent>(entity, out var unrevivableComp) && unrevivableComp.Analyzable)
             unrevivable = true;
 
+        // _Duty: состояние цели для эмбиент-звука в анализаторе
+        var mobState = MobState.Alive;
+        if (TryComp<MobStateComponent>(target, out var mob))
+            mobState = mob.CurrentState;
+
         // ADT-Tweak start: - Get a list of metabolizing chemicals
         List<(string ReagentId, FixedPoint2 Quantity)>? metabolizingReagents = null;
         if (TryComp<BloodstreamComponent>(target, out var bloodstreamComp) &&
@@ -269,7 +308,8 @@ public sealed class HealthAnalyzerSystem : EntitySystem
             null,
             bleeding,
             unrevivable,
-            metabolizingReagents // ADT-Tweak
+            metabolizingReagents, // ADT-Tweak
+            mobState // _Duty
         );
     }
 }

@@ -55,16 +55,16 @@ public sealed partial class FuryStimulatorComponent : Component
     // ── Длительности фаз (сек) ────────────────────────────────
 
     [DataField]
-    public float IntroDuration = 5f;
+    public float IntroDuration = 15f;
 
     [DataField]
-    public float RampDuration = 25f;
+    public float RampDuration = 35f;
 
     [DataField]
     public float PeakDuration = 35f;
 
     [DataField]
-    public float DeclineDuration = 15f;
+    public float DeclineDuration = 20f;
 
     /// <summary>
     /// Сила разового резкого толчка камеры в начале фазы ввода (укол). 0 = выкл.
@@ -72,6 +72,24 @@ public sealed partial class FuryStimulatorComponent : Component
     /// </summary>
     [DataField]
     public float IntroKickStrength = 1f;
+
+    // ── Лечение в крите ───────────────────────────────────────
+
+    /// <summary>
+    /// Маленький хил, снимаемый раз в <see cref="CritHealInterval"/>, пока носитель под
+    /// препаратом И в критическом состоянии. Вне крита не действует. Пропорционально
+    /// уменьшает суммарный урон (сохраняя соотношение типов), постепенно вытягивая из крита.
+    /// </summary>
+    [DataField]
+    public float CritHealAmount = 2f;
+
+    /// <summary>Интервал лечения в крите (сек).</summary>
+    [DataField]
+    public float CritHealInterval = 1f;
+
+    /// <summary>Момент следующего тика лечения в крите (сброс в 0 вне крита — при входе лечит сразу).</summary>
+    [ViewVariables]
+    public TimeSpan NextCritHeal;
 
     // ── Тюнинг ────────────────────────────────────────────────
 

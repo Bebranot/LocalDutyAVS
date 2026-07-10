@@ -34,6 +34,7 @@ public sealed class FuryStimulatorSystem : SharedFuryStimulatorSystem
     [Dependency] private readonly IGameTiming _timing = default!;
     [Dependency] private readonly IRobustRandom _random = default!;
     [Dependency] private readonly SharedAudioSystem _audio = default!;
+    [Dependency] private readonly DamageableSystem _damageable = default!;
     [Dependency] private readonly MovementSpeedModifierSystem _movement = default!;
     [Dependency] private readonly SharedGunSystem _gun = default!;
     [Dependency] private readonly SharedHandsSystem _hands = default!;
@@ -41,6 +42,7 @@ public sealed class FuryStimulatorSystem : SharedFuryStimulatorSystem
     [Dependency] private readonly SharedPopupSystem _popup = default!;
     [Dependency] private readonly ExplosionSystem _explosion = default!;
     [Dependency] private readonly SharedCameraRecoilSystem _recoil = default!;
+    [Dependency] private readonly SharedAppearanceSystem _appearance = default!;
 
     private static readonly string[] WarningPopups =
         { "fury-popup-warn-1", "fury-popup-warn-2", "fury-popup-warn-3" };
@@ -153,6 +155,21 @@ public sealed class FuryStimulatorSystem : SharedFuryStimulatorSystem
             {
                 _popup.PopupEntity(Loc.GetString(_random.Pick(WarningPopups)), uid, uid, PopupType.LargeCaution);
                 comp.NextPopup = now + TimeSpan.FromSeconds(_random.NextFloat(comp.PopupIntervalMin, comp.PopupIntervalMax));
+            }
+
+            // Маленький хил, пока носитель в крите: препарат не даёт умереть, медленно вытягивая из крита.
+            // Вне крита таймер сбрасываем, чтобы при входе в крит лечение началось сразу.
+            if (TryComp<MobStateComponent>(uid, out var mobState) && mobState.CurrentState == MobState.Critical)
+            {
+                if (now >= comp.NextCritHeal)
+                {
+                    HealCrit(uid, comp);
+                    comp.NextCritHeal = now + TimeSpan.FromSeconds(comp.CritHealInterval);
+                }
+            }
+            else
+            {
+                comp.NextCritHeal = TimeSpan.Zero;
             }
 
             FadeMusic(comp, frameTime);
@@ -272,6 +289,25 @@ public sealed class FuryStimulatorSystem : SharedFuryStimulatorSystem
         // Неуязвимость к боли — только пик/спад. Гасим лишь урон стамины, восстановление не трогаем.
         if (args.Value > 0f && IsPainImmune(ent.Comp.Stage))
             args.Cancelled = true;
+    }
+
+    /// <summary>
+    /// Пропорционально снижает суммарный урон на <see cref="FuryStimulatorComponent.CritHealAmount"/>,
+    /// сохраняя соотношение типов урона (как в системе Лазаруса). Вызывается только в крите.
+    /// </summary>
+    private void HealCrit(EntityUid uid, FuryStimulatorComponent comp)
+    {
+        var current = _damageable.GetTotalDamage(uid);
+        if (current <= 0)
+            return;
+
+        var target = current - FixedPoint2.New(comp.CritHealAmount);
+        if (target < FixedPoint2.Zero)
+            target = FixedPoint2.Zero;
+
+        var factor = (float) (target.Float() / current.Float());
+        var scaled = _damageable.GetAllDamage(uid) * factor;
+        _damageable.SetDamage(uid, scaled);
     }
 
     // ── Музыка (персональная, crossfade, fade 0.5 c) ──────────
@@ -442,7 +478,12 @@ public sealed class FuryStimulatorSystem : SharedFuryStimulatorSystem
         _audio.PlayPvs(ent.Comp.InjectSound, target);
 
         ent.Comp.Charges--;
-        if (ent.Comp.Charges <= 0 && ent.Comp.DeleteWhenEmpty)
-            QueueDel(ent);
+        if (ent.Comp.Charges <= 0)
+        {
+            if (ent.Comp.DeleteWhenEmpty)
+                QueueDel(ent);
+            else
+                _appearance.SetData(ent, FuryInjectorVisuals.Used, true); // пустой (использованный) спрайт
+        }
     }
 }

@@ -1,6 +1,13 @@
 - type: vendingMachineInventory
   id: SecTechInventory
   startingInventory:
+    WeaponPistolMk58: 6
+    MagazinePistolRubber: 12
+    MagazinePistolHighCapacity: 4
+    MagazineBoxPistol: 2
+    SpeedLoaderMagnum: 4
+    MagazineBoxMagnum: 2
+    EmergencyMedipen: 4
     SecurityWhistle: 5
     Handcuffs: 8
     GrenadeFlashBang: 4

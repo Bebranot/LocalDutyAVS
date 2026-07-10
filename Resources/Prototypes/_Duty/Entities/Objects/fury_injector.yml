@@ -8,7 +8,17 @@
     машиной для ближнего боя — ценой рассудка, меткости и, при передозировке, целостности тела.
   components:
   - type: Sprite
-    sprite: Objects/Specific/Medical/hypospray.rsi
-    state: hypo
+    sprite: _Duty/Objects/Items/fury_injector.rsi
+    layers:
+    - state: full
+      map: ["base"]
+  - type: Appearance
+  - type: GenericVisualizer
+    visuals:
+      enum.FuryInjectorVisuals.Used:
+        base:
+          True: { state: empty }
+          False: { state: full }
   - type: FuryStimulatorInjector
     charges: 1
+    deleteWhenEmpty: false
