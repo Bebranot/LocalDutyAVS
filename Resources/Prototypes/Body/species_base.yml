@@ -148,6 +148,8 @@
       enum.HereticLivingHeartKey.Key: # goob edit - heretics
         type: LivingHeartMenuBoundUserInterface
   - type: Puller
+  - type: GrabIntent
+  - type: Grabbable
   - type: Speech
     speechSounds: Alto
   - type: DamageForceSay

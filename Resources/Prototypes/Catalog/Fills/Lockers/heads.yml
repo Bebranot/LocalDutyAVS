@@ -447,7 +447,14 @@
     - id: ClothingOuterCoatHoSGreatcoat # Corvax-Resprite
     - id: BookBusido # Corvax-Books
     - id: ADTBookPTCR #ADT-tweak
+    - id: ADTBookPTSD #ADT-tweak
+    # ADT-WikiBooks-Start
+    - id: ADTBookSRPcmd
+    - id: ADTBookSRPsec
+    - id: ADTBookPCDsec
+    - id: ADTBookPCDcmd
     - id: ADTtelescopicBaton
+    # ADT-WikiBooks-End
     # ADT-SecShuttle-Start
     - id: ADTSecShuttleConsoleCircuitboard
     # ADT-SecShuttle-End

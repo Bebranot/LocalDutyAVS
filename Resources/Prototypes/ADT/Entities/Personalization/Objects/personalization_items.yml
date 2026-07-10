@@ -669,16 +669,6 @@
 # Pangaari
 - type: entity
   parent: BasePlushie
-  id: ADTPlushieTeo
-  name: Djessie plushie
-  description: It looks like a soft and cute blondie.
-  components:
-  - type: Sprite
-    sprite: ADT/Personalization/toys.rsi
-    state: plushie_teo
-
-- type: entity
-  parent: BasePlushie
   id: ADTPlushiePochita
   name: Plush pochita
   description: A plush dog toy with a chainsaw blade sticking out of its head
@@ -2166,7 +2156,7 @@
   parent: BasePlushie
   id: ADTPlushieDionaIneedPizza486
   name: Diona in red hat plushie
-  description: Diona in red hat plushie
+  description: A pleasantly rustling toy in the shape of Diona. Now with a hat!
   suffix: Personal, ineedpizza486
   components:
   - type: Sprite
@@ -2510,11 +2500,11 @@
     soundGunshot:
       path: /Audio/Weapons/Guns/Gunshots/laser_cannon.ogg
   - type: BatteryAmmoProvider
-    proto: ADTBulletDisabler
+    proto: BulletDisabler
     fireCost: 150
   - type: BatteryWeaponFireModes
     fireModes:
-    - proto: ADTBulletDisablerStrong
+    - proto: BulletDisabler
       fireCost: 150
     - proto: ADTBulletLaser
       fireCost: 150
@@ -3219,7 +3209,7 @@
   - type: AltFireMelee
   # ADT-Tweak end
   - type: Gun
-    fireRate: 1 # ADT-Tweak 2 -> 1
+    fireRate: 1
     selectedMode: SemiAuto
     availableModes:
     - SemiAuto
@@ -3229,12 +3219,13 @@
       path: /Audio/ADT/Weapons/Guns/Gunshots/laser_gun_type_empty.ogg
   - type: BatteryAmmoProvider
     proto: PulseType
-    fireCost: 100 # ADT tweak 200 -> 100
+    fireCost: 100
   - type: Battery
-    maxCharge: 1000 # ADT tweak 2000->1000
-    startingCharge: 1000 # ADT tweak 2000 -> 1000
+    maxCharge: 1000
+    startingCharge: 1000
   - type: BatterySelfRecharger
     autoRechargeRate: 40
+    autoRechargePauseTime: 5
 
 - type: entity
   parent: BasicHitscan
@@ -3736,6 +3727,45 @@
     angle: 90
   - type: Item
     sprite: ADT/Personalization/svet217_KS-43_Cherry.rsi
+
+# stryz_ani
+- type: entity
+  parent: [ BaseSword, BaseMajorContraband ]
+  id: ADTStryzAniKatana
+  name: cyber katana
+  description: A new branch in the creation of katanas from the best masters this katana is made to order from the Syndicates cursed katana. Upon inspection, it contains a strange mechanism related to gloves
+  suffix: Personal, stryz_ani
+  components:
+  - type: Tag
+    tags:
+    - ADTStryzAniKatana
+  - type: Sprite
+    sprite: ADT/Personalization/stryz_ani/katana.rsi
+  - type: MeleeWeapon
+    wideAnimationRotation: -65
+    attackRate: 1.2
+    damage:
+      types:
+        Slash: 14
+    soundHit:
+        path: /Audio/Weapons/bladeslice.ogg
+  - type: Item
+    shape:
+    - 0,0,0,3
+  - type: Clothing
+    sprite: ADT/Personalization/stryz_ani/katana.rsi
+    slots:
+    - Back
+    - Belt
+  - type: ThrowingAngle
+    angle: 225
+  - type: DamageOtherOnHit
+    damage:
+      types:
+        Slash: 10
+        Piercing: 12
+  - type: DisarmMalus
+  - type: PickableWeapon
 
 - type: entity
   parent: PlushieMoth
