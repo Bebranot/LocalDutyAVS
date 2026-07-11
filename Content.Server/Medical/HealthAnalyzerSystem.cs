@@ -20,6 +20,9 @@ using Robust.Shared.Audio.Systems;
 using Robust.Shared.Containers;
 using Robust.Shared.Timing;
 using Content.Server.Body.Systems;
+using Content.Shared.Mobs; // _Duty
+using Content.Shared._Duty.HealthAnalyzer; // _Duty
+using Content.Shared._Duty.Heartbeat; // _Duty
 
 namespace Content.Server.Medical;
 
@@ -35,6 +38,15 @@ public sealed class HealthAnalyzerSystem : EntitySystem
     [Dependency] private readonly TransformSystem _transformSystem = default!;
     [Dependency] private readonly SharedPopupSystem _popupSystem = default!;
     [Dependency] private readonly BloodstreamSystem _bloodstreamSystem = default!;
+    [Dependency] private readonly SharedHeartbeatSystem _heartbeat = default!; // _Duty
+
+    /// <summary>
+    /// _Duty: последнее отправленное сканирующему звуковое состояние пульса, по анализатору.
+    /// Нужно, чтобы не слать <see cref="HealthAnalyzerAudioEvent"/> на каждый Update (раз в
+    /// UpdateInterval), а только при реальной смене уровня/крита/грани смерти — как уже
+    /// сделано для networked-состояния в <c>HeartbeatSystem.Recalculate</c>.
+    /// </summary>
+    private readonly Dictionary<EntityUid, (HeartbeatLevel Level, bool InCrit, bool NearDeath, bool Flatline)> _lastSentAudio = new();
 
     public override void Initialize()
     {
@@ -112,7 +124,11 @@ public sealed class HealthAnalyzerSystem : EntitySystem
             _audio.PlayPvs(uid.Comp.ScanningEndSound, uid);
 
         OpenUserInterface(args.User, uid);
-        BeginAnalyzingEntity(uid, args.Target.Value);
+        BeginAnalyzingEntity(uid, args.Target.Value, args.User);
+
+        // _Duty: сразу запускаем сердцебиение цели у сканирующего
+        SendHeartbeatAudio(uid.Owner, args.Target.Value, args.User, true);
+
         args.Handled = true;
     }
 
@@ -123,6 +139,13 @@ public sealed class HealthAnalyzerSystem : EntitySystem
     {
         if (uid.Comp.ScannedEntity is { } patient)
             _toggle.TryDeactivate(uid.Owner);
+
+        // _Duty
+        if (uid.Comp.ScannerUser is { } scannerUser)
+        {
+            _lastSentAudio.Remove(uid.Owner);
+            RaiseNetworkEvent(new HealthAnalyzerStopAudioEvent(), scannerUser);
+        }
     }
 
     /// <summary>
@@ -132,6 +155,13 @@ public sealed class HealthAnalyzerSystem : EntitySystem
     {
         if (!args.Activated && ent.Comp.ScannedEntity is { } patient)
             StopAnalyzingEntity(ent, patient);
+
+        // _Duty
+        if (!args.Activated && ent.Comp.ScannerUser is { } scannerUser)
+        {
+            _lastSentAudio.Remove(ent.Owner);
+            RaiseNetworkEvent(new HealthAnalyzerStopAudioEvent(), scannerUser);
+        }
     }
 
     /// <summary>
@@ -141,6 +171,13 @@ public sealed class HealthAnalyzerSystem : EntitySystem
     {
         if (uid.Comp.ScannedEntity is { } patient)
             _toggle.TryDeactivate(uid.Owner);
+
+        // _Duty
+        if (uid.Comp.ScannerUser is { } scannerUser)
+        {
+            _lastSentAudio.Remove(uid.Owner);
+            RaiseNetworkEvent(new HealthAnalyzerStopAudioEvent(), scannerUser);
+        }
     }
 
     private void OpenUserInterface(EntityUid user, EntityUid analyzer)
@@ -156,10 +193,11 @@ public sealed class HealthAnalyzerSystem : EntitySystem
     /// </summary>
     /// <param name="healthAnalyzer">The health analyzer that should receive the updates</param>
     /// <param name="target">The entity to start analyzing</param>
-    private void BeginAnalyzingEntity(Entity<HealthAnalyzerComponent> healthAnalyzer, EntityUid target)
+    private void BeginAnalyzingEntity(Entity<HealthAnalyzerComponent> healthAnalyzer, EntityUid target, EntityUid user)
     {
         //Link the health analyzer to the scanned entity
         healthAnalyzer.Comp.ScannedEntity = target;
+        healthAnalyzer.Comp.ScannerUser = user; // _Duty
 
         _toggle.TryActivate(healthAnalyzer.Owner);
 
@@ -173,8 +211,17 @@ public sealed class HealthAnalyzerSystem : EntitySystem
     /// <param name="target">The entity to analyze</param>
     private void StopAnalyzingEntity(Entity<HealthAnalyzerComponent> healthAnalyzer, EntityUid target)
     {
+        var scannerUser = healthAnalyzer.Comp.ScannerUser; // _Duty
+
         //Unlink the analyzer
         healthAnalyzer.Comp.ScannedEntity = null;
+        healthAnalyzer.Comp.ScannerUser = null; // _Duty
+
+        if (scannerUser is { } user)
+        {
+            _lastSentAudio.Remove(healthAnalyzer.Owner); // _Duty
+            RaiseNetworkEvent(new HealthAnalyzerStopAudioEvent(), user); // _Duty
+        }
 
         _toggle.TryDeactivate(healthAnalyzer.Owner);
 
@@ -189,6 +236,13 @@ public sealed class HealthAnalyzerSystem : EntitySystem
     /// <param name="target">The entity to analyze</param>
     private void PauseAnalyzingEntity(Entity<HealthAnalyzerComponent> healthAnalyzer, EntityUid target)
     {
+        // _Duty
+        if (healthAnalyzer.Comp.ScannerUser is { } scannerUser)
+        {
+            _lastSentAudio.Remove(healthAnalyzer.Owner);
+            RaiseNetworkEvent(new HealthAnalyzerStopAudioEvent(), scannerUser);
+        }
+
         if (!healthAnalyzer.Comp.IsAnalyzerActive)
             return;
 
@@ -216,6 +270,36 @@ public sealed class HealthAnalyzerSystem : EntitySystem
             HealthAnalyzerUiKey.Key,
             new HealthAnalyzerScannedUserMessage(uiState)
         );
+
+        // _Duty: обновляем сердцебиение цели у сканирующего
+        if (TryComp<HealthAnalyzerComponent>(healthAnalyzer, out var analyzer) && analyzer.ScannerUser is { } scannerUser)
+            SendHeartbeatAudio(healthAnalyzer, target, scannerUser, false);
+    }
+
+    /// <summary>
+    /// _Duty: шлёт сканирующему уровень сердцебиения цели (уровень пульса, крит, грань смерти).
+    /// </summary>
+    private void SendHeartbeatAudio(EntityUid healthAnalyzer, EntityUid target, EntityUid user, bool forceRestart)
+    {
+        // _Duty: «вторая жизнь» (Лазарус) активна — глушим все наши звуки у сканирующего.
+        if (_heartbeat.IsSuppressed(target))
+        {
+            _lastSentAudio.Remove(healthAnalyzer);
+            RaiseNetworkEvent(new HealthAnalyzerStopAudioEvent(), user);
+            return;
+        }
+
+        var level = _heartbeat.GetLevel(target);
+        var inCrit = _heartbeat.IsInCrit(target);
+        var nearDeath = _heartbeat.GetVitalFraction(target) < SharedHeartbeatSystem.NearDeathFraction;
+        var flatline = TryComp<MobStateComponent>(target, out var mob) && mob.CurrentState == MobState.Dead;
+
+        var state = (level, inCrit, nearDeath, flatline);
+        if (!forceRestart && _lastSentAudio.TryGetValue(healthAnalyzer, out var last) && last == state)
+            return;
+
+        _lastSentAudio[healthAnalyzer] = state;
+        RaiseNetworkEvent(new HealthAnalyzerAudioEvent(level, inCrit, nearDeath, flatline, forceRestart), user);
     }
 
     /// <summary>
@@ -249,6 +333,14 @@ public sealed class HealthAnalyzerSystem : EntitySystem
         if (TryComp<UnrevivableComponent>(entity, out var unrevivableComp) && unrevivableComp.Analyzable)
             unrevivable = true;
 
+        // _Duty: состояние цели для эмбиент-звука в анализаторе
+        var mobState = MobState.Alive;
+        if (TryComp<MobStateComponent>(target, out var mob))
+            mobState = mob.CurrentState;
+
+        // _Duty: «живучесть» для мигающей крит-таблички (1 = полное HP, ≤0 = крит).
+        var healthFraction = _heartbeat.GetVitalFraction(entity);
+
         // ADT-Tweak start: - Get a list of metabolizing chemicals
         List<(string ReagentId, FixedPoint2 Quantity)>? metabolizingReagents = null;
         if (TryComp<BloodstreamComponent>(target, out var bloodstreamComp) &&
@@ -269,7 +361,9 @@ public sealed class HealthAnalyzerSystem : EntitySystem
             null,
             bleeding,
             unrevivable,
-            metabolizingReagents // ADT-Tweak
+            metabolizingReagents, // ADT-Tweak
+            mobState, // _Duty
+            healthFraction // _Duty
         );
     }
 }

@@ -6,6 +6,7 @@ namespace Content.Shared.Input
     public static class ContentKeyFunctions
     {
         public static readonly BoundKeyFunction ToggleKnockdown = "ToggleKnockdown";
+        public static readonly BoundKeyFunction Sprint = "Sprint"; // _Duty: третья ступень — спринт (зажать)
         public static readonly BoundKeyFunction UseItemInHand = "ActivateItemInHand";
         public static readonly BoundKeyFunction AltUseItemInHand = "AltActivateItemInHand";
         public static readonly BoundKeyFunction ActivateItemInWorld = "ActivateItemInWorld";
@@ -144,5 +145,6 @@ namespace Content.Shared.Input
         public static readonly BoundKeyFunction MappingOpenContextMenu = "MappingOpenContextMenu";
         public static readonly BoundKeyFunction PickupHumans = "PickupHumans"; // ADT-Tweak
         public static readonly BoundKeyFunction Aim = "Aim"; // _Duty
+        public static readonly BoundKeyFunction ResistGrab = "ResistGrab"; // ADT-Tweak
     }
 }

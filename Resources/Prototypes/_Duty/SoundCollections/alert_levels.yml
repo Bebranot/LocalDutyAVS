@@ -1,0 +1,16 @@
+# Озвучка объявления красного кода с вариативностью.
+# SoundCollection выбирает файл равновероятно, поэтому вес 90/10 задаётся
+# дублированием: обычный code_red — 9 записей, code_redAlt — 1 (итого 10 => 90% / 10%).
+- type: soundCollection
+  id: DutyCodeRed
+  files:
+    - /Audio/_Duty/Announcement/code_red.ogg
+    - /Audio/_Duty/Announcement/code_red.ogg
+    - /Audio/_Duty/Announcement/code_red.ogg
+    - /Audio/_Duty/Announcement/code_red.ogg
+    - /Audio/_Duty/Announcement/code_red.ogg
+    - /Audio/_Duty/Announcement/code_red.ogg
+    - /Audio/_Duty/Announcement/code_red.ogg
+    - /Audio/_Duty/Announcement/code_red.ogg
+    - /Audio/_Duty/Announcement/code_red.ogg
+    - /Audio/_Duty/Announcement/code_redAlt.ogg

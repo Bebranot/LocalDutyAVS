@@ -54,6 +54,7 @@ public sealed class LazarusSystem : EntitySystem
         base.Initialize();
 
         SubscribeLocalEvent<PlayerSpawnCompleteEvent>(OnPlayerSpawn);
+        SubscribeLocalEvent<RoundRestartCleanupEvent>(OnRoundRestart);
 
         _console.RegisterCommand("duty_lazarus_test",
             "Принудительно запустить эффект Лазаруса у игрока (в обход шанса, крита и кулдауна).",
@@ -69,6 +70,12 @@ public sealed class LazarusSystem : EntitySystem
             return;
 
         EnsureComp<LazarusComponent>(ev.Mob);
+    }
+
+    /// <summary>Раунд перезапустился — отложенные "вставания" из прошлого раунда больше не актуальны.</summary>
+    private void OnRoundRestart(RoundRestartCleanupEvent ev)
+    {
+        _pendingRevives.Clear();
     }
 
     public override void Update(float frameTime)
@@ -200,6 +207,9 @@ public sealed class LazarusSystem : EntitySystem
                 LastStandDelay = lazarus.LastStandDelay,
             }, actor.PlayerSession);
         }
+
+        // _Duty: заглушить наше сердцебиение/монитор на время кинематики «второй жизни».
+        RaiseLocalEvent(uid, new LazarusStartedEvent(lazarus.ReviveDelay));
 
         _pendingRevives.Add((uid, now + lazarus.ReviveDelay));
     }

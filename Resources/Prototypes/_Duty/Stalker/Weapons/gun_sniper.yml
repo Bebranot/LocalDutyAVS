@@ -40,7 +40,7 @@
 - type: entity
   parent: STBaseWeaponSniperMosin
   id: STWeaponSniperMosin
-  suffix: "Duty, Stalker"
+  suffix: "Stalker, STWeapon, Огнестрел"
   name: Мосина
   description: Легендарная болтовая винтовка Мосина под 7.62x54мм R. Медленная перезарядка и 5 патронов, но огромная останавливающая сила.
 
@@ -79,7 +79,7 @@
 - type: entity
   parent: STBaseWeaponSniperSKS
   id: STWeaponSniperSKS
-  suffix: "Duty, Stalker"
+  suffix: "Stalker, STWeapon, Огнестрел"
   name: СКС
   description: Самозарядный карабин Симонова под 7.62x39мм с несъёмным магазином на 10 патронов. Мощный калибр по низкой цене.
 
@@ -137,14 +137,14 @@
 - type: entity
   parent: STBaseWeaponRifleSVDS
   id: STWeaponSniperSVDS
-  suffix: "Duty, Stalker"
+  suffix: "Stalker, STWeapon, Огнестрел"
   name: СВДС (Драгунова)
   description: Модернизированная складная версия легендарной СВД под 7.62x54мм R. Любимица меткачей Зоны.
 
 - type: entity
   parent: STBaseWeaponRifleSVDS
   id: STWeaponSniperSVDSGrass
-  suffix: "Duty, Stalker"
+  suffix: "Stalker, STWeapon, Огнестрел"
   name: СВДС (маскхалат)
   description: СВДС с маскировочной сеткой и тонкой настройкой для максимальной скрытности.
   components:
@@ -158,7 +158,7 @@
 - type: entity
   parent: STBaseWeaponRifleSVDS
   id: STWeaponSniperSVDSCovenant
-  suffix: "Duty, Stalker"
+  suffix: "Stalker, STWeapon, Огнестрел"
   name: СВДС "Завет"
   description: Кастомная СВДС снайперов фракции «Завет». Уникальный камуфляж и маркировки.
   components:
@@ -172,7 +172,7 @@
 - type: entity
   parent: STBaseWeaponRifleSVDS
   id: STWeaponSniperSVU
-  suffix: "Duty, Stalker"
+  suffix: "Stalker, STWeapon, Огнестрел"
   name: СВУ
   description: Булл-пап версия СВДС для городских операций. Короче ствол — меньше дальность, но удобнее в тесноте.
   components:
@@ -186,7 +186,7 @@
 - type: entity
   parent: STBaseWeaponRifleSVDS
   id: STWeaponSniperSVUSeraphim
-  suffix: "Duty, Stalker"
+  suffix: "Stalker, STWeapon, Огнестрел"
   name: СВУ серафимов
   description: Элитная СВУ таинственной фракции «Серафимы». Белая отделка, продвинутые модификации.
   components:
@@ -200,7 +200,7 @@
 - type: entity
   parent: STBaseWeaponRifleSVDS
   id: STWeaponRifleSVDSWood
-  suffix: "Duty, Stalker"
+  suffix: "Stalker, STWeapon, Огнестрел"
   name: Самоделка
   description: Самодельная винтовка под магазин СВД. Кривая, но дико смертоносная.
   components:
@@ -275,14 +275,14 @@
 - type: entity
   parent: STVBaseWeaponSniperVepr
   id: STWeaponSniperVepr
-  suffix: "Duty, Stalker"
+  suffix: "Stalker, STWeapon, Огнестрел"
   name: ВПО-129 "Vepr" 7.62x54
   description: Гражданский охотничий карабин ВПО-129 на базе легендарного РПК под мощный 7.62x54мм R.
 
 - type: entity
   parent: STVBaseWeaponSniperVepr
   id: STWeaponSniperVeprSeraphim
-  suffix: "Duty, Stalker"
+  suffix: "Stalker, STWeapon, Огнестрел"
   name: ВПО-129 "Серафим"
   description: Тактический ВПО-129 с маркировками фракции «Серафимы». Белая отделка.
   components:
@@ -296,7 +296,7 @@
 - type: entity
   parent: STVBaseWeaponSniperVepr
   id: STWeaponSniperVeprGrass
-  suffix: "Duty, Stalker"
+  suffix: "Stalker, STWeapon, Огнестрел"
   name: ВПО-129 "Трава"
   description: Мечта кустаря — ВПО-129 с маскировочной сеткой и растительностью для скрытности.
   components:
@@ -360,14 +360,14 @@
 - type: entity
   parent: STBaseWeaponSniperVSS
   id: STWeaponSniperVSS
-  suffix: "Duty, Stalker"
+  suffix: "Stalker, STWeapon, Огнестрел"
   name: ВСС "Винторез"
   description: Специальная снайперская винтовка для бесшумной и беспламенной стрельбы. Интегрированный глушитель и оптика, дозвуковой 9x39мм.
 
 - type: entity
   parent: STBaseWeaponSniperVSS
   id: STWeaponSniperVSSOracle
-  suffix: "Duty, Stalker"
+  suffix: "Stalker, STWeapon, Огнестрел"
   name: ВСС "Оракул"
   description: Тщательно доработанный «Винторез» с улучшенными характеристиками и следами бережного ухода.
   components:
@@ -428,6 +428,6 @@
 - type: entity
   parent: STBaseWeaponRifleOSV96
   id: STWeaponSniperOSV96
-  suffix: "Duty, Stalker"
+  suffix: "Stalker, STWeapon, Огнестрел"
   name: ОСВ-96 "Взломщик"
   description: Российская самозарядная крупнокалиберная снайперская винтовка под 12,7x108мм. Разработана в Туле в КБ приборостроения.

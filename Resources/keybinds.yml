@@ -558,6 +558,9 @@ binds:
   key: Z
 - function: ToggleKnockdown
   type: State
+  key: R
+- function: Sprint
+  type: State
   key: C
 - function: OpenAbilitiesMenu
   type: State

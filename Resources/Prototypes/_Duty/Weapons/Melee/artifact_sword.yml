@@ -2,6 +2,7 @@
 - type: entity
   name: Artifact Sword
   id: ArtifactSword
+  suffix: Duty, Оружие ближнего боя
   description: Its very powerful blade. Only worthy (and very strong) can carry it.
   parent: BaseItem
   components:

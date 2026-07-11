@@ -14,7 +14,7 @@
   - type: Projectile
     damage:
       types:
-        Piercing: 34
+        Piercing: 21
   - type: StaminaDamageOnCollide
     damage: 4
 
@@ -27,7 +27,7 @@
   - type: Projectile
     damage:
       types:
-        Piercing: 35
+        Piercing: 22
 
 - type: entity
   id: Bullet739BP
@@ -38,7 +38,7 @@
   - type: Projectile
     damage:
       types:
-        Piercing: 30
+        Piercing: 23
 
 # ── Патроны (гильза + снаряд) ────────────────────────────────────────────────
 - type: entity
@@ -65,7 +65,7 @@
 - type: entity
   id: STCartridge739FMJ
   name: cartridge (7.62x39) FMJ
-  suffix: "Stalker"
+  suffix: "Stalker, STWeapon, Огнестрел"
   parent: BaseSTCartridge739
   components:
   - type: CartridgeAmmo
@@ -74,7 +74,7 @@
 - type: entity
   id: STCartridge739PC
   name: cartridge (7.62x39) PS
-  suffix: "Stalker"
+  suffix: "Stalker, STWeapon, Огнестрел"
   parent: BaseSTCartridge739
   components:
   - type: CartridgeAmmo
@@ -83,7 +83,7 @@
 - type: entity
   id: STCartridge739BP
   name: cartridge (7.62x39) BP
-  suffix: "Stalker"
+  suffix: "Stalker, STWeapon, Огнестрел"
   parent: BaseSTCartridge739
   components:
   - type: CartridgeAmmo
@@ -93,7 +93,7 @@
 - type: entity
   id: Base739Mag10
   name: magazine 7.62x39 (10)
-  suffix: "Duty, Stalker"
+  suffix: "Stalker, STWeapon, Огнестрел"
   description: Магазин 7.62x39 для АК. Вместимость 10.
   parent: BaseItem
   components:
@@ -131,7 +131,7 @@
 - type: entity
   id: Magazine739x30
   name: magazine 7.62x39 (30)
-  suffix: "Duty, Stalker"
+  suffix: "Stalker, STWeapon, Огнестрел"
   description: Магазин 7.62x39 для АК. Вместимость 30.
   parent: Base739Mag10
   components:

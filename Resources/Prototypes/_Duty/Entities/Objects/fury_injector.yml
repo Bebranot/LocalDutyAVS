@@ -1,0 +1,24 @@
+# _Duty: авто-инъектор стимулятора Fury-16 (аналог Fury-16 из Z-city).
+- type: entity
+  parent: BaseItem
+  id: FuryStimulatorInjector
+  suffix: Duty, Предмет
+  name: инъектор «Fury-16»
+  description: Боевой стимулятор из старых военных запасов. На короткое время делает бойца
+    машиной для ближнего боя — ценой рассудка, меткости и, при передозировке, целостности тела.
+  components:
+  - type: Sprite
+    sprite: _Duty/Objects/Items/fury_injector.rsi
+    layers:
+    - state: full
+      map: ["base"]
+  - type: Appearance
+  - type: GenericVisualizer
+    visuals:
+      enum.FuryInjectorVisuals.Used:
+        base:
+          True: { state: empty }
+          False: { state: full }
+  - type: FuryStimulatorInjector
+    charges: 1
+    deleteWhenEmpty: false

@@ -2,7 +2,7 @@
   name: "Гипоспрей Офицера Синего Щита"
   parent: HyposprayBrigmedic
   description: "Отличный и компактный гипоспрей, подходящий под полевые условия."
-  suffix: Duty
+  suffix: Duty, Предмет
   id: DutyHypoBlueShield
   components:
   - type: Sprite

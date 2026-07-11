@@ -5,6 +5,7 @@ using Content.Shared.Alert;
 using Content.Shared.Inventory.Events;
 using Content.Shared.Rounding;
 using Content.Shared.Toggleable;
+using Robust.Shared.Audio.Systems;
 using Robust.Shared.Timing;
 using Content.Shared.ADT.Eye.Blinding;
 
@@ -16,6 +17,7 @@ public abstract class SharedNightVisionSystem : EntitySystem
     [Dependency] private readonly SharedAppearanceSystem _appearance = default!;
     [Dependency] private readonly AlertsSystem _alerts = default!;
     [Dependency] private readonly IGameTiming _timing = default!;
+    [Dependency] private readonly SharedAudioSystem _audio = default!;
 
     public override void Initialize()
     {
@@ -73,6 +75,11 @@ public abstract class SharedNightVisionSystem : EntitySystem
             return;
 
         args.Handled = true;
+
+        // _Duty: звук вкл/выкл на переключении (направление совпадает с ToggleNightVisionItem).
+        var turningOff = ent.Comp.User == args.Performer && ent.Comp.Toggleable;
+        _audio.PlayPredicted(turningOff ? ent.Comp.ToggleOffSound : ent.Comp.ToggleOnSound, ent, args.Performer);
+
         ToggleNightVisionItem(ent, args.Performer);
     }
 

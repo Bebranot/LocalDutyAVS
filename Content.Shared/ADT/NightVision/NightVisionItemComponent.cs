@@ -1,4 +1,5 @@
 using Content.Shared.Inventory;
+using Robust.Shared.Audio;
 using Robust.Shared.GameStates;
 using Robust.Shared.Prototypes;
 
@@ -23,4 +24,11 @@ public sealed partial class NightVisionItemComponent : Component
     // Only allows for a single slotflag right now because some code uses strings and some code uses enums to determine slots :(
     [DataField, AutoNetworkedField]
     public SlotFlags SlotFlags { get; set; } = SlotFlags.EYES;
+
+    // _Duty: звуки переключения (опциональны; задаются на предмете).
+    [DataField]
+    public SoundSpecifier? ToggleOnSound;
+
+    [DataField]
+    public SoundSpecifier? ToggleOffSound;
 }

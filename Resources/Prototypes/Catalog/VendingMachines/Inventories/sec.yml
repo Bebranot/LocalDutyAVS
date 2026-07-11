@@ -1,6 +1,13 @@
 - type: vendingMachineInventory
   id: SecTechInventory
   startingInventory:
+    WeaponPistolMk58: 6
+    MagazinePistolRubber: 12
+    MagazinePistolHighCapacity: 4
+    MagazineBoxPistol: 2
+    SpeedLoaderMagnum: 4
+    MagazineBoxMagnum: 2
+    EmergencyMedipen: 4
     SecurityWhistle: 5
     Handcuffs: 8
     GrenadeFlashBang: 4
@@ -19,7 +26,7 @@
     RiotShield: 2
     RiotLaserShield: 2
     ADTClothingBeltJudo: 3 #ADT tweak
-    ADTBookPTCR: 4 #ADT tweak
+    ADTBookPTSD: 4 #ADT tweak
     ADTWeaponTonfa: 2 #ADT tweak
     # RiotBulletShield: 2 ADT no nullet shield
     RadioHandheldSecurity: 5

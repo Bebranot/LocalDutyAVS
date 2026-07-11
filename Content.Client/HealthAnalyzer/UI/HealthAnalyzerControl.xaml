@@ -39,6 +39,15 @@
         </GridContainer>
     </BoxContainer>
 
+    <!-- _Duty: мигающая табличка критического статуса (HP пациента < ~10%) -->
+    <PanelContainer Name="CriticalStatusPanel" Visible="False" Margin="0 2 0 6">
+        <Label Name="CriticalStatusLabel"
+               Align="Center"
+               HorizontalAlignment="Center"
+               HorizontalExpand="True"
+               Margin="6 6 6 6" />
+    </PanelContainer>
+
     <PanelContainer Name="AlertsDivider" Visible="False" StyleClasses="LowDivider" />
 
     <BoxContainer Name="AlertsContainer" Visible="False" Margin="0 5" Orientation="Vertical" HorizontalAlignment="Center">

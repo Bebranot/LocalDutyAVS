@@ -1,0 +1,10 @@
+# _Duty: шейдеры
+- type: shader
+  id: DutyColorTint
+  kind: source
+  path: "/Textures/_Duty/Shaders/color_tint.swsl"
+
+- type: shader
+  id: DutyNightVision
+  kind: source
+  path: "/Textures/_Duty/Shaders/nightvision.swsl"

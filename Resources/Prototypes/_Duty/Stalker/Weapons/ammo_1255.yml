@@ -13,9 +13,9 @@
     projectileClass: 1
     damage:
       types:
-        Blunt: 6
-        Slash: 6
-        Piercing: 44.5
+        Blunt: 2
+        Slash: 2
+        Piercing: 34
   - type: StaminaDamageOnCollide
     damage: 5
 
@@ -29,9 +29,9 @@
     projectileClass: 2
     damage:
       types:
-        Blunt: 6.5
-        Slash: 6.5
-        Piercing: 54
+        Blunt: 3
+        Slash: 3
+        Piercing: 36
 
 - type: entity
   id: Bullet1255BP
@@ -43,7 +43,7 @@
     projectileClass: 4
     damage:
       types:
-        Piercing: 65
+        Piercing: 48
 
 # ── Патроны ──────────────────────────────────────────────────────────────────
 - type: entity
@@ -70,7 +70,7 @@
 - type: entity
   id: STCartridge1255PS12A
   name: cartridge 12.7x55 PS12A
-  suffix: "Stalker"
+  suffix: "Stalker, STWeapon, Огнестрел"
   parent: BaseSTCartridge1255
   components:
   - type: CartridgeAmmo
@@ -79,7 +79,7 @@
 - type: entity
   id: STCartridge1255TP
   name: cartridge 12.7x55 TP
-  suffix: "Stalker"
+  suffix: "Stalker, STWeapon, Огнестрел"
   parent: BaseSTCartridge1255
   components:
   - type: CartridgeAmmo
@@ -88,7 +88,7 @@
 - type: entity
   id: STCartridge1255BP
   name: cartridge 12.7x55 BP
-  suffix: "Stalker"
+  suffix: "Stalker, STWeapon, Огнестрел"
   parent: BaseSTCartridge1255
   components:
   - type: CartridgeAmmo
@@ -100,7 +100,7 @@
   name: магазин АШ-12 (20)
   description: Магазин 12,7x55 для АШ-12. Вместимость 20.
   parent: BaseItem
-  suffix: "Duty, Stalker"
+  suffix: "Stalker, STWeapon, Огнестрел"
   components:
   - type: Tag
     tags:

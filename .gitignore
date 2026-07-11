@@ -329,3 +329,6 @@ Resources/MapImages
 
 # duty
 fix_migration.py
+
+# codegraph index (local, per-developer)
+.codegraph/

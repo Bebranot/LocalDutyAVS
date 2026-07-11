@@ -5,6 +5,7 @@
   parent: BaseItem
   description: Специально разработанный гипоспрей для полевых медиков.
   id: Hypospraynikitafuji1515
+  suffix: Duty, Предмет
   components:
   - type: Sprite
     sprite: _DeadSpace/Sponsor/nikitafuji1515/hypo.rsi
@@ -19,8 +20,13 @@
     solution: hypospray
   - type: ExaminableSolution
     solution: hypospray
-  - type: Hypospray
-    onlyAffectsMobs: false
+  - type: Injector
+    solutionName: hypospray
+    ignoreClosed: false
+    activeModeProtoId: HyposprayDynamicMode
+    allowedModes:
+    - HyposprayDynamicMode
+    - HyposprayInjectMode
   - type: UseDelay
     delay: 0.5
   - type: StaticPrice

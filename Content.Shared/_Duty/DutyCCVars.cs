@@ -118,4 +118,24 @@ public sealed class DutyCCVars
     /// </summary>
     public static readonly CVarDef<bool> ConcussionEffectsEnabled =
         CVarDef.Create("duty.concussion_effects_enabled", true, CVar.ARCHIVE | CVar.CLIENTONLY);
+
+    // ── Сердцебиение (пресентейшн-звук пульса тела) ───────────────────────────
+
+    /// <summary>
+    /// Включён ли пассивный звук сердцебиения тела (пульс у владельца).
+    /// Сервер решает (выключается сразу у всех, accessibility), но REPLICATED — чтобы
+    /// клиент, который и проигрывает звук у владельца, мог его прочитать.
+    /// НЕ затрагивает диагностический звук в анализаторе здоровья.
+    /// </summary>
+    public static readonly CVarDef<bool> HeartbeatEnabled =
+        CVarDef.Create("duty.heartbeat_enabled", true, CVar.SERVER | CVar.REPLICATED);
+
+    // ── Реалистичный бег (выносливость + замедление от ХП/брони/оружия) ─────────
+
+    /// <summary>
+    /// Включена ли система реалистичного бега: расход выносливости, замедление спринта
+    /// от ХП, занятых слотов и оружия в руках. Выключение возвращает ванильный спринт.
+    /// </summary>
+    public static readonly CVarDef<bool> SprintEnabled =
+        CVarDef.Create("duty.sprint_enabled", true, CVar.SERVER | CVar.REPLICATED);
 }

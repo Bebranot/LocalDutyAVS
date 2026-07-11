@@ -1,6 +1,6 @@
 - type: entity
   name: ParentBracelets
-  suffix: Duty
+  suffix: Duty, Оружие ближнего боя
   parent: [ BaseItem, BaseKnife ]
   abstract: true
   id: BaseBracelets

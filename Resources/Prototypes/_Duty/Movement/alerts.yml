@@ -1,0 +1,21 @@
+# _Duty: полоска выносливости спринта, жёстко под боевой стаминой.
+# 4 ступени: severity 0 = stamina4 (анимированная, <20%), далее запас растёт.
+- type: alertCategory
+  id: DutyEndurance
+
+- type: alert
+  id: DutyEndurance
+  category: DutyEndurance
+  minSeverity: 0
+  maxSeverity: 3
+  icons:
+  - sprite: /Textures/_Duty/Interface/run_stamina.rsi
+    state: stamina4
+  - sprite: /Textures/_Duty/Interface/run_stamina.rsi
+    state: stamina3
+  - sprite: /Textures/_Duty/Interface/run_stamina.rsi
+    state: stamina2
+  - sprite: /Textures/_Duty/Interface/run_stamina.rsi
+    state: stamina1
+  name: alerts-duty-endurance-name
+  description: alerts-duty-endurance-desc

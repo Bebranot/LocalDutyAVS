@@ -1,0 +1,24 @@
+# _Duty: тактические очки ночного видения (ПНВ). На ADT-системе NightVision.
+- type: entity
+  parent: [ClothingEyesBase, BaseMajorContraband]
+  id: DutyClothingEyesNightVision
+  suffix: Duty, Одежда
+  name: очки ночного видения
+  description: Тактические очки ночного видения. Усиливают остаточный свет, превращая тьму в зелёный полумрак. Слепят при яркой вспышке.
+  components:
+  - type: Sprite
+    sprite: ADT/Clothing/Eyes/Glasses/mgd_pnvhud.rsi
+  - type: Clothing
+    sprite: ADT/Clothing/Eyes/Glasses/mgd_pnvhud.rsi
+  - type: NightVisionItem
+    toggleOnSound:
+      path: /Audio/_Duty/NightVision/activate.ogg
+    toggleOffSound:
+      path: /Audio/_Duty/NightVision/deactivate.ogg
+  - type: Appearance
+  - type: GenericVisualizer
+    visuals:
+      enum.NightVisionItemVisuals.Active:
+        icon:
+          True: { state: icon }
+          False: { state: icon }

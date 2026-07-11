@@ -3,7 +3,7 @@
   parent: BaseItem
   id: WeaponPistolStormMaker
   description: Старый револьвер. Странно, но барабан заварен.
-  suffix: Duty
+  suffix: Duty, Огнестрел
   components:
   - type: Sprite
     sprite: _Duty/Weapons/Guns/StormMaker.rsi

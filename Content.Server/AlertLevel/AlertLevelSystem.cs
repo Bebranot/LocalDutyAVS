@@ -2,7 +2,9 @@ using System.Linq;
 using Content.Server.Chat.Systems;
 using Content.Server.Station.Systems;
 using Content.Shared.CCVar;
+using Content.Shared.GameTicking;
 using Robust.Shared.Audio;
+using Robust.Shared.Audio.Components;
 using Robust.Shared.Audio.Systems;
 using Robust.Shared.Configuration;
 using Robust.Shared.Prototypes;
@@ -20,14 +22,30 @@ public sealed class AlertLevelSystem : EntitySystem
     // Until stations are a prototype, this is how it's going to have to be.
     public const string DefaultAlertLevelSet = "stationAlerts";
 
+    // _Duty: fade-out for the previous alert level sound when the level changes mid-playback,
+    // so switching codes doesn't overlap two sirens.
+    private const float FadeMinVolume = -32f;
+    private const float FadeDuration = 1.5f;
+    private readonly Dictionary<EntityUid, float> _fadingOut = new();
+    private readonly List<EntityUid> _fadeToRemove = new();
+
     public override void Initialize()
     {
         SubscribeLocalEvent<StationInitializedEvent>(OnStationInitialize);
         SubscribeLocalEvent<PrototypesReloadedEventArgs>(OnPrototypeReload);
+        SubscribeLocalEvent<RoundRestartCleanupEvent>(OnRoundRestart);
+    }
+
+    /// <summary>_Duty: раунд перезапустился — прошлые fade-out потоки больше не актуальны.</summary>
+    private void OnRoundRestart(RoundRestartCleanupEvent ev)
+    {
+        _fadingOut.Clear();
     }
 
     public override void Update(float time)
     {
+        UpdateFades(time);
+
         var query = EntityQueryEnumerator<AlertLevelComponent>();
 
         while (query.MoveNext(out var station, out var alert))
@@ -44,6 +62,55 @@ public sealed class AlertLevelSystem : EntitySystem
 
             alert.CurrentDelay -= time;
         }
+    }
+
+    private void UpdateFades(float frameTime)
+    {
+        if (_fadingOut.Count == 0)
+            return;
+
+        _fadeToRemove.Clear();
+
+        foreach (var (stream, changePerSecond) in _fadingOut)
+        {
+            if (!TryComp(stream, out AudioComponent? component))
+            {
+                _fadeToRemove.Add(stream);
+                continue;
+            }
+
+            var volume = component.Volume - changePerSecond * frameTime;
+            volume = MathF.Max(FadeMinVolume, volume);
+            _audio.SetVolume(stream, volume, component);
+
+            if (volume <= FadeMinVolume)
+            {
+                _audio.Stop(stream, component);
+                _fadeToRemove.Add(stream);
+            }
+        }
+
+        foreach (var stream in _fadeToRemove)
+        {
+            _fadingOut.Remove(stream);
+        }
+    }
+
+    private void FadeOutSound(EntityUid stream)
+    {
+        _fadingOut.Remove(stream);
+
+        if (!TryComp(stream, out AudioComponent? component))
+            return;
+
+        var diff = component.Volume - FadeMinVolume;
+        if (diff <= 0)
+        {
+            _audio.Stop(stream, component);
+            return;
+        }
+
+        _fadingOut[stream] = diff / FadeDuration;
     }
 
     private void OnStationInitialize(StationInitializedEvent args)
@@ -163,6 +230,13 @@ public sealed class AlertLevelSystem : EntitySystem
             component.ActiveDelay = true;
         }
 
+        // _Duty: fade out the previous alert level's sound instead of letting it overlap the new one.
+        if (component.CurrentSoundStream != null)
+        {
+            FadeOutSound(component.CurrentSoundStream.Value);
+            component.CurrentSoundStream = null;
+        }
+
         component.CurrentLevel = level;
         component.IsLevelLocked = locked;
 
@@ -192,7 +266,8 @@ public sealed class AlertLevelSystem : EntitySystem
             if (detail.Sound != null)
             {
                 var filter = _stationSystem.GetInOwningStation(station);
-                _audio.PlayGlobal(detail.Sound, filter, true, detail.Sound.Params);
+                var played = _audio.PlayGlobal(detail.Sound, filter, true, detail.Sound.Params);
+                component.CurrentSoundStream = played?.Entity;
             }
             else
             {

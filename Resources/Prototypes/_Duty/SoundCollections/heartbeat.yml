@@ -1,0 +1,39 @@
+# _Duty: сэмплы сердцебиения. Проигрываются штучно по таймеру (не лупом).
+# В коллекции можно держать несколько файлов — будет играться случайный,
+# так добавляется вариативность без правки кода.
+
+# Лёгкое сердцебиение (небольшие повреждения).
+- type: soundCollection
+  id: DutyHeartbeatLight
+  files:
+    - /Audio/_Duty/Effects/Heartbeat/heartthump.ogg
+
+# Тяжёлое сердцебиение (серьёзные повреждения / крит).
+- type: soundCollection
+  id: DutyHeartbeatHeavy
+  files:
+    - /Audio/_Duty/Effects/Heartbeat/heartthump-heavy.ogg
+
+# Монотонный писк кардиомонитора (мед-алерт в крите).
+- type: soundCollection
+  id: DutyHeartbeatMonitor
+  files:
+    - /Audio/_Duty/Effects/Heartbeat/heartthump-heavy-monitor.ogg
+
+# Тревога панели анализатора (HP пациента ниже ~10%).
+- type: soundCollection
+  id: DutyHeartbeatPanelAlert
+  files:
+    - /Audio/_Duty/Effects/Heartbeat/healthpanel-alert.ogg
+
+# Зацикленный критический тон (в анализаторе, пока цель в крите) — вместо ударов.
+- type: soundCollection
+  id: DutyHeartbeatCriticalLoop
+  files:
+    - /Audio/_Duty/Effects/Heartbeat/criticalloop.ogg
+
+# Ровная линия (флатлайн) — один раз при смерти цели в анализаторе.
+- type: soundCollection
+  id: DutyHeartbeatFlatline
+  files:
+    - /Audio/_Duty/Effects/Heartbeat/flatline.ogg

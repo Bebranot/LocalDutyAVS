@@ -11,6 +11,7 @@
   save: false
   components:
   - type: Concussion # _Duty: шкала контузии от выстрелов/взрывов
+  - type: Heartbeat # _Duty: уровень пульса (презентационный звук сердцебиения)
   - type: DamageVisuals
     thresholds: [ 10, 20, 30, 50, 70, 100 ]
     targetLayers:
@@ -148,6 +149,8 @@
       enum.HereticLivingHeartKey.Key: # goob edit - heretics
         type: LivingHeartMenuBoundUserInterface
   - type: Puller
+  - type: GrabIntent
+  - type: Grabbable
   - type: Speech
     speechSounds: Alto
   - type: DamageForceSay

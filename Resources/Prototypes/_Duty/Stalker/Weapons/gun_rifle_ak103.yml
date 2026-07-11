@@ -63,14 +63,14 @@
   parent: STBaseWeaponRifleAK103
   id: STWeaponRifleAK103
   name: AK-103
-  suffix: "Duty, Stalker"
+  suffix: "Stalker, STWeapon, Огнестрел"
   description: Современный вариант Калашникова под 7.62x39мм. Ценится в Зоне за надёжность и огневую мощь.
 
 - type: entity
   parent: STBaseWeaponRifleAK103
   id: STWeaponRifleAK103Kamo
   name: AK-103 "Veteran"
-  suffix: "Duty, Stalker"
+  suffix: "Stalker, STWeapon, Огнестрел"
   description: Тщательно доработанный AK-103 с улучшенными характеристиками.
   components:
   - type: Clothing
@@ -88,7 +88,7 @@
   parent: STBaseWeaponRifleAK103
   id: STWeaponRifleAK203
   name: AK-203
-  suffix: "Duty, Stalker"
+  suffix: "Stalker, STWeapon, Огнестрел"
   description: Новейшая эволюция Калашникова. Редкость в Зоне, обычно с военными экспедициями.
   components:
   - type: Clothing
@@ -110,7 +110,7 @@
   parent: STWeaponRifleSaiga545
   id: STWeaponRifleSaiga739
   name: saiga 7.39
-  suffix: "Duty, Stalker"
+  suffix: "Stalker, STWeapon, Огнестрел"
   description: Гражданская версия под 7.62x39. Популярна у сталкеров за доступность боеприпасов.
   components:
   - type: ItemSlots
@@ -148,7 +148,7 @@
   parent: STWeaponRifleSaiga739
   id: STWeaponRifleSaiga739Auto
   name: saiga 7.39
-  suffix: "Duty, Stalker"
+  suffix: "Stalker, STWeapon, Огнестрел"
   description: Гражданская версия под 7.62x39, автоматический вариант.
   components:
   - type: Gun

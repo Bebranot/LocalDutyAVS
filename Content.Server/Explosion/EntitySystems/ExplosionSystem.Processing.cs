@@ -453,6 +453,9 @@ public sealed partial class ExplosionSystem
                 // _Duty: контузия (шкала + звон + затемнение) от близких взрывов, масштаб по урону.
                 _concussion.ApplyExplosionConcussion(entity, damage.GetTotal().Float());
 
+                // _Duty: контузия (шкала + звон + затемнение) от близких взрывов, масштаб по урону.
+                _concussion.ApplyExplosionConcussion(entity, damage.GetTotal().Float());
+
                 if (_actorQuery.HasComp(entity))
                 {
                     // Log damage to player entities only; this will create a massive amount of log spam otherwise.

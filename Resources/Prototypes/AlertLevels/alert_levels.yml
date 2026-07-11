@@ -31,7 +31,8 @@
       shuttleTime: 600
     red:
       announcement: alert-level-red-announcement
-      sound: /Audio/_Duty/Announcement/code_red.ogg
+      sound: !type:SoundCollectionSpecifier
+        collection: DutyCodeRed
       color: Red
       emergencyLightColor: Red
       forceEnableEmergencyLights: true

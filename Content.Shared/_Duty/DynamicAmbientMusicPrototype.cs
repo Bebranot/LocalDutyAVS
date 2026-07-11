@@ -55,9 +55,9 @@ public sealed partial class DynamicAmbientMusicPrototype : IPrototype
     [DataField(required: true)]
     public List<DutyCritTrack> TracksMobCritical = new();
 
-    /// <summary>Усиление громкости для TracksMobCritical (в dB, положительное = громче).</summary>
+    /// <summary>Усиление громкости для TracksMobCritical (в dB, положительное = громче). Не зависит от <see cref="VolumeBoostDb"/>.</summary>
     [DataField]
-    public float MobCritVolumeBoost = 6f;
+    public float MobCritVolumeBoost = 8f;
 
     /// <summary>Длительность fade-out и fade-in при переходе между крит. треками (сек).</summary>
     [DataField]
@@ -79,9 +79,17 @@ public sealed partial class DynamicAmbientMusicPrototype : IPrototype
     [DataField]
     public List<SoundSpecifier> DeathSounds = new();
 
+    /// <summary>Усиление громкости звука смерти (в dB). Не зависит от <see cref="VolumeBoostDb"/> — смерть намеренно не участвует в общем бусте музыки.</summary>
+    [DataField]
+    public float DeathVolumeBoost = 2f;
+
     /// <summary>Список звуков при входе в критическое состояние (MobState.Critical). Рандомный выбор. КД 2 минуты, прерывается fadeout при резком выходе из крита.</summary>
     [DataField]
     public List<SoundSpecifier> CritEnterSounds = new();
+
+    /// <summary>Усиление громкости звука входа в крит (в dB). Не зависит от <see cref="VolumeBoostDb"/> — крит-стингер намеренно не участвует в общем бусте музыки.</summary>
+    [DataField]
+    public float CritEnterVolumeBoost = 2f;
 
     [DataField] public float CalmMinInterval = 5f;
     [DataField] public float CalmMaxInterval = 50f;
@@ -92,8 +100,10 @@ public sealed partial class DynamicAmbientMusicPrototype : IPrototype
     [DataField] public float CombatFadeInDuration = 0.5f;
 
     /// <summary>
-    /// Общий буст громкости (в dB) ко всем категориям динамической музыки/эмбиента.
-    /// Положительное = громче. Применяется поверх индивидуальных громкостей уровней.
+    /// Общий буст громкости (в dB) для «музыкальных» категорий динамической музыки/эмбиента
+    /// (HP-уровни, бой). Положительное = громче. Применяется поверх индивидуальных громкостей уровней.
+    /// НЕ затрагивает критмод (<see cref="MobCritVolumeBoost"/>), смерть (<see cref="DeathVolumeBoost"/>)
+    /// и крит-стингер (<see cref="CritEnterVolumeBoost"/>) — у них свои независимые бусты.
     /// </summary>
-    [DataField] public float VolumeBoostDb = 2f;
+    [DataField] public float VolumeBoostDb = 6f;
 }

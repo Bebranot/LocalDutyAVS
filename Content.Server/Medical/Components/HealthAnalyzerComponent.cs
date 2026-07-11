@@ -67,4 +67,9 @@ public sealed partial class HealthAnalyzerComponent : Component
     /// </summary>
     [DataField]
     public bool Silent;
+
+    /// <summary>
+    /// _Duty: пользователь, который сейчас сканирует цель — получатель эмбиент-звука состояния.
+    /// </summary>
+    public EntityUid? ScannerUser;
 }

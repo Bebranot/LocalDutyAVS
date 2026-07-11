@@ -5,14 +5,14 @@
   parent: STBaseLRBullet
   id: BulletRemingtonMagnum
   name: bullet (.44 remington magnum)
-  suffix: "Stalker"
+  suffix: "Stalker, STWeapon, Огнестрел"
   categories: [ HideSpawnMenu ]
   components:
   - type: Projectile
     projectileClass: 2
     damage:
       types:
-        Piercing: 30
+        Piercing: 36
   - type: StaminaDamageOnCollide
     damage: 10
 
@@ -20,14 +20,14 @@
   parent: BulletRemingtonMagnum
   id: BulletRemingtonMagnumAP
   name: bullet (.44 remington magnum armor-piercing)
-  suffix: "Stalker"
+  suffix: "Stalker, STWeapon, Огнестрел"
   categories: [ HideSpawnMenu ]
   components:
   - type: Projectile
     projectileClass: 3
     damage:
       types:
-        Piercing: 35
+        Piercing: 40
   - type: StaminaDamageOnCollide
     damage: 15
 
@@ -57,7 +57,7 @@
   parent: BaseCartridgeRemingtonMagnum
   id: CartridgeRemingtonMagnum
   name: cartridge .44 remington magnum
-  suffix: "Stalker"
+  suffix: "Stalker, STWeapon, Огнестрел"
   components:
   - type: CartridgeAmmo
     proto: BulletRemingtonMagnum
@@ -66,7 +66,7 @@
   parent: BaseCartridgeRemingtonMagnum
   id: CartridgeRemingtonMagnumAP
   name: cartridge .44 remington magnum AP
-  suffix: "Stalker"
+  suffix: "Stalker, STWeapon, Огнестрел"
   components:
   - type: CartridgeAmmo
     proto: BulletRemingtonMagnumAP
@@ -75,7 +75,7 @@
 - type: entity
   id: BaseSpeedLoaderRemingtonMagnum
   name: спидлоадер (.44 remington magnum)
-  suffix: "Duty, Stalker"
+  suffix: "Stalker, STWeapon, Огнестрел"
   parent: BaseItem
   abstract: true
   components:
@@ -129,7 +129,7 @@
 - type: entity
   parent: SpeedLoaderRemingtonMagnum
   id: SpeedLoaderRemingtonMagnumEmpty
-  suffix: "Duty, Stalker, Пустой"
+  suffix: "Stalker, STWeapon, Огнестрел, Пустой"
   components:
   - type: BallisticAmmoProvider
     proto: null
