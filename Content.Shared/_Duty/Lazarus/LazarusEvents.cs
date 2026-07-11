@@ -33,3 +33,19 @@ public sealed class LazarusTriggeredEvent : EntityEventArgs
     /// <summary>Задержка вступления основного звука относительно сердцебиения, сек.</summary>
     public float LastStandDelay;
 }
+
+/// <summary>
+/// _Duty: серверное directed-событие в момент срабатывания «второй жизни» на сущности.
+/// Нужно другим системам (сердцебиение), чтобы заглушить свои звуки на время кинематики
+/// Лазаруса — иначе наш пульс/монитор клэшатся с музыкой Last Standing.
+/// </summary>
+public sealed class LazarusStartedEvent : EntityEventArgs
+{
+    /// <summary>Как долго держать заглушку (обычно = ReviveDelay, до «вставания»).</summary>
+    public TimeSpan SuppressDuration;
+
+    public LazarusStartedEvent(TimeSpan suppressDuration)
+    {
+        SuppressDuration = suppressDuration;
+    }
+}

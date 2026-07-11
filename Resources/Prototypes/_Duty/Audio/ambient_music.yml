@@ -350,7 +350,10 @@
       path: /Audio/_Duty/Ambient/CasualtiesUnknown/lobotomy.ogg
 
   # Настройки и все такое
-  volumeBoostDb: 2 # Общий буст громкости всей динамической музыки/эмбиента (dB)
+  volumeBoostDb: 6 # Общий буст громкости «музыкальных» категорий: HP-уровни и бой (dB). НЕ трогает критмод/смерть/крит-стингер.
+  mobCritVolumeBoost: 8 # Буст критмода (dB), независим от volumeBoostDb.
+  deathVolumeBoost: 2 # Буст звука смерти (dB), независим от volumeBoostDb.
+  critEnterVolumeBoost: 2 # Буст крит-стингера (dB), независим от volumeBoostDb.
   calmMinInterval: 5
   calmMaxInterval: 45
   calmFadeInDuration: 3.5

@@ -128,6 +128,8 @@ namespace Content.Server.Entry
 
             _log.GetSawmill("Storage").Level = LogLevel.Info;
             _log.GetSawmill("db.ef").Level = LogLevel.Info;
+            // _Duty: спам "Received late nwVar message" не является ошибкой, глушим Warning
+            _log.GetSawmill("cfg").Level = LogLevel.Error;
 
             _adminLog.Initialize();
             _chatSan.Initialize();

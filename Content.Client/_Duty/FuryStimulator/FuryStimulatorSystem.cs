@@ -27,7 +27,7 @@ public sealed class FuryStimulatorSystem : SharedFuryStimulatorSystem
     private const float ShakeSpeed = 4f;
 
     /// <summary>Амплитуда смещения глаза на пике (в тайлах).</summary>
-    private const float ShakeAmplitude = 0.12f;
+    private const float ShakeAmplitude = 0.15f;
 
     /// <summary>Целевой сдвиг Z слушателя на пике (базовый ~-5): чем дальше, тем глуше мир.</summary>
     private const float MuffleZOffset = -14f;

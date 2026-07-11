@@ -1,21 +1,29 @@
-using Content.Shared.Mobs;
+using Content.Shared._Duty.Heartbeat;
 using Robust.Shared.Serialization;
 
 namespace Content.Shared._Duty.HealthAnalyzer;
 
 /// <summary>
-/// _Duty: команда клиенту проиграть зацикленный звук состояния сканируемой цели
-/// (сердцебиение / софткрит / крит) в анализаторе здоровья. Порт из Lost Paradise (#297).
+/// _Duty: команда клиенту проигрывать сердцебиение сканируемой цели в анализаторе здоровья.
+/// Звук штучными сэмплами по <see cref="Level"/> (ниже HP — чаще и тяжелее). В крите
+/// (<see cref="InCrit"/>) тяжёлое сердцебиение чередуется с писком монитора и играет быстро.
+/// На грани смерти (<see cref="NearDeath"/>, HP &lt; ~10%) добавляется тревога панели.
 /// </summary>
 [Serializable, NetSerializable]
 public sealed class HealthAnalyzerAudioEvent : EntityEventArgs
 {
-    public MobState State;
+    public HeartbeatLevel Level;
+    public bool InCrit;
+    public bool NearDeath;
+    public bool Flatline; // цель мертва — пульса нет (тишина в анализаторе)
     public bool ForceRestart;
 
-    public HealthAnalyzerAudioEvent(MobState state, bool forceRestart = false)
+    public HealthAnalyzerAudioEvent(HeartbeatLevel level, bool inCrit, bool nearDeath, bool flatline, bool forceRestart = false)
     {
-        State = state;
+        Level = level;
+        InCrit = inCrit;
+        NearDeath = nearDeath;
+        Flatline = flatline;
         ForceRestart = forceRestart;
     }
 }

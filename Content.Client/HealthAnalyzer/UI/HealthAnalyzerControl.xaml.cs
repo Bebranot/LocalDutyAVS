@@ -1,6 +1,7 @@
 using System.Linq;
 using System.Numerics;
 using Content.Client.UserInterface.Controls;
+using Content.Shared._Duty.Heartbeat;
 using Content.Shared._Duty.Lazarus;
 using Content.Shared.ADT.Body.Allergies;
 using Content.Shared.Atmos;
@@ -22,6 +23,7 @@ using Robust.Client.ResourceManagement;
 using Robust.Client.UserInterface.Controls;
 using Robust.Client.UserInterface.XAML;
 using Robust.Shared.Prototypes;
+using Robust.Shared.Timing;
 using Robust.Shared.Utility;
 
 namespace Content.Client.HealthAnalyzer.UI;
@@ -41,6 +43,24 @@ public sealed partial class HealthAnalyzerControl : BoxContainer
     private readonly IResourceCache _cache;
     private readonly DamageableSystem _damageable;
 
+    // _Duty: мигающая табличка критического статуса (HP пациента < ~10%).
+    private static readonly string[] CriticalTexts =
+    {
+        "СТАТУС ЗДОРОВЬЯ\nКРИТИЧЕСКИЙ",
+        "КОНЕЦ\nНЕИЗБЕЖЕН",
+        "ТРЕБУЕТСЯ СРОЧНАЯ\nМЕД. ПОМОЩЬ",
+    };
+    private const string CriticalDeadText = "Сердце остановлено."; // статичный текст после смерти
+    private const float CriticalBlinkHalfPeriod = 0.4f; // полупериод мигания (сек)
+    private const float CriticalTextPeriod = 1.6f;       // смена текста (сек)
+    private static readonly Color CriticalTextColor = Color.FromHex("#FF3030");
+
+    private bool _criticalActive;
+    private bool _criticalDead;
+    private int _criticalTextIndex;
+    private float _criticalBlinkAccum;
+    private float _criticalTextAccum;
+
     public HealthAnalyzerControl()
     {
         RobustXamlLoader.Load(this);
@@ -51,6 +71,18 @@ public sealed partial class HealthAnalyzerControl : BoxContainer
         _prototypes = dependencies.Resolve<IPrototypeManager>();
         _cache = dependencies.Resolve<IResourceCache>();
         _damageable = _entityManager.System<DamageableSystem>();
+
+        // _Duty: красная панель + шрифт Underdog для крит-таблички.
+        CriticalStatusPanel.PanelOverride = new StyleBoxFlat
+        {
+            BackgroundColor = Color.FromHex("#3A0000"),
+            BorderColor = CriticalTextColor,
+            BorderThickness = new Thickness(2),
+        };
+        CriticalStatusLabel.FontOverride = new VectorFont(
+            _cache.GetResource<FontResource>("/Fonts/Duty/Underdog/Underdog-Regular.ttf"), 18);
+        CriticalStatusLabel.FontColorOverride = CriticalTextColor;
+        CriticalStatusLabel.Text = CriticalTexts[0];
     }
 
     public void Populate(HealthAnalyzerUiState state)
@@ -61,10 +93,16 @@ public sealed partial class HealthAnalyzerControl : BoxContainer
             || !_entityManager.TryGetComponent<DamageableComponent>(target, out var damageable))
         {
             NoPatientDataText.Visible = true;
+            SetCriticalState(false, false); // _Duty
             return;
         }
 
         NoPatientDataText.Visible = false;
+
+        // _Duty: мёртв → «Сердце остановлено.»; HP < ~10% → мигающая крит-табличка.
+        var dead = state.MobState == MobState.Dead;
+        var nearDeath = state.HealthFraction is { } hp && hp < SharedHeartbeatSystem.NearDeathFraction;
+        SetCriticalState(dead || nearDeath, dead);
 
         // Scan Mode
 
@@ -440,4 +478,54 @@ public sealed partial class HealthAnalyzerControl : BoxContainer
         return titleRow;
     }
     // ADT-Tweak end
+
+    // _Duty start: табличка критического статуса
+    private void SetCriticalState(bool active, bool dead)
+    {
+        // Пересобираем при смене активности ИЛИ режима (жив на грани / мёртв).
+        if (_criticalActive == active && _criticalDead == dead)
+            return;
+
+        _criticalActive = active;
+        _criticalDead = dead;
+        CriticalStatusPanel.Visible = active;
+
+        if (!active)
+            return;
+
+        // Сброс анимации при повторном включении.
+        _criticalBlinkAccum = 0f;
+        _criticalTextAccum = 0f;
+        _criticalTextIndex = 0;
+        CriticalStatusLabel.Modulate = Color.White;
+        // Мёртв — статичный «Сердце остановлено.»; жив на грани — цикл тревожных фраз.
+        CriticalStatusLabel.Text = dead ? CriticalDeadText : CriticalTexts[0];
+    }
+
+    protected override void FrameUpdate(FrameEventArgs args)
+    {
+        base.FrameUpdate(args);
+
+        if (!_criticalActive)
+            return;
+
+        // Сердце остановлено — статичный текст, без мигания и смены фраз.
+        if (_criticalDead)
+            return;
+
+        // Смена текста между вариантами.
+        _criticalTextAccum += args.DeltaSeconds;
+        if (_criticalTextAccum >= CriticalTextPeriod)
+        {
+            _criticalTextAccum -= CriticalTextPeriod;
+            _criticalTextIndex = (_criticalTextIndex + 1) % CriticalTexts.Length;
+            CriticalStatusLabel.Text = CriticalTexts[_criticalTextIndex];
+        }
+
+        // Мигание (гашение прозрачностью по полупериоду).
+        _criticalBlinkAccum += args.DeltaSeconds;
+        var on = (int)(_criticalBlinkAccum / CriticalBlinkHalfPeriod) % 2 == 0;
+        CriticalStatusLabel.Modulate = on ? Color.White : Color.White.WithAlpha(0.15f);
+    }
+    // _Duty end
 }

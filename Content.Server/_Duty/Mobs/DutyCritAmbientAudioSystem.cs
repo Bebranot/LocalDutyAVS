@@ -12,10 +12,11 @@ public sealed class DutyCritAmbientAudioSystem : EntitySystem
 {
     [Dependency] private readonly SharedAudioSystem _audio = default!;
 
-    private static readonly Dictionary<MobState, (string Sound, float Volume)> StateAudio = new()
-    {
-        { MobState.Critical, ("/Audio/_Duty/CritAmbient/critical.ogg", -8f) },
-    };
+    // _Duty: старый зацикленный крит-пульс ОТКЛЮЧЁН — его заменила система Heartbeat
+    // (Content.{Shared,Server}/_Duty/Heartbeat), которая бьёт штучными сэмплами по уровню
+    // HP + отдельный писк монитора в крите. Словарь оставлен пустым, чтобы не плодить
+    // двойной звук; плюмбинг сохранён на случай возврата иных крит-эмбиентов.
+    private static readonly Dictionary<MobState, (string Sound, float Volume)> StateAudio = new();
 
     private readonly Dictionary<EntityUid, EntityUid> _playing = new();
 

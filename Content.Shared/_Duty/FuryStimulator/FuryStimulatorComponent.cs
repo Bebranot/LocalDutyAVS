@@ -64,7 +64,7 @@ public sealed partial class FuryStimulatorComponent : Component
     public float PeakDuration = 35f;
 
     [DataField]
-    public float DeclineDuration = 20f;
+    public float DeclineDuration = 24f;
 
     /// <summary>
     /// Сила разового резкого толчка камеры в начале фазы ввода (укол). 0 = выкл.

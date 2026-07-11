@@ -33,6 +33,12 @@ public sealed partial class AlertLevelComponent : Component
     [ViewVariables] public bool ActiveDelay;
 
     /// <summary>
+    /// The audio stream currently playing this station's alert level sound, if any.
+    /// Used to fade it out when the level changes before the previous sound finishes.
+    /// </summary>
+    [ViewVariables] public EntityUid? CurrentSoundStream;
+
+    /// <summary>
     /// If the level can be selected on the station.
     /// </summary>
     [ViewVariables]

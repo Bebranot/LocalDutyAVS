@@ -1,6 +1,7 @@
 using Content.Client.Audio;
 using Content.Client.Gameplay;
 using Content.Shared._Duty;
+using Content.Shared._Duty.FuryStimulator;
 using Content.Shared.CCVar;
 using Content.Shared.CombatMode;
 using Content.Shared.Damage;
@@ -66,6 +67,12 @@ public sealed class DynamicAmbientMusicSystem : EntitySystem
     private bool _trackPlaying;
     private bool _waitingForStateTransition;
     private TimeSpan _stateTransitionEndTime = TimeSpan.Zero;
+
+    // Fury-16: пока идёт эффект стимулятора, динамическая музыка выключена (у Fury своя музыка фаз),
+    // и возвращается только через FuryResumeDelay после окончания эффекта.
+    private bool _furySuppressed;
+    private TimeSpan _furyResumeTime = TimeSpan.Zero;
+    private static readonly TimeSpan FuryResumeDelay = TimeSpan.FromSeconds(20);
 
     private bool _enabled = true;
     private bool _peacefulDisabled;
@@ -181,6 +188,8 @@ public sealed class DynamicAmbientMusicSystem : EntitySystem
             _critEnterStream = null;
         }
         _critEnterReadyTime = TimeSpan.Zero;
+        _furySuppressed = false;
+        _furyResumeTime = TimeSpan.Zero;
         DeleteCritReverbChain();
         UpdateMasterGain(force: true);
     }
@@ -216,6 +225,9 @@ public sealed class DynamicAmbientMusicSystem : EntitySystem
             UpdateCritAudioDuck(frameTime, inCrit: false);
             return;
         }
+
+        if (UpdateFurySuppression(player.Value, frameTime))
+            return;
 
         var mobState = GetMobState(player.Value);
 
@@ -333,6 +345,42 @@ public sealed class DynamicAmbientMusicSystem : EntitySystem
             UpdateHealthMusic(player.Value);
         else if (_currentStream != null && _currentType == DutyMusicType.Calm)
             StopCurrent(immediate: false);
+    }
+
+    /// <summary>
+    /// Пока на игроке активен эффект Fury-16 (и 20 c после его окончания) глушим динамическую
+    /// музыку — у Fury своя персональная музыка фаз. Возвращает <c>true</c>, если музыка сейчас
+    /// подавлена и остальную логику <see cref="Update"/> надо пропустить.
+    /// </summary>
+    private bool UpdateFurySuppression(EntityUid player, float frameTime)
+    {
+        var furyActive = HasComp<FuryStimulatorComponent>(player);
+
+        if (furyActive)
+        {
+            _furySuppressed = true;
+            _furyResumeTime = _timing.CurTime + FuryResumeDelay;
+        }
+
+        if (!_furySuppressed)
+            return false;
+
+        // Эффект закончился и таймер возврата истёк — снимаем подавление, музыка возвращается сразу.
+        if (!furyActive && _timing.CurTime >= _furyResumeTime)
+        {
+            _furySuppressed = false;
+            _trackPlaying = false;
+            _waitingForStateTransition = false;
+            _nextTrackTime = _timing.CurTime;
+            return false;
+        }
+
+        if (_currentStream != null)
+            StopCurrent(immediate: false);
+        StopCritStreams();
+        UpdateCritAudioDuck(frameTime, inCrit: false);
+        _lastMobState = GetMobState(player);
+        return true;
     }
 
     private void UpdateCritAudioDuck(float frameTime, bool inCrit)
@@ -752,15 +800,25 @@ public sealed class DynamicAmbientMusicSystem : EntitySystem
 
         var proto = GetProto();
 
-        // Общий буст ко всем категориям динамической музыки/эмбиента.
-        db += proto?.VolumeBoostDb ?? 0f;
-
-        if (level != DutyAmbientMusicLevel.MobCritical)
-            return db;
-
-        db += proto?.MobCritVolumeBoost ?? 0f;
-        db += _config.GetCVar(DutyCCVars.DynamicAmbientMusicCritExtraBoostDb);
-        return db;
+        // Критмод, смерть и крит-стингер имеют собственные независимые бусты и НЕ участвуют
+        // в общем бусте музыки (VolumeBoostDb) — их громкость не меняется при усилении музыки.
+        switch (level)
+        {
+            case DutyAmbientMusicLevel.MobCritical:
+                db += proto?.MobCritVolumeBoost ?? 0f;
+                db += _config.GetCVar(DutyCCVars.DynamicAmbientMusicCritExtraBoostDb);
+                return db;
+            case DutyAmbientMusicLevel.Death:
+                db += proto?.DeathVolumeBoost ?? 0f;
+                return db;
+            case DutyAmbientMusicLevel.CritEnter:
+                db += proto?.CritEnterVolumeBoost ?? 0f;
+                return db;
+            default:
+                // Общий буст ко всем «музыкальным» категориям (HP-уровни, бой).
+                db += proto?.VolumeBoostDb ?? 0f;
+                return db;
+        }
     }
 
     private bool HasAnyAudibleVolume()
