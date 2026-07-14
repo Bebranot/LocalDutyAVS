@@ -141,7 +141,7 @@ namespace Content.Shared.Preferences
         /// When spawning into a round what's the preferred spot to spawn.
         /// </summary>
         [DataField]
-        public SpawnPriorityPreference SpawnPriority { get; private set; } = SpawnPriorityPreference.None;
+        public SpawnPriorityPreference SpawnPriority { get; private set; } = SpawnPriorityPreference.Cryosleep;
 
         // ADT Barks start
         [DataField]

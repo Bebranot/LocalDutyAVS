@@ -12,6 +12,7 @@
   components:
   - type: Concussion # _Duty: шкала контузии от выстрелов/взрывов
   - type: Heartbeat # _Duty: уровень пульса (презентационный звук сердцебиения)
+  - type: FireAgony # _Duty: сцена агонии при сильном горении (только у player-controlled)
   - type: DamageVisuals
     thresholds: [ 10, 20, 30, 50, 70, 100 ]
     targetLayers:

@@ -1,0 +1,5 @@
+# _Duty: экранный шейдер «Агонии от огня» (красная пульсирующая виньетка боли).
+- type: shader
+  id: FireAgonyVision
+  kind: source
+  path: "/Textures/Shaders/_Duty/fire_agony.swsl"

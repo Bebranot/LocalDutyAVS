@@ -1,6 +1,7 @@
 using Content.Client.Audio;
 using Content.Client.Gameplay;
 using Content.Shared._Duty;
+using Content.Shared._Duty.FireAgony;
 using Content.Shared._Duty.FuryStimulator;
 using Content.Shared.CCVar;
 using Content.Shared.CombatMode;
@@ -79,6 +80,13 @@ public sealed class DynamicAmbientMusicSystem : EntitySystem
     private bool _combatDisabled;
 
     private float _critDuck;
+
+    // _Duty: приглушение всего звука на время сцены «Агонии от огня» — ещё один фактор
+    // master gain рядом с крит-даком (иначе две системы дрались бы за SetMasterGain).
+    private float _agonyDuck;
+    private const float AgonyDuckGain = 0.35f;
+    private const float AgonyDuckFadeSeconds = 0.5f;
+
     private float _lastAppliedMasterGain = -1f;
     private EntityUid? _critAuxUid;
     private EntityUid? _critEffectUid;
@@ -398,14 +406,29 @@ public sealed class DynamicAmbientMusicSystem : EntitySystem
                 : Math.Max(target, _critDuck - step);
         }
 
+        // _Duty: параллельно ведём дак «Агонии от огня» (свой фейд ~0.5с).
+        var agonyTarget = IsLocalAgony() ? 1f : 0f;
+        var agonyStep = AgonyDuckFadeSeconds <= 0f ? 1f : frameTime / AgonyDuckFadeSeconds;
+        _agonyDuck = agonyTarget > _agonyDuck
+            ? Math.Min(agonyTarget, _agonyDuck + agonyStep)
+            : Math.Max(agonyTarget, _agonyDuck - agonyStep);
+
         UpdateMasterGain();
+    }
+
+    /// <summary>_Duty: активна ли сейчас сцена агонии у локального игрока.</summary>
+    private bool IsLocalAgony()
+    {
+        return _playerManager.LocalEntity is { } local
+            && TryComp<FireAgonyComponent>(local, out var agony)
+            && agony.Active;
     }
 
     private void UpdateMasterGain(bool force = false)
     {
         var baseGain = _config.GetCVar(CCVars.AudioMasterVolume) * ContentAudioSystem.MasterVolumeMultiplier;
         var duckGain = _config.GetCVar(DutyCCVars.CritAudioDuckGain);
-        var gain = baseGain * float.Lerp(1f, duckGain, _critDuck);
+        var gain = baseGain * float.Lerp(1f, duckGain, _critDuck) * float.Lerp(1f, AgonyDuckGain, _agonyDuck);
 
         if (!force && MathF.Abs(gain - _lastAppliedMasterGain) < 0.001f)
             return;
