@@ -46,7 +46,6 @@ public sealed class HealthAnalyzerAudioSystem : EntitySystem
     private bool _inCrit;
     private bool _nearDeath;
     private bool _flatlineState;
-    private bool _wasFlatline;
 
     private float _beatAccum;
     private float _critFade;
@@ -77,20 +76,21 @@ public sealed class HealthAnalyzerAudioSystem : EntitySystem
         _flatlineState = ev.Flatline;
 
         if (ev.ForceRestart)
-        {
             _beatAccum = float.MaxValue; // ударить сразу на открытии сканирования
 
-            // flatline играем ТОЛЬКО когда смерть происходит при активном просмотре.
-            // Если на открытии скана цель уже мертва — считаем звук уже «сыгранным»,
-            // чтобы он не повторялся при каждом повторном анализе трупа.
-            _wasFlatline = ev.Flatline;
+        // Ровную линию проигрываем строго по одноразовому импульсу от сервера. Сервер сам
+        // решает, кому и когда её слать (один раз на зрителя, см. HealthAnalyzerSystem), поэтому
+        // ни пауза вне радиуса, ни повторный анализ трупа звук здесь не переигрывают.
+        if (ev.PlayFlatline)
+        {
+            StopLoops();
+            Play(_flatline, FlatlineVolume);
         }
     }
 
     private void OnStopAudio(HealthAnalyzerStopAudioEvent ev)
     {
         _active = false;
-        _wasFlatline = false;
         StopLoops();
     }
 
@@ -105,16 +105,13 @@ public sealed class HealthAnalyzerAudioSystem : EntitySystem
             return;
         }
 
-        // Цель мертва — глушим циклы, один раз играем ровную линию.
+        // Цель мертва — тишина, глушим все циклы. Сам звук ровной линии — одноразовый
+        // импульс в OnAudioEvent, здесь не проигрываем (иначе повтор при ре-синке).
         if (_flatlineState)
         {
             StopLoops();
-            if (!_wasFlatline)
-                Play(_flatline, FlatlineVolume);
-            _wasFlatline = true;
             return;
         }
-        _wasFlatline = false;
 
         // Тревога панели на грани смерти.
         UpdateLoop(ref _alertStream, _nearDeath, _alert, AlertVolume);

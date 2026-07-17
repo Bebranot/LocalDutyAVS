@@ -16,14 +16,16 @@ public sealed class HealthAnalyzerAudioEvent : EntityEventArgs
     public bool InCrit;
     public bool NearDeath;
     public bool Flatline; // цель мертва — пульса нет (тишина в анализаторе)
+    public bool PlayFlatline; // одноразовый импульс: проиграть ровную линию прямо сейчас (переход жив→мёртв)
     public bool ForceRestart;
 
-    public HealthAnalyzerAudioEvent(HeartbeatLevel level, bool inCrit, bool nearDeath, bool flatline, bool forceRestart = false)
+    public HealthAnalyzerAudioEvent(HeartbeatLevel level, bool inCrit, bool nearDeath, bool flatline, bool playFlatline = false, bool forceRestart = false)
     {
         Level = level;
         InCrit = inCrit;
         NearDeath = nearDeath;
         Flatline = flatline;
+        PlayFlatline = playFlatline;
         ForceRestart = forceRestart;
     }
 }

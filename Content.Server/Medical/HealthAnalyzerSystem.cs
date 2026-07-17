@@ -21,6 +21,7 @@ using Robust.Shared.Containers;
 using Robust.Shared.Timing;
 using Content.Server.Body.Systems;
 using Content.Shared.Mobs; // _Duty
+using Content.Server._Duty.HealthAnalyzer; // _Duty
 using Content.Shared._Duty.HealthAnalyzer; // _Duty
 using Content.Shared._Duty.Heartbeat; // _Duty
 
@@ -55,6 +56,19 @@ public sealed class HealthAnalyzerSystem : EntitySystem
         SubscribeLocalEvent<HealthAnalyzerComponent, EntGotInsertedIntoContainerMessage>(OnInsertedIntoContainer);
         SubscribeLocalEvent<HealthAnalyzerComponent, ItemToggledEvent>(OnToggled);
         SubscribeLocalEvent<HealthAnalyzerComponent, DroppedEvent>(OnDropped);
+        SubscribeLocalEvent<HealthAnalyzerComponent, ComponentShutdown>(OnShutdown); // _Duty
+    }
+
+    /// <summary>
+    /// _Duty: анализатор уничтожается во время скана — чистим наш кэш звука и глушим сканирующего,
+    /// иначе в <see cref="_lastSentAudio"/> осталась бы висячая запись по удалённому EntityUid.
+    /// </summary>
+    private void OnShutdown(Entity<HealthAnalyzerComponent> ent, ref ComponentShutdown args)
+    {
+        _lastSentAudio.Remove(ent.Owner);
+
+        if (ent.Comp.ScannerUser is { } scannerUser)
+            RaiseNetworkEvent(new HealthAnalyzerStopAudioEvent(), scannerUser);
     }
 
     public override void Update(float frameTime)
@@ -294,12 +308,30 @@ public sealed class HealthAnalyzerSystem : EntitySystem
         var nearDeath = _heartbeat.GetVitalFraction(target) < SharedHeartbeatSystem.NearDeathFraction;
         var flatline = TryComp<MobStateComponent>(target, out var mob) && mob.CurrentState == MobState.Dead;
 
+        // _Duty: ровная линия — один раз на КАЖДОГО зрителя. Память о том, кто уже слышал, живёт
+        // на пациенте (см. HealthAnalyzerFlatlineHeardComponent): переживает паузу/повторный
+        // анализ, поэтому тот же медик звук не переиграет, а другой, впервые сканирующий тело,
+        // услышит его один раз. Компонент умирает вместе с телом — утечки нет.
+        var playFlatline = false;
+        if (flatline)
+        {
+            var heard = EnsureComp<HealthAnalyzerFlatlineHeardComponent>(target);
+            if (heard.Users.Add(user))
+                playFlatline = true;
+        }
+        else
+        {
+            // Цель жива/воскрешена — сбрасываем «уже слышали» у всех, чтобы новая смерть снова прозвучала.
+            RemComp<HealthAnalyzerFlatlineHeardComponent>(target);
+        }
+
         var state = (level, inCrit, nearDeath, flatline);
-        if (!forceRestart && _lastSentAudio.TryGetValue(healthAnalyzer, out var last) && last == state)
+        // playFlatline — одноразовый импульс, поэтому его наличие всегда пробивает дедуп.
+        if (!forceRestart && !playFlatline && _lastSentAudio.TryGetValue(healthAnalyzer, out var last) && last == state)
             return;
 
         _lastSentAudio[healthAnalyzer] = state;
-        RaiseNetworkEvent(new HealthAnalyzerAudioEvent(level, inCrit, nearDeath, flatline, forceRestart), user);
+        RaiseNetworkEvent(new HealthAnalyzerAudioEvent(level, inCrit, nearDeath, flatline, playFlatline, forceRestart), user);
     }
 
     /// <summary>
