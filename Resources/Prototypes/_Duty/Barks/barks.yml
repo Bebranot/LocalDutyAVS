@@ -1,0 +1,26 @@
+- type: speechBark
+  id: DutyNoelle
+  name: bark-duty-noelle-name
+  sound: /Audio/_Duty/Effects/Bark/noelle/snd_txtnoe.ogg
+  category: deltarune
+
+- type: speechBark
+  id: DutyQueen
+  name: bark-duty-queen-name
+  sound:
+    collection: DutyQueenBark
+  category: deltarune
+
+- type: speechBark
+  id: DutyPink
+  name: bark-duty-pink-name
+  sound:
+    collection: DutyPinkBark
+  category: standard
+
+- type: speechBark
+  id: DutyUnknown
+  name: bark-duty-unknown-name
+  sound:
+    collection: DutyUnknownBark
+  category: standard

@@ -1,0 +1,20 @@
+- type: soundCollection
+  id: DutyQueenBark
+  files:
+  - /Audio/_Duty/Effects/Bark/queen/snd_queen_bitcrushed_hoot.ogg
+  - /Audio/_Duty/Effects/Bark/queen/snd_queen_hoot_1.ogg
+  - /Audio/_Duty/Effects/Bark/queen/snd_queen_hoot_2.ogg
+
+- type: soundCollection
+  id: DutyPinkBark
+  files:
+  - /Audio/_Duty/Effects/Bark/pink/snd_pink_gasp.ogg
+  - /Audio/_Duty/Effects/Bark/pink/snd_pink_mew.ogg
+  - /Audio/_Duty/Effects/Bark/pink/snd_pink_throw.ogg
+  - /Audio/_Duty/Effects/Bark/pink/snd_pink_throw2.ogg
+
+- type: soundCollection
+  id: DutyUnknownBark
+  files:
+  - /Audio/_Duty/Effects/Bark/unknown/snd_hurtsmall.ogg
+  - /Audio/_Duty/Effects/Bark/unknown/snd_pombark.ogg
