@@ -83,10 +83,10 @@ public sealed class FractureTreatmentSystem : EntitySystem
             return;
         }
 
-        // Провал: боль, крик и урон.
+        // Провал: боль, крик и урон. origin = пациент, чтобы этот урон сам не вызвал новую травму.
         var dmg = new DamageSpecifier();
         dmg.DamageDict.Add("Blunt", SplintFailDamage);
-        _damageable.TryChangeDamage(patient, dmg, ignoreResistances: true);
+        _damageable.TryChangeDamage(patient, dmg, ignoreResistances: true, origin: patient);
 
         _popup.PopupEntity(Loc.GetString("trauma-splint-fail-scream"), patient, PopupType.LargeCaution);
     }

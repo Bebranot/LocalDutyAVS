@@ -22,6 +22,7 @@ public sealed class FractureSystem : EntitySystem
     [Dependency] private readonly IGameTiming _timing = default!;
     [Dependency] private readonly INetManager _net = default!;
     [Dependency] private readonly MovementSpeedModifierSystem _movementSpeed = default!;
+    [Dependency] private readonly SharedTransformSystem _transform = default!;
 
     // ── Тюнинг (Phase 6). ──────────────────────────────────────────────────────
 
@@ -86,7 +87,12 @@ public sealed class FractureSystem : EntitySystem
         if (args.Type != TraumaType.Fracture || args.Zone is not { } zone)
             return;
 
+        var isNew = !HasComp<FractureComponent>(ent);
         var comp = EnsureComp<FractureComponent>(ent);
+
+        // Инициализируем позицию для «урона при ходьбе», чтобы первый тик не сработал ложно.
+        if (isNew)
+            comp.LastPosition = _transform.GetWorldPosition(ent.Owner);
 
         if (comp.Zones.TryGetValue(zone, out var state))
         {

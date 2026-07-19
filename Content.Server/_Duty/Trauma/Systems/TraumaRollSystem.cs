@@ -81,6 +81,11 @@ public sealed class TraumaRollSystem : EntitySystem
 
     private void OnDamageDealt(Entity<TraumaTargetComponent> ent, ref DamageDealtEvent args)
     {
+        // Урон «сам себе» (медицинские процедуры, провал шинирования и т.п.) травму не вызывает —
+        // иначе лечение могло бы каскадом ломать новые кости. Падения (origin == null) роллятся.
+        if (args.Origin == ent.Owner)
+            return;
+
         // Только игроки — NPC/мобов без игрока не травмируем.
         if (!HasComp<ActorComponent>(ent))
             return;

@@ -3,6 +3,7 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
 using Content.Shared._Duty.Trauma.Components;
+using Content.Shared.Body.Components;
 using Content.Shared.Body.Systems;
 using Content.Shared.Damage;
 using Content.Shared.Damage.Systems;
@@ -54,8 +55,11 @@ public sealed class TraumaResolverSystem : EntitySystem
     /// <summary>Шанс упасть при движении с открытым переломом ноги за тик.</summary>
     private const float LegFallChanceOpen = 0.1f;
 
-    /// <summary>Поддерживаемый уровень неартериального кровотечения при открытом переломе.</summary>
-    private const float OpenBleed = 1.0f;
+    /// <summary>Поддерживаемый (не превышаемый) уровень неартериального кровотечения при открытом переломе.</summary>
+    private const float OpenBleedTarget = 1.5f;
+
+    /// <summary>Ниже этой доли крови открытый перелом перестаёт кровить (чтобы не осушать в ноль).</summary>
+    private const float OpenBleedBloodFloor = 0.5f;
 
     public override void Initialize()
     {
@@ -115,22 +119,20 @@ public sealed class TraumaResolverSystem : EntitySystem
                 hasOpen = true;
         }
 
+        // Отслеживаем перемещение всегда (иначе позиция устареет между тирами).
+        var pos = _xform.GetWorldPosition(uid);
+        var moved = (pos - comp.LastPosition).Length() > MoveThreshold;
+        comp.LastPosition = pos;
+
         // Нога: движение с полным/открытым переломом причиняет боль и урон, открытый — ещё и падения.
-        if (legTier >= FractureTier.Full)
+        if (legTier >= FractureTier.Full && moved)
         {
-            var pos = _xform.GetWorldPosition(uid);
-            var moved = (pos - comp.LastPosition).Length() > MoveThreshold;
-            comp.LastPosition = pos;
+            var dmg = legTier >= FractureTier.Open ? LegMoveDamageOpen : LegMoveDamageFull;
+            DealBlunt(uid, dmg);
+            _popup.PopupEntity(Loc.GetString("trauma-fracture-leg-pain"), uid, uid, PopupType.SmallCaution);
 
-            if (moved)
-            {
-                var dmg = legTier >= FractureTier.Open ? LegMoveDamageOpen : LegMoveDamageFull;
-                DealBlunt(uid, dmg);
-                _popup.PopupEntity(Loc.GetString("trauma-fracture-leg-pain"), uid, uid, PopupType.SmallCaution);
-
-                if (legTier >= FractureTier.Open && _random.Prob(LegFallChanceOpen))
-                    _stun.TryKnockdown((uid, null), TimeSpan.FromSeconds(2), refresh: true, drop: false);
-            }
+            if (legTier >= FractureTier.Open && _random.Prob(LegFallChanceOpen))
+                _stun.TryKnockdown((uid, null), TimeSpan.FromSeconds(2), refresh: true, drop: false);
         }
 
         // Рука: полный/открытый перелом временами роняет предмет из руки.
@@ -140,9 +142,15 @@ public sealed class TraumaResolverSystem : EntitySystem
             RaiseLocalEvent(uid, ref drop);
         }
 
-        // Открытый перелом — доп. неартериальное кровотечение (поддерживаем небольшой уровень).
-        if (hasOpen)
-            _bloodstream.TryModifyBleedAmount(uid, OpenBleed);
+        // Открытый перелом — доп. неартериальное кровотечение: держим низкий целевой уровень и не
+        // ниже пола крови, чтобы не осушать пациента в ноль (как это было бы при слепой подкачке).
+        if (hasOpen
+            && TryComp<BloodstreamComponent>(uid, out var blood)
+            && _bloodstream.GetBloodLevel(uid) > OpenBleedBloodFloor
+            && blood.BleedAmount < OpenBleedTarget)
+        {
+            _bloodstream.TryModifyBleedAmount(uid, OpenBleedTarget - blood.BleedAmount);
+        }
     }
 
     private void OnRefreshSpeed(EntityUid uid, FractureComponent comp, RefreshMovementSpeedModifiersEvent args)
@@ -198,6 +206,7 @@ public sealed class TraumaResolverSystem : EntitySystem
     {
         var dmg = new DamageSpecifier();
         dmg.DamageDict.Add("Blunt", amount);
-        _damageable.TryChangeDamage(uid, dmg, ignoreResistances: true, interruptsDoAfters: false);
+        // origin = сам моб: этот «боль при ходьбе» урон не должен провоцировать новую травму.
+        _damageable.TryChangeDamage(uid, dmg, ignoreResistances: true, interruptsDoAfters: false, origin: uid);
     }
 }
