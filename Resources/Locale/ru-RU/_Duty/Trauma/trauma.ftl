@@ -1,5 +1,8 @@
 # _Duty: система тяжёлых травм
 
+# Осмотр здоровья (ПКМ → осмотреть → здоровье)
+trauma-examine-arterial = [color=crimson]Кажется, повреждена крупная артерия — кровь идёт толчками.[/color]
+
 # Лечение артериального кровотечения (BUI)
 trauma-verb-category-self-treatment = Самолечение
 trauma-verb-treat-arterial = Остановить артериальное кровотечение

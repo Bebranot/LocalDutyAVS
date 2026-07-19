@@ -9,28 +9,34 @@ namespace Content.Shared._Duty.Trauma.Components;
 /// <summary>
 /// _Duty: артериальное кровотечение — беззонный дебафф, который надо лечить (жгутом/зажимом).
 ///
-/// Реализовано как «непросыхающая рана»: пока висит компонент, серверный
-/// <c>ArterialBleedSystem</c> периодически подкачивает <c>BloodstreamComponent.BleedAmount</c>
-/// (тот сам клампится на своём максимуме), поэтому ванильный пайплайн кровит быстро и стабильно,
-/// а обычный клоттинг НЕ обнуляет кровотечение и не гасит алерт «кровь». Обычная повязка такое
-/// не остановит — снимается только специальным лечением (см. системы лечения травм), при снятии
-/// накопленный bleed резко гасится (жгут останавливает быстро).
+/// Модель «медленная утечка + стабильный урон»: пока уровень крови выше <see cref="BloodFloor"/>,
+/// серверный <c>ArterialBleedSystem</c> поддерживает небольшую скорость кровотечения
+/// (<see cref="BleedTarget"/>) — видимые лужи, бледность и ванильный Bloodloss-урон. У пола
+/// кровотечение прекращается, поэтому кровь НЕ утекает в ноль: смерть наступает от накопленного
+/// Bloodloss-урона, а не от нулевого объёма крови. Обычная повязка такое не остановит — снимается
+/// только специальным лечением, при снятии кровотечение гасится.
 /// </summary>
-[RegisterComponent, NetworkedComponent, AutoGenerateComponentState]
+[RegisterComponent, NetworkedComponent]
 public sealed partial class ArterialBleedComponent : Component
 {
     /// <summary>
-    /// На сколько поднимать bleed за одну подкачку. Значение с запасом перекрывает естественный
-    /// клоттинг, так что bleed держится у своего потолка (см. <c>BloodstreamComponent.MaxBleedAmount</c>).
+    /// Доля крови, ниже которой перестаём кровить (чтобы объём не уходил в ноль). Держится чуть
+    /// ниже ванильного порога кровопотери, чтобы Bloodloss-урон шёл стабильно, но без разгона.
     /// </summary>
-    [DataField, AutoNetworkedField]
-    public float BleedTopUp = 4f;
+    [DataField]
+    public float BloodFloor = 0.6f;
 
-    /// <summary>Период подкачки в секундах.</summary>
-    [DataField, AutoNetworkedField]
-    public float UpdateIntervalSeconds = 1.5f;
+    /// <summary>
+    /// Поддерживаемая скорость кровотечения (медленная утечка), пока крови больше <see cref="BloodFloor"/>.
+    /// </summary>
+    [DataField]
+    public float BleedTarget = 1.5f;
 
-    /// <summary>Время следующей подкачки (серверное, не сетевое).</summary>
+    /// <summary>Период тика поддержки в секундах.</summary>
+    [DataField]
+    public float UpdateIntervalSeconds = 1f;
+
+    /// <summary>Время следующего тика (серверное).</summary>
     [DataField]
     public TimeSpan NextUpdate;
 }
