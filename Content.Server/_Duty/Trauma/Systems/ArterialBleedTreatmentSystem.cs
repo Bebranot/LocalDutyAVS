@@ -2,7 +2,6 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
-using System.Numerics;
 using Content.Server._Duty.Trauma.Components;
 using Content.Shared._Duty.Trauma.Components;
 using Content.Shared._Duty.Trauma.UI;
@@ -12,7 +11,6 @@ using Content.Shared.Movement.Systems;
 using Content.Shared.Popups;
 using Content.Shared.Stacks;
 using Content.Shared.Verbs;
-using Robust.Shared.Utility;
 
 namespace Content.Server._Duty.Trauma.Systems;
 
@@ -22,6 +20,10 @@ namespace Content.Server._Duty.Trauma.Systems;
 /// Этапы строго последовательны: прижать ладонью → пальцем → наложить жгут → затянуть (несколько
 /// раз). На первом этапе лечащий замедляется и его камера приближается — до конца лечения или до
 /// закрытия окна (закрытие = отмена). Наложение жгута требует 2 ткани ИЛИ жгут в активной руке.
+///
+/// Эффекты лечащего (слоудаун + зум) и незавершённый DoAfter снимаются в ComponentShutdown
+/// <see cref="ActiveArterialTreatmentComponent"/>, поэтому любой путь удаления сессии
+/// (завершение, закрытие окна, смерть/дисконнект лечащего) откатывает состояние корректно.
 /// </summary>
 public sealed class ArterialBleedTreatmentSystem : EntitySystem
 {
@@ -52,7 +54,7 @@ public sealed class ArterialBleedTreatmentSystem : EntitySystem
     private const int RequiredClothCount = 2;
 
     /// <summary>Приближение камеры лечащего (меньше 1 = зум in).</summary>
-    private static readonly Vector2 TreatmentZoom = new(0.75f, 0.75f);
+    private static readonly System.Numerics.Vector2 TreatmentZoom = new(0.75f, 0.75f);
 
     public override void Initialize()
     {
@@ -63,6 +65,7 @@ public sealed class ArterialBleedTreatmentSystem : EntitySystem
 
         SubscribeLocalEvent<ActiveArterialTreatmentComponent, ArterialTreatmentDoAfterEvent>(OnDoAfter);
         SubscribeLocalEvent<ActiveArterialTreatmentComponent, RefreshMovementSpeedModifiersEvent>(OnRefreshSpeed);
+        SubscribeLocalEvent<ActiveArterialTreatmentComponent, ComponentShutdown>(OnSessionShutdown);
     }
 
     private void OnGetVerbs(Entity<ArterialBleedComponent> ent, ref GetVerbsEvent<Verb> args)
@@ -108,9 +111,10 @@ public sealed class ArterialBleedTreatmentSystem : EntitySystem
         if (args.UiKey is not ArterialTreatmentUiKey)
             return;
 
-        // Закрытие окна = отмена лечения. Прогресс сбрасывается, эффекты лечащего снимаются.
+        // Закрытие окна = отмена лечения. Прогресс сбрасывается; эффекты и DoAfter снимутся в
+        // ComponentShutdown сессии.
         if (TryComp<ActiveArterialTreatmentComponent>(args.Actor, out var session) && session.Patient == ent.Owner)
-            EndSession(args.Actor, session);
+            RemComp<ActiveArterialTreatmentComponent>(args.Actor);
     }
 
     private void OnStep(Entity<ArterialBleedComponent> ent, ref ArterialTreatmentStepMessage args)
@@ -124,28 +128,35 @@ public sealed class ArterialBleedTreatmentSystem : EntitySystem
         if (session.Busy || args.Step != session.Step)
             return;
 
-        // Наложение жгута требует материал в руке.
-        if (session.Step == ArterialTreatmentStep.ApplyTourniquet && !HasTourniquetMaterial(healer))
+        // Наложение жгута требует материал в руке — фиксируем конкретный предмет на старте этапа.
+        EntityUid? used = null;
+        if (session.Step == ArterialTreatmentStep.ApplyTourniquet)
         {
-            _popup.PopupEntity(Loc.GetString("trauma-arterial-need-material"), healer, healer);
-            return;
+            if (!TryGetTourniquetMaterial(healer, out var material))
+            {
+                _popup.PopupEntity(Loc.GetString("trauma-arterial-need-material"), healer, healer);
+                return;
+            }
+
+            session.TourniquetItem = material;
+            used = material;
         }
 
         // Эффекты лечащего включаются с первого этапа и держатся до конца/отмены.
         if (session.Step == ArterialTreatmentStep.PalmPress && !session.EffectsApplied)
             ApplyHealerEffects(healer, session);
 
-        var delay = GetStepTime(session.Step);
-        var doAfter = new DoAfterArgs(EntityManager, healer, delay, new ArterialTreatmentDoAfterEvent(session.Step), healer, ent.Owner)
+        var doAfter = new DoAfterArgs(EntityManager, healer, GetStepTime(session.Step), new ArterialTreatmentDoAfterEvent(session.Step), healer, ent.Owner, used)
         {
             BreakOnMove = true,
             BreakOnDamage = true,
-            NeedHand = session.Step == ArterialTreatmentStep.ApplyTourniquet,
+            NeedHand = used != null,
         };
 
-        if (!_doAfter.TryStartDoAfter(doAfter))
+        if (!_doAfter.TryStartDoAfter(doAfter, out var id))
             return;
 
+        session.CurrentDoAfter = id;
         session.Busy = true;
         PushState(ent.Owner, session);
     }
@@ -154,6 +165,7 @@ public sealed class ArterialBleedTreatmentSystem : EntitySystem
     {
         var session = ent.Comp;
         session.Busy = false;
+        session.CurrentDoAfter = null;
 
         if (args.Cancelled || args.Handled)
         {
@@ -174,7 +186,8 @@ public sealed class ArterialBleedTreatmentSystem : EntitySystem
                 break;
 
             case ArterialTreatmentStep.ApplyTourniquet:
-                ConsumeTourniquetMaterial(ent.Owner);
+                ConsumeTourniquetMaterial(session.TourniquetItem);
+                session.TourniquetItem = null;
                 session.Step = ArterialTreatmentStep.TightenTourniquet;
                 break;
 
@@ -197,6 +210,21 @@ public sealed class ArterialBleedTreatmentSystem : EntitySystem
             args.ModifySpeed(SlowdownModifier);
     }
 
+    private void OnSessionShutdown(Entity<ActiveArterialTreatmentComponent> ent, ref ComponentShutdown args)
+    {
+        // Отменяем незавершённый DoAfter.
+        if (ent.Comp.CurrentDoAfter is { } doAfter)
+            _doAfter.Cancel(doAfter);
+
+        if (!ent.Comp.EffectsApplied)
+            return;
+
+        // Снимаем слоудаун и зум, каким бы путём сессия ни удалялась.
+        ent.Comp.EffectsApplied = false;
+        _movementSpeed.RefreshMovementSpeedModifiers(ent.Owner);
+        _contentEye.SetZoom(ent.Owner, SharedContentEyeSystem.DefaultZoom);
+    }
+
     private void CompleteTreatment(EntityUid healer, ActiveArterialTreatmentComponent session)
     {
         var patient = session.Patient;
@@ -205,18 +233,8 @@ public sealed class ArterialBleedTreatmentSystem : EntitySystem
         _popup.PopupEntity(Loc.GetString("trauma-arterial-treated"), patient, healer);
 
         _ui.CloseUi(patient, ArterialTreatmentUiKey.Key, healer);
-        // EndSession дополнительно вызовется из OnUiClosed, но он идемпотентен.
-        EndSession(healer, session);
-    }
-
-    private void EndSession(EntityUid healer, ActiveArterialTreatmentComponent session)
-    {
-        if (session.EffectsApplied)
-            _contentEye.SetZoom(healer, SharedContentEyeSystem.DefaultZoom);
-
+        // Снятие сессии (ComponentShutdown откатит эффекты и отменит DoAfter).
         RemComp<ActiveArterialTreatmentComponent>(healer);
-        // Пересчёт скорости уже без нашего обработчика — слоудаун снят.
-        _movementSpeed.RefreshMovementSpeedModifiers(healer);
     }
 
     private void ApplyHealerEffects(EntityUid healer, ActiveArterialTreatmentComponent session)
@@ -243,26 +261,32 @@ public sealed class ArterialBleedTreatmentSystem : EntitySystem
         _ => TimeSpan.Zero,
     };
 
-    /// <summary>Есть ли в активной руке жгут (любой предмет) ИЛИ стак ткани нужного размера.</summary>
-    private bool HasTourniquetMaterial(EntityUid healer)
+    /// <summary>
+    /// Есть ли в активной руке жгут (любой цельный предмет) ИЛИ стак ткани нужного размера.
+    /// Возвращает конкретный предмет, чтобы зафиксировать его на весь этап.
+    /// </summary>
+    private bool TryGetTourniquetMaterial(EntityUid healer, out EntityUid material)
     {
+        material = default;
+
         if (!_hands.TryGetActiveItem(healer, out var item) || item is not { } used)
             return false;
 
         // Стак (ткань) — нужно не меньше RequiredClothCount; иначе это цельный предмет (жгут).
-        if (TryComp<StackComponent>(used, out var stack))
-            return _stack.GetCount((used, stack)) >= RequiredClothCount;
+        if (TryComp<StackComponent>(used, out var stack) && _stack.GetCount((used, stack)) < RequiredClothCount)
+            return false;
 
+        material = used;
         return true;
     }
 
-    private void ConsumeTourniquetMaterial(EntityUid healer)
+    private void ConsumeTourniquetMaterial(EntityUid? item)
     {
-        if (!_hands.TryGetActiveItem(healer, out var item) || item is not { } used)
+        // Расходуется только зафиксированный на старте этапа предмет, и только если это стак ткани;
+        // цельный жгут — многоразовый.
+        if (item is not { } used || Deleted(used) || !TryComp<StackComponent>(used, out var stack))
             return;
 
-        // Ткань расходуется (2 штуки); цельный жгут — многоразовый, не тратится.
-        if (TryComp<StackComponent>(used, out var stack))
-            _stack.SetCount(used, _stack.GetCount((used, stack)) - RequiredClothCount, stack);
+        _stack.SetCount(used, _stack.GetCount((used, stack)) - RequiredClothCount, stack);
     }
 }

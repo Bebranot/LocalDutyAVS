@@ -59,10 +59,17 @@ public sealed class TraumaRollSystem : EntitySystem
     private const float DislocationMaxChance = 0.10f;
 
     /// <summary>
-    /// Делитель формулы перелома: <c>урон * random(1..10) * hpFactor / scale</c>.
-    /// Подобран так, чтобы средний удар давал умеренный шанс, а тяжёлый приближался к капу.
+    /// Делитель формулы перелома: <c>урон * random(1..10) * hpFactor / scale</c>. Подобран так,
+    /// чтобы перелом был событием, а не шумом: ~5% на слабый удар, приближается к капу на очень
+    /// сильный. Тюнится в Phase 6.
     /// </summary>
-    private const float FractureChanceScale = 100f;
+    private const float FractureChanceScale = 400f;
+
+    /// <summary>
+    /// Делитель формулы артерии: <c>урон * random(1..10) / scale</c>. Артерия должна быть
+    /// редкой даже на сильном режущем ударе. Тюнится в Phase 6.
+    /// </summary>
+    private const float ArterialChanceScale = 350f;
 
     /// <summary>Множитель шанса перелома при нулевом HP цели (при полном HP множитель = 1).</summary>
     private const float HpFractureFactorMax = 2f;
@@ -119,7 +126,7 @@ public sealed class TraumaRollSystem : EntitySystem
     private void TryRollArterialBleed(Entity<TraumaTargetComponent> ent, float sharp)
     {
         // Шанс = урон * random(1..10), редкий и не гарантированный даже на большом уроне.
-        var chance = Math.Clamp(sharp * _random.Next(1, 11) / FractureChanceScale, 0f, MaxTraumaChance);
+        var chance = Math.Clamp(sharp * _random.Next(1, 11) / ArterialChanceScale, 0f, MaxTraumaChance);
         if (_random.Prob(chance))
             RaiseTrauma(ent, TraumaType.ArterialBleed, null, sharp);
     }

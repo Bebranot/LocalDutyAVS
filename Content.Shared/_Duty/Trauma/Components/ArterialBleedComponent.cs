@@ -8,25 +8,29 @@ namespace Content.Shared._Duty.Trauma.Components;
 
 /// <summary>
 /// _Duty: артериальное кровотечение — беззонный дебафф, который надо лечить (жгутом/зажимом).
-/// Даёт быстрый доп. отток крови поверх обычного bleed'а, НЕ подменяя его: слушает
-/// <see cref="Content.Shared.Body.Events.BleedModifierEvent"/> и добавляет
-/// <see cref="ExtraBleedPerTick"/> к оттоку за тик. Обычная повязка такое не останавливает —
-/// снимается только специальным лечением (см. системы лечения травм).
+///
+/// Реализовано как «непросыхающая рана»: пока висит компонент, серверный
+/// <c>ArterialBleedSystem</c> периодически подкачивает <c>BloodstreamComponent.BleedAmount</c>
+/// (тот сам клампится на своём максимуме), поэтому ванильный пайплайн кровит быстро и стабильно,
+/// а обычный клоттинг НЕ обнуляет кровотечение и не гасит алерт «кровь». Обычная повязка такое
+/// не остановит — снимается только специальным лечением (см. системы лечения травм), при снятии
+/// накопленный bleed резко гасится (жгут останавливает быстро).
 /// </summary>
 [RegisterComponent, NetworkedComponent, AutoGenerateComponentState]
 public sealed partial class ArterialBleedComponent : Component
 {
     /// <summary>
-    /// Доп. кровопотеря за тик поверх обычной. Сетевое — тик bleed'а предсказывается на клиенте,
-    /// поэтому значение должно совпадать на обеих сторонах.
+    /// На сколько поднимать bleed за одну подкачку. Значение с запасом перекрывает естественный
+    /// клоттинг, так что bleed держится у своего потолка (см. <c>BloodstreamComponent.MaxBleedAmount</c>).
     /// </summary>
     [DataField, AutoNetworkedField]
-    public float ExtraBleedPerTick = 1.0f;
+    public float BleedTopUp = 4f;
 
-    /// <summary>
-    /// Разовый скачок накопленного bleed'а в момент получения травмы («резкая кровопотеря»).
-    /// Применяется один раз сервером при наложении, поэтому сеть не нужна.
-    /// </summary>
+    /// <summary>Период подкачки в секундах.</summary>
+    [DataField, AutoNetworkedField]
+    public float UpdateIntervalSeconds = 1.5f;
+
+    /// <summary>Время следующей подкачки (серверное, не сетевое).</summary>
     [DataField]
-    public float InitialBleedSpike = 5.0f;
+    public TimeSpan NextUpdate;
 }
