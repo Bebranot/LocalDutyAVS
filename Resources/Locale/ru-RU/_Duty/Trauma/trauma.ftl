@@ -2,6 +2,21 @@
 
 # Осмотр здоровья (ПКМ → осмотреть → здоровье)
 trauma-examine-arterial = [color=crimson]Кажется, повреждена крупная артерия — кровь идёт толчками.[/color]
+trauma-examine-fracture = [color=orange]{ $zone }: { $tier }.[/color]
+trauma-examine-fracture-splinted = [color=yellow]{ $zone }: { $tier } (в шине).[/color]
+
+# Зоны тела
+trauma-zone-head = Голова
+trauma-zone-torso = Грудная клетка
+trauma-zone-left-arm = Левая рука
+trauma-zone-right-arm = Правая рука
+trauma-zone-left-leg = Левая нога
+trauma-zone-right-leg = Правая нога
+
+# Тиры перелома
+trauma-fracture-tier-crack = трещина
+trauma-fracture-tier-full = перелом
+trauma-fracture-tier-open = открытый перелом
 
 # Лечение артериального кровотечения (BUI)
 trauma-verb-category-self-treatment = Самолечение
