@@ -6,6 +6,7 @@ using System.Linq;
 using Content.Shared._Duty.Trauma.Components;
 using Content.Shared._Duty.Trauma.Events;
 using Content.Shared.HealthExaminable;
+using Content.Shared.Movement.Systems;
 using Robust.Shared.Network;
 using Robust.Shared.Timing;
 
@@ -20,6 +21,7 @@ public sealed class FractureSystem : EntitySystem
 {
     [Dependency] private readonly IGameTiming _timing = default!;
     [Dependency] private readonly INetManager _net = default!;
+    [Dependency] private readonly MovementSpeedModifierSystem _movementSpeed = default!;
 
     // ── Тюнинг (Phase 6). ──────────────────────────────────────────────────────
 
@@ -73,6 +75,9 @@ public sealed class FractureSystem : EntitySystem
                 RemComp<FractureComponent>(uid);
             else if (changed)
                 Dirty(uid, comp);
+
+            if (changed)
+                _movementSpeed.RefreshMovementSpeedModifiers(uid);
         }
     }
 
@@ -97,6 +102,7 @@ public sealed class FractureSystem : EntitySystem
         state.NextHeal = _timing.CurTime + HealStep(state);
         comp.Zones[zone] = state;
         Dirty(ent.Owner, comp);
+        _movementSpeed.RefreshMovementSpeedModifiers(ent.Owner);
     }
 
     private void OnHealthExamined(Entity<FractureComponent> ent, ref HealthBeingExaminedEvent args)

@@ -18,6 +18,9 @@ trauma-fracture-tier-crack = трещина
 trauma-fracture-tier-full = перелом
 trauma-fracture-tier-open = открытый перелом
 
+# Функциональные эффекты
+trauma-fracture-leg-pain = Острая боль пронзает сломанную ногу!
+
 # Лечение артериального кровотечения (BUI)
 trauma-verb-category-self-treatment = Самолечение
 trauma-verb-treat-arterial = Остановить артериальное кровотечение

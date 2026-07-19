@@ -2,6 +2,7 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
+using System.Numerics;
 using Robust.Shared.GameStates;
 using Robust.Shared.Serialization;
 
@@ -47,4 +48,12 @@ public sealed partial class FractureComponent : Component
     /// <summary>Сломанные зоны и их состояние.</summary>
     [AutoNetworkedField]
     public Dictionary<BodyZone, FractureZoneState> Zones = new();
+
+    /// <summary>Серверное: позиция на прошлом тике эффектов (для урона «при ходьбе»).</summary>
+    [ViewVariables]
+    public Vector2 LastPosition;
+
+    /// <summary>Серверное: время следующего тика функциональных эффектов.</summary>
+    [ViewVariables]
+    public TimeSpan NextEffectTick;
 }
