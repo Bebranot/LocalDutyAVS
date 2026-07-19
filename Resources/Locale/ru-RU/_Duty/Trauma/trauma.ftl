@@ -21,6 +21,12 @@ trauma-fracture-tier-open = открытый перелом
 # Функциональные эффекты
 trauma-fracture-leg-pain = Острая боль пронзает сломанную ногу!
 
+# Шинирование
+trauma-verb-splint = Наложить шину
+trauma-splint-start = Вам накладывают шину — не двигайтесь.
+trauma-splint-success = Шина наложена, кость зафиксирована.
+trauma-splint-fail-scream = Раздаётся крик боли!
+
 # Лечение артериального кровотечения (BUI)
 trauma-verb-category-self-treatment = Самолечение
 trauma-verb-treat-arterial = Остановить артериальное кровотечение

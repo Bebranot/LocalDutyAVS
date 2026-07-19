@@ -163,7 +163,10 @@ public sealed class TraumaResolverSystem : EntitySystem
         }
     }
 
-    /// <summary>Наибольший тир среди сломанных зон, подходящих под фильтр (null — таких нет).</summary>
+    /// <summary>
+    /// Наибольший ЭФФЕКТИВНЫЙ тир среди зон под фильтр (null — таких нет). Шина снижает
+    /// функциональную тяжесть на тир (трещина в шине эффекта не даёт).
+    /// </summary>
     private static FractureTier? GetWorstTier(FractureComponent comp, Func<BodyZone, bool> filter)
     {
         FractureTier? worst = null;
@@ -171,11 +174,24 @@ public sealed class TraumaResolverSystem : EntitySystem
         {
             if (!filter(zone))
                 continue;
-            if (worst is null || state.Tier > worst)
-                worst = state.Tier;
+
+            if (EffectiveTier(state) is not { } tier)
+                continue;
+
+            if (worst is null || tier > worst)
+                worst = tier;
         }
 
         return worst;
+    }
+
+    /// <summary>Функциональный тир с учётом шины: шина снижает на один, трещина в шине — ноль эффекта.</summary>
+    private static FractureTier? EffectiveTier(FractureZoneState state)
+    {
+        if (!state.Splinted)
+            return state.Tier;
+
+        return state.Tier <= FractureTier.Crack ? null : (FractureTier)((byte)state.Tier - 1);
     }
 
     private void DealBlunt(EntityUid uid, float amount)

@@ -117,6 +117,44 @@ public sealed class FractureSystem : EntitySystem
         }
     }
 
+    /// <summary>Есть ли хотя бы одна сломанная, но ещё не зашинированная зона.</summary>
+    public bool HasUnsplintedFracture(EntityUid uid) =>
+        TryComp<FractureComponent>(uid, out var comp) && comp.Zones.Values.Any(z => !z.Splinted);
+
+    /// <summary>
+    /// Накладывает шину на самую тяжёлую ещё не зашинированную зону (стабилизация + ускоренное
+    /// сращивание). false — если шинировать нечего.
+    /// </summary>
+    public bool TrySplintWorstZone(EntityUid uid)
+    {
+        if (!TryComp<FractureComponent>(uid, out var comp))
+            return false;
+
+        BodyZone? best = null;
+        var bestTier = FractureTier.Crack;
+        foreach (var (zone, state) in comp.Zones)
+        {
+            if (state.Splinted)
+                continue;
+            if (best is null || state.Tier > bestTier)
+            {
+                best = zone;
+                bestTier = state.Tier;
+            }
+        }
+
+        if (best is not { } target)
+            return false;
+
+        var st = comp.Zones[target];
+        st.Splinted = true;
+        st.NextHeal = _timing.CurTime + HealStep(st);
+        comp.Zones[target] = st;
+        Dirty(uid, comp);
+        _movementSpeed.RefreshMovementSpeedModifiers(uid);
+        return true;
+    }
+
     private TimeSpan HealStep(FractureZoneState state) =>
         state.Splinted ? SplintedHealStep : UnsplintedHealStep;
 
