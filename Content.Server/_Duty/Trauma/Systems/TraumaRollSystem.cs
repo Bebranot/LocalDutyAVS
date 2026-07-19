@@ -111,9 +111,12 @@ public sealed class TraumaRollSystem : EntitySystem
         if (!TryPickZone(ent.Comp, out var zone))
             return;
 
-        // Вывих: только суставные зоны, относительно слабый удар и только по ещё не сломанной
-        // зоне. По уже сломанной зоне тупой удар идёт на эскалацию перелома, а не на вывих.
-        if (BodyZoneCategory.IsJoint(zone) && blunt < DislocationMaxDamage && !IsFractured(ent.Owner, zone))
+        // Вывих: только суставные зоны, относительно слабый удар и только по ещё не травмированной
+        // зоне. По уже сломанной/вывихнутой зоне тупой удар идёт на перелом (эскалацию), а не на вывих.
+        if (BodyZoneCategory.IsJoint(zone)
+            && blunt < DislocationMaxDamage
+            && !IsFractured(ent.Owner, zone)
+            && !IsDislocated(ent.Owner, zone))
         {
             var dislocationChance = _random.NextFloat(DislocationMinChance, DislocationMaxChance);
             if (_random.Prob(dislocationChance))
@@ -213,6 +216,9 @@ public sealed class TraumaRollSystem : EntitySystem
 
     private bool IsFractured(EntityUid uid, BodyZone zone) =>
         TryComp<FractureComponent>(uid, out var fracture) && fracture.Zones.ContainsKey(zone);
+
+    private bool IsDislocated(EntityUid uid, BodyZone zone) =>
+        TryComp<DislocationComponent>(uid, out var dislocation) && dislocation.Dislocated.Contains(zone);
 
     private static float GetPositiveDamage(DamageSpecifier damage, ProtoId<DamageTypePrototype> type)
     {

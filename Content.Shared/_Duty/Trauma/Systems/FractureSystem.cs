@@ -45,6 +45,7 @@ public sealed class FractureSystem : EntitySystem
             return;
 
         var now = _timing.CurTime;
+        List<EntityUid>? toRemove = null;
 
         var query = EntityQueryEnumerator<FractureComponent>();
         while (query.MoveNext(out var uid, out var comp))
@@ -72,14 +73,23 @@ public sealed class FractureSystem : EntitySystem
                 changed = true;
             }
 
+            if (!changed)
+                continue;
+
+            // Удаление компонента откладываем — нельзя менять структуру во время перебора запроса.
             if (comp.Zones.Count == 0)
-                RemComp<FractureComponent>(uid);
-            else if (changed)
+                (toRemove ??= new()).Add(uid);
+            else
                 Dirty(uid, comp);
 
-            if (changed)
-                _movementSpeed.RefreshMovementSpeedModifiers(uid);
+            _movementSpeed.RefreshMovementSpeedModifiers(uid);
         }
+
+        if (toRemove is null)
+            return;
+
+        foreach (var uid in toRemove)
+            RemComp<FractureComponent>(uid);
     }
 
     private void OnTraumaRolled(Entity<TraumaTargetComponent> ent, ref TraumaRolledEvent args)

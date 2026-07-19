@@ -27,6 +27,14 @@ trauma-splint-start = Вам накладывают шину — не двига
 trauma-splint-success = Шина наложена, кость зафиксирована.
 trauma-splint-fail-scream = Раздаётся крик боли!
 
+# Вывих
+trauma-examine-dislocation = [color=orange]{ $zone }: вывих — сустав неестественно вывернут.[/color]
+trauma-examine-residual = [color=gray]{ $zone }: недавно вправлена, ещё слаба.[/color]
+trauma-verb-reduce-dislocation = Вправить вывих
+trauma-reduce-start = Вправление сустава — не двигайтесь.
+trauma-reduce-success = Сустав встал на место.
+trauma-reduce-fail = Не удалось вправить — резкая боль!
+
 # Лечение артериального кровотечения (BUI)
 trauma-verb-category-self-treatment = Самолечение
 trauma-verb-treat-arterial = Остановить артериальное кровотечение

@@ -2,6 +2,7 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
+using System.Linq;
 using Content.Shared._Duty.Trauma.Components;
 using Content.Shared.Body.Components;
 using Content.Shared.Body.Systems;
@@ -61,10 +62,42 @@ public sealed class TraumaResolverSystem : EntitySystem
     /// <summary>Ниже этой доли крови открытый перелом перестаёт кровить (чтобы не осушать в ноль).</summary>
     private const float OpenBleedBloodFloor = 0.5f;
 
+    /// <summary>Вывих: доля проваленных ударов рукой (почти неработоспособна) / остаточная слабость.</summary>
+    private const float DislocArmFail = 0.85f;
+    private const float ResidualArmFail = 0.25f;
+
+    /// <summary>Вывих ноги: множитель скорости (тяжёлое нарушение опоры) / остаточная слабость.</summary>
+    private const float DislocLegSpeed = 0.5f;
+    private const float ResidualLegSpeed = 0.85f;
+
     public override void Initialize()
     {
         SubscribeLocalEvent<FractureComponent, RefreshMovementSpeedModifiersEvent>(OnRefreshSpeed);
         SubscribeLocalEvent<FractureComponent, AttackAttemptEvent>(OnAttackAttempt);
+
+        SubscribeLocalEvent<DislocationComponent, RefreshMovementSpeedModifiersEvent>(OnDislocRefreshSpeed);
+        SubscribeLocalEvent<DislocationComponent, AttackAttemptEvent>(OnDislocAttackAttempt);
+    }
+
+    private void OnDislocRefreshSpeed(EntityUid uid, DislocationComponent comp, RefreshMovementSpeedModifiersEvent args)
+    {
+        if (comp.Dislocated.Any(BodyZoneCategory.IsLeg))
+            args.ModifySpeed(DislocLegSpeed, DislocLegSpeed);
+        else if (comp.Residual.Keys.Any(BodyZoneCategory.IsLeg))
+            args.ModifySpeed(ResidualLegSpeed, ResidualLegSpeed);
+    }
+
+    private void OnDislocAttackAttempt(EntityUid uid, DislocationComponent comp, AttackAttemptEvent args)
+    {
+        if (args.Cancelled)
+            return;
+
+        var chance =
+            comp.Dislocated.Any(BodyZoneCategory.IsArm) ? DislocArmFail :
+            comp.Residual.Keys.Any(BodyZoneCategory.IsArm) ? ResidualArmFail : 0f;
+
+        if (chance > 0f && SharedRandomExtensions.PredictedProb(_timing, chance, GetNetEntity(uid)))
+            args.Cancel();
     }
 
     private void OnAttackAttempt(EntityUid uid, FractureComponent comp, AttackAttemptEvent args)
