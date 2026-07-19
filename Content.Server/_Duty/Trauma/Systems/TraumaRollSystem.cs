@@ -4,6 +4,7 @@
 
 using Content.Shared._Duty.Trauma;
 using Content.Shared._Duty.Trauma.Components;
+using Content.Shared._Duty.Trauma.Events;
 using Content.Shared.Damage;
 using Content.Shared.Damage.Prototypes;
 using Content.Shared.Damage.Systems;
@@ -25,8 +26,9 @@ namespace Content.Server._Duty.Trauma.Systems;
 /// доступные зоны) И управляемые игроком (ActorComponent) И живые. Урон ниже
 /// <see cref="MinTraumaDamage"/> игнорируется — царапина не должна ломать кости.
 ///
-/// В этой фазе система только РОЛЛИТ и логирует решение; применение эффектов (перелом/вывих/
-/// артерия) подключается отдельными системами-механиками в следующих фазах.
+/// Сама система только РЕШАЕТ и поднимает <see cref="TraumaRolledEvent"/> на цели — применение
+/// конкретного эффекта (перелом/вывих/артерия) делают отдельные системы-механики. Это единая
+/// точка расширения: новый тип травмы = новый обработчик события, без правок роллера.
 /// </summary>
 public sealed class TraumaRollSystem : EntitySystem
 {
@@ -104,14 +106,14 @@ public sealed class TraumaRollSystem : EntitySystem
             var dislocationChance = _random.NextFloat(DislocationMinChance, DislocationMaxChance);
             if (_random.Prob(dislocationChance))
             {
-                LogRoll(ent, TraumaType.Dislocation, zone, dislocationChance);
+                RaiseTrauma(ent, TraumaType.Dislocation, zone, blunt);
                 return;
             }
         }
 
         var fractureChance = GetFractureChance(ent, blunt);
         if (_random.Prob(fractureChance))
-            LogRoll(ent, TraumaType.Fracture, zone, fractureChance);
+            RaiseTrauma(ent, TraumaType.Fracture, zone, blunt);
     }
 
     private void TryRollArterialBleed(Entity<TraumaTargetComponent> ent, float sharp)
@@ -119,7 +121,7 @@ public sealed class TraumaRollSystem : EntitySystem
         // Шанс = урон * random(1..10), редкий и не гарантированный даже на большом уроне.
         var chance = Math.Clamp(sharp * _random.Next(1, 11) / FractureChanceScale, 0f, MaxTraumaChance);
         if (_random.Prob(chance))
-            LogRoll(ent, TraumaType.ArterialBleed, null, chance);
+            RaiseTrauma(ent, TraumaType.ArterialBleed, null, sharp);
     }
 
     /// <summary>
@@ -205,9 +207,13 @@ public sealed class TraumaRollSystem : EntitySystem
         return value.Float();
     }
 
-    private void LogRoll(EntityUid uid, TraumaType type, BodyZone? zone, float chance)
+    /// <summary>
+    /// Публикует выпавшую травму на цели. <paramref name="damage"/> — величина урона удара,
+    /// вызвавшего травму (используется механиками, например для тира перелома).
+    /// </summary>
+    private void RaiseTrauma(EntityUid uid, TraumaType type, BodyZone? zone, float damage)
     {
-        var where = zone is { } z ? z.ToString() : "—";
-        Log.Debug($"Trauma roll HIT: {ToPrettyString(uid)} → {type} @ {where} (chance {chance:P0})");
+        var ev = new TraumaRolledEvent(type, zone, damage);
+        RaiseLocalEvent(uid, ref ev);
     }
 }
