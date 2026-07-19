@@ -1,0 +1,12 @@
+<controls:FancyWindow xmlns="https://spacestation14.io"
+                      xmlns:controls="clr-namespace:Content.Client.UserInterface.Controls"
+                      Title="{Loc 'trauma-arterial-window-title'}"
+                      MinSize="340 240">
+    <BoxContainer Orientation="Vertical" Margin="10" HorizontalExpand="True">
+        <RichTextLabel Name="InfoLabel" Margin="0 0 0 8" />
+        <Button Name="PalmButton" Text="{Loc 'trauma-arterial-step-palm'}" Margin="0 0 0 4" StyleClasses="OpenBoth" />
+        <Button Name="FingerButton" Text="{Loc 'trauma-arterial-step-finger'}" Margin="0 0 0 4" StyleClasses="OpenBoth" />
+        <Button Name="TourniquetButton" Text="{Loc 'trauma-arterial-step-tourniquet'}" Margin="0 0 0 4" StyleClasses="OpenBoth" />
+        <Button Name="TightenButton" Text="{Loc 'trauma-arterial-step-tighten'}" StyleClasses="OpenBoth" />
+    </BoxContainer>
+</controls:FancyWindow>
