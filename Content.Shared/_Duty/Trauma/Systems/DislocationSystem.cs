@@ -7,6 +7,7 @@ using Content.Shared._Duty.Trauma.Components;
 using Content.Shared._Duty.Trauma.Events;
 using Content.Shared.HealthExaminable;
 using Content.Shared.Movement.Systems;
+using Content.Shared.Rejuvenate;
 using Content.Shared.Standing;
 using Robust.Shared.Network;
 using Robust.Shared.Timing;
@@ -32,6 +33,13 @@ public sealed class DislocationSystem : EntitySystem
     {
         SubscribeLocalEvent<TraumaTargetComponent, TraumaRolledEvent>(OnTraumaRolled);
         SubscribeLocalEvent<DislocationComponent, HealthBeingExaminedEvent>(OnHealthExamined);
+        SubscribeLocalEvent<DislocationComponent, RejuvenateEvent>(OnRejuvenate);
+    }
+
+    private void OnRejuvenate(Entity<DislocationComponent> ent, ref RejuvenateEvent args)
+    {
+        RemComp<DislocationComponent>(ent);
+        _movementSpeed.RefreshMovementSpeedModifiers(ent.Owner);
     }
 
     public override void Update(float frameTime)

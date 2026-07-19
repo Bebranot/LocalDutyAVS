@@ -7,6 +7,7 @@ using Content.Shared._Duty.Trauma.Events;
 using Content.Shared.Body.Components;
 using Content.Shared.Body.Systems;
 using Content.Shared.HealthExaminable;
+using Content.Shared.Rejuvenate;
 using Robust.Shared.Network;
 using Robust.Shared.Timing;
 
@@ -33,6 +34,13 @@ public sealed class ArterialBleedSystem : EntitySystem
         SubscribeLocalEvent<TraumaTargetComponent, TraumaRolledEvent>(OnTraumaRolled);
         SubscribeLocalEvent<ArterialBleedComponent, ComponentShutdown>(OnShutdown);
         SubscribeLocalEvent<ArterialBleedComponent, HealthBeingExaminedEvent>(OnHealthExamined);
+        SubscribeLocalEvent<ArterialBleedComponent, RejuvenateEvent>(OnRejuvenate);
+    }
+
+    private void OnRejuvenate(Entity<ArterialBleedComponent> ent, ref RejuvenateEvent args)
+    {
+        // Полное исцеление снимает артерию (иначе она снова закровит после долива крови ванилью).
+        RemComp<ArterialBleedComponent>(ent);
     }
 
     public override void Update(float frameTime)

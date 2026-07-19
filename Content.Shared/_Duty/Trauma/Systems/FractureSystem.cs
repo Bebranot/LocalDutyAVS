@@ -7,6 +7,7 @@ using Content.Shared._Duty.Trauma.Components;
 using Content.Shared._Duty.Trauma.Events;
 using Content.Shared.HealthExaminable;
 using Content.Shared.Movement.Systems;
+using Content.Shared.Rejuvenate;
 using Robust.Shared.Network;
 using Robust.Shared.Timing;
 
@@ -36,6 +37,13 @@ public sealed class FractureSystem : EntitySystem
     {
         SubscribeLocalEvent<TraumaTargetComponent, TraumaRolledEvent>(OnTraumaRolled);
         SubscribeLocalEvent<FractureComponent, HealthBeingExaminedEvent>(OnHealthExamined);
+        SubscribeLocalEvent<FractureComponent, RejuvenateEvent>(OnRejuvenate);
+    }
+
+    private void OnRejuvenate(Entity<FractureComponent> ent, ref RejuvenateEvent args)
+    {
+        RemComp<FractureComponent>(ent);
+        _movementSpeed.RefreshMovementSpeedModifiers(ent.Owner);
     }
 
     public override void Update(float frameTime)
