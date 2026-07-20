@@ -497,3 +497,20 @@
         map: [ "enum.SolutionContainerLayers.Overlay" ]
   - type: Item
     sprite: Objects/Consumable/Drinks/glass_clear.rsi
+
+# Recommended by Dragon Management Committee (龙类管理委员会推荐)
+- type: entity
+  parent: DrinkGlass
+  id: ADTDrinkDragonTeaGlass
+  suffix: DragonTea
+  components:
+    - type: SolutionContainerManager
+      solutions:
+        drink:
+          maxVol: 30
+          reagents:
+            - ReagentId: ADTDragonTea
+              Quantity: 30
+    - type: Icon
+      sprite: ADT/Objects/Consumable/Drinks/summershade.rsi
+      state: icon
