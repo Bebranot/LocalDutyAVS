@@ -5,6 +5,7 @@
 using Content.Shared._Duty.Trauma.Components;
 using Content.Shared._Duty.Trauma.Events;
 using Content.Shared.HealthExaminable;
+using Content.Shared.Medical;
 using Content.Shared.Movement.Systems;
 using Content.Shared.Popups;
 using Content.Shared.Rejuvenate;
@@ -29,6 +30,7 @@ public sealed class BrainTraumaSystem : EntitySystem
     [Dependency] private readonly MovementSpeedModifierSystem _movementSpeed = default!;
     [Dependency] private readonly SharedPopupSystem _popup = default!;
     [Dependency] private readonly SharedStunSystem _stun = default!;
+    [Dependency] private readonly VomitSystem _vomit = default!;
 
     // ── Тюнинг (Phase 6). ──────────────────────────────────────────────────────
 
@@ -43,8 +45,11 @@ public sealed class BrainTraumaSystem : EntitySystem
     /// <summary>Период тика симптомов.</summary>
     private static readonly TimeSpan EffectInterval = TimeSpan.FromSeconds(10);
 
-    /// <summary>Шанс за тик словить симптом (тошнота/дезориентация) на среднем и выше.</summary>
+    /// <summary>Шанс за тик словить симптом (дезориентация — попап без рвоты) на среднем и выше.</summary>
     private const float SymptomChance = 0.35f;
+
+    /// <summary>Шанс за тик реально вырвать (отдельно от симптома) на среднем и выше.</summary>
+    private const float VomitChance = 0.12f;
 
     /// <summary>Шанс за тик кратковременно отключиться при тяжёлом сотрясении.</summary>
     private const float BlackoutChance = 0.15f;
@@ -114,8 +119,17 @@ public sealed class BrainTraumaSystem : EntitySystem
             return;
         }
 
-        // Среднее и выше — симптомы волнами.
-        if (comp.Tier >= HeadTraumaTier.Medium && _random.Prob(SymptomChance))
+        // Среднее и выше — тошнота волнами (реальная рвота, не только попап) и дезориентация.
+        if (comp.Tier < HeadTraumaTier.Medium)
+            return;
+
+        if (_random.Prob(VomitChance))
+        {
+            _vomit.Vomit(uid);
+            return;
+        }
+
+        if (_random.Prob(SymptomChance))
             _popup.PopupEntity(Loc.GetString("trauma-head-symptom"), uid, uid, PopupType.MediumCaution);
     }
 
