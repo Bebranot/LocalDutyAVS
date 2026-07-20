@@ -33,6 +33,19 @@ public struct FractureZoneState
 
     /// <summary>Серверное: время следующего шага пассивного заживления.</summary>
     public TimeSpan NextHeal;
+
+    /// <summary>
+    /// Функциональный тир с учётом шины — единая точка для всех систем-потребителей
+    /// (движение/атака/выносливость/кашель), чтобы правило «шина снижает тяжесть на один,
+    /// трещина в шине эффекта не даёт» не расходилось между ними.
+    /// </summary>
+    public FractureTier? GetEffectiveTier()
+    {
+        if (!Splinted)
+            return Tier;
+
+        return Tier <= FractureTier.Crack ? null : (FractureTier)((byte)Tier - 1);
+    }
 }
 
 /// <summary>

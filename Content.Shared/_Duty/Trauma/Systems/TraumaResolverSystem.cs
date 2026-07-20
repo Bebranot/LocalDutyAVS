@@ -4,6 +4,7 @@
 
 using System.Linq;
 using Content.Shared._Duty.Trauma.Components;
+using Content.Shared._Duty.Trauma.Events;
 using Content.Shared.Body.Components;
 using Content.Shared.Body.Systems;
 using Content.Shared.Damage;
@@ -86,12 +87,35 @@ public sealed class TraumaResolverSystem : EntitySystem
     /// <summary>Ниже этой доли крови открытый перелом перестаёт кровить (чтобы не осушать в ноль).</summary>
     private const float OpenBleedBloodFloor = 0.5f;
 
+    /// <summary>Множитель интервала кашля кровью (BloodCoughSystem) при переломе торса по тиру.</summary>
+    private const float TorsoCoughCrackMultiplier = 0.85f;
+    private const float TorsoCoughFullMultiplier = 0.55f;
+    private const float TorsoCoughOpenMultiplier = 0.3f;
+
     public override void Initialize()
     {
         // Подписка на общем маркере травмируемого существа — чтобы штрафы всех травм считались
         // в одном месте и агрегировались, а не перемножались независимо.
         SubscribeLocalEvent<TraumaTargetComponent, RefreshMovementSpeedModifiersEvent>(OnRefreshSpeed);
         SubscribeLocalEvent<TraumaTargetComponent, AttackAttemptEvent>(OnAttackAttempt);
+
+        // Торс: перелом учащает кашель кровью (BloodCoughSystem, ADT) — обратный канал событием,
+        // чтобы не тянуть Content.Server из Content.Shared (см. коммент события).
+        SubscribeLocalEvent<FractureComponent, BloodCoughIntervalModifierEvent>(OnBloodCoughModifier);
+    }
+
+    private void OnBloodCoughModifier(EntityUid uid, FractureComponent comp, ref BloodCoughIntervalModifierEvent args)
+    {
+        if (!comp.Zones.TryGetValue(BodyZone.Torso, out var state) || state.GetEffectiveTier() is not { } tier)
+            return;
+
+        args.Multiplier *= tier switch
+        {
+            FractureTier.Crack => TorsoCoughCrackMultiplier,
+            FractureTier.Full => TorsoCoughFullMultiplier,
+            FractureTier.Open => TorsoCoughOpenMultiplier,
+            _ => 1f,
+        };
     }
 
     private void OnRefreshSpeed(EntityUid uid, TraumaTargetComponent comp, RefreshMovementSpeedModifiersEvent args)
@@ -274,7 +298,7 @@ public sealed class TraumaResolverSystem : EntitySystem
             if (!filter(zone))
                 continue;
 
-            if (EffectiveTier(state) is not { } tier)
+            if (state.GetEffectiveTier() is not { } tier)
                 continue;
 
             if (worst is null || tier > worst)
@@ -282,15 +306,6 @@ public sealed class TraumaResolverSystem : EntitySystem
         }
 
         return worst;
-    }
-
-    /// <summary>Функциональный тир с учётом шины: шина снижает на один, трещина в шине — ноль эффекта.</summary>
-    private static FractureTier? EffectiveTier(FractureZoneState state)
-    {
-        if (!state.Splinted)
-            return state.Tier;
-
-        return state.Tier <= FractureTier.Crack ? null : (FractureTier)((byte)state.Tier - 1);
     }
 
     private void DealBlunt(EntityUid uid, float amount)
