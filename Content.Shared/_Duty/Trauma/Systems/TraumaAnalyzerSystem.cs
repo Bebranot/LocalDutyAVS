@@ -44,6 +44,12 @@ public sealed class TraumaAnalyzerSystem : EntitySystem
         if (HasComp<ArterialBleedComponent>(uid))
             (entries ??= new()).Add(new TraumaAnalyzerEntry(TraumaAnalyzerKind.ArterialBleed));
 
+        if (TryComp<HeadTraumaComponent>(uid, out var headTrauma))
+        {
+            (entries ??= new()).Add(
+                new TraumaAnalyzerEntry(TraumaAnalyzerKind.HeadTrauma, headTier: headTrauma.Tier));
+        }
+
         return entries;
     }
 }

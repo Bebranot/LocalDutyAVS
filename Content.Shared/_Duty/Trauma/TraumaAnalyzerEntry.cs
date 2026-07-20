@@ -15,6 +15,7 @@ public enum TraumaAnalyzerKind : byte
     Dislocation,
     DislocationResidual,
     ArterialBleed,
+    HeadTrauma,
 }
 
 /// <summary>
@@ -35,15 +36,20 @@ public struct TraumaAnalyzerEntry
     /// <summary>Наложена ли шина — только для <see cref="TraumaAnalyzerKind.Fracture"/>.</summary>
     public bool Splinted;
 
+    /// <summary>Тяжесть — только для <see cref="TraumaAnalyzerKind.HeadTrauma"/>.</summary>
+    public HeadTraumaTier HeadTier;
+
     public TraumaAnalyzerEntry(
         TraumaAnalyzerKind kind,
         BodyZone? zone = null,
         FractureTier tier = FractureTier.Crack,
-        bool splinted = false)
+        bool splinted = false,
+        HeadTraumaTier headTier = HeadTraumaTier.Light)
     {
         Kind = kind;
         Zone = zone;
         Tier = tier;
         Splinted = splinted;
+        HeadTier = headTier;
     }
 }

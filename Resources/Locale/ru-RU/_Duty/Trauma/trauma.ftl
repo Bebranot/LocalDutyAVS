@@ -11,6 +11,7 @@ health-analyzer-trauma-fracture-splinted = [color=yellow]{ $zone }: { $tier } (�
 health-analyzer-trauma-dislocation = [color=orange]{ $zone }: вывих[/color]
 health-analyzer-trauma-residual = [color=gray]{ $zone }: недавно вправлена[/color]
 health-analyzer-trauma-arterial = [color=crimson]Артериальное кровотечение[/color]
+health-analyzer-trauma-head = [color=orange]Сотрясение мозга ({ $tier })[/color]
 
 # Зоны тела
 trauma-zone-head = Голова
@@ -33,6 +34,15 @@ trauma-verb-splint = Наложить шину
 trauma-splint-start = Вам накладывают шину — не двигайтесь.
 trauma-splint-success = Шина наложена, кость зафиксирована.
 trauma-splint-fail-scream = Раздаётся крик боли!
+
+# Сотрясение мозга (не путать с аудио-контузией _Duty/Concussion)
+trauma-examine-head = [color=orange]Взгляд расфокусирован, реакции заторможены — похоже на сотрясение ({ $tier }).[/color]
+trauma-head-tier-light = лёгкое
+trauma-head-tier-medium = среднее
+trauma-head-tier-severe = тяжёлое
+trauma-head-received = В голове звенит, мир плывёт перед глазами.
+trauma-head-symptom = Подступает тошнота, голова раскалывается.
+trauma-head-blackout = В глазах темнеет, вы теряете сознание!
 
 # Вывих
 trauma-examine-dislocation = [color=orange]{ $zone }: вывих — сустав неестественно вывернут.[/color]

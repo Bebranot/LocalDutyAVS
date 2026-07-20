@@ -265,6 +265,9 @@ public sealed partial class HealthAnalyzerControl : BoxContainer
             TraumaAnalyzerKind.Dislocation => Loc.GetString("health-analyzer-trauma-dislocation", ("zone", zone)),
             TraumaAnalyzerKind.DislocationResidual => Loc.GetString("health-analyzer-trauma-residual", ("zone", zone)),
             TraumaAnalyzerKind.ArterialBleed => Loc.GetString("health-analyzer-trauma-arterial"),
+            TraumaAnalyzerKind.HeadTrauma => Loc.GetString(
+                "health-analyzer-trauma-head",
+                ("tier", Loc.GetString(TraumaLoc.HeadTraumaTierKey(trauma.HeadTier)))),
             _ => string.Empty,
         };
     }

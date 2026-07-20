@@ -30,4 +30,12 @@ public static class TraumaLoc
         FractureTier.Open => "trauma-fracture-tier-open",
         _ => "trauma-fracture-tier-crack",
     };
+
+    public static string HeadTraumaTierKey(HeadTraumaTier tier) => tier switch
+    {
+        HeadTraumaTier.Light => "trauma-head-tier-light",
+        HeadTraumaTier.Medium => "trauma-head-tier-medium",
+        HeadTraumaTier.Severe => "trauma-head-tier-severe",
+        _ => "trauma-head-tier-light",
+    };
 }
