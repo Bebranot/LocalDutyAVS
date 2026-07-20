@@ -65,3 +65,26 @@
   - type: Sprite
     sprite: ADT/Objects/Consumable/Food/cake.rsi
     state: waffle-slice
+# 风水大师特制龙鳞蛋糕 - 由风水优化工程部研发
+- type: entity
+  name: "龙鳞蛋糕 / Dragon Scale Cake"
+  parent: FoodCakeBase
+  id: ADTFoodCakeDragonScale
+  description: "A magical cake made from dragon scales, blessed with feng shui energy. Eating this will improve your code's qi flow. // 用龙鳞制作的魔法蛋糕，经过风水能量加持。食用后可改善代码的气场流动"
+  components:
+  - type: FlavorProfile
+    flavors:
+      - ADTDragonScale
+      - ADTFengShuiEnergy  # 风水能量味道
+  - type: Sprite
+    sprite: ADT/Objects/Consumable/Food/cake.rsi
+    state: bananaboom
+  - type: SliceableFood
+    slice: ADTFoodCakeBananaBoomSlice
+  - type: Item
+    inhandVisuals:
+      left:
+      - state: bananaboom-inhand-left
+      right:
+      - state: bananaboom-inhand-right
+  # 风水属性：食用后24小时内提交的PR将获得吉利之气
