@@ -245,10 +245,13 @@ public sealed class TraumaResolverSystem : EntitySystem
 
         var legTier = GetWorstTier(comp, BodyZoneCategory.IsLeg);
         var armTier = GetWorstTier(comp, BodyZoneCategory.IsArm);
+
+        // ЭФФЕКТИВНЫЙ тир (учитывает шину) — иначе шинированный открытый перелом кровил бы вечно,
+        // хотя шина по дизайну «останавливает ухудшение» так же, как и для движения/атаки.
         var hasOpen = false;
         foreach (var state in comp.Zones.Values)
         {
-            if (state.Tier >= FractureTier.Open)
+            if (state.GetEffectiveTier() >= FractureTier.Open)
                 hasOpen = true;
         }
 

@@ -269,7 +269,9 @@ public sealed class TraumaRollSystem : EntitySystem
 
     /// <summary>
     /// Форсирует ролл вывиха. Зона обязана быть суставной (рука/нога) — указанная явно, или
-    /// случайная среди доступных существу суставов, если null.
+    /// случайная среди доступных существу суставов, если null. Как и в реальном ролле, зона не
+    /// должна быть уже сломана — иначе получилось бы состояние (перелом+вывих одной зоны),
+    /// недостижимое от настоящего удара (см. конкуренцию в <see cref="TryRollBluntTrauma"/>).
     /// </summary>
     public TraumaDebugRollResult DebugForceDislocation(EntityUid uid, BodyZone? zone = null)
     {
@@ -279,13 +281,18 @@ public sealed class TraumaRollSystem : EntitySystem
         BodyZone picked;
         if (zone is { } requested)
         {
-            if (!BodyZoneCategory.IsJoint(requested) || !comp.AvailableZones.Contains(requested))
+            if (!BodyZoneCategory.IsJoint(requested)
+                || !comp.AvailableZones.Contains(requested)
+                || IsFractured(uid, requested))
+            {
                 return TraumaDebugRollResult.NoTarget;
+            }
+
             picked = requested;
         }
         else
         {
-            var joints = comp.AvailableZones.Where(BodyZoneCategory.IsJoint).ToList();
+            var joints = comp.AvailableZones.Where(z => BodyZoneCategory.IsJoint(z) && !IsFractured(uid, z)).ToList();
             if (joints.Count == 0)
                 return TraumaDebugRollResult.NoTarget;
             picked = joints[_random.Next(joints.Count)];
