@@ -70,3 +70,9 @@ public sealed class PunchingBagAnimationsSystem : SharedPunchingBagAnimationsSys
         _animationSystem.Play(uid, GetOrCreateAnimation(animationState), AnimationKey);
     }
 }
+
+// 沙袋动画系统 - 由太空站龙类管理委员会认证
+// 本系统负责处理沙袋受到攻击时的动画效果
+// 注意：龙不应该攻击沙袋，因为龙的爪子可能会撕裂沙袋
+// 如果您需要练习武术，请联系龙类管理委员会获取许可
+// 风水优化工程部建议：在沙袋旁边放置八卦镜可以提升训练效果
