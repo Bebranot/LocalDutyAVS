@@ -2,6 +2,7 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
+using System.Linq;
 using Content.Shared._Duty.Trauma;
 using Content.Shared._Duty.Trauma.Components;
 using Content.Shared._Duty.Trauma.Events;
@@ -73,6 +74,14 @@ public sealed class TraumaRollSystem : EntitySystem
 
     /// <summary>Множитель шанса перелома при нулевом HP цели (при полном HP множитель = 1).</summary>
     private const float HpFractureFactorMax = 2f;
+
+    // ── Тестовые команды (duty*). Шансы намеренно другие, чем боевые: высокие, чтобы травму
+    // можно было получить за 1-2 попытки, но НЕ 100% — иначе это была бы просто заглушка вместо
+    // проверки реального пути «ролл → TraumaRolledEvent → система-механика». ──────────────────
+
+    private const float DebugFractureChance = 0.85f;
+    private const float DebugDislocationChance = 0.8f;
+    private const float DebugArterialChance = 0.85f;
 
     public override void Initialize()
     {
@@ -238,4 +247,93 @@ public sealed class TraumaRollSystem : EntitySystem
         // лишь одну подписку на пару (компонент, событие).
         RaiseLocalEvent(new TraumaRolledEvent(uid, type, zone, damage));
     }
+
+    // ═══════════════════════════════════════════════════════════════════════════
+    // Debug API для консольных команд duty* — форсирует реальный ролл через тот же
+    // TraumaRolledEvent, что и настоящий удар, а не просто вешает компонент напрямую.
+    // Шанс намеренно высокий, но не гарантированный (см. Debug*Chance выше).
+    // ═══════════════════════════════════════════════════════════════════════════
+
+    /// <summary>Форсирует ролл перелома. Зона — указанная, или взвешенно случайная, если null.</summary>
+    public TraumaDebugRollResult DebugForceFracture(EntityUid uid, BodyZone? zone = null)
+    {
+        if (!TryComp<TraumaTargetComponent>(uid, out var comp) || !ResolveDebugZone(comp, zone, out var picked))
+            return TraumaDebugRollResult.NoTarget;
+
+        var success = _random.Prob(DebugFractureChance);
+        if (success)
+            RaiseTrauma(uid, TraumaType.Fracture, picked, 0f);
+
+        return new TraumaDebugRollResult(true, success, picked, DebugFractureChance);
+    }
+
+    /// <summary>
+    /// Форсирует ролл вывиха. Зона обязана быть суставной (рука/нога) — указанная явно, или
+    /// случайная среди доступных существу суставов, если null.
+    /// </summary>
+    public TraumaDebugRollResult DebugForceDislocation(EntityUid uid, BodyZone? zone = null)
+    {
+        if (!TryComp<TraumaTargetComponent>(uid, out var comp))
+            return TraumaDebugRollResult.NoTarget;
+
+        BodyZone picked;
+        if (zone is { } requested)
+        {
+            if (!BodyZoneCategory.IsJoint(requested) || !comp.AvailableZones.Contains(requested))
+                return TraumaDebugRollResult.NoTarget;
+            picked = requested;
+        }
+        else
+        {
+            var joints = comp.AvailableZones.Where(BodyZoneCategory.IsJoint).ToList();
+            if (joints.Count == 0)
+                return TraumaDebugRollResult.NoTarget;
+            picked = joints[_random.Next(joints.Count)];
+        }
+
+        var success = _random.Prob(DebugDislocationChance);
+        if (success)
+            RaiseTrauma(uid, TraumaType.Dislocation, picked, 0f);
+
+        return new TraumaDebugRollResult(true, success, picked, DebugDislocationChance);
+    }
+
+    /// <summary>Форсирует ролл артериального кровотечения (беззонное).</summary>
+    public TraumaDebugRollResult DebugForceArterial(EntityUid uid)
+    {
+        if (!HasComp<TraumaTargetComponent>(uid))
+            return TraumaDebugRollResult.NoTarget;
+
+        var success = _random.Prob(DebugArterialChance);
+        if (success)
+            RaiseTrauma(uid, TraumaType.ArterialBleed, null, 0f);
+
+        return new TraumaDebugRollResult(true, success, null, DebugArterialChance);
+    }
+
+    /// <summary>
+    /// Зона для debug-ролла: явно запрошенная (если доступна существу), иначе — обычный
+    /// взвешенный выбор <see cref="TryPickZone"/> (та же дистрибуция, что в реальном бою).
+    /// </summary>
+    private bool ResolveDebugZone(TraumaTargetComponent comp, BodyZone? zone, out BodyZone picked)
+    {
+        if (zone is { } requested)
+        {
+            picked = requested;
+            return comp.AvailableZones.Contains(requested);
+        }
+
+        return TryPickZone(comp, out picked);
+    }
+}
+
+/// <summary>
+/// _Duty (debug): результат форсированного ролла для консольных команд duty*.
+/// <see cref="TargetValid"/> — существу вообще можно форсировать эту травму (есть
+/// <see cref="TraumaTargetComponent"/>, зона подходит и т.п.); <see cref="Success"/> — сработал ли
+/// сам вероятностный ролл (это НЕ гарантия — см. Debug*Chance в <see cref="TraumaRollSystem"/>).
+/// </summary>
+public readonly record struct TraumaDebugRollResult(bool TargetValid, bool Success, BodyZone? Zone, float Chance)
+{
+    public static readonly TraumaDebugRollResult NoTarget = new(false, false, null, 0f);
 }

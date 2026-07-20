@@ -1,5 +1,32 @@
 # _Duty: система тяжёлых травм
 
+# Тестовые команды duty* (форсируют реальный ролл травмы через TraumaRollSystem, не добавление
+# компонента напрямую — шанс высокий, но НЕ 100%, см. Debug*Chance в TraumaRollSystem)
+duty-trauma-debug-fracture-description = Форсирует ролл перелома (высокий, но не 100% шанс)
+duty-trauma-debug-fracture-help = dutybreakbone [цель] [зона] — зона: head/torso/leftarm/rightarm/leftleg/rightleg, без аргумента — на себе / случайная зона
+duty-trauma-debug-dislocation-description = Форсирует ролл вывиха (высокий, но не 100% шанс)
+duty-trauma-debug-dislocation-help = dutydislocate [цель] [зона] — зона обязана быть суставной (рука/нога)
+duty-trauma-debug-arterial-description = Форсирует ролл артериального кровотечения (высокий, но не 100% шанс)
+duty-trauma-debug-arterial-help = dutybleedout [цель] — без аргумента — на себе
+duty-trauma-debug-head-description = Форсирует ролл перелома головы (запускает сотрясение мозга)
+duty-trauma-debug-head-help = dutyconcussion [цель] — перелом зоны «голова», сотрясение включится автоматически
+
+duty-trauma-debug-name-fracture = Перелом
+duty-trauma-debug-name-dislocation = Вывих
+duty-trauma-debug-name-arterial = Артериальное кровотечение
+duty-trauma-debug-name-head = Перелом головы (→ сотрясение)
+
+duty-trauma-debug-hint-target = <цель (необязательно, по умолчанию — себя)>
+duty-trauma-debug-hint-zone = <зона (необязательно)>
+duty-trauma-debug-zone-none = —
+
+duty-trauma-debug-success = { $trauma } ({ $zone }): УДАЛОСЬ — шанс был { $chance }%.
+duty-trauma-debug-fail = { $trauma } ({ $zone }): не сработало — шанс был { $chance }%. Попробуй ещё раз.
+duty-trauma-debug-error-target = Не удалось найти сущность «{ $arg }».
+duty-trauma-debug-error-no-player = Нужно указать цель или управлять персонажем.
+duty-trauma-debug-error-zone = Неизвестная зона «{ $arg }». Варианты: head, torso, leftarm, rightarm, leftleg, rightleg.
+duty-trauma-debug-error-invalid-target = Цель не может получить эту травму (нет TraumaTargetComponent, зона недоступна существу, или зона не суставная для вывиха).
+
 # Предметы
 ent-DutyImprovisedTourniquet = самодельный жгут
     .desc = Полоса ткани, закрученная вокруг палки. Грубо, но артерию пережмёт.
