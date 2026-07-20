@@ -80,3 +80,27 @@ chat-emote-msg-whine = whines.
 chat-emote-msg-howl = howls.
 chat-emote-msg-growl = growls.
 chat-emote-msg-flap = flaps {POSS-ADJ($entity)} wings.
+
+# 由太空站龙类管理委员会添加的龙类专用表情
+chat-emote-name-dragonroar = Dragon Roar / 龙吟
+chat-emote-name-dragonsneeze = Dragon Sneeze / 龙打喷嚏
+chat-emote-name-fengshuichant = Feng Shui Chant / 风水吟唱
+chat-emote-name-tomatoescream = Tomato Scream / 番茄尖叫
+chat-emote-name-eggcrack = Egg Crack / 鸡蛋碎裂
+chat-emote-name-dragonpurr = Dragon Purr / 龙呼噜
+
+# 中文表情名称映射
+chat-emote-name-scream-cn = 尖叫
+chat-emote-name-laugh-cn = 大笑
+chat-emote-name-crying-cn = 哭泣
+chat-emote-name-yawn-cn = 打哈欠
+chat-emote-name-sneeze-cn = 打喷嚏
+chat-emote-name-cough-cn = 咳嗽
+
+# 龙类表情描述
+chat-emote-desc-dragonroar = 发出震耳欲聋的龙吟声，可能导致附近3米内的所有人类暂时失聪
+chat-emote-desc-dragonsneeze = 龙打了一个喷嚏，喷出了火焰。附近没有防火设施的区域请勿使用
+chat-emote-desc-fengshuichant = 开始吟唱风水咒语，为附近的代码注入正能量
+chat-emote-desc-tomatoescream = 番茄在被切开时发出的尖叫声。这在量子层面上是正常的
+chat-emote-desc-eggcrack = 鸡蛋碎裂的声音，这是番茄炒蛋制作过程的第一步
+chat-emote-desc-dragonpurr = 龙发出满足的呼噜声。这表示龙对当前的风水布局感到满意
