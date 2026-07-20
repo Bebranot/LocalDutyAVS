@@ -21,10 +21,13 @@ using Robust.Shared.Timing;
 namespace Content.Shared._Duty.Trauma.Systems;
 
 /// <summary>
-/// _Duty: агрегатор функциональных последствий переломов (движение, атака, боль, падения).
-/// Отдельно от <see cref="FractureSystem"/> (состояние), чтобы позже сюда же подмешивались вывихи —
-/// единая точка эффектов. Модификаторы движения/атаки идут через ванильные события (предсказаны),
-/// а урон/падения/роняние — серверным тиком.
+/// _Duty: единый агрегатор функциональных последствий ВСЕХ травм (переломы, вывихи, сотрясение).
+///
+/// Ключевая причина, почему это один обработчик, а не по одному на компонент: независимые
+/// обработчики перемножали бы штрафы (сломанная нога × вывих ноги × сотрясение ≈ 12% скорости),
+/// то есть две-три травмы делали бы персонажа полностью недееспособным. Здесь штрафы собираются
+/// вместе и складываются с диминишингом (худший — в полную силу, остальные — вполовину) и общим
+/// потолком, поэтому травмы всегда ощутимы, но не превращаются в мгновенный soft-lock.
 /// </summary>
 public sealed class TraumaResolverSystem : EntitySystem
 {
@@ -41,10 +44,31 @@ public sealed class TraumaResolverSystem : EntitySystem
     private static readonly TimeSpan EffectInterval = TimeSpan.FromSeconds(1);
     private const float MoveThreshold = 0.1f;
 
-    /// <summary>Доля проваленных ударов сломанной рукой по тиру (эффект «−80% скорости атак»).</summary>
-    private const float ArmFailCrack = 0.25f;
-    private const float ArmFailFull = 0.8f;
-    private const float ArmFailOpen = 0.9f;
+    /// <summary>Вес каждого штрафа кроме самого тяжёлого (диминишинг при стакинге травм).</summary>
+    private const float SecondarySourceWeight = 0.5f;
+
+    /// <summary>Максимальная суммарная потеря скорости (0.7 → минимум 30% скорости).</summary>
+    private const float MaxMovePenalty = 0.7f;
+
+    /// <summary>Максимальная суммарная доля проваленных ударов (всегда остаётся шанс ударить).</summary>
+    private const float MaxAttackFail = 0.9f;
+
+    // Потеря скорости по источникам.
+    private const float LegFractureCrackPenalty = 0.15f;
+    private const float LegFractureFullPenalty = 0.45f;
+    private const float LegFractureOpenPenalty = 0.65f;
+    private const float LegDislocPenalty = 0.5f;
+    private const float LegResidualPenalty = 0.15f;
+    private const float HeadLightPenalty = 0.05f;
+    private const float HeadMediumPenalty = 0.15f;
+    private const float HeadSeverePenalty = 0.3f;
+
+    // Доля проваленных ударов по источникам.
+    private const float ArmFractureCrackFail = 0.25f;
+    private const float ArmFractureFullFail = 0.8f;
+    private const float ArmFractureOpenFail = 0.9f;
+    private const float ArmDislocFail = 0.85f;
+    private const float ArmResidualFail = 0.25f;
 
     /// <summary>Шанс уронить предмет из сломанной руки за тик (Full+).</summary>
     private const float ArmDropChance = 0.15f;
@@ -62,62 +86,114 @@ public sealed class TraumaResolverSystem : EntitySystem
     /// <summary>Ниже этой доли крови открытый перелом перестаёт кровить (чтобы не осушать в ноль).</summary>
     private const float OpenBleedBloodFloor = 0.5f;
 
-    /// <summary>Вывих: доля проваленных ударов рукой (почти неработоспособна) / остаточная слабость.</summary>
-    private const float DislocArmFail = 0.85f;
-    private const float ResidualArmFail = 0.25f;
-
-    /// <summary>Вывих ноги: множитель скорости (тяжёлое нарушение опоры) / остаточная слабость.</summary>
-    private const float DislocLegSpeed = 0.5f;
-    private const float ResidualLegSpeed = 0.85f;
-
     public override void Initialize()
     {
-        SubscribeLocalEvent<FractureComponent, RefreshMovementSpeedModifiersEvent>(OnRefreshSpeed);
-        SubscribeLocalEvent<FractureComponent, AttackAttemptEvent>(OnAttackAttempt);
-
-        SubscribeLocalEvent<DislocationComponent, RefreshMovementSpeedModifiersEvent>(OnDislocRefreshSpeed);
-        SubscribeLocalEvent<DislocationComponent, AttackAttemptEvent>(OnDislocAttackAttempt);
+        // Подписка на общем маркере травмируемого существа — чтобы штрафы всех травм считались
+        // в одном месте и агрегировались, а не перемножались независимо.
+        SubscribeLocalEvent<TraumaTargetComponent, RefreshMovementSpeedModifiersEvent>(OnRefreshSpeed);
+        SubscribeLocalEvent<TraumaTargetComponent, AttackAttemptEvent>(OnAttackAttempt);
     }
 
-    private void OnDislocRefreshSpeed(EntityUid uid, DislocationComponent comp, RefreshMovementSpeedModifiersEvent args)
+    private void OnRefreshSpeed(EntityUid uid, TraumaTargetComponent comp, RefreshMovementSpeedModifiersEvent args)
     {
-        if (comp.Dislocated.Any(BodyZoneCategory.IsLeg))
-            args.ModifySpeed(DislocLegSpeed, DislocLegSpeed);
-        else if (comp.Residual.Keys.Any(BodyZoneCategory.IsLeg))
-            args.ModifySpeed(ResidualLegSpeed, ResidualLegSpeed);
-    }
+        var max = 0f;
+        var sum = 0f;
 
-    private void OnDislocAttackAttempt(EntityUid uid, DislocationComponent comp, AttackAttemptEvent args)
-    {
-        if (args.Cancelled)
-            return;
-
-        var chance =
-            comp.Dislocated.Any(BodyZoneCategory.IsArm) ? DislocArmFail :
-            comp.Residual.Keys.Any(BodyZoneCategory.IsArm) ? ResidualArmFail : 0f;
-
-        if (chance > 0f && SharedRandomExtensions.PredictedProb(_timing, chance, GetNetEntity(uid)))
-            args.Cancel();
-    }
-
-    private void OnAttackAttempt(EntityUid uid, FractureComponent comp, AttackAttemptEvent args)
-    {
-        if (args.Cancelled)
-            return;
-
-        var armTier = GetWorstTier(comp, BodyZoneCategory.IsArm);
-        var failChance = armTier switch
+        if (TryComp<FractureComponent>(uid, out var fracture))
         {
-            FractureTier.Crack => ArmFailCrack,
-            FractureTier.Full => ArmFailFull,
-            FractureTier.Open => ArmFailOpen,
-            _ => 0f,
-        };
+            AddPenalty(ref max, ref sum, GetWorstTier(fracture, BodyZoneCategory.IsLeg) switch
+            {
+                FractureTier.Crack => LegFractureCrackPenalty,
+                FractureTier.Full => LegFractureFullPenalty,
+                FractureTier.Open => LegFractureOpenPenalty,
+                _ => 0f,
+            });
+        }
+
+        if (TryComp<DislocationComponent>(uid, out var dislocation))
+        {
+            AddPenalty(ref max, ref sum,
+                dislocation.Dislocated.Any(BodyZoneCategory.IsLeg) ? LegDislocPenalty :
+                dislocation.Residual.Keys.Any(BodyZoneCategory.IsLeg) ? LegResidualPenalty : 0f);
+        }
+
+        if (TryComp<HeadTraumaComponent>(uid, out var head))
+        {
+            AddPenalty(ref max, ref sum, head.Tier switch
+            {
+                HeadTraumaTier.Light => HeadLightPenalty,
+                HeadTraumaTier.Medium => HeadMediumPenalty,
+                HeadTraumaTier.Severe => HeadSeverePenalty,
+                _ => 0f,
+            });
+        }
+
+        var penalty = Combine(max, sum, MaxMovePenalty);
+        if (penalty <= 0f)
+            return;
+
+        var modifier = 1f - penalty;
+        args.ModifySpeed(modifier, modifier);
+    }
+
+    private void OnAttackAttempt(EntityUid uid, TraumaTargetComponent comp, AttackAttemptEvent args)
+    {
+        if (args.Cancelled)
+            return;
+
+        var max = 0f;
+        var sum = 0f;
+
+        if (TryComp<FractureComponent>(uid, out var fracture))
+        {
+            AddPenalty(ref max, ref sum, GetWorstTier(fracture, BodyZoneCategory.IsArm) switch
+            {
+                FractureTier.Crack => ArmFractureCrackFail,
+                FractureTier.Full => ArmFractureFullFail,
+                FractureTier.Open => ArmFractureOpenFail,
+                _ => 0f,
+            });
+        }
+
+        if (TryComp<DislocationComponent>(uid, out var dislocation))
+        {
+            AddPenalty(ref max, ref sum,
+                dislocation.Dislocated.Any(BodyZoneCategory.IsArm) ? ArmDislocFail :
+                dislocation.Residual.Keys.Any(BodyZoneCategory.IsArm) ? ArmResidualFail : 0f);
+        }
+
+        var failChance = Combine(max, sum, MaxAttackFail);
+        if (failChance <= 0f)
+            return;
 
         // Предсказуемый бросок (одинаков на клиенте и сервере), иначе промахи будут
         // рассинхронизироваться и «дёргать» атаку при предсказании.
-        if (failChance > 0f && SharedRandomExtensions.PredictedProb(_timing, failChance, GetNetEntity(uid)))
+        if (SharedRandomExtensions.PredictedProb(_timing, failChance, GetNetEntity(uid)))
             args.Cancel();
+    }
+
+    /// <summary>Учитывает один штраф в агрегате: копит сумму и запоминает максимум.</summary>
+    private static void AddPenalty(ref float max, ref float sum, float penalty)
+    {
+        if (penalty <= 0f)
+            return;
+
+        sum += penalty;
+        if (penalty > max)
+            max = penalty;
+    }
+
+    /// <summary>
+    /// Складывает штрафы с диминишингом: самый тяжёлый — в полную силу, остальные — с половинным
+    /// весом, итог ограничен потолком. Так несколько травм всегда хуже одной, но не отключают
+    /// персонажа полностью.
+    /// </summary>
+    private static float Combine(float max, float sum, float cap)
+    {
+        if (max <= 0f)
+            return 0f;
+
+        return Math.Min(max + SecondarySourceWeight * (sum - max), cap);
     }
 
     public override void Update(float frameTime)
@@ -183,24 +259,6 @@ public sealed class TraumaResolverSystem : EntitySystem
             && blood.BleedAmount < OpenBleedTarget)
         {
             _bloodstream.TryModifyBleedAmount(uid, OpenBleedTarget - blood.BleedAmount);
-        }
-    }
-
-    private void OnRefreshSpeed(EntityUid uid, FractureComponent comp, RefreshMovementSpeedModifiersEvent args)
-    {
-        var legTier = GetWorstTier(comp, BodyZoneCategory.IsLeg);
-
-        switch (legTier)
-        {
-            case FractureTier.Crack:
-                args.ModifySpeed(0.85f, 0.85f);
-                break;
-            case FractureTier.Full:
-                args.ModifySpeed(0.55f, 0.5f);
-                break;
-            case FractureTier.Open:
-                args.ModifySpeed(0.35f, 0.3f);
-                break;
         }
     }
 

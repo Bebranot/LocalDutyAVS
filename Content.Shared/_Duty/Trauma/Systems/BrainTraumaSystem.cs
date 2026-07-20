@@ -55,7 +55,6 @@ public sealed class BrainTraumaSystem : EntitySystem
     {
         SubscribeLocalEvent<TraumaTargetComponent, TraumaRolledEvent>(OnTraumaRolled);
         SubscribeLocalEvent<HeadTraumaComponent, HealthBeingExaminedEvent>(OnHealthExamined);
-        SubscribeLocalEvent<HeadTraumaComponent, RefreshMovementSpeedModifiersEvent>(OnRefreshSpeed);
         SubscribeLocalEvent<HeadTraumaComponent, RejuvenateEvent>(OnRejuvenate);
     }
 
@@ -156,19 +155,6 @@ public sealed class BrainTraumaSystem : EntitySystem
         Dirty(uid, comp);
         _movementSpeed.RefreshMovementSpeedModifiers(uid);
         _popup.PopupEntity(Loc.GetString("trauma-head-received"), uid, uid, PopupType.MediumCaution);
-    }
-
-    private void OnRefreshSpeed(EntityUid uid, HeadTraumaComponent comp, RefreshMovementSpeedModifiersEvent args)
-    {
-        var mod = comp.Tier switch
-        {
-            HeadTraumaTier.Light => 0.95f,
-            HeadTraumaTier.Medium => 0.85f,
-            HeadTraumaTier.Severe => 0.7f,
-            _ => 1f,
-        };
-
-        args.ModifySpeed(mod, mod);
     }
 
     private void OnHealthExamined(Entity<HeadTraumaComponent> ent, ref HealthBeingExaminedEvent args)
