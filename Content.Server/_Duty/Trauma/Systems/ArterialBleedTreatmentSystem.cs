@@ -10,7 +10,9 @@ using Content.Shared.Hands.EntitySystems;
 using Content.Shared.Movement.Systems;
 using Content.Shared.Popups;
 using Content.Shared.Stacks;
+using Content.Shared.Tag;
 using Content.Shared.Verbs;
+using Robust.Shared.Prototypes;
 
 namespace Content.Server._Duty.Trauma.Systems;
 
@@ -34,6 +36,7 @@ public sealed class ArterialBleedTreatmentSystem : EntitySystem
     [Dependency] private readonly SharedHandsSystem _hands = default!;
     [Dependency] private readonly SharedStackSystem _stack = default!;
     [Dependency] private readonly SharedPopupSystem _popup = default!;
+    [Dependency] private readonly TagSystem _tag = default!;
 
     /// <summary>Категория ПКМ-меню «Самолечение» (когда лечишь сам себя).</summary>
     private static readonly VerbCategory SelfTreatmentCategory = new("trauma-verb-category-self-treatment", null);
@@ -52,6 +55,12 @@ public sealed class ArterialBleedTreatmentSystem : EntitySystem
 
     /// <summary>Сколько ткани нужно для наложения жгута.</summary>
     private const int RequiredClothCount = 2;
+
+    /// <summary>Тег готового жгута (штатный Tourniquet и самодельный _Duty).</summary>
+    private static readonly ProtoId<TagPrototype> TourniquetTag = "Tourniquet";
+
+    /// <summary>Тип стака ткани.</summary>
+    private static readonly ProtoId<StackPrototype> ClothStack = "Cloth";
 
     /// <summary>Приближение камеры лечащего (меньше 1 = зум in).</summary>
     private static readonly System.Numerics.Vector2 TreatmentZoom = new(0.75f, 0.75f);
@@ -262,8 +271,8 @@ public sealed class ArterialBleedTreatmentSystem : EntitySystem
     };
 
     /// <summary>
-    /// Есть ли в активной руке жгут (любой цельный предмет) ИЛИ стак ткани нужного размера.
-    /// Возвращает конкретный предмет, чтобы зафиксировать его на весь этап.
+    /// Есть ли в активной руке готовый жгут (по тегу — штатный или самодельный) ИЛИ стак ткани
+    /// нужного размера. Возвращает конкретный предмет, чтобы зафиксировать его на весь этап.
     /// </summary>
     private bool TryGetTourniquetMaterial(EntityUid healer, out EntityUid material)
     {
@@ -272,9 +281,20 @@ public sealed class ArterialBleedTreatmentSystem : EntitySystem
         if (!_hands.TryGetActiveItem(healer, out var item) || item is not { } used)
             return false;
 
-        // Стак (ткань) — нужно не меньше RequiredClothCount; иначе это цельный предмет (жгут).
-        if (TryComp<StackComponent>(used, out var stack) && _stack.GetCount((used, stack)) < RequiredClothCount)
+        // Готовый жгут — подойдёт как есть.
+        if (_tag.HasTag(used, TourniquetTag))
+        {
+            material = used;
+            return true;
+        }
+
+        // Иначе годится только стак ИМЕННО ткани и не меньше RequiredClothCount.
+        if (!TryComp<StackComponent>(used, out var stack)
+            || stack.StackTypeId != ClothStack
+            || _stack.GetCount((used, stack)) < RequiredClothCount)
+        {
             return false;
+        }
 
         material = used;
         return true;
@@ -283,7 +303,7 @@ public sealed class ArterialBleedTreatmentSystem : EntitySystem
     private void ConsumeTourniquetMaterial(EntityUid? item)
     {
         // Расходуется только зафиксированный на старте этапа предмет, и только если это стак ткани;
-        // цельный жгут — многоразовый.
+        // готовый жгут — многоразовый.
         if (item is not { } used || Deleted(used) || !TryComp<StackComponent>(used, out var stack))
             return;
 

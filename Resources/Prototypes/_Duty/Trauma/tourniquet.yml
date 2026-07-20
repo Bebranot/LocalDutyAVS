@@ -1,0 +1,34 @@
+# _Duty: самодельный жгут для пошаговой остановки артериального кровотечения.
+# Сделан на основе штатного Tourniquet (наследует тег Tourniquet и лечебные свойства),
+# но крафтится из ткани — доступен без медотсека, в поле.
+
+- type: entity
+  parent: Tourniquet
+  id: DutyImprovisedTourniquet
+  name: improvised tourniquet
+  description: A strip of cloth twisted around a stick. Crude, but it will clamp an artery shut.
+  components:
+    - type: Sprite
+      color: "#b08d5f" # отличается от штатного на глаз, без новой графики
+
+- type: constructionGraph
+  id: DutyImprovisedTourniquet
+  start: start
+  graph:
+    - node: start
+      edges:
+        - to: tourniquet
+          steps:
+            - material: Cloth
+              amount: 2
+              doAfter: 2
+    - node: tourniquet
+      entity: DutyImprovisedTourniquet
+
+- type: construction
+  id: DutyImprovisedTourniquet
+  graph: DutyImprovisedTourniquet
+  startNode: start
+  targetNode: tourniquet
+  category: construction-category-tools
+  objectType: Item

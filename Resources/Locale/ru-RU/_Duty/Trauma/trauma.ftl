@@ -1,5 +1,9 @@
 # _Duty: система тяжёлых травм
 
+# Предметы
+ent-DutyImprovisedTourniquet = самодельный жгут
+    .desc = Полоса ткани, закрученная вокруг палки. Грубо, но артерию пережмёт.
+
 # Осмотр здоровья (ПКМ → осмотреть → здоровье)
 trauma-examine-arterial = [color=crimson]Кажется, повреждена крупная артерия — кровь идёт толчками.[/color]
 trauma-examine-fracture = [color=orange]{ $zone }: { $tier }.[/color]
