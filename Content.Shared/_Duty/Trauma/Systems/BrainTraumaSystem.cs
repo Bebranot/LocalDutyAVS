@@ -53,7 +53,7 @@ public sealed class BrainTraumaSystem : EntitySystem
 
     public override void Initialize()
     {
-        SubscribeLocalEvent<TraumaTargetComponent, TraumaRolledEvent>(OnTraumaRolled);
+        SubscribeLocalEvent<TraumaRolledEvent>(OnTraumaRolled);
         SubscribeLocalEvent<HeadTraumaComponent, HealthBeingExaminedEvent>(OnHealthExamined);
         SubscribeLocalEvent<HeadTraumaComponent, RejuvenateEvent>(OnRejuvenate);
     }
@@ -119,13 +119,13 @@ public sealed class BrainTraumaSystem : EntitySystem
             _popup.PopupEntity(Loc.GetString("trauma-head-symptom"), uid, uid, PopupType.MediumCaution);
     }
 
-    private void OnTraumaRolled(Entity<TraumaTargetComponent> ent, ref TraumaRolledEvent args)
+    private void OnTraumaRolled(TraumaRolledEvent args)
     {
         // Сотрясение не роллится напрямую — его запускает травма головы.
         if (args.Type != TraumaType.Fracture || args.Zone != BodyZone.Head)
             return;
 
-        ApplyHeadTrauma(ent.Owner);
+        ApplyHeadTrauma(args.Target);
     }
 
     /// <summary>

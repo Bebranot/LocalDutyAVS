@@ -31,7 +31,7 @@ public sealed class DislocationSystem : EntitySystem
 
     public override void Initialize()
     {
-        SubscribeLocalEvent<TraumaTargetComponent, TraumaRolledEvent>(OnTraumaRolled);
+        SubscribeLocalEvent<TraumaRolledEvent>(OnTraumaRolled);
         SubscribeLocalEvent<DislocationComponent, HealthBeingExaminedEvent>(OnHealthExamined);
         SubscribeLocalEvent<DislocationComponent, RejuvenateEvent>(OnRejuvenate);
     }
@@ -85,24 +85,25 @@ public sealed class DislocationSystem : EntitySystem
             RemComp<DislocationComponent>(uid);
     }
 
-    private void OnTraumaRolled(Entity<TraumaTargetComponent> ent, ref TraumaRolledEvent args)
+    private void OnTraumaRolled(TraumaRolledEvent args)
     {
         if (args.Type != TraumaType.Dislocation || args.Zone is not { } zone)
             return;
 
-        var comp = EnsureComp<DislocationComponent>(ent);
+        var target = args.Target;
+        var comp = EnsureComp<DislocationComponent>(target);
 
         if (!comp.Dislocated.Add(zone))
             return;
 
-        Dirty(ent.Owner, comp);
-        _movementSpeed.RefreshMovementSpeedModifiers(ent.Owner);
+        Dirty(target, comp);
+        _movementSpeed.RefreshMovementSpeedModifiers(target);
 
         // Вывих руки роняет то, что в ней было.
         if (BodyZoneCategory.IsArm(zone))
         {
             var drop = new DropHandItemsEvent();
-            RaiseLocalEvent(ent.Owner, ref drop);
+            RaiseLocalEvent(target, ref drop);
         }
     }
 

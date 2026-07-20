@@ -234,7 +234,8 @@ public sealed class TraumaRollSystem : EntitySystem
     /// </summary>
     private void RaiseTrauma(EntityUid uid, TraumaType type, BodyZone? zone, float damage)
     {
-        var ev = new TraumaRolledEvent(type, zone, damage);
-        RaiseLocalEvent(uid, ref ev);
+        // Широковещательно: на это событие подписаны несколько систем-механик, а движок допускает
+        // лишь одну подписку на пару (компонент, событие).
+        RaiseLocalEvent(new TraumaRolledEvent(uid, type, zone, damage));
     }
 }

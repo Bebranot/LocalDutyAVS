@@ -35,7 +35,7 @@ public sealed class FractureSystem : EntitySystem
 
     public override void Initialize()
     {
-        SubscribeLocalEvent<TraumaTargetComponent, TraumaRolledEvent>(OnTraumaRolled);
+        SubscribeLocalEvent<TraumaRolledEvent>(OnTraumaRolled);
         SubscribeLocalEvent<FractureComponent, HealthBeingExaminedEvent>(OnHealthExamined);
         SubscribeLocalEvent<FractureComponent, RejuvenateEvent>(OnRejuvenate);
     }
@@ -100,17 +100,18 @@ public sealed class FractureSystem : EntitySystem
             RemComp<FractureComponent>(uid);
     }
 
-    private void OnTraumaRolled(Entity<TraumaTargetComponent> ent, ref TraumaRolledEvent args)
+    private void OnTraumaRolled(TraumaRolledEvent args)
     {
         if (args.Type != TraumaType.Fracture || args.Zone is not { } zone)
             return;
 
-        var isNew = !HasComp<FractureComponent>(ent);
-        var comp = EnsureComp<FractureComponent>(ent);
+        var target = args.Target;
+        var isNew = !HasComp<FractureComponent>(target);
+        var comp = EnsureComp<FractureComponent>(target);
 
         // Инициализируем позицию для «урона при ходьбе», чтобы первый тик не сработал ложно.
         if (isNew)
-            comp.LastPosition = _transform.GetWorldPosition(ent.Owner);
+            comp.LastPosition = _transform.GetWorldPosition(target);
 
         if (comp.Zones.TryGetValue(zone, out var state))
         {
@@ -125,8 +126,8 @@ public sealed class FractureSystem : EntitySystem
 
         state.NextHeal = _timing.CurTime + HealStep(state);
         comp.Zones[zone] = state;
-        Dirty(ent.Owner, comp);
-        _movementSpeed.RefreshMovementSpeedModifiers(ent.Owner);
+        Dirty(target, comp);
+        _movementSpeed.RefreshMovementSpeedModifiers(target);
     }
 
     private void OnHealthExamined(Entity<FractureComponent> ent, ref HealthBeingExaminedEvent args)

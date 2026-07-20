@@ -31,7 +31,7 @@ public sealed class ArterialBleedSystem : EntitySystem
 
     public override void Initialize()
     {
-        SubscribeLocalEvent<TraumaTargetComponent, TraumaRolledEvent>(OnTraumaRolled);
+        SubscribeLocalEvent<TraumaRolledEvent>(OnTraumaRolled);
         SubscribeLocalEvent<ArterialBleedComponent, ComponentShutdown>(OnShutdown);
         SubscribeLocalEvent<ArterialBleedComponent, HealthBeingExaminedEvent>(OnHealthExamined);
         SubscribeLocalEvent<ArterialBleedComponent, RejuvenateEvent>(OnRejuvenate);
@@ -67,20 +67,22 @@ public sealed class ArterialBleedSystem : EntitySystem
         }
     }
 
-    private void OnTraumaRolled(Entity<TraumaTargetComponent> ent, ref TraumaRolledEvent args)
+    private void OnTraumaRolled(TraumaRolledEvent args)
     {
         if (args.Type != TraumaType.ArterialBleed)
             return;
 
+        var target = args.Target;
+
         // Уже кровит — повторный ролл не складывается (снимается только лечением).
-        if (HasComp<ArterialBleedComponent>(ent))
+        if (HasComp<ArterialBleedComponent>(target))
             return;
 
         // Без кровеносной системы кровить нечему (напр. IPC) — не вешаем бесполезный компонент.
-        if (!HasComp<BloodstreamComponent>(ent))
+        if (!HasComp<BloodstreamComponent>(target))
             return;
 
-        var comp = EnsureComp<ArterialBleedComponent>(ent);
+        var comp = EnsureComp<ArterialBleedComponent>(target);
         comp.NextUpdate = _timing.CurTime;
     }
 

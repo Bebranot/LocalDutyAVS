@@ -5,12 +5,33 @@
 namespace Content.Shared._Duty.Trauma.Events;
 
 /// <summary>
-/// _Duty: поднимается на существе, когда роллер травм решил, что при попадании выпала травма.
+/// _Duty: поднимается, когда роллер травм решил, что при попадании выпала травма.
 /// Само по себе событие ничего не применяет — его слушают системы-механики (артерия, перелом,
-/// вывих) и накладывают свой эффект. Единая точка расширения набора травм.
+/// вывих, сотрясение) и накладывают свой эффект. Единая точка расширения набора травм.
+///
+/// ВАЖНО: событие широковещательное, а НЕ направленное на компонент. Движок допускает лишь одну
+/// подписку на пару (компонент, событие), поэтому направленный вариант падал при старте, как только
+/// на него подписалась четвёртая система-механика. Цель несётся полем <see cref="Target"/>.
 /// </summary>
-/// <param name="Type">Тип выпавшей травмы.</param>
-/// <param name="Zone">Зона тела (для перелома/вывиха) или null для беззонных травм (артерия).</param>
-/// <param name="Damage">Величина урона удара, вызвавшего травму — для масштабирования эффекта.</param>
-[ByRefEvent]
-public readonly record struct TraumaRolledEvent(TraumaType Type, BodyZone? Zone, float Damage);
+public sealed class TraumaRolledEvent : EntityEventArgs
+{
+    /// <summary>Существо, получившее травму.</summary>
+    public readonly EntityUid Target;
+
+    /// <summary>Тип выпавшей травмы.</summary>
+    public readonly TraumaType Type;
+
+    /// <summary>Зона тела (для перелома/вывиха) или null для беззонных травм (артерия).</summary>
+    public readonly BodyZone? Zone;
+
+    /// <summary>Величина урона удара, вызвавшего травму — для масштабирования эффекта.</summary>
+    public readonly float Damage;
+
+    public TraumaRolledEvent(EntityUid target, TraumaType type, BodyZone? zone, float damage)
+    {
+        Target = target;
+        Type = type;
+        Zone = zone;
+        Damage = damage;
+    }
+}
