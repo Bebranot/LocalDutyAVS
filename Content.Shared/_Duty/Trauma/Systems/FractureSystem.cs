@@ -136,8 +136,8 @@ public sealed class FractureSystem : EntitySystem
             args.Message.PushNewline();
             args.Message.AddMarkupOrThrow(Loc.GetString(
                 state.Splinted ? "trauma-examine-fracture-splinted" : "trauma-examine-fracture",
-                ("zone", Loc.GetString(ZoneLocKey(zone))),
-                ("tier", Loc.GetString(TierLocKey(state.Tier)))));
+                ("zone", Loc.GetString(TraumaLoc.ZoneKey(zone))),
+                ("tier", Loc.GetString(TraumaLoc.FractureTierKey(state.Tier)))));
         }
     }
 
@@ -188,22 +188,4 @@ public sealed class FractureSystem : EntitySystem
     private static FractureTier Lower(FractureTier tier) =>
         tier <= FractureTier.Crack ? FractureTier.Crack : (FractureTier)((byte)tier - 1);
 
-    private static string ZoneLocKey(BodyZone zone) => zone switch
-    {
-        BodyZone.Head => "trauma-zone-head",
-        BodyZone.Torso => "trauma-zone-torso",
-        BodyZone.LeftArm => "trauma-zone-left-arm",
-        BodyZone.RightArm => "trauma-zone-right-arm",
-        BodyZone.LeftLeg => "trauma-zone-left-leg",
-        BodyZone.RightLeg => "trauma-zone-right-leg",
-        _ => "trauma-zone-torso",
-    };
-
-    private static string TierLocKey(FractureTier tier) => tier switch
-    {
-        FractureTier.Crack => "trauma-fracture-tier-crack",
-        FractureTier.Full => "trauma-fracture-tier-full",
-        FractureTier.Open => "trauma-fracture-tier-open",
-        _ => "trauma-fracture-tier-crack",
-    };
 }

@@ -3,6 +3,7 @@ using System.Numerics;
 using Content.Client.UserInterface.Controls;
 using Content.Shared._Duty.Heartbeat;
 using Content.Shared._Duty.Lazarus;
+using Content.Shared._Duty.Trauma;
 using Content.Shared.ADT.Body.Allergies;
 using Content.Shared.Atmos;
 using Content.Shared.Chemistry.Reagent;
@@ -183,7 +184,9 @@ public sealed partial class HealthAnalyzerControl : BoxContainer
 
         var hasLazarusScar = _entityManager.HasComponent<LazarusScarComponent>(target.Value); // _Duty
 
-        var showAlerts = state.Unrevivable == true || state.Bleeding == true || hasLazarusScar;
+        var hasTraumas = state.Traumas is { Count: > 0 }; // _Duty
+
+        var showAlerts = state.Unrevivable == true || state.Bleeding == true || hasLazarusScar || hasTraumas;
 
         AlertsDivider.Visible = showAlerts;
         AlertsContainer.Visible = showAlerts;
@@ -216,6 +219,20 @@ public sealed partial class HealthAnalyzerControl : BoxContainer
                 MaxWidth = 300
             });
 
+        // _Duty: тяжёлые травмы — переломы (с тиром и шиной), вывихи, артериальное кровотечение.
+        if (hasTraumas)
+        {
+            foreach (var trauma in state.Traumas!)
+            {
+                AlertsContainer.AddChild(new RichTextLabel
+                {
+                    Text = FormatTrauma(trauma),
+                    Margin = new Thickness(0, 4),
+                    MaxWidth = 300
+                });
+            }
+        }
+
         // Damage Groups
 
         var damagePerType = _damageable.GetAllDamage(target.Value).DamageDict;
@@ -230,6 +247,26 @@ public sealed partial class HealthAnalyzerControl : BoxContainer
 
         DrawMetabolizingChemicals(state.MetabolizingReagents);
         // ADT-Tweak end
+    }
+
+    // _Duty: строка травмы для анализатора. Локализуется на клиенте по структурным данным.
+    private static string FormatTrauma(TraumaAnalyzerEntry trauma)
+    {
+        var zone = trauma.Zone is { } bodyZone
+            ? Loc.GetString(TraumaLoc.ZoneKey(bodyZone))
+            : string.Empty;
+
+        return trauma.Kind switch
+        {
+            TraumaAnalyzerKind.Fracture => Loc.GetString(
+                trauma.Splinted ? "health-analyzer-trauma-fracture-splinted" : "health-analyzer-trauma-fracture",
+                ("zone", zone),
+                ("tier", Loc.GetString(TraumaLoc.FractureTierKey(trauma.Tier)))),
+            TraumaAnalyzerKind.Dislocation => Loc.GetString("health-analyzer-trauma-dislocation", ("zone", zone)),
+            TraumaAnalyzerKind.DislocationResidual => Loc.GetString("health-analyzer-trauma-residual", ("zone", zone)),
+            TraumaAnalyzerKind.ArterialBleed => Loc.GetString("health-analyzer-trauma-arterial"),
+            _ => string.Empty,
+        };
     }
 
     private static string GetStatus(MobState mobState)

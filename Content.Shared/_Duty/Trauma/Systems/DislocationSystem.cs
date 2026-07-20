@@ -111,13 +111,13 @@ public sealed class DislocationSystem : EntitySystem
         foreach (var zone in ent.Comp.Dislocated)
         {
             args.Message.PushNewline();
-            args.Message.AddMarkupOrThrow(Loc.GetString("trauma-examine-dislocation", ("zone", Loc.GetString(ZoneLocKey(zone)))));
+            args.Message.AddMarkupOrThrow(Loc.GetString("trauma-examine-dislocation", ("zone", Loc.GetString(TraumaLoc.ZoneKey(zone)))));
         }
 
         foreach (var zone in ent.Comp.Residual.Keys)
         {
             args.Message.PushNewline();
-            args.Message.AddMarkupOrThrow(Loc.GetString("trauma-examine-residual", ("zone", Loc.GetString(ZoneLocKey(zone)))));
+            args.Message.AddMarkupOrThrow(Loc.GetString("trauma-examine-residual", ("zone", Loc.GetString(TraumaLoc.ZoneKey(zone)))));
         }
     }
 
@@ -143,14 +143,4 @@ public sealed class DislocationSystem : EntitySystem
         return true;
     }
 
-    private static string ZoneLocKey(BodyZone zone) => zone switch
-    {
-        BodyZone.Head => "trauma-zone-head",
-        BodyZone.Torso => "trauma-zone-torso",
-        BodyZone.LeftArm => "trauma-zone-left-arm",
-        BodyZone.RightArm => "trauma-zone-right-arm",
-        BodyZone.LeftLeg => "trauma-zone-left-leg",
-        BodyZone.RightLeg => "trauma-zone-right-leg",
-        _ => "trauma-zone-torso",
-    };
 }

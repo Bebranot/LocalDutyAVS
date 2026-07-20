@@ -5,6 +5,13 @@ trauma-examine-arterial = [color=crimson]Кажется, повреждена к
 trauma-examine-fracture = [color=orange]{ $zone }: { $tier }.[/color]
 trauma-examine-fracture-splinted = [color=yellow]{ $zone }: { $tier } (в шине).[/color]
 
+# Анализатор здоровья
+health-analyzer-trauma-fracture = [color=orange]{ $zone }: { $tier }[/color]
+health-analyzer-trauma-fracture-splinted = [color=yellow]{ $zone }: { $tier } (в шине)[/color]
+health-analyzer-trauma-dislocation = [color=orange]{ $zone }: вывих[/color]
+health-analyzer-trauma-residual = [color=gray]{ $zone }: недавно вправлена[/color]
+health-analyzer-trauma-arterial = [color=crimson]Артериальное кровотечение[/color]
+
 # Зоны тела
 trauma-zone-head = Голова
 trauma-zone-torso = Грудная клетка

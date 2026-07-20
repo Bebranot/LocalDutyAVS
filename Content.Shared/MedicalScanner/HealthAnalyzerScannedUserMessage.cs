@@ -1,3 +1,4 @@
+using Content.Shared._Duty.Trauma; // _Duty
 using Content.Shared.FixedPoint; // ADT-Tweak
 using Content.Shared.Mobs; // _Duty
 using Robust.Shared.Serialization;
@@ -33,8 +34,9 @@ public struct HealthAnalyzerUiState
     public List<(string ReagentId, FixedPoint2 Quantity)>? MetabolizingReagents; // ADT-Tweak - list of metabolizing reagents inside scanned user
     public MobState? MobState; // _Duty - для эмбиент-звука состояния в анализаторе
     public float? HealthFraction; // _Duty - «живучесть» (1 = полное HP, ≤0 = крит); для мигающей крит-таблички
+    public List<TraumaAnalyzerEntry>? Traumas; // _Duty - переломы/вывихи/артерия с тирами
 
-    public HealthAnalyzerUiState(NetEntity? targetEntity, float temperature, float bloodLevel, bool? scanMode, bool? bleeding, bool? unrevivable, List<(string ReagentId, FixedPoint2 Quantity)>? metabolizingReagents = null, MobState? mobState = null, float? healthFraction = null) // Starlight - added metabolizingReagents parameter
+    public HealthAnalyzerUiState(NetEntity? targetEntity, float temperature, float bloodLevel, bool? scanMode, bool? bleeding, bool? unrevivable, List<(string ReagentId, FixedPoint2 Quantity)>? metabolizingReagents = null, MobState? mobState = null, float? healthFraction = null, List<TraumaAnalyzerEntry>? traumas = null) // Starlight - added metabolizingReagents parameter
     {
         TargetEntity = targetEntity;
         Temperature = temperature;
@@ -45,5 +47,6 @@ public struct HealthAnalyzerUiState
         MetabolizingReagents = metabolizingReagents; // ADT-Tweak
         MobState = mobState; // _Duty
         HealthFraction = healthFraction; // _Duty
+        Traumas = traumas; // _Duty
     }
 }

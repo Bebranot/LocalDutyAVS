@@ -24,6 +24,7 @@ using Content.Shared.Mobs; // _Duty
 using Content.Server._Duty.HealthAnalyzer; // _Duty
 using Content.Shared._Duty.HealthAnalyzer; // _Duty
 using Content.Shared._Duty.Heartbeat; // _Duty
+using Content.Shared._Duty.Trauma.Systems; // _Duty
 
 namespace Content.Server.Medical;
 
@@ -40,6 +41,7 @@ public sealed class HealthAnalyzerSystem : EntitySystem
     [Dependency] private readonly SharedPopupSystem _popupSystem = default!;
     [Dependency] private readonly BloodstreamSystem _bloodstreamSystem = default!;
     [Dependency] private readonly SharedHeartbeatSystem _heartbeat = default!; // _Duty
+    [Dependency] private readonly TraumaAnalyzerSystem _traumaAnalyzer = default!; // _Duty
 
     /// <summary>
     /// _Duty: последнее отправленное сканирующему звуковое состояние пульса, по анализатору.
@@ -386,6 +388,9 @@ public sealed class HealthAnalyzerSystem : EntitySystem
         }
         // ADT-Tweak end
 
+        // _Duty: тяжёлые травмы (переломы с тирами, вывихи, артериальное кровотечение).
+        var traumas = _traumaAnalyzer.GetEntries(entity);
+
         return new HealthAnalyzerUiState(
             GetNetEntity(entity),
             bodyTemperature,
@@ -395,7 +400,8 @@ public sealed class HealthAnalyzerSystem : EntitySystem
             unrevivable,
             metabolizingReagents, // ADT-Tweak
             mobState, // _Duty
-            healthFraction // _Duty
+            healthFraction, // _Duty
+            traumas // _Duty
         );
     }
 }
