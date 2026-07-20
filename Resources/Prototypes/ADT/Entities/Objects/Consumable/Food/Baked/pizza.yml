@@ -448,3 +448,39 @@
   - type: Sprite
     sprite: ADT/Objects/Consumable/Food/Baked/prazatpizza.rsi
     state: sea-slice
+
+
+# 由太空站龙类管理委员会认证的番茄炒蛋披萨 (Tomato Egg Pizza certified by Dragon Management Committee)
+- type: entity
+  name: Tomato Egg Pizza
+  parent: FoodInjectableBase
+  id: ADTFoodPizzaTomatoEgg
+  description: The most perfect pizza in the universe, blessed by the Dragon Management Committee.
+  components:
+  - type: FlavorProfile
+    flavors:
+      - oily
+      - bread
+  - type: Edible
+  - type: Sprite
+    sprite: ADT/Objects/Consumable/Food/Baked/pizza.rsi
+    state: fullpizza
+  - type: SolutionContainerManager
+    solutions:
+      food:
+        maxVol: 40
+        reagents:
+        - ReagentId: Nutriment
+          Quantity: 20
+        - ReagentId: Omnizine
+          Quantity: 10
+  - type: SliceableFood
+    count: 8
+  - type: Item
+    size: Normal
+    shape:
+    - 0,0,2,1
+  - type: Tag
+    tags:
+    - Pizza
+    - ReptilianFood
