@@ -2,6 +2,8 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
+using Content.Shared._Duty.Trauma;
+using Content.Shared._Duty.Trauma.Components;
 using Content.Shared.Alert;
 using Content.Shared.CCVar;
 using Content.Shared.Damage.Components;
@@ -66,6 +68,11 @@ public sealed class DutySprintSystem : EntitySystem
     private const float TwoHandedWeaponFactor = 0.85f;
     private const float SprintFloor = 0.5f;       // абсолютный пол множителя
     private const float RefreshEpsilon = 0.01f;
+
+    // _Duty Trauma: доп. расход выносливости при переломе торса (сложнее дышать на бегу).
+    private const float TorsoFractureCrackDrainPenalty = 0.1f;
+    private const float TorsoFractureFullDrainPenalty = 0.3f;
+    private const float TorsoFractureOpenDrainPenalty = 0.5f;
 
     public override void Initialize()
     {
@@ -229,8 +236,27 @@ public sealed class DutySprintSystem : EntitySystem
 
     private float GetDrainPenaltyFraction(EntityUid uid)
     {
-        var penalty = (1f - GetHpFactor(uid)) + (1f - GetSlotFactor(uid));
+        var penalty = (1f - GetHpFactor(uid)) + (1f - GetSlotFactor(uid)) + GetTorsoFracturePenalty(uid);
         return Math.Clamp(penalty, 0f, 1f);
+    }
+
+    /// <summary>_Duty: перелом рёбер (торса) — тем сложнее дышать при спринте, чем тяжелее тир.</summary>
+    private float GetTorsoFracturePenalty(EntityUid uid)
+    {
+        if (!TryComp<FractureComponent>(uid, out var fracture)
+            || !fracture.Zones.TryGetValue(BodyZone.Torso, out var state)
+            || state.GetEffectiveTier() is not { } tier)
+        {
+            return 0f;
+        }
+
+        return tier switch
+        {
+            FractureTier.Crack => TorsoFractureCrackDrainPenalty,
+            FractureTier.Full => TorsoFractureFullDrainPenalty,
+            FractureTier.Open => TorsoFractureOpenDrainPenalty,
+            _ => 0f,
+        };
     }
 
     private bool IsSprinting(EntityUid uid, DutyStaminaComponent comp)

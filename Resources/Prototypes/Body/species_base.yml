@@ -149,6 +149,9 @@
         type: StoreBoundUserInterface
       enum.HereticLivingHeartKey.Key: # goob edit - heretics
         type: LivingHeartMenuBoundUserInterface
+      enum.ArterialTreatmentUiKey.Key: # _Duty: пошаговое лечение артерии
+        type: ArterialTreatmentBoundUserInterface
+  - type: TraumaTarget # _Duty: существо может получать тяжёлые травмы
   - type: Puller
   - type: GrabIntent
   - type: Grabbable
