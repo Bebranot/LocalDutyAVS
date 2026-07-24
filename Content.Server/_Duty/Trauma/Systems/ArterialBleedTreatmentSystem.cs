@@ -52,8 +52,20 @@ public sealed class ArterialBleedTreatmentSystem : EntitySystem
     private static readonly TimeSpan ApplyTourniquetTime = TimeSpan.FromSeconds(10);
     private static readonly TimeSpan TightenTime = TimeSpan.FromSeconds(5);
 
-    /// <summary>Сколько раз нужно «затянуть жгут» (по 5с каждое).</summary>
+    /// <summary>Сколько раз нужно «затянуть жгут» (по 5с каждое) без готового жгута в руке.</summary>
     private const int TightenRequired = 5;
+
+    /// <summary>
+    /// Сколько раз нужно «затянуть жгут», если в руке лечащего готовый жгут (тег
+    /// <see cref="TourniquetTag"/>) — с ним не нужно импровизировать, достаточно одного рывка.
+    /// </summary>
+    private const int TightenRequiredWithTourniquet = 1;
+
+    /// <summary>
+    /// Множитель длительности этапов прижатия/наложения, если в руке лечащего готовый жгут —
+    /// с профессиональным жгутом процедура идёт быстрее, чем с импровизацией из ткани.
+    /// </summary>
+    private const float TourniquetSpeedMultiplier = 0.5f;
 
     /// <summary>Множитель скорости лечащего во время лечения (0.3 = −70%).</summary>
     private const float SlowdownModifier = 0.3f;
@@ -117,7 +129,7 @@ public sealed class ArterialBleedTreatmentSystem : EntitySystem
         session.Patient = ent.Owner;
         session.Step = ArterialTreatmentStep.PalmPress;
 
-        PushState(ent.Owner, session);
+        PushState(ent.Owner, healer, session);
     }
 
     private void OnUiClosed(Entity<ArterialBleedComponent> ent, ref BoundUIClosedEvent args)
@@ -160,7 +172,8 @@ public sealed class ArterialBleedTreatmentSystem : EntitySystem
         if (session.Step == ArterialTreatmentStep.PalmPress && !session.EffectsApplied)
             ApplyHealerEffects(healer, session);
 
-        var doAfter = new DoAfterArgs(EntityManager, healer, GetStepTime(session.Step), new ArterialTreatmentDoAfterEvent(session.Step), healer, ent.Owner, used)
+        var stepTime = GetStepTime(session.Step, HasRealTourniquet(healer, session));
+        var doAfter = new DoAfterArgs(EntityManager, healer, stepTime, new ArterialTreatmentDoAfterEvent(session.Step), healer, ent.Owner, used)
         {
             BreakOnMove = true,
             BreakOnDamage = true,
@@ -172,7 +185,7 @@ public sealed class ArterialBleedTreatmentSystem : EntitySystem
 
         session.CurrentDoAfter = id;
         session.Busy = true;
-        PushState(ent.Owner, session);
+        PushState(ent.Owner, healer, session);
     }
 
     private void OnDoAfter(Entity<ActiveArterialTreatmentComponent> ent, ref ArterialTreatmentDoAfterEvent args)
@@ -183,7 +196,7 @@ public sealed class ArterialBleedTreatmentSystem : EntitySystem
 
         if (args.Cancelled || args.Handled)
         {
-            PushState(session.Patient, session);
+            PushState(session.Patient, ent.Owner, session);
             return;
         }
 
@@ -207,7 +220,7 @@ public sealed class ArterialBleedTreatmentSystem : EntitySystem
 
             case ArterialTreatmentStep.TightenTourniquet:
                 session.TightenProgress++;
-                if (session.TightenProgress >= TightenRequired)
+                if (session.TightenProgress >= GetTightenRequired(ent.Owner, session))
                 {
                     CompleteTreatment(ent.Owner, session);
                     return;
@@ -215,7 +228,7 @@ public sealed class ArterialBleedTreatmentSystem : EntitySystem
                 break;
         }
 
-        PushState(session.Patient, session);
+        PushState(session.Patient, ent.Owner, session);
     }
 
     private void OnRefreshSpeed(EntityUid uid, ActiveArterialTreatmentComponent comp, RefreshMovementSpeedModifiersEvent args)
@@ -301,22 +314,52 @@ public sealed class ArterialBleedTreatmentSystem : EntitySystem
         _contentEye.SetZoom(healer, TreatmentZoom);
     }
 
-    private void PushState(EntityUid patient, ActiveArterialTreatmentComponent session)
+    private void PushState(EntityUid patient, EntityUid healer, ActiveArterialTreatmentComponent session)
     {
         _ui.SetUiState(
             patient,
             ArterialTreatmentUiKey.Key,
-            new ArterialTreatmentBuiState(session.Step, session.TightenProgress, TightenRequired, session.Busy));
+            new ArterialTreatmentBuiState(session.Step, session.TightenProgress, GetTightenRequired(healer, session), session.Busy));
     }
 
-    private static TimeSpan GetStepTime(ArterialTreatmentStep step) => step switch
+    /// <summary>
+    /// Готовый жгут (тег <see cref="TourniquetTag"/>) в активной руке лечащего прямо сейчас —
+    /// проверяется заново на каждом шаге, а не фиксируется один раз на всё лечение.
+    /// </summary>
+    private bool HasTourniquetInHand(EntityUid healer) =>
+        _hands.TryGetActiveItem(healer, out var item) && item is { } used && _tag.HasTag(used, TourniquetTag);
+
+    /// <summary>
+    /// Жгут задействован в лечении — либо сейчас в руке, либо уже наложен и спрятан
+    /// (<see cref="ActiveArterialTreatmentComponent.StashedTourniquet"/>, наложение прячет его из
+    /// рук — см. <see cref="StashOrConsumeTourniquetMaterial"/>). Без ИЛИ проверка после наложения
+    /// всегда давала бы «нет жгута», хотя он уже используется.
+    /// </summary>
+    private bool HasRealTourniquet(EntityUid healer, ActiveArterialTreatmentComponent session) =>
+        session.StashedTourniquet is not null || HasTourniquetInHand(healer);
+
+    /// <summary>Сколько раз нужно затянуть жгут — меньше, если в лечении задействован готовый жгут.</summary>
+    private int GetTightenRequired(EntityUid healer, ActiveArterialTreatmentComponent session) =>
+        HasRealTourniquet(healer, session) ? TightenRequiredWithTourniquet : TightenRequired;
+
+    private static TimeSpan GetStepTime(ArterialTreatmentStep step, bool hasTourniquet)
     {
-        ArterialTreatmentStep.PalmPress => PalmPressTime,
-        ArterialTreatmentStep.FingerPress => FingerPressTime,
-        ArterialTreatmentStep.ApplyTourniquet => ApplyTourniquetTime,
-        ArterialTreatmentStep.TightenTourniquet => TightenTime,
-        _ => TimeSpan.Zero,
-    };
+        var baseTime = step switch
+        {
+            ArterialTreatmentStep.PalmPress => PalmPressTime,
+            ArterialTreatmentStep.FingerPress => FingerPressTime,
+            ArterialTreatmentStep.ApplyTourniquet => ApplyTourniquetTime,
+            ArterialTreatmentStep.TightenTourniquet => TightenTime,
+            _ => TimeSpan.Zero,
+        };
+
+        // Затягивание не ускоряем по длительности — с жгутом сокращается количество повторов
+        // (см. GetTightenRequired), а не время одного рывка.
+        if (!hasTourniquet || step == ArterialTreatmentStep.TightenTourniquet)
+            return baseTime;
+
+        return baseTime * TourniquetSpeedMultiplier;
+    }
 
     /// <summary>
     /// Есть ли в активной руке готовый жгут (по тегу — штатный или самодельный) ИЛИ стак ткани

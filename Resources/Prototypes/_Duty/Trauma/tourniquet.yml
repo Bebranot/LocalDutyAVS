@@ -1,6 +1,6 @@
 # _Duty: самодельный жгут для пошаговой остановки артериального кровотечения.
 # Сделан на основе штатного Tourniquet (наследует тег Tourniquet и лечебные свойства),
-# но крафтится из ткани — доступен без медотсека, в поле.
+# крафтится из 2 ткани + 1 доски (10с) — доступен без медотсека, в поле.
 
 - type: entity
   parent: Tourniquet
@@ -21,7 +21,10 @@
           steps:
             - material: Cloth
               amount: 2
-              doAfter: 2
+              doAfter: 5
+            - material: WoodPlank
+              amount: 1
+              doAfter: 5
     - node: tourniquet
       entity: DutyImprovisedTourniquet
 

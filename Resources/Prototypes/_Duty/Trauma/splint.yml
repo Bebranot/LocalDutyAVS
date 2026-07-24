@@ -1,5 +1,5 @@
-# _Duty: шина для лечения переломов (FractureTreatmentSystem). Крафтится из дерева и ткани;
-# сам предмет — расходник, тратится при попытке шинирования (успех или провал — не важно).
+# _Duty: шина для лечения переломов (FractureTreatmentSystem). Крафтится из 2 досок + 1 ткани
+# (15с); сам предмет — расходник, тратится при попытке шинирования (успех или провал — не важно).
 # Спрайт переиспользуется (деревянный брусок) с перекраской, без новой графики — как жгут.
 
 - type: entity
@@ -27,12 +27,12 @@
       edges:
         - to: splint
           steps:
-            - material: Cloth
-              amount: 2
-              doAfter: 2
             - material: WoodPlank
+              amount: 2
+              doAfter: 8
+            - material: Cloth
               amount: 1
-              doAfter: 2
+              doAfter: 7
     - node: splint
       entity: DutySplint
 

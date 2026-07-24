@@ -311,6 +311,16 @@ public sealed class HealthAnalyzerSystem : EntitySystem
     /// </summary>
     private void SendHeartbeatAudio(EntityUid healthAnalyzer, EntityUid target, EntityUid user, bool forceRestart)
     {
+        // _Duty: окно анализатора у этого зрителя закрыто — прибор продолжает сканировать в фоне
+        // (ванильное поведение, см. Update), но звук ему при этом не шлём. Без этой проверки
+        // фоновый Update() каждую секунду заново вызывал бы SendHeartbeatAudio и перезапускал звук
+        // почти сразу после закрытия окна — одного BoundUIClosedEvent-стопа недостаточно.
+        if (!_uiSystem.IsUiOpen(healthAnalyzer, HealthAnalyzerUiKey.Key, user))
+        {
+            _lastSentAudio.Remove(healthAnalyzer);
+            return;
+        }
+
         // _Duty: «вторая жизнь» (Лазарус) активна — глушим все наши звуки у сканирующего.
         if (_heartbeat.IsSuppressed(target))
         {
