@@ -15,6 +15,7 @@ using Content.Shared.Popups;
 using Content.Shared.Random.Helpers;
 using Content.Shared.Standing;
 using Content.Shared.Stunnable;
+using Content.Shared.Weapons.Melee.Events;
 using Robust.Shared.Network;
 using Robust.Shared.Random;
 using Robust.Shared.Timing;
@@ -92,6 +93,9 @@ public sealed class TraumaResolverSystem : EntitySystem
     private const float TorsoCoughFullMultiplier = 0.55f;
     private const float TorsoCoughOpenMultiplier = 0.3f;
 
+    /// <summary>Штраф урона ближним оружием за каждую сломанную руку (линейный, не диминишинг).</summary>
+    private const float ArmFractureMeleeDamagePenalty = 0.15f;
+
     public override void Initialize()
     {
         // Подписка на общем маркере травмируемого существа — чтобы штрафы всех травм считались
@@ -102,6 +106,32 @@ public sealed class TraumaResolverSystem : EntitySystem
         // Торс: перелом учащает кашель кровью (BloodCoughSystem, ADT) — обратный канал событием,
         // чтобы не тянуть Content.Server из Content.Shared (см. коммент события).
         SubscribeLocalEvent<FractureComponent, BloodCoughIntervalModifierEvent>(OnBloodCoughModifier);
+
+        // GetMeleeDamageEvent поднимается на ОРУЖИИ, а не на атакующем (см. User в событии) —
+        // без фильтра по компоненту, чтобы поймать его вне зависимости от того, чем бьют.
+        SubscribeLocalEvent<GetMeleeDamageEvent>(OnGetMeleeDamage);
+    }
+
+    /// <summary>
+    /// Перелом руки бьёт по урону ближним оружием, а не только по шансу промаха (тот считается
+    /// отдельно в <see cref="OnAttackAttempt"/>). Стакинг тут намеренно линейный, а не диминишинг:
+    /// две сломанные руки = -30% урона, обе половины страдают независимо.
+    /// </summary>
+    private void OnGetMeleeDamage(ref GetMeleeDamageEvent args)
+    {
+        if (!TryComp<FractureComponent>(args.User, out var fracture))
+            return;
+
+        var brokenArms = 0;
+        if (fracture.Zones.TryGetValue(BodyZone.LeftArm, out var left) && left.GetEffectiveTier() is not null)
+            brokenArms++;
+        if (fracture.Zones.TryGetValue(BodyZone.RightArm, out var right) && right.GetEffectiveTier() is not null)
+            brokenArms++;
+
+        if (brokenArms == 0)
+            return;
+
+        args.Damage *= 1f - ArmFractureMeleeDamagePenalty * brokenArms;
     }
 
     private void OnBloodCoughModifier(EntityUid uid, FractureComponent comp, ref BloodCoughIntervalModifierEvent args)

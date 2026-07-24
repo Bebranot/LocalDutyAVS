@@ -6,6 +6,7 @@ using Content.Shared._Duty.Trauma.Components;
 using Content.Shared._Duty.Trauma.Events;
 using Content.Shared.Body.Components;
 using Content.Shared.Body.Systems;
+using Content.Shared.Damage.Systems;
 using Content.Shared.HealthExaminable;
 using Content.Shared.Rejuvenate;
 using Robust.Shared.Network;
@@ -26,8 +27,16 @@ namespace Content.Shared._Duty.Trauma.Systems;
 public sealed class ArterialBleedSystem : EntitySystem
 {
     [Dependency] private readonly SharedBloodstreamSystem _bloodstream = default!;
+    [Dependency] private readonly DamageableSystem _damageable = default!;
     [Dependency] private readonly IGameTiming _timing = default!;
     [Dependency] private readonly INetManager _net = default!;
+
+    /// <summary>
+    /// Доп. доля DPS от кровопотери поверх ванильного расчёта (см. <c>Update</c>) — ×1.5 итого.
+    /// Именно доп.-урон, а не ускорение вытекания крови: пользователь просил не трогать скорость,
+    /// с которой падает объём крови, только итоговый урон в секунду.
+    /// </summary>
+    private const float ArterialBonusDamageMultiplier = 0.5f;
 
     public override void Initialize()
     {
@@ -59,11 +68,21 @@ public sealed class ArterialBleedSystem : EntitySystem
 
             // Пока крови больше пола — поддерживаем небольшую скорость кровотечения (медленная
             // утечка). У пола перестаём — объём крови стабилизируется, в ноль не уходит.
-            if (_bloodstream.GetBloodLevel(uid) <= comp.BloodFloor)
+            var bloodLevel = _bloodstream.GetBloodLevel(uid);
+            if (bloodLevel <= comp.BloodFloor)
                 continue;
 
             if (blood.BleedAmount < comp.BleedTarget)
                 _bloodstream.TryModifyBleedAmount(uid, comp.BleedTarget - blood.BleedAmount);
+
+            // Доп.-урон поверх ванильного Bloodloss-DPS (см. SharedBloodstreamSystem.Update) —
+            // то же условие и та же формула, что и у ваниль, только домноженная на нашу долю.
+            // Скорость вытекания крови (выше) этим не затрагивается.
+            if (bloodLevel < blood.BloodlossThreshold)
+            {
+                var extra = blood.BloodlossDamage / (0.1f + bloodLevel) * ArterialBonusDamageMultiplier;
+                _damageable.TryChangeDamage(uid, extra, ignoreResistances: false, interruptsDoAfters: false);
+            }
         }
     }
 

@@ -1,0 +1,45 @@
+# _Duty: шина для лечения переломов (FractureTreatmentSystem). Крафтится из дерева и ткани;
+# сам предмет — расходник, тратится при попытке шинирования (успех или провал — не важно).
+# Спрайт переиспользуется (деревянный брусок) с перекраской, без новой графики — как жгут.
+
+- type: entity
+  parent: BaseItem
+  id: DutySplint
+  name: splint
+  description: A pair of wooden slats bound together with cloth. Used to stabilize a fracture.
+  components:
+    - type: Tag
+      tags:
+        - Splint
+    - type: Sprite
+      sprite: Objects/Tools/rolling_pin.rsi
+      state: icon
+      color: "#c9a876"
+    - type: Item
+      sprite: Objects/Tools/rolling_pin.rsi
+      size: Small
+
+- type: constructionGraph
+  id: DutySplint
+  start: start
+  graph:
+    - node: start
+      edges:
+        - to: splint
+          steps:
+            - material: Cloth
+              amount: 2
+              doAfter: 2
+            - material: WoodPlank
+              amount: 1
+              doAfter: 2
+    - node: splint
+      entity: DutySplint
+
+- type: construction
+  id: DutySplint
+  graph: DutySplint
+  startNode: start
+  targetNode: splint
+  category: construction-category-tools
+  objectType: Item

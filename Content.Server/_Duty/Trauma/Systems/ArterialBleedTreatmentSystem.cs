@@ -12,6 +12,7 @@ using Content.Shared.Popups;
 using Content.Shared.Stacks;
 using Content.Shared.Tag;
 using Content.Shared.Verbs;
+using Robust.Shared.Containers;
 using Robust.Shared.Prototypes;
 
 namespace Content.Server._Duty.Trauma.Systems;
@@ -37,6 +38,10 @@ public sealed class ArterialBleedTreatmentSystem : EntitySystem
     [Dependency] private readonly SharedStackSystem _stack = default!;
     [Dependency] private readonly SharedPopupSystem _popup = default!;
     [Dependency] private readonly TagSystem _tag = default!;
+    [Dependency] private readonly SharedContainerSystem _container = default!;
+
+    /// <summary>Контейнер, в котором на время лечения прячется многоразовый жгут-предмет.</summary>
+    private const string TourniquetStashId = "DutyTourniquetStash";
 
     /// <summary>Категория ПКМ-меню «Самолечение» (когда лечишь сам себя).</summary>
     private static readonly VerbCategory SelfTreatmentCategory = new("trauma-verb-category-self-treatment", null);
@@ -195,7 +200,7 @@ public sealed class ArterialBleedTreatmentSystem : EntitySystem
                 break;
 
             case ArterialTreatmentStep.ApplyTourniquet:
-                ConsumeTourniquetMaterial(session.TourniquetItem);
+                StashOrConsumeTourniquetMaterial(ent.Owner, session);
                 session.TourniquetItem = null;
                 session.Step = ArterialTreatmentStep.TightenTourniquet;
                 break;
@@ -225,6 +230,10 @@ public sealed class ArterialBleedTreatmentSystem : EntitySystem
         if (ent.Comp.CurrentDoAfter is { } doAfter)
             _doAfter.Cancel(doAfter);
 
+        // Возвращаем спрятанный жгут в руку, каким бы путём сессия ни прервалась (отмена/смерть/
+        // дисконнект) — иначе он терялся бы в контейнере навсегда.
+        ReturnStashedTourniquet(ent.Owner, ent.Comp);
+
         if (!ent.Comp.EffectsApplied)
             return;
 
@@ -242,8 +251,47 @@ public sealed class ArterialBleedTreatmentSystem : EntitySystem
         _popup.PopupEntity(Loc.GetString("trauma-arterial-treated"), patient, healer);
 
         _ui.CloseUi(patient, ArterialTreatmentUiKey.Key, healer);
-        // Снятие сессии (ComponentShutdown откатит эффекты и отменит DoAfter).
+        // Снятие сессии (ComponentShutdown вернёт спрятанный жгут и откатит эффекты/DoAfter).
         RemComp<ActiveArterialTreatmentComponent>(healer);
+    }
+
+    /// <summary>
+    /// Наложение жгута состоялось: многоразовый предмет-жгут прячется из рук лечащего (вернётся
+    /// по завершении/отмене лечения), а расходная ткань списывается безвозвратно, как и раньше.
+    /// </summary>
+    private void StashOrConsumeTourniquetMaterial(EntityUid healer, ActiveArterialTreatmentComponent session)
+    {
+        var item = session.TourniquetItem;
+        if (item is not { } used || Deleted(used))
+            return;
+
+        if (_tag.HasTag(used, TourniquetTag))
+        {
+            var container = _container.EnsureContainer<ContainerSlot>(healer, TourniquetStashId);
+            if (_container.Insert(used, container))
+                session.StashedTourniquet = used;
+
+            return;
+        }
+
+        ConsumeTourniquetMaterial(used);
+    }
+
+    /// <summary>Достаёт спрятанный жгут из контейнера и возвращает его в руку лечащего.</summary>
+    private void ReturnStashedTourniquet(EntityUid healer, ActiveArterialTreatmentComponent session)
+    {
+        if (session.StashedTourniquet is not { } item)
+            return;
+
+        session.StashedTourniquet = null;
+
+        if (Deleted(item))
+            return;
+
+        if (_container.TryGetContainer(healer, TourniquetStashId, out var container))
+            _container.Remove(item, container);
+
+        _hands.TryPickupAnyHand(healer, item);
     }
 
     private void ApplyHealerEffects(EntityUid healer, ActiveArterialTreatmentComponent session)

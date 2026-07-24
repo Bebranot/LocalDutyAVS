@@ -7,8 +7,10 @@ using Content.Shared._Duty.Trauma.Components;
 using Content.Shared._Duty.Trauma.Events;
 using Content.Shared.HealthExaminable;
 using Content.Shared.Movement.Systems;
+using Content.Shared.Popups;
 using Content.Shared.Rejuvenate;
 using Robust.Shared.Network;
+using Robust.Shared.Random;
 using Robust.Shared.Timing;
 
 namespace Content.Shared._Duty.Trauma.Systems;
@@ -24,6 +26,8 @@ public sealed class FractureSystem : EntitySystem
     [Dependency] private readonly INetManager _net = default!;
     [Dependency] private readonly MovementSpeedModifierSystem _movementSpeed = default!;
     [Dependency] private readonly SharedTransformSystem _transform = default!;
+    [Dependency] private readonly SharedPopupSystem _popup = default!;
+    [Dependency] private readonly IRobustRandom _random = default!;
 
     // ── Тюнинг (Phase 6). ──────────────────────────────────────────────────────
 
@@ -32,6 +36,23 @@ public sealed class FractureSystem : EntitySystem
 
     /// <summary>Через сколько с шиной тир снижается на один шаг (быстрее).</summary>
     private static readonly TimeSpan SplintedHealStep = TimeSpan.FromMinutes(2);
+
+    /// <summary>Варианты крика боли при первом переломе зоны (не эскалации).</summary>
+    private static readonly string[] NewFracturePainKeys =
+    {
+        "trauma-fracture-pain-new-1",
+        "trauma-fracture-pain-new-2",
+        "trauma-fracture-pain-new-3",
+        "trauma-fracture-pain-new-4",
+    };
+
+    /// <summary>Варианты крика боли при эскалации уже сломанной зоны (тир растёт).</summary>
+    private static readonly string[] EscalateFracturePainKeys =
+    {
+        "trauma-fracture-pain-escalate-1",
+        "trauma-fracture-pain-escalate-2",
+        "trauma-fracture-pain-escalate-3",
+    };
 
     public override void Initialize()
     {
@@ -113,7 +134,8 @@ public sealed class FractureSystem : EntitySystem
         if (isNew)
             comp.LastPosition = _transform.GetWorldPosition(target);
 
-        if (comp.Zones.TryGetValue(zone, out var state))
+        var isEscalation = comp.Zones.TryGetValue(zone, out var state);
+        if (isEscalation)
         {
             // Повторный удар по сломанной зоне — эскалация тира (шина при этом слетает).
             state.Tier = Raise(state.Tier);
@@ -128,6 +150,24 @@ public sealed class FractureSystem : EntitySystem
         comp.Zones[zone] = state;
         Dirty(target, comp);
         _movementSpeed.RefreshMovementSpeedModifiers(target);
+
+        PopupFracturePain(target, zone, state.Tier, isEscalation);
+    }
+
+    /// <summary>
+    /// Крик боли в момент перелома/эскалации — видно всем рядом (как крик), реплика случайная из
+    /// набора и зависит от того, свежий перелом это или усугубление уже сломанной зоны.
+    /// </summary>
+    private void PopupFracturePain(EntityUid target, BodyZone zone, FractureTier tier, bool isEscalation)
+    {
+        var keys = isEscalation ? EscalateFracturePainKeys : NewFracturePainKeys;
+        var key = keys[_random.Next(keys.Length)];
+        var popupType = tier >= FractureTier.Full ? PopupType.LargeCaution : PopupType.MediumCaution;
+
+        _popup.PopupEntity(
+            Loc.GetString(key, ("zone", Loc.GetString(TraumaLoc.ZoneKey(zone)))),
+            target,
+            popupType);
     }
 
     private void OnHealthExamined(Entity<FractureComponent> ent, ref HealthBeingExaminedEvent args)

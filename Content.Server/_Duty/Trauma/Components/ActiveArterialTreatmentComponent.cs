@@ -41,6 +41,14 @@ public sealed partial class ActiveArterialTreatmentComponent : Component
     [ViewVariables]
     public EntityUid? TourniquetItem;
 
+    /// <summary>
+    /// Многоразовый жгут-предмет, спрятанный из рук лечащего на время наложения/затягивания —
+    /// возвращается в руку по завершении лечения или при отмене сессии. Ткань сюда не попадает
+    /// (она расходуется безвозвратно через <see cref="TourniquetItem"/>).
+    /// </summary>
+    [ViewVariables]
+    public EntityUid? StashedTourniquet;
+
     /// <summary>Текущий активный DoAfter — чтобы отменить его при отмене/закрытии окна.</summary>
     [ViewVariables]
     public DoAfterId? CurrentDoAfter;

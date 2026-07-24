@@ -59,6 +59,20 @@ public sealed class HealthAnalyzerSystem : EntitySystem
         SubscribeLocalEvent<HealthAnalyzerComponent, ItemToggledEvent>(OnToggled);
         SubscribeLocalEvent<HealthAnalyzerComponent, DroppedEvent>(OnDropped);
         SubscribeLocalEvent<HealthAnalyzerComponent, ComponentShutdown>(OnShutdown); // _Duty
+        SubscribeLocalEvent<HealthAnalyzerComponent, BoundUIClosedEvent>(OnUiClosed); // _Duty
+    }
+
+    /// <summary>
+    /// _Duty: закрытие окна анализатора глушит только звук у того, кто его закрыл — прибор
+    /// продолжает сканировать в фоне (ванильное поведение), меняется лишь наш кастомный звук.
+    /// </summary>
+    private void OnUiClosed(Entity<HealthAnalyzerComponent> ent, ref BoundUIClosedEvent args)
+    {
+        if (args.UiKey is not HealthAnalyzerUiKey || ent.Comp.ScannerUser != args.Actor)
+            return;
+
+        _lastSentAudio.Remove(ent.Owner);
+        RaiseNetworkEvent(new HealthAnalyzerStopAudioEvent(), args.Actor);
     }
 
     /// <summary>
