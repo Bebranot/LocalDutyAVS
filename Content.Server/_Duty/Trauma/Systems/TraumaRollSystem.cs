@@ -60,14 +60,14 @@ public sealed class TraumaRollSystem : EntitySystem
     private const float DislocationMaxChance = 0.10f;
 
     /// <summary>
-    /// Делитель формулы перелома: <c>урон * random(1..10) * hpFactor / scale</c>. Подобран так,
+    /// Делитель формулы перелома: <c>урон * random(1..5) * hpFactor / scale</c>. Подобран так,
     /// чтобы перелом был событием, а не шумом: ~5% на слабый удар, приближается к капу на очень
     /// сильный. Тюнится в Phase 6.
     /// </summary>
     private const float FractureChanceScale = 400f;
 
     /// <summary>
-    /// Делитель формулы артерии: <c>урон * random(1..10) / scale</c>. Артерия должна быть
+    /// Делитель формулы артерии: <c>урон * random(1..5) / scale</c>. Артерия должна быть
     /// редкой даже на сильном режущем ударе. Тюнится в Phase 6.
     /// </summary>
     private const float ArterialChanceScale = 350f;
@@ -142,19 +142,19 @@ public sealed class TraumaRollSystem : EntitySystem
 
     private void TryRollArterialBleed(Entity<TraumaTargetComponent> ent, float sharp)
     {
-        // Шанс = урон * random(1..10), редкий и не гарантированный даже на большом уроне.
-        var chance = Math.Clamp(sharp * _random.Next(1, 11) / ArterialChanceScale, 0f, MaxTraumaChance);
+        // Шанс = урон * random(1..5), редкий и не гарантированный даже на большом уроне.
+        var chance = Math.Clamp(sharp * _random.Next(1, 6) / ArterialChanceScale, 0f, MaxTraumaChance);
         if (_random.Prob(chance))
             RaiseTrauma(ent, TraumaType.ArterialBleed, null, sharp);
     }
 
     /// <summary>
-    /// Шанс перелома: <c>урон * random(1..10) * hpFactor / scale</c>, где hpFactor растёт
+    /// Шанс перелома: <c>урон * random(1..5) * hpFactor / scale</c>, где hpFactor растёт
     /// по мере падения HP цели. Итог клампится, чтобы не превышать общий кап травм.
     /// </summary>
     private float GetFractureChance(EntityUid uid, float blunt)
     {
-        var roll = _random.Next(1, 11); // 1..10 включительно
+        var roll = _random.Next(1, 6); // 1..5 включительно
         var chance = blunt * roll * GetHpFractureFactor(uid) / FractureChanceScale;
         return Math.Clamp(chance, 0f, MaxTraumaChance);
     }

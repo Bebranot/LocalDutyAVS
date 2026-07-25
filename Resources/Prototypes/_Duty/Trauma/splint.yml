@@ -1,6 +1,5 @@
 # _Duty: шина для лечения переломов (FractureTreatmentSystem). Крафтится из 2 досок + 1 ткани
 # (15с); сам предмет — расходник, тратится при попытке шинирования (успех или провал — не важно).
-# Спрайт переиспользуется (деревянный брусок) с перекраской, без новой графики — как жгут.
 
 - type: entity
   parent: BaseItem
@@ -12,11 +11,11 @@
       tags:
         - Splint
     - type: Sprite
-      sprite: Objects/Tools/rolling_pin.rsi
+      sprite: _Duty/Objects/Items/Makeshift_Health/improvised_splint.rsi
       state: icon
-      color: "#c9a876"
     - type: Item
-      sprite: Objects/Tools/rolling_pin.rsi
+      # У самодельной рси нет отдельных инхенд-состояний (только icon) — не задаём
+      # Item.sprite, иначе движок искал бы несуществующие "inhand-*" состояния там же.
       size: Small
 
 - type: constructionGraph
