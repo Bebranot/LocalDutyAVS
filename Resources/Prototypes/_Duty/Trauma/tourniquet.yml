@@ -9,7 +9,13 @@
   description: A strip of cloth twisted around a stick. Crude, but it will clamp an artery shut.
   components:
     - type: Sprite
-      color: "#b08d5f" # отличается от штатного на глаз, без новой графики
+      sprite: _Duty/Objects/Items/Makeshift_Health/improvised_tourniquet.rsi
+      state: icon
+    - type: Item
+      # У самодельной рси нет отдельных инхенд-состояний (только icon) — сбрасываем
+      # унаследованный от штатного Tourniquet heldPrefix, иначе движок искал бы
+      # несуществующие "tourniquet-inhand-*" состояния.
+      heldPrefix: null
 
 - type: constructionGraph
   id: DutyImprovisedTourniquet
