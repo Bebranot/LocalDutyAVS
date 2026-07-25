@@ -38,6 +38,12 @@ trauma-examine-arterial = [color=crimson]Кажется, повреждена к
 trauma-examine-fracture = [color=orange]{ $zone }: { $tier }.[/color]
 trauma-examine-fracture-splinted = [color=yellow]{ $zone }: { $tier } (в шине).[/color]
 
+# Алерт-иконки (алерт-бар, как HP/стамина)
+trauma-alert-brokenbone-name = Перелом
+trauma-alert-brokenbone-desc = У вас сломана кость. Точная зона и тяжесть — в осмотре себя или в анализаторе здоровья.
+trauma-alert-artery-name = Артериальное кровотечение
+trauma-alert-artery-desc = Повреждена крупная артерия — кровь идёт толчками. Нужна остановка кровотечения (жгут/прижатие), иначе урон продолжится.
+
 # Анализатор здоровья
 health-analyzer-trauma-fracture = [color=orange]{ $zone }: { $tier }[/color]
 health-analyzer-trauma-fracture-splinted = [color=yellow]{ $zone }: { $tier } (в шине)[/color]

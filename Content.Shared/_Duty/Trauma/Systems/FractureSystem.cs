@@ -5,11 +5,13 @@
 using System.Linq;
 using Content.Shared._Duty.Trauma.Components;
 using Content.Shared._Duty.Trauma.Events;
+using Content.Shared.Alert;
 using Content.Shared.HealthExaminable;
 using Content.Shared.Movement.Systems;
 using Content.Shared.Popups;
 using Content.Shared.Rejuvenate;
 using Robust.Shared.Network;
+using Robust.Shared.Prototypes;
 using Robust.Shared.Random;
 using Robust.Shared.Timing;
 
@@ -28,6 +30,10 @@ public sealed class FractureSystem : EntitySystem
     [Dependency] private readonly SharedTransformSystem _transform = default!;
     [Dependency] private readonly SharedPopupSystem _popup = default!;
     [Dependency] private readonly IRobustRandom _random = default!;
+    [Dependency] private readonly AlertsSystem _alerts = default!;
+
+    /// <summary>Алерт-иконка (по типу HP/стамины) — показывается, пока сломана хотя бы одна зона.</summary>
+    private static readonly ProtoId<AlertPrototype> BrokenBoneAlert = "DutyBrokenBone";
 
     // ── Тюнинг (Phase 6). ──────────────────────────────────────────────────────
 
@@ -59,12 +65,19 @@ public sealed class FractureSystem : EntitySystem
         SubscribeLocalEvent<TraumaRolledEvent>(OnTraumaRolled);
         SubscribeLocalEvent<FractureComponent, HealthBeingExaminedEvent>(OnHealthExamined);
         SubscribeLocalEvent<FractureComponent, RejuvenateEvent>(OnRejuvenate);
+        SubscribeLocalEvent<FractureComponent, ComponentShutdown>(OnFractureShutdown);
     }
 
     private void OnRejuvenate(Entity<FractureComponent> ent, ref RejuvenateEvent args)
     {
         RemComp<FractureComponent>(ent);
         _movementSpeed.RefreshMovementSpeedModifiers(ent.Owner);
+    }
+
+    /// <summary>Снимаем алерт при удалении компонента любым путём (заживление/реджувенейт/смерть).</summary>
+    private void OnFractureShutdown(Entity<FractureComponent> ent, ref ComponentShutdown args)
+    {
+        _alerts.ClearAlert(ent.Owner, BrokenBoneAlert);
     }
 
     public override void Update(float frameTime)
@@ -150,6 +163,7 @@ public sealed class FractureSystem : EntitySystem
         comp.Zones[zone] = state;
         Dirty(target, comp);
         _movementSpeed.RefreshMovementSpeedModifiers(target);
+        _alerts.ShowAlert(target, BrokenBoneAlert);
 
         PopupFracturePain(target, zone, state.Tier, isEscalation);
     }
