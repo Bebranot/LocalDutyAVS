@@ -70,7 +70,7 @@ public sealed class HealthAnalyzerSystem : EntitySystem
     /// </summary>
     private void OnUiClosed(Entity<HealthAnalyzerComponent> ent, ref BoundUIClosedEvent args)
     {
-        if (args.UiKey is not HealthAnalyzerUiKey || ent.Comp.ScannerUser != args.Actor)
+        if (args.UiKey is not HealthAnalyzerUiKey || ent.Comp.ScannerUser != args.Actor)    
             return;
 
         _lastSentAudio.Remove(ent.Owner);
