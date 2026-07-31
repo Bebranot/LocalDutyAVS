@@ -60,7 +60,6 @@ public sealed class HealthAnalyzerSystem : EntitySystem
         SubscribeLocalEvent<HealthAnalyzerComponent, EntGotInsertedIntoContainerMessage>(OnInsertedIntoContainer);
         SubscribeLocalEvent<HealthAnalyzerComponent, ItemToggledEvent>(OnToggled);
         SubscribeLocalEvent<HealthAnalyzerComponent, DroppedEvent>(OnDropped);
-<<<<<<< HEAD
         SubscribeLocalEvent<HealthAnalyzerComponent, ComponentShutdown>(OnShutdown); // _Duty
         SubscribeLocalEvent<HealthAnalyzerComponent, BoundUIClosedEvent>(OnUiClosed); // _Duty
     }
@@ -88,9 +87,7 @@ public sealed class HealthAnalyzerSystem : EntitySystem
 
         if (ent.Comp.ScannerUser is { } scannerUser)
             RaiseNetworkEvent(new HealthAnalyzerStopAudioEvent(), scannerUser);
-=======
         SubscribeLocalEvent<HealthAnalyzerComponent, InventoryRelayedEvent<GetVerbsEvent<InnateVerb>>>(AddScanVerb);  // ADT-Tweak
->>>>>>> upstream/master
     }
 
     public override void Update(float frameTime)
