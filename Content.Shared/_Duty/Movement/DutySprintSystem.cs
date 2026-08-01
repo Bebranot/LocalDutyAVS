@@ -6,8 +6,10 @@ using Content.Shared._Duty.Trauma;
 using Content.Shared._Duty.Trauma.Components;
 using Content.Shared.Alert;
 using Content.Shared.CCVar;
+using Content.Shared.Cuffs.Components;
 using Content.Shared.Damage.Components;
 using Content.Shared.Damage.Systems;
+using Content.Shared.Gravity;
 using Content.Shared.Hands;
 using Content.Shared.Hands.EntitySystems;
 using Content.Shared.Input;
@@ -18,9 +20,11 @@ using Content.Shared.Mobs.Systems;
 using Content.Shared.Movement.Components;
 using Content.Shared.Movement.Systems;
 using Content.Shared.Popups;
+using Content.Shared.Standing;
 using Content.Shared.Weapons.Melee;
 using Content.Shared.Weapons.Ranged.Components;
 using Content.Shared.Wieldable.Components;
+using Robust.Shared.Audio.Systems;
 using Robust.Shared.Configuration;
 using Robust.Shared.Input.Binding;
 using Robust.Shared.Network;
@@ -49,6 +53,9 @@ public sealed class DutySprintSystem : EntitySystem
     [Dependency] private readonly MovementSpeedModifierSystem _movementSpeed = default!;
     [Dependency] private readonly SharedHandsSystem _hands = default!;
     [Dependency] private readonly SharedPopupSystem _popup = default!;
+    [Dependency] private readonly SharedAudioSystem _audio = default!;
+    [Dependency] private readonly StandingStateSystem _standing = default!;
+    [Dependency] private readonly SharedGravitySystem _gravity = default!;
 
     private bool _enabled = true;
 
@@ -159,6 +166,14 @@ public sealed class DutySprintSystem : EntitySystem
             || !TryComp<DutyStaminaComponent>(uid, out var comp)
             || comp.WantsSprint == wants)
             return;
+
+        // Нажатие при запрещающем состоянии — объясняем причину и не даём взвести флаг. Отпускание
+        // пропускаем всегда, иначе флаг залипнет, если состояние изменилось с зажатой клавишей.
+        if (wants && GetSprintBlocker(uid) is { } blocker)
+        {
+            _popup.PopupClient(Loc.GetString(blocker), uid, uid);
+            return;
+        }
 
         comp.WantsSprint = wants;
         Dirty(uid, comp);
@@ -289,12 +304,43 @@ public sealed class DutySprintSystem : EntitySystem
         };
     }
 
-    private bool IsSprinting(EntityUid uid, DutyStaminaComponent comp)
+    /// <summary>
+    /// Реально ли существо сейчас спринтует: клавиша зажата, состояние тела позволяет, ходьба не
+    /// включена и есть ввод направления. Публично — этим же предикатом клиент решает, пора ли
+    /// сыпать пыль под ноги (<c>DutySprintVisualsSystem</c>), чтобы визуал не разъезжался
+    /// с механикой.
+    /// </summary>
+    public bool IsSprinting(EntityUid uid, DutyStaminaComponent comp)
     {
         return comp.WantsSprint
+               && CanSprint(uid)
                && TryComp<InputMoverComponent>(uid, out var mover)
                && mover.Sprinting
                && mover.HasDirectionalMovement;
+    }
+
+    /// <summary>
+    /// Позволяет ли текущее состояние тела разгоняться. Проверяется не только при нажатии, но и
+    /// каждый тик в <see cref="IsSprinting"/>: сбили с ног или заковали посреди забега — спринт
+    /// обязан оборваться сам, а не доработать до отпускания клавиши.
+    /// </summary>
+    public bool CanSprint(EntityUid uid) => GetSprintBlocker(uid) is null;
+
+    /// <summary>Ключ локали причины, по которой спринт запрещён, или null если разрешён.</summary>
+    private string? GetSprintBlocker(EntityUid uid)
+    {
+        if (_standing.IsDown(uid))
+            return "duty-sprint-blocked-lying";
+
+        // Скованные руки — бежать можно, рвануть нельзя (как у Goob).
+        if (TryComp<CuffableComponent>(uid, out var cuffs) && !cuffs.CanStillInteract)
+            return "duty-sprint-blocked-restrained";
+
+        // В невесомости отталкиваться не от чего.
+        if (_gravity.IsWeightless(uid))
+            return "duty-sprint-blocked-weightless";
+
+        return null;
     }
 
     // ── Тик: расход / восстановление / отдышка ────────────────────────────────
@@ -313,6 +359,17 @@ public sealed class DutySprintSystem : EntitySystem
             var sprinting = IsSprinting(uid, comp);
             var old = comp.Current;
             var oldBreathing = comp.Breathing;
+
+            // Звук рывка на фронте «побежал». Фронт держим только в первом предсказанном проходе:
+            // клиентский Update за тик вызывается многократно при ре-предсказании, иначе фронт
+            // съел бы непредсказанный проход и звук не сыграл бы вовсе.
+            if (_timing.IsFirstTimePredicted)
+            {
+                if (sprinting && !comp.WasSprinting)
+                    _audio.PlayPredicted(comp.SprintStartSound, uid, uid);
+
+                comp.WasSprinting = sprinting;
+            }
 
             if (sprinting)
             {

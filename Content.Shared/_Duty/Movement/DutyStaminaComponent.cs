@@ -2,6 +2,7 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
+using System.Numerics;
 using Content.Shared.Alert;
 using Robust.Shared.Audio;
 using Robust.Shared.GameStates;
@@ -127,4 +128,86 @@ public sealed partial class DutyStaminaComponent : Component
 
     [DataField]
     public ProtoId<AlertPrototype> EnduranceAlert = "DutyEndurance";
+
+    // ── Рывок: звук и пыль (порт с Goob) ──────────────────────────────────────
+
+    /// <summary>Звук рывка в момент начала спринта.</summary>
+    [DataField]
+    public SoundSpecifier SprintStartSound = new SoundPathSpecifier("/Audio/_Duty/Effects/Sprint/sprint_puff.ogg");
+
+    /// <summary>Большое облако пыли — спавнится один раз на старте рывка.</summary>
+    [DataField]
+    public EntProtoId SprintCloud = "DutySprintCloud";
+
+    /// <summary>Мелкое облачко — спавнится периодически, пока бежишь.</summary>
+    [DataField]
+    public EntProtoId SprintCloudSmall = "DutySprintCloudSmall";
+
+    /// <summary>Период между мелкими облачками пыли, сек.</summary>
+    [DataField]
+    public float TimeBetweenSteps = 0.6f;
+
+    /// <summary>Служебное (только сервер): предыдущее состояние «реально бежит», для фронта звука.</summary>
+    [ViewVariables]
+    public bool WasSprinting;
+
+    /// <summary>Служебное (только клиент): предыдущее состояние «реально бежит», для фронта пыли.</summary>
+    [ViewVariables]
+    public bool WasSprintingVisual;
+
+    /// <summary>Служебное (только клиент): когда спавнили прошлое облачко пыли.</summary>
+    [ViewVariables]
+    public TimeSpan LastStepTime;
+
+    // ── Тряска спрайта от усталости (порт с Goob, перевешен на наш пул) ────────
+    // Переиспользуем готовую StunSystem.GetFatigueAnimation — она уже есть в форке и крутит
+    // анимацию усталости от БОЕВОЙ стамины. Здесь те же параметры, но шкала — наша выносливость.
+
+    /// <summary>Доля запаса, ниже которой спрайт начинает дышать и подрагивать.</summary>
+    [DataField]
+    public float ShakeThreshold = 0.5f;
+
+    /// <summary>Минимальное вертикальное смещение «дыхания» на пороге.</summary>
+    [DataField]
+    public float BreathingAmplitudeMin = 0.04f;
+
+    /// <summary>Сколько добавляется к дыханию к нулю выносливости.</summary>
+    [DataField]
+    public float BreathingAmplitudeMod = 0.04f;
+
+    /// <summary>Минимальная амплитуда дрожи на пороге.</summary>
+    [DataField]
+    public float JitterAmplitudeMin;
+
+    /// <summary>Сколько добавляется к дрожи к нулю выносливости.</summary>
+    [DataField]
+    public float JitterAmplitudeMod = 0.04f;
+
+    /// <summary>Нижние множители дрожи по X и Y.</summary>
+    [DataField]
+    public Vector2 JitterMin = new(0.5f, 0.125f);
+
+    /// <summary>Верхние множители дрожи по X и Y.</summary>
+    [DataField]
+    public Vector2 JitterMax = new(1f, 0.25f);
+
+    /// <summary>Минимальная частота анимаций в секунду на пороге.</summary>
+    [DataField]
+    public float FrequencyMin = 0.25f;
+
+    /// <summary>Сколько добавляется к частоте к нулю выносливости.</summary>
+    [DataField]
+    public float FrequencyMod = 1.75f;
+
+    /// <summary>Сколько подрагиваний за одну анимацию.</summary>
+    [DataField]
+    public int Jitters = 4;
+
+    /// <summary>Служебное (только клиент): прошлое смещение дрожи, чтобы не дёргать в тот же угол.</summary>
+    [ViewVariables]
+    public Vector2 LastJitter;
+
+    /// <summary>Служебное (только клиент): смещение спрайта до начала тряски, для возврата.</summary>
+    [ViewVariables]
+    public Vector2 StartOffset;
 }
