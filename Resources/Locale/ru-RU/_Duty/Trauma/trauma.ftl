@@ -110,4 +110,5 @@ trauma-arterial-step-tighten = Затянуть жгут
 trauma-arterial-step-tighten-progress = Затянуть жгут ({ $current }/{ $total })
 
 trauma-arterial-need-material = Нужно две ткани или жгут в руке.
+trauma-arterial-already-treating = Вы уже занимаетесь другим пациентом.
 trauma-arterial-treated = Артериальное кровотечение остановлено.
