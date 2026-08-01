@@ -60,6 +60,7 @@ public sealed class HealthAnalyzerSystem : EntitySystem
         SubscribeLocalEvent<HealthAnalyzerComponent, EntGotInsertedIntoContainerMessage>(OnInsertedIntoContainer);
         SubscribeLocalEvent<HealthAnalyzerComponent, ItemToggledEvent>(OnToggled);
         SubscribeLocalEvent<HealthAnalyzerComponent, DroppedEvent>(OnDropped);
+        SubscribeLocalEvent<HealthAnalyzerComponent, InventoryRelayedEvent<GetVerbsEvent<InnateVerb>>>(AddScanVerb);  // ADT-Tweak
         SubscribeLocalEvent<HealthAnalyzerComponent, ComponentShutdown>(OnShutdown); // _Duty
         SubscribeLocalEvent<HealthAnalyzerComponent, BoundUIClosedEvent>(OnUiClosed); // _Duty
     }
@@ -70,7 +71,7 @@ public sealed class HealthAnalyzerSystem : EntitySystem
     /// </summary>
     private void OnUiClosed(Entity<HealthAnalyzerComponent> ent, ref BoundUIClosedEvent args)
     {
-        if (args.UiKey is not HealthAnalyzerUiKey || ent.Comp.ScannerUser != args.Actor)    
+        if (args.UiKey is not HealthAnalyzerUiKey || ent.Comp.ScannerUser != args.Actor)
             return;
 
         _lastSentAudio.Remove(ent.Owner);
@@ -87,7 +88,6 @@ public sealed class HealthAnalyzerSystem : EntitySystem
 
         if (ent.Comp.ScannerUser is { } scannerUser)
             RaiseNetworkEvent(new HealthAnalyzerStopAudioEvent(), scannerUser);
-        SubscribeLocalEvent<HealthAnalyzerComponent, InventoryRelayedEvent<GetVerbsEvent<InnateVerb>>>(AddScanVerb);  // ADT-Tweak
     }
 
     public override void Update(float frameTime)

@@ -130,14 +130,14 @@ public sealed class TraumaRollSystem : EntitySystem
             var dislocationChance = _random.NextFloat(DislocationMinChance, DislocationMaxChance);
             if (_random.Prob(dislocationChance))
             {
-                RaiseTrauma(ent, TraumaType.Dislocation, zone, blunt);
+                RaiseTrauma(ent, TraumaType.Dislocation, zone);
                 return;
             }
         }
 
         var fractureChance = GetFractureChance(ent, blunt);
         if (_random.Prob(fractureChance))
-            RaiseTrauma(ent, TraumaType.Fracture, zone, blunt);
+            RaiseTrauma(ent, TraumaType.Fracture, zone);
     }
 
     private void TryRollArterialBleed(Entity<TraumaTargetComponent> ent, float sharp)
@@ -145,7 +145,7 @@ public sealed class TraumaRollSystem : EntitySystem
         // Шанс = урон * random(1..5), редкий и не гарантированный даже на большом уроне.
         var chance = Math.Clamp(sharp * _random.Next(1, 6) / ArterialChanceScale, 0f, MaxTraumaChance);
         if (_random.Prob(chance))
-            RaiseTrauma(ent, TraumaType.ArterialBleed, null, sharp);
+            RaiseTrauma(ent, TraumaType.ArterialBleed, null);
     }
 
     /// <summary>
@@ -237,15 +237,12 @@ public sealed class TraumaRollSystem : EntitySystem
         return value.Float();
     }
 
-    /// <summary>
-    /// Публикует выпавшую травму на цели. <paramref name="damage"/> — величина урона удара,
-    /// вызвавшего травму (используется механиками, например для тира перелома).
-    /// </summary>
-    private void RaiseTrauma(EntityUid uid, TraumaType type, BodyZone? zone, float damage)
+    /// <summary>Публикует выпавшую травму на цели — дальше её накладывают системы-механики.</summary>
+    private void RaiseTrauma(EntityUid uid, TraumaType type, BodyZone? zone)
     {
         // Широковещательно: на это событие подписаны несколько систем-механик, а движок допускает
         // лишь одну подписку на пару (компонент, событие).
-        RaiseLocalEvent(new TraumaRolledEvent(uid, type, zone, damage));
+        RaiseLocalEvent(new TraumaRolledEvent(uid, type, zone));
     }
 
     // ═══════════════════════════════════════════════════════════════════════════
@@ -262,7 +259,7 @@ public sealed class TraumaRollSystem : EntitySystem
 
         var success = _random.Prob(DebugFractureChance);
         if (success)
-            RaiseTrauma(uid, TraumaType.Fracture, picked, 0f);
+            RaiseTrauma(uid, TraumaType.Fracture, picked);
 
         return new TraumaDebugRollResult(true, success, picked, DebugFractureChance);
     }
@@ -300,7 +297,7 @@ public sealed class TraumaRollSystem : EntitySystem
 
         var success = _random.Prob(DebugDislocationChance);
         if (success)
-            RaiseTrauma(uid, TraumaType.Dislocation, picked, 0f);
+            RaiseTrauma(uid, TraumaType.Dislocation, picked);
 
         return new TraumaDebugRollResult(true, success, picked, DebugDislocationChance);
     }
@@ -313,7 +310,7 @@ public sealed class TraumaRollSystem : EntitySystem
 
         var success = _random.Prob(DebugArterialChance);
         if (success)
-            RaiseTrauma(uid, TraumaType.ArterialBleed, null, 0f);
+            RaiseTrauma(uid, TraumaType.ArterialBleed, null);
 
         return new TraumaDebugRollResult(true, success, null, DebugArterialChance);
     }

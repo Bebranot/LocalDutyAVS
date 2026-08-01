@@ -94,6 +94,46 @@ public sealed class ArterialBleedTreatmentSystem : EntitySystem
         SubscribeLocalEvent<ActiveArterialTreatmentComponent, ComponentShutdown>(OnSessionShutdown);
     }
 
+    /// <summary>
+    /// Сессия висит на ЛЕЧАЩЕМ, а условия её жизни — на ПАЦИЕНТЕ, то есть на ЧУЖОЙ сущности.
+    /// Directed-подписок на <see cref="ArterialBleedComponent"/> для этого мало: как только компонент
+    /// снят иначе, чем через <see cref="CompleteTreatment"/> (реджув, смерть/удаление пациента,
+    /// админ-хил), <see cref="OnUiClosed"/> уже не вызовется — движок не доставляет directed-событие
+    /// без компонента — и сессия зависает НАВСЕГДА вместе со слоудауном −70% и зумом камеры.
+    /// Поэтому валидируем сессии здесь: одна проверка покрывает сразу все пути обрыва.
+    /// </summary>
+    public override void Update(float frameTime)
+    {
+        List<EntityUid>? stale = null;
+
+        var query = EntityQueryEnumerator<ActiveArterialTreatmentComponent>();
+        while (query.MoveNext(out var healer, out var session))
+        {
+            if (IsSessionAlive(healer, session))
+                continue;
+
+            // Удаление откладываем — нельзя менять структуру во время перебора запроса.
+            (stale ??= new()).Add(healer);
+        }
+
+        if (stale is null)
+            return;
+
+        // ComponentShutdown вернёт спрятанный жгут и откатит эффекты/DoAfter.
+        foreach (var healer in stale)
+            RemComp<ActiveArterialTreatmentComponent>(healer);
+    }
+
+    /// <summary>Пациент ещё жив как сущность, всё ещё кровит, и окно лечения всё ещё открыто лечащим.</summary>
+    private bool IsSessionAlive(EntityUid healer, ActiveArterialTreatmentComponent session)
+    {
+        var patient = session.Patient;
+
+        return !TerminatingOrDeleted(patient)
+               && HasComp<ArterialBleedComponent>(patient)
+               && _ui.IsUiOpen(patient, ArterialTreatmentUiKey.Key, healer);
+    }
+
     private void OnGetVerbs(Entity<ArterialBleedComponent> ent, ref GetVerbsEvent<Verb> args)
     {
         if (!args.CanInteract || !args.CanAccess)
@@ -121,9 +161,20 @@ public sealed class ArterialBleedTreatmentSystem : EntitySystem
 
         var healer = args.Actor;
 
-        // Одна активная сессия на лечащего.
-        if (HasComp<ActiveArterialTreatmentComponent>(healer))
+        // Одна активная сессия на лечащего. Второе окно надо ЗАКРЫТЬ, а не просто выйти из
+        // обработчика: иначе у лечащего висит окно без состояния с мёртвыми кнопками. Закрываем
+        // только чужое окно (другой пациент) — там OnUiClosed не тронет текущую сессию, т.к.
+        // сверяет Patient; на своём же пациенте закрытие снесло бы живую сессию.
+        if (TryComp<ActiveArterialTreatmentComponent>(healer, out var active))
+        {
+            if (active.Patient != ent.Owner)
+            {
+                _ui.CloseUi(ent.Owner, ArterialTreatmentUiKey.Key, healer);
+                _popup.PopupEntity(Loc.GetString("trauma-arterial-already-treating"), healer, healer);
+            }
+
             return;
+        }
 
         var session = AddComp<ActiveArterialTreatmentComponent>(healer);
         session.Patient = ent.Owner;
@@ -299,6 +350,12 @@ public sealed class ArterialBleedTreatmentSystem : EntitySystem
         session.StashedTourniquet = null;
 
         if (Deleted(item))
+            return;
+
+        // Лечащего удаляют (гиб/дисконнект/конец раунда) — контейнер и руки уже разбираются движком,
+        // лезть туда нельзя: жгут всё равно уедет вместе с сущностью, а операции над терминируемым
+        // контейнером дают ошибки в лог.
+        if (TerminatingOrDeleted(healer))
             return;
 
         if (_container.TryGetContainer(healer, TourniquetStashId, out var container))

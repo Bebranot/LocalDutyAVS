@@ -41,9 +41,7 @@ public sealed partial class ArterialTreatmentWindow : FancyWindow
             ("current", state.TightenProgress),
             ("total", state.TightenRequired));
 
-        InfoLabel.SetMessage(Loc.GetString(state.CurrentStep == ArterialTreatmentStep.Done
-            ? "trauma-arterial-info-done"
-            : "trauma-arterial-info"));
+        InfoLabel.SetMessage(Loc.GetString("trauma-arterial-info"));
     }
 
     private static void SetStepEnabled(Button button, ArterialTreatmentBuiState state, ArterialTreatmentStep step)
