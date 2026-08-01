@@ -18,8 +18,8 @@ public enum ArterialTreatmentUiKey : byte
 }
 
 /// <summary>
-/// _Duty: этап пошагового лечения артерии. Выполняются строго по порядку. <see cref="Done"/> —
-/// маркер завершения (кровотечение снято), кнопок под него нет.
+/// _Duty: этап пошагового лечения артерии. Выполняются строго по порядку. Отдельного этапа
+/// «завершено» нет: последнее затягивание сразу снимает кровотечение и закрывает окно.
 /// </summary>
 [Serializable, NetSerializable]
 public enum ArterialTreatmentStep : byte
@@ -35,9 +35,6 @@ public enum ArterialTreatmentStep : byte
 
     /// <summary>Затянуть жгут. Повторяется несколько раз (см. состояние окна).</summary>
     TightenTourniquet,
-
-    /// <summary>Лечение завершено.</summary>
-    Done,
 }
 
 /// <summary>

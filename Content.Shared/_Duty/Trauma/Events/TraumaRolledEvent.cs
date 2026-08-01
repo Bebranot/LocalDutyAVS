@@ -24,14 +24,10 @@ public sealed class TraumaRolledEvent : EntityEventArgs
     /// <summary>Зона тела (для перелома/вывиха) или null для беззонных травм (артерия).</summary>
     public readonly BodyZone? Zone;
 
-    /// <summary>Величина урона удара, вызвавшего травму — для масштабирования эффекта.</summary>
-    public readonly float Damage;
-
-    public TraumaRolledEvent(EntityUid target, TraumaType type, BodyZone? zone, float damage)
+    public TraumaRolledEvent(EntityUid target, TraumaType type, BodyZone? zone)
     {
         Target = target;
         Type = type;
         Zone = zone;
-        Damage = damage;
     }
 }

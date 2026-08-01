@@ -101,7 +101,6 @@ trauma-verb-treat-arterial = Остановить артериальное кр�
 
 trauma-arterial-window-title = Остановка кровотечения
 trauma-arterial-info = Выполняйте этапы по порядку. Не двигайтесь — иначе действие прервётся.
-trauma-arterial-info-done = Кровотечение остановлено.
 
 trauma-arterial-step-palm = Прижать рану ладонью
 trauma-arterial-step-finger = Прижать пальцем
