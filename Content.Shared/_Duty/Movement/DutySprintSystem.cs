@@ -96,6 +96,29 @@ public sealed class DutySprintSystem : EntitySystem
         // NB: на вилдинг не подписываемся — пара (WieldableComponent, ItemWieldedEvent) уже занята
         // SharedWieldableSystem, а движок допускает лишь одну подписку на (компонент, событие).
         // Фактор «оружие в руках» и так пересчитывается каждый тик во время спринта.
+
+        // Клавиша held: если игрок отсоединился или слёг с зажатой C, key-up до тела уже не доедет
+        // и WantsSprint залип бы навсегда — тело осталось бы в «вечном спринте». Гасим флаг сами.
+        SubscribeLocalEvent<DutyStaminaComponent, PlayerDetachedEvent>((u, c, _) => ClearWantsSprint(u, c));
+        SubscribeLocalEvent<DutyStaminaComponent, MobStateChangedEvent>(OnMobStateChanged);
+    }
+
+    private void OnMobStateChanged(Entity<DutyStaminaComponent> ent, ref MobStateChangedEvent args)
+    {
+        if (args.NewMobState != MobState.Alive)
+            ClearWantsSprint(ent.Owner, ent.Comp);
+    }
+
+    /// <summary>Принудительно снимает намерение спринтовать (отсоединение, крит, смерть).</summary>
+    private void ClearWantsSprint(EntityUid uid, DutyStaminaComponent comp)
+    {
+        if (!comp.WantsSprint)
+            return;
+
+        comp.WantsSprint = false;
+        comp.SprintElapsed = 0f;
+        Dirty(uid, comp);
+        _movementSpeed.RefreshMovementSpeedModifiers(uid);
     }
 
     public override void Shutdown()
@@ -108,8 +131,15 @@ public sealed class DutySprintSystem : EntitySystem
     {
         _enabled = value;
         var query = EntityQueryEnumerator<DutyStaminaComponent>();
-        while (query.MoveNext(out var uid, out _))
+        while (query.MoveNext(out var uid, out var comp))
+        {
+            // Выключили систему на ходу — Update больше не крутится, и недокрученная полоска
+            // выносливости висела бы на экране навсегда. Гасим её здесь.
+            if (!value)
+                _alerts.ClearAlert(uid, comp.EnduranceAlert);
+
             _movementSpeed.RefreshMovementSpeedModifiers(uid);
+        }
     }
 
     private void Refresh(EntityUid uid) => _movementSpeed.RefreshMovementSpeedModifiers(uid);
@@ -342,7 +372,11 @@ public sealed class DutySprintSystem : EntitySystem
             if (staminaChanged || comp.Breathing != oldBreathing)
                 Dirty(uid, comp);
 
-            if (!sprinting && comp.Current >= comp.Max && !comp.Breathing)
+            // Пока клавиша зажата, маркер НЕ снимаем, даже если запас полон. Иначе: держим C,
+            // останавливаемся, выносливость дотикивает до максимума, маркер уходит — и дальше
+            // бежать можно бесплатно, потому что SetWantsSprint на зажатой клавише повторно не
+            // вызовется (ранний выход по comp.WantsSprint == wants) и маркер уже не вернётся.
+            if (!sprinting && !comp.WantsSprint && comp.Current >= comp.Max && !comp.Breathing)
                 RemComp<ActiveDutyStaminaComponent>(uid);
         }
     }
