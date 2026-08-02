@@ -184,7 +184,7 @@
 # крафты
 - type: technology
   id: Bracelets
-  name: Кинетические наручи
+  name: research-technology-duty-bracelets
   icon:
     sprite: _Duty/Weapons/Melee/Bracelets/Salvage.rsi
     state: icon
