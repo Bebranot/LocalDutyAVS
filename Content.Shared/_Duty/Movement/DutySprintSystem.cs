@@ -425,9 +425,9 @@ public sealed class DutySprintSystem : EntitySystem
             // иначе клиентское предсказание выносливости гасит флаг раньше и звук обрывается.
             if (_net.IsServer)
             {
-                if (sprinting && comp.SprintElapsed >= comp.BreathingStartSeconds)
+                if (sprinting && comp.CanGetWinded && comp.SprintElapsed >= comp.BreathingStartSeconds)
                     comp.Breathing = true;
-                else if (comp.Breathing && comp.Current >= comp.Max * comp.BreathingStopFraction)
+                else if (comp.Breathing && (!comp.CanGetWinded || comp.Current >= comp.Max * comp.BreathingStopFraction))
                     comp.Breathing = false;
             }
 

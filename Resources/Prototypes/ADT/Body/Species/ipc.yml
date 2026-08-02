@@ -40,6 +40,11 @@
   parent: [ PlayerSiliconHumanoidBase, ADTAppearanceIPC ]
   name: Урист МакПозитроник
   components:
+  # _Duty: ИПЦ наследуется от PlayerSiliconHumanoidBase, а не от BaseSpeciesMob, поэтому пул
+  # выносливости мимо него проходил и спринта у расы не было вообще. Отдышку глушим — хрипеть
+  # человеческим голосом роботу нечем.
+  - type: DutyStamina
+    canGetWinded: false
   - type: VisualBody
   - type: PowerCellSlot
     cellSlotId: cell_slot

@@ -109,6 +109,13 @@ public sealed partial class DutyStaminaComponent : Component
 
     // ── Отдышка (клиентский звук) ─────────────────────────────────────────────
 
+    /// <summary>
+    /// Может ли существо запыхаться. Выключается тем, кто не дышит: ИПЦ выносливость тратит и
+    /// спринтует наравне со всеми, но хрипеть человеческим голосом ему нечем.
+    /// </summary>
+    [DataField]
+    public bool CanGetWinded = true;
+
     /// <summary>Сколько секунд непрерывного спринта до появления отдышки.</summary>
     [DataField]
     public float BreathingStartSeconds = 15f;
