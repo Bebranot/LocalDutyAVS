@@ -51,7 +51,7 @@ public sealed class HealthAnalyzerSystem : EntitySystem
     /// UpdateInterval), а только при реальной смене уровня/крита/грани смерти — как уже
     /// сделано для networked-состояния в <c>HeartbeatSystem.Recalculate</c>.
     /// </summary>
-    private readonly Dictionary<EntityUid, (HeartbeatLevel Level, bool InCrit, bool NearDeath, bool Flatline)> _lastSentAudio = new();
+    private readonly Dictionary<EntityUid, (bool InCrit, bool NearDeath, bool Flatline)> _lastSentAudio = new();
 
     public override void Initialize()
     {
@@ -360,7 +360,6 @@ public sealed class HealthAnalyzerSystem : EntitySystem
             return;
         }
 
-        var level = _heartbeat.GetLevel(target);
         var inCrit = _heartbeat.IsInCrit(target);
         var nearDeath = _heartbeat.GetVitalFraction(target) < SharedHeartbeatSystem.NearDeathFraction;
         var flatline = TryComp<MobStateComponent>(target, out var mob) && mob.CurrentState == MobState.Dead;
@@ -382,13 +381,13 @@ public sealed class HealthAnalyzerSystem : EntitySystem
             RemComp<HealthAnalyzerFlatlineHeardComponent>(target);
         }
 
-        var state = (level, inCrit, nearDeath, flatline);
+        var state = (inCrit, nearDeath, flatline);
         // playFlatline — одноразовый импульс, поэтому его наличие всегда пробивает дедуп.
         if (!forceRestart && !playFlatline && _lastSentAudio.TryGetValue(healthAnalyzer, out var last) && last == state)
             return;
 
         _lastSentAudio[healthAnalyzer] = state;
-        RaiseNetworkEvent(new HealthAnalyzerAudioEvent(level, inCrit, nearDeath, flatline, playFlatline, forceRestart), user);
+        RaiseNetworkEvent(new HealthAnalyzerAudioEvent(inCrit, nearDeath, flatline, playFlatline), user);
     }
 
     /// <summary>
