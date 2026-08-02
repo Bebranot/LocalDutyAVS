@@ -46,7 +46,7 @@ public sealed class ArterialBleedSystem : EntitySystem
     /// стабилизации крови у пола. Скорость вытекания крови (<c>BleedAmount</c>/<c>BleedTarget</c>/
     /// <c>BloodFloor</c> ниже) этим не затрагивается — только сам урон.
     /// </summary>
-    private const float ArterialBloodlossDamagePerSecond = 1.5f;
+    private const float ArterialBloodlossDamagePerSecond = 0.75f;
 
     public override void Initialize()
     {
