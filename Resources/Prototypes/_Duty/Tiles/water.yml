@@ -87,9 +87,11 @@
     layers:
       - state: water1
     # Goobstation - fishing
+  # _Duty: раньше во всех четырёх водоёмах стоял StalkerFishingTier1 — таблицу так и не завезли,
+  # и рыбалка молча не давала улова. Взяли готовую WaterFishingLootTable из ADT-рыбалки.
   - type: FishingSpot
     fishList: !type:NestedSelector
-      tableId: StalkerFishingTier1
+      tableId: WaterFishingLootTable
     fishDefaultTimer: 25.0
     fishTimerVariety: 15.0
   # Goobstation - fishing
@@ -109,7 +111,7 @@
     # Goobstation - fishing
   - type: FishingSpot
     fishList: !type:NestedSelector
-      tableId: StalkerFishingTier1
+      tableId: WaterFishingLootTable
     fishDefaultTimer: 25.0
     fishTimerVariety: 15.0
   # Goobstation - fishing
@@ -129,7 +131,7 @@
     # Goobstation - fishing
   - type: FishingSpot
     fishList: !type:NestedSelector
-      tableId: StalkerFishingTier1
+      tableId: WaterFishingLootTable
     fishDefaultTimer: 25.0
     fishTimerVariety: 15.0
   # Goobstation - fishing
@@ -157,7 +159,7 @@
     # Goobstation - fishing
   - type: FishingSpot
     fishList: !type:NestedSelector
-      tableId: StalkerFishingTier1
+      tableId: WaterFishingLootTable
     fishDefaultTimer: 25.0
     fishTimerVariety: 15.0
   # Goobstation - fishing
