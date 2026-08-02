@@ -2,7 +2,7 @@
   id: SecTechInventory
   startingInventory:
     WeaponPistolMk58: 6
-    MagazinePistolRubber: 12
+    # MagazinePistolRubber убран: такого прототипа в форке нет, 12 слотов были пустыми.
     MagazinePistolHighCapacity: 4
     MagazineBoxPistol: 2
     SpeedLoaderMagnum: 4

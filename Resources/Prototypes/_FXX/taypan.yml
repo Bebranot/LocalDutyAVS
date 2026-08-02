@@ -758,7 +758,7 @@
     - SurgeryStatic
     - AdvancedTools
     - ScienceEquipment
-    - ScienceExplosives
+    # ScienceExplosives убран: пак намеренно отключён ADT-твиком (см. Recipes/Lathes/Packs/science.yml)
     - ScienceClothing
     - PowerCells
     - ScienceWeapons
@@ -843,7 +843,7 @@
   id: TaypanClothingFXXInventory
   startingInventory:
     ClothingOuterCoatLab: 16
-    ADTClothingOuterCoatCyberSun: 16
+    # ADTClothingOuterCoatCyberSun убран: такого прототипа нет, слот был пустым.
     ClothingOuterCoatLabSecurityMedic: 16
     ClothingOuterCoatLabSeniorPhysician: 16
     ClothingOuterCoatLabViro: 16
@@ -1058,7 +1058,7 @@
   abstract: true
   components:
   - type: Store
-    name: Аплинк Тайпана
+    name: store-preset-name-taypan-uplink
     categories:
     - UplinkTaypan    
     currencyWhitelist:
