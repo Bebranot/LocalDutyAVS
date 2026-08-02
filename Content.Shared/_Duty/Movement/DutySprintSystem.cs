@@ -6,7 +6,6 @@ using Content.Shared._Duty.Trauma;
 using Content.Shared._Duty.Trauma.Components;
 using Content.Shared.Alert;
 using Content.Shared.CCVar;
-using Content.Shared.Cuffs.Components;
 using Content.Shared.Damage.Components;
 using Content.Shared.Damage.Systems;
 using Content.Shared.Gravity;
@@ -349,9 +348,8 @@ public sealed class DutySprintSystem : EntitySystem
         if (_standing.IsDown(uid))
             return "duty-sprint-blocked-lying";
 
-        // Скованные руки — бежать можно, рвануть нельзя (как у Goob).
-        if (TryComp<CuffableComponent>(uid, out var cuffs) && !cuffs.CanStillInteract)
-            return "duty-sprint-blocked-restrained";
+        // Наручники спринт НЕ запрещают — сознательное отступление от Goob: удирающий в браслетах
+        // задержанный это весело и никого не ломает.
 
         // В невесомости отталкиваться не от чего.
         if (_gravity.IsWeightless(uid))
