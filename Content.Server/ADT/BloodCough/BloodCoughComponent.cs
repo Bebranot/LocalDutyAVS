@@ -8,11 +8,13 @@ namespace Content.Server.ADT.BloodCough;
 [Access(typeof(BloodCoughSystem))]
 public sealed partial class BloodCoughComponent : Component
 {
+    // _Duty: было 5-16 сек — раненый кашлял по 5 раз в минуту, это читалось как спам.
+    // Разрежено до 20-45; травмы торса всё ещё учащают кашель (см. BloodCoughIntervalModifierEvent).
     [DataField("coughTimeMin"), ViewVariables(VVAccess.ReadWrite)]
-    public int CoughTimeMin = 5;
+    public int CoughTimeMin = 20;
 
     [DataField("coughTimeMax"), ViewVariables(VVAccess.ReadWrite)]
-    public int CoughTimeMax = 16;
+    public int CoughTimeMax = 45;
 
     [DataField("postingSayDamage")]
     public string? PostingSayDamage = default;

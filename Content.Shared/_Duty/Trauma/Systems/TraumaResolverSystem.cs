@@ -88,10 +88,14 @@ public sealed class TraumaResolverSystem : EntitySystem
     /// <summary>Ниже этой доли крови открытый перелом перестаёт кровить (чтобы не осушать в ноль).</summary>
     private const float OpenBleedBloodFloor = 0.5f;
 
-    /// <summary>Множитель интервала кашля кровью (BloodCoughSystem) при переломе торса по тиру.</summary>
-    private const float TorsoCoughCrackMultiplier = 0.85f;
-    private const float TorsoCoughFullMultiplier = 0.55f;
-    private const float TorsoCoughOpenMultiplier = 0.3f;
+    /// <summary>
+    /// Множитель интервала кашля кровью (BloodCoughSystem) при переломе торса по тиру.
+    /// Смягчён: прежние 0.85/0.55/0.3 ускоряли кашель втрое и поверх частого базового интервала
+    /// давали сплошной поток эмоций в чате.
+    /// </summary>
+    private const float TorsoCoughCrackMultiplier = 0.9f;
+    private const float TorsoCoughFullMultiplier = 0.75f;
+    private const float TorsoCoughOpenMultiplier = 0.6f;
 
     /// <summary>Штраф урона ближним оружием за каждую сломанную руку (линейный, не диминишинг).</summary>
     private const float ArmFractureMeleeDamagePenalty = 0.15f;

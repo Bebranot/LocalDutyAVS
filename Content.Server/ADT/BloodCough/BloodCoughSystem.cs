@@ -64,9 +64,13 @@ public sealed class BloodCoughSystem : EntitySystem
             // Выполняем кашель
             PerformCough(uid, comp);
 
-            // Устанавливаем следующий интервал (_Duty: травмы торса могут его учащать)
+            // Устанавливаем следующий интервал (_Duty: травмы торса могут его учащать).
+            // _Duty: считаем ОТ ТЕКУЩЕГО момента, а не прибавляем к прошлому сроку. Со сложением
+            // NextCough отставал от реального времени каждый раз, когда тик пропускался (моб в
+            // крите — см. проверку IsAlive выше), и после возвращения в строй кашель выстреливал
+            // КАЖДЫЙ тик, пока накопленное отставание не выберется. Это и был «спам кашля».
             var nextDelay = _random.Next(comp.CoughTimeMin, comp.CoughTimeMax) * GetCoughIntervalMultiplier(uid);
-            comp.NextCough += TimeSpan.FromSeconds(nextDelay);
+            comp.NextCough = curTime + TimeSpan.FromSeconds(nextDelay);
         }
     }
 
