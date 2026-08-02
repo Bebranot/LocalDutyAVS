@@ -1,5 +1,9 @@
+# Родитель — ClothingHeadHelmetArmoredBase, а НЕ ClothingHeadHelmetBasic: последний получил
+# ADT-твиком складное забрало (слои icon + icon-open, Foldable, FoldableClothing). У короны
+# такого арта нет и по смыслу не нужно, а объявленный слой icon-open заставлял клиент писать
+# в лог «State 'icon-open' not found in RSI» и ронял YAML-линтер.
 - type: entity
-  parent: [ClothingHeadHelmetBasic, BaseMajorContraband]
+  parent: [ClothingHeadHelmetArmoredBase, BaseMajorContraband]
   id: ClothingHeadHelmetSQcrown
   name: Sledge queen`s crown
   description: Queen`s crown. It`s blocking damage for all head. Don`t ask why.
