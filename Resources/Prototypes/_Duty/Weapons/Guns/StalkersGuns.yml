@@ -357,7 +357,7 @@
       path: /Audio/Weapons/Guns/Gunshots/shotgun.ogg
   - type: ChamberMagazineAmmoProvider
     soundRack:
-      path: /Audio/Weapons/Guns/Cock/shotgun_cock.ogg
+      path: /Audio/Corvax/Weapons/Guns/Cock/shotgun_cock.ogg # _Duty: файл лежит у Corvax, а не в ваниле
   - type: ItemSlots
     slots:
       gun_magazine:
