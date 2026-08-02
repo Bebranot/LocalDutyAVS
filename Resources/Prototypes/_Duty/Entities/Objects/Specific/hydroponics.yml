@@ -409,6 +409,7 @@
       - material: Cable
         amount: 2
       - tag: ElectroCabbageTag
+        name: construction-graph-tag-electro-cabbage
         icon:
           sprite: _Duty/Specific/Hydroponics/ElectroCabbage.rsi
           state: icon
@@ -431,14 +432,17 @@
       - material: CableMV
         amount: 15
       - tag: ElectroCabbageTag
+        name: construction-graph-tag-electro-cabbage
         icon:
           sprite: _Duty/Specific/Hydroponics/ElectroCabbage.rsi
           state: icon
       - tag: ElectroCabbageTag
+        name: construction-graph-tag-electro-cabbage
         icon:
           sprite: _Duty/Specific/Hydroponics/ElectroCabbage.rsi
           state: icon
       - tag: ElectroCabbageTag
+        name: construction-graph-tag-electro-cabbage
         icon:
           sprite: _Duty/Specific/Hydroponics/ElectroCabbage.rsi
           state: icon
