@@ -19,7 +19,7 @@
       types:
         Blunt: 10
         Slash: 5
-    WideAnimationRotation: -135
+    wideAnimationRotation: -135
   - type: Wieldable
     HeavyStaminaCost: 5
   - type: ComboStrike
@@ -58,7 +58,7 @@
 
 - type: entity
   id: ComboHitEffectRND
-  noSpawn: true
+  categories: [ HideSpawnMenu ]
   components:
     - type: TimedDespawn
       lifetime: 0.5
@@ -73,7 +73,7 @@
 
 - type: entity
   id: ComboHitEffectSalvage
-  noSpawn: true
+  categories: [ HideSpawnMenu ]
   parent: ComboHitEffectRND
   components:
     - type: TimedDespawn
@@ -103,7 +103,7 @@
           Blunt: 5.5
           Slash: 2.5
           Structural: 75
-      WideAnimationRotation: -135
+      wideAnimationRotation: -135
     - type: Sharp
     - type: ComboStrike
       hitsRequired: 6
@@ -135,7 +135,7 @@
           Blunt: 2.5
           Heat: 0.5
           Structural: 25
-      WideAnimationRotation: -135
+      wideAnimationRotation: -135
     - type: Sharp
     - type: ComboStrike
       hitsRequired: 2
@@ -143,7 +143,7 @@
         types:
           Blunt: 4
           Radiation: 6
-          Burn: 15
+          Heat: 15 # было Burn — это группа урона, а не тип, поэтому 15 урона не наносились
       staminaDamage: 20
       comboSound:
         path: /Audio/Weapons/emitter.ogg
@@ -166,7 +166,7 @@
       damage:
         types:
           Blunt: 2.5
-      WideAnimationRotation: -135
+      wideAnimationRotation: -135
     - type: Sharp
     - type: ComboStrike
       hitsRequired: 5

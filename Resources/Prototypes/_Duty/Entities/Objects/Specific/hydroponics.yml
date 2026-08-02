@@ -79,7 +79,7 @@
       types:
         Blunt: 10
   - type: Damageable
-    damageModifierSet: glass # эм... не знаю что ещё сюда поставить
+    damageModifierSet: Glass # эм... не знаю что ещё сюда поставить (id с большой буквы, иначе не находится)
   - type: Destructible
     thresholds:
     - trigger:

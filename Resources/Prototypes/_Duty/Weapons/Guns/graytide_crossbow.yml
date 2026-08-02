@@ -63,7 +63,7 @@
       - material: MetalRod
         amount: 5
       - material: Cable
-        amout: 10
+        amount: 10
       - tag: Pipe
         icon:
           sprite: Structures/Piping/Atmospherics/pipe.rsi
