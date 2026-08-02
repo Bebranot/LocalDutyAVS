@@ -22,4 +22,12 @@ public sealed partial class DislocationComponent : Component
     /// <summary>Зоны в остаточной слабости после вправления → время окончания.</summary>
     [AutoNetworkedField]
     public Dictionary<BodyZone, TimeSpan> Residual = new();
+
+    /// <summary>
+    /// Накопленная прибавка к шансу вправления за прошлые неудачи. Каждый провал добавляет
+    /// случайные 5-10%, успех обнуляет. Не сетевое — нужно только серверу для броска, показывать
+    /// игроку точное число мы не хотим.
+    /// </summary>
+    [ViewVariables]
+    public float ReduceBonus;
 }

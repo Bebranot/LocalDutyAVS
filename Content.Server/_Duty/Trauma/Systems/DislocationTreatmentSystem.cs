@@ -31,6 +31,13 @@ public sealed class DislocationTreatmentSystem : EntitySystem
     private const float SelfReduceChance = 0.3f;
     private const float OtherReduceChance = 0.7f;
 
+    /// <summary>Границы прибавки к шансу за каждую неудачную попытку.</summary>
+    private const float FailBonusMin = 0.05f;
+    private const float FailBonusMax = 0.10f;
+
+    /// <summary>Потолок итогового шанса — даже после десятка неудач гарантии не даём.</summary>
+    private const float MaxReduceChance = 0.95f;
+
     public override void Initialize()
     {
         SubscribeLocalEvent<DislocationComponent, GetVerbsEvent<Verb>>(OnGetVerbs);
@@ -84,9 +91,22 @@ public sealed class DislocationTreatmentSystem : EntitySystem
         args.Handled = true;
         var patient = ent.Owner;
 
-        if (_random.Prob(args.SuccessChance) && _dislocation.TryReduceFirst(patient))
+        // Каждая прошлая неудача облегчает следующую попытку: сустав постепенно «расхаживается».
+        // Бонус копится на пациенте, а не на лечащем, — это состояние тела, поэтому подхватывает
+        // его и напарник, взявшийся вправлять после чужих неудач.
+        var chance = Math.Clamp(args.SuccessChance + ent.Comp.ReduceBonus, 0f, MaxReduceChance);
+
+        if (_random.Prob(chance) && _dislocation.TryReduceFirst(patient))
+        {
+            ent.Comp.ReduceBonus = 0f;
             _popup.PopupEntity(Loc.GetString("trauma-reduce-success"), patient, patient);
-        else
-            _popup.PopupEntity(Loc.GetString("trauma-reduce-fail"), patient, PopupType.MediumCaution);
+            return;
+        }
+
+        ent.Comp.ReduceBonus += _random.NextFloat(FailBonusMin, FailBonusMax);
+        _popup.PopupEntity(Loc.GetString("trauma-reduce-fail"), patient, PopupType.MediumCaution);
+
+        // Красная виньетка боли — только пациенту, это его ощущение.
+        RaiseNetworkEvent(new DutyPainFlashEvent(), patient);
     }
 }
