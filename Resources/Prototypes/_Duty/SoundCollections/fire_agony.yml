@@ -9,18 +9,5 @@
     - /Audio/_Duty/Effects/Agony/agony_5.ogg
     - /Audio/_Duty/Effects/Agony/agony_6.ogg
 
-# Duty - по полу
-
-- type: soundCollection
-  id: DutyFemaleAgonyScreams
-  files:
-    - /Audio/_Duty/Effects/Agony/FemaleAgony2.ogg
-    - /Audio/_Duty/Effects/Agony/FemaleAgony3.ogg
-    - /Audio/_Duty/Effects/Agony/FemaleAgony1.ogg
-
-- type: soundCollection
-  id: DutyMaleAgonyScreams
-  files:
-      - /Audio/_Duty/Effects/Agony/MaleAgony1.ogg
-      - /Audio/_Duty/Effects/Agony/MaleAgony2.ogg
-      - /Audio/_Duty/Effects/Agony/MaleAgony3.ogg
+# Коллекции по полу (DutyFemaleAgonyScreams / DutyMaleAgonyScreams) удалены: сэмплов
+# Male/FemaleAgony никогда не завозили, и на сами коллекции никто не ссылался.

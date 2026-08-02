@@ -14,8 +14,8 @@
       types:
         Blunt: 8
         Structural: 10
-    soundHit:
-      path: /Audio/_Duty/рофло звуки/udar-trubi.ogg
+    # soundHit убран: файла udar-trubi.ogg никогда не завозили, папки с таким именем нет.
+    # Удар звучит стандартно.
   - type: Wieldable
   - type: IncreaseDamageOnWield
     damage:
