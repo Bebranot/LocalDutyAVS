@@ -4,6 +4,7 @@
 
 using Content.Shared._Duty.Trauma.Components;
 using Content.Shared._Duty.Trauma.Events;
+using Content.Shared.Alert;
 using Content.Shared.Body.Components;
 using Content.Shared.Body.Systems;
 using Content.Shared.Damage;
@@ -11,6 +12,7 @@ using Content.Shared.Damage.Systems;
 using Content.Shared.HealthExaminable;
 using Content.Shared.Rejuvenate;
 using Robust.Shared.Network;
+using Robust.Shared.Prototypes;
 using Robust.Shared.Timing;
 
 namespace Content.Shared._Duty.Trauma.Systems;
@@ -32,6 +34,10 @@ public sealed class ArterialBleedSystem : EntitySystem
     [Dependency] private readonly DamageableSystem _damageable = default!;
     [Dependency] private readonly IGameTiming _timing = default!;
     [Dependency] private readonly INetManager _net = default!;
+    [Dependency] private readonly AlertsSystem _alerts = default!;
+
+    /// <summary>Алерт-иконка (по типу HP/стамины) — показывается, пока активно кровотечение.</summary>
+    private static readonly ProtoId<AlertPrototype> ArteryAlert = "DutyArtery";
 
     /// <summary>
     /// Прямой урон Bloodloss в секунду от артерии, НЕ завязанный на ванильный авто-тик
@@ -103,10 +109,14 @@ public sealed class ArterialBleedSystem : EntitySystem
 
         var comp = EnsureComp<ArterialBleedComponent>(target);
         comp.NextUpdate = _timing.CurTime;
+        _alerts.ShowAlert(target, ArteryAlert);
     }
 
     private void OnShutdown(Entity<ArterialBleedComponent> ent, ref ComponentShutdown args)
     {
+        // Снимаем алерт при удалении компонента любым путём (лечение/реджувенейт/смерть).
+        _alerts.ClearAlert(ent.Owner, ArteryAlert);
+
         // Лечение: гасим кровотечение; кровь и Bloodloss-урон восстановятся сами со временем.
         if (_net.IsServer)
             _bloodstream.TryModifyBleedAmount(ent.Owner, -100f);
