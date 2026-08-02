@@ -2,7 +2,6 @@
 - type: marking
   id: 3eiladoTail
   bodyPart: Tail
-  markingCategory: Tail
   sponsorOnly: false #Duty - ХАЛЯВА
   sprites:
   - sprite: _DeadSpace/Sponsor/3eilado/Customization/tail.rsi
@@ -15,7 +14,6 @@
 - type: marking
   id: 3eiladoHair
   bodyPart: Hair
-  markingCategory: Hair
   sponsorOnly: false #Duty - ХАЛЯВА
   sprites:
   - sprite: _DeadSpace/Sponsor/3eilado/Customization/hair.rsi
@@ -24,11 +22,9 @@
 - type: marking
   id: 3eiladoWings
   bodyPart: Tail
-  markingCategory: Tail
   followSkinColor: true
   forcedColoring: true
   sponsorOnly: false #Duty - ХАЛЯВА
-  speciesRestriction: [Demon]
   sprites:
   - sprite: _DeadSpace/Sponsor/3eilado/Customization/demon/wings.rsi
     state: wings
@@ -36,8 +32,6 @@
 - type: marking
   id: 3eiladoMothWings
   bodyPart: Tail
-  markingCategory: Tail
-  speciesRestriction: [Moth]
   sponsorOnly: false #Duty - ХАЛЯВА
   sprites:
   - sprite: _DeadSpace/Sponsor/3eilado/Customization/moth/wings.rsi
@@ -50,8 +44,6 @@
 - type: marking
   id: 3eiladoWingsMothAntennas
   bodyPart: HeadTop
-  markingCategory: HeadTop
-  speciesRestriction: [Moth]
   sponsorOnly: false #Duty - ХАЛЯВА
   sprites:
   - sprite: _DeadSpace/Sponsor/3eilado/Customization/moth/top.rsi
@@ -60,7 +52,6 @@
 - type: marking
   id: DemonHorns3eilado
   bodyPart: HeadTop
-  markingCategory: HeadTop
   sponsorOnly: false #Duty - ХАЛЯВА
   sprites:
   - sprite: _DeadSpace/Sponsor/3eilado/horns.rsi

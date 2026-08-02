@@ -23,7 +23,6 @@
     - SemiAuto
     soundGunshot:
       path: /Audio/_Duty/StormMakerShoot.ogg
-      useKey: false
   - type: AmmoCounter
   - type: RechargeBasicEntityAmmo
     rechargeCooldown: 60

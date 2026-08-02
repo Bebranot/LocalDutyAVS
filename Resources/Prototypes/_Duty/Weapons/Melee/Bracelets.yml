@@ -21,7 +21,6 @@
         Slash: 5
     wideAnimationRotation: -135
   - type: Wieldable
-    HeavyStaminaCost: 5
   - type: ComboStrike
     hitsRequired: 5
     bonusDamage:

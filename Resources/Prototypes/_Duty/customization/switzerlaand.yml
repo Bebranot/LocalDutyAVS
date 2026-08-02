@@ -3,7 +3,6 @@
 - type: marking
   id: BandagedEyeRightswitzerlaand
   bodyPart: Head
-  markingCategory: Head
   sprites:
   - sprite: _DeadSpace/Sponsor/switzerlaand/markings.rsi
     state: bandaged_R_eye
@@ -11,7 +10,6 @@
 - type: marking
   id: BandagedEyeLeftswitzerlaand
   bodyPart: Head
-  markingCategory: Head
   sprites:
   - sprite: _DeadSpace/Sponsor/switzerlaand/markings.rsi
     state: bandaged_L_eye
@@ -19,7 +17,6 @@
 - type: marking
   id: switzerlaandTail
   bodyPart: Tail
-  markingCategory: Tail
   sprites:
   - sprite: _DeadSpace/Sponsor/switzerlaand/markings.rsi
     state: kitsune_primary

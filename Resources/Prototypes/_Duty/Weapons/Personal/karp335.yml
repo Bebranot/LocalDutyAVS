@@ -20,7 +20,6 @@
         Piercing: 2
         Structural: 10
   - type: Wieldable
-    HeavyStaminaCost: 35
   - type: IncreaseDamageOnWield
     damage:
       types:
