@@ -124,6 +124,9 @@ public sealed class DutySprintSystem : EntitySystem
 
         comp.WantsSprint = false;
         comp.SprintElapsed = 0f;
+        // Пауза как при обычном отпускании клавиши — чтобы её нельзя было обойти смертью или
+        // переподключением с зажатой C.
+        comp.NextSprintAllowed = _timing.CurTime + TimeSpan.FromSeconds(comp.SprintCooldown);
         Dirty(uid, comp);
         _movementSpeed.RefreshMovementSpeedModifiers(uid);
     }
@@ -169,10 +172,24 @@ public sealed class DutySprintSystem : EntitySystem
 
         // Нажатие при запрещающем состоянии — объясняем причину и не даём взвести флаг. Отпускание
         // пропускаем всегда, иначе флаг залипнет, если состояние изменилось с зажатой клавишей.
-        if (wants && GetSprintBlocker(uid) is { } blocker)
+        if (wants)
         {
-            _popup.PopupClient(Loc.GetString(blocker), uid, uid);
-            return;
+            if (GetSprintBlocker(uid) is { } blocker)
+            {
+                _popup.PopupClient(Loc.GetString(blocker), uid, uid);
+                return;
+            }
+
+            if (_timing.CurTime < comp.NextSprintAllowed)
+            {
+                _popup.PopupClient(Loc.GetString("duty-sprint-blocked-cooldown"), uid, uid);
+                return;
+            }
+        }
+        else
+        {
+            // Отпустили клавишу — заводим паузу до следующего рывка.
+            comp.NextSprintAllowed = _timing.CurTime + TimeSpan.FromSeconds(comp.SprintCooldown);
         }
 
         comp.WantsSprint = wants;

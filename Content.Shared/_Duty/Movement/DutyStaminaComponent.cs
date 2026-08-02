@@ -93,6 +93,20 @@ public sealed partial class DutyStaminaComponent : Component
     [DataField(customTypeSerializer: typeof(TimeOffsetSerializer)), AutoNetworkedField, AutoPausedField]
     public TimeSpan NextRegen = TimeSpan.Zero;
 
+    /// <summary>
+    /// Пауза между рывками, сек. Отсчитывается от момента ОТПУСКАНИЯ клавиши. Нужна против
+    /// спама: без неё долбёжка по клавише сыпала бы звук рывка, облака пыли и эмоции над головой.
+    /// </summary>
+    [DataField]
+    public float SprintCooldown = 2f;
+
+    /// <summary>
+    /// Время, раньше которого следующий рывок не начать. Сетевое — клиент должен предсказывать
+    /// отказ так же, как сервер, иначе спринт «дёргался» бы на откате предсказания.
+    /// </summary>
+    [DataField(customTypeSerializer: typeof(TimeOffsetSerializer)), AutoNetworkedField, AutoPausedField]
+    public TimeSpan NextSprintAllowed = TimeSpan.Zero;
+
     // ── Отдышка (клиентский звук) ─────────────────────────────────────────────
 
     /// <summary>Сколько секунд непрерывного спринта до появления отдышки.</summary>
