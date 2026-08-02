@@ -19,7 +19,8 @@ public static class TraumaLoc
     /// тексту, но разных по объекту VerbCategory дали бы в меню две отдельные вкладки с одним
     /// названием.
     /// </summary>
-    public static readonly VerbCategory SelfTreatmentCategory = new("trauma-verb-category-self-treatment", null);
+    public static readonly VerbCategory SelfTreatmentCategory =
+        new("trauma-verb-category-self-treatment", "/Textures/Interface/VerbIcons/rejuvenate.svg.192dpi.png");
 
     public static string ZoneKey(BodyZone zone) => zone switch
     {
