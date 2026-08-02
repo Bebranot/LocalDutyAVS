@@ -2,6 +2,7 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
+using Content.Shared._Duty.Trauma;
 using Content.Shared._Duty.Trauma.Components;
 using Content.Shared._Duty.Trauma.Events;
 using Content.Shared._Duty.Trauma.Systems;
@@ -46,10 +47,14 @@ public sealed class DislocationTreatmentSystem : EntitySystem
             return;
 
         var user = args.User;
+        var isSelf = user == patient;
 
         args.Verbs.Add(new Verb
         {
             Text = Loc.GetString("trauma-verb-reduce-dislocation"),
+            // Вправляешь себе — под вкладку «Самолечение», рядом с остановкой артерии; вправляешь
+            // другому — обычным пунктом меню.
+            Category = isSelf ? TraumaLoc.SelfTreatmentCategory : null,
             Act = () => StartReduce(patient, user),
         });
     }

@@ -3,6 +3,7 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
 using Content.Shared._Duty.Trauma.Components;
+using Content.Shared.Verbs;
 
 namespace Content.Shared._Duty.Trauma;
 
@@ -12,6 +13,14 @@ namespace Content.Shared._Duty.Trauma;
 /// </summary>
 public static class TraumaLoc
 {
+    /// <summary>
+    /// Вкладка ПКМ-меню «Самолечение» — общая для ВСЕХ процедур, которые можно делать себе
+    /// (остановка артерии, вправление вывиха и т.д.). Одна на всех намеренно: два одинаковых по
+    /// тексту, но разных по объекту VerbCategory дали бы в меню две отдельные вкладки с одним
+    /// названием.
+    /// </summary>
+    public static readonly VerbCategory SelfTreatmentCategory = new("trauma-verb-category-self-treatment", null);
+
     public static string ZoneKey(BodyZone zone) => zone switch
     {
         BodyZone.Head => "trauma-zone-head",

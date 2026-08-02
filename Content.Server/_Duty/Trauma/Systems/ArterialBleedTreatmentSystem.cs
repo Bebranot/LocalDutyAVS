@@ -3,6 +3,7 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
 using Content.Server._Duty.Trauma.Components;
+using Content.Shared._Duty.Trauma;
 using Content.Shared._Duty.Trauma.Components;
 using Content.Shared._Duty.Trauma.UI;
 using Content.Shared.DoAfter;
@@ -42,9 +43,6 @@ public sealed class ArterialBleedTreatmentSystem : EntitySystem
 
     /// <summary>Контейнер, в котором на время лечения прячется многоразовый жгут-предмет.</summary>
     private const string TourniquetStashId = "DutyTourniquetStash";
-
-    /// <summary>Категория ПКМ-меню «Самолечение» (когда лечишь сам себя).</summary>
-    private static readonly VerbCategory SelfTreatmentCategory = new("trauma-verb-category-self-treatment", null);
 
     // ── Тюнинг (Phase 6). ──────────────────────────────────────────────────────
     private static readonly TimeSpan PalmPressTime = TimeSpan.FromSeconds(5);
@@ -147,7 +145,7 @@ public sealed class ArterialBleedTreatmentSystem : EntitySystem
         {
             Text = Loc.GetString("trauma-verb-treat-arterial"),
             // Самолечение — под своей вкладкой; лечение другого — обычным пунктом.
-            Category = isSelf ? SelfTreatmentCategory : null,
+            Category = isSelf ? TraumaLoc.SelfTreatmentCategory : null,
             Act = () => _ui.OpenUi(patient, ArterialTreatmentUiKey.Key, user),
         };
 
