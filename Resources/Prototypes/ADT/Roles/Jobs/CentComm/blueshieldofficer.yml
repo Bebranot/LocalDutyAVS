@@ -27,8 +27,11 @@
   supervisors: job-supervisors-CCC
   canBeAntag: false
   access:
-  - ADTAccessCaptain #ADT-tweak - полный доступ ко всем станционным дверям, кроме ЦК и ОСЩ
   - BlueShield
+  # ADTAccessCaptain — это accessGroup, а не accessLevel, поэтому в access: он молча не
+  # применялся и ОСЩ оставался без станционного доступа.
+  accessGroups:
+  - ADTAccessCaptain #ADT-tweak - полный доступ ко всем станционным дверям, кроме ЦК и ОСЩ
   special:
   - !type:AddImplantSpecial
     implants: [ MindShieldImplant ]
