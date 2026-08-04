@@ -138,4 +138,13 @@ public sealed class DutyCCVars
     /// </summary>
     public static readonly CVarDef<bool> SprintEnabled =
         CVarDef.Create("duty.sprint_enabled", true, CVar.SERVER | CVar.REPLICATED);
+
+    // ── Discord ───────────────────────────────────────────────────────────────
+
+    /// <summary>
+    /// ID роли, которую пингует вебхук при старте раунда. Пусто — пинга нет.
+    /// Аналог апстримного discord.round_end_role, но для начала раунда.
+    /// </summary>
+    public static readonly CVarDef<string> DiscordRoundStartRole =
+        CVarDef.Create("discord.round_start_role", string.Empty, CVar.SERVERONLY);
 }
