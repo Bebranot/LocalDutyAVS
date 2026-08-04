@@ -34,13 +34,13 @@
     availableModes:
     - SemiAuto
     soundGunshot:
-      path: /Audio/_Duty/Deci_shoot.ogg
+      path: /Audio/_Duty/Weapons/Melee/Decimator/Deci_shoot.ogg
     useKey: false
   - type: AmmoCounter
   - type: RechargeBasicEntityAmmo
     rechargeCooldown: 5
     rechargeSound:
-      path: /Audio/_Duty/Deci_reload.ogg
+      path: /Audio/_Duty/Weapons/Melee/Decimator/Deci_reload.ogg
   - type: BasicEntityAmmoProvider
     proto: DeciBullet
     capacity: 1
