@@ -1,4 +1,4 @@
-namespace Content.Shared._Duty;
+namespace Content.Shared._Duty.AmbientMusic;
 
 /// <summary>
 /// Уровни динамической (Duty) фоновой музыки — соответствуют плейлистам в <c>DutyAmbientMusic</c>.

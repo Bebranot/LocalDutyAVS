@@ -6,7 +6,7 @@ using Robust.Shared.Audio;
 using Robust.Shared.Prototypes;
 using Robust.Shared.Serialization;
 
-namespace Content.Shared.Duty.Audio;
+namespace Content.Shared._Duty.AmbientMusic;
 
 /// <summary>Трек для крит. состояния с явно заданной длительностью.</summary>
 [DataDefinition]

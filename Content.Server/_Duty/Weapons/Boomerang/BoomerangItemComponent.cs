@@ -3,7 +3,7 @@ using Robust.Shared.GameObjects;
 using Robust.Shared.Serialization.Manager.Attributes;
 using Robust.Shared.Timing;
 
-namespace Content.Server._Duty.Weapons;
+namespace Content.Server._Duty.Weapons.Boomerang;
 
 [RegisterComponent]
 public sealed partial class BoomerangItemComponent : Component

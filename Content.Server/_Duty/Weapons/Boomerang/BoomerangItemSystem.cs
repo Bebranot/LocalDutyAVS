@@ -12,7 +12,7 @@ using Robust.Shared.Physics.Events;
 using Robust.Shared.Physics.Systems;
 using Robust.Shared.Timing;
 
-namespace Content.Server._Duty.Weapons;
+namespace Content.Server._Duty.Weapons.Boomerang;
 
 public sealed class BoomerangItemSystem : EntitySystem
 {

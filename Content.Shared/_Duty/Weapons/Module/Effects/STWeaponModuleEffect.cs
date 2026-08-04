@@ -1,7 +1,7 @@
 using Content.Shared.Weapons.Ranged.Components;
 using Robust.Shared.Serialization;
 
-namespace Content.Shared._Duty.Weapon.Module.Effects;
+namespace Content.Shared._Duty.Weapons.Module.Effects;
 
 // Порт из STALKER-14. Набор множителей/добавок, которые модуль накладывает на ствол.
 [DataDefinition, Serializable, NetSerializable]

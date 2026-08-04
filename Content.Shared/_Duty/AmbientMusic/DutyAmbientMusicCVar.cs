@@ -1,7 +1,7 @@
 using Content.Shared.CCVar;
 using Robust.Shared.Configuration;
 
-namespace Content.Shared._Duty;
+namespace Content.Shared._Duty.AmbientMusic;
 
 /// <summary>
 /// CVar громкости по уровню динамической музыки.
@@ -53,7 +53,7 @@ public static class DutyAmbientMusicCVar
 }
 
 /// <summary>
-/// Состояние HP для спокойной (не боевой) музыки — зеркало логики в <see cref="Content.Client.Duty.Audio.DynamicAmbientMusicSystem"/>.
+/// Состояние HP для спокойной (не боевой) музыки — зеркало логики в <see cref="Content.Client._Duty.AmbientMusic.DynamicAmbientMusicSystem"/>.
 /// </summary>
 public enum HealthMusicState
 {

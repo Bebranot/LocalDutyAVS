@@ -1,11 +1,11 @@
-using Content.Shared._Duty.Weapon.Module;
-using Content.Shared._Duty.Weapon.Module.Effects;
+using Content.Shared._Duty.Weapons.Module;
+using Content.Shared._Duty.Weapons.Module.Effects;
 using Content.Shared.Weapons.Ranged.Components;
 using Content.Shared.Weapons.Ranged.Events;
 using Content.Shared.Weapons.Ranged.Systems;
 using Robust.Shared.Containers;
 
-namespace Content.Server._Duty.Weapon.Module;
+namespace Content.Server._Duty.Weapons.Module;
 
 // Порт из STALKER-14 (Фаза 1 DutyAVS, без зум-скоупинга).
 // Модули в слотах ствола (gun_module_*, gun_auto_sear) меняют статы Gun и доступные режимы огня.

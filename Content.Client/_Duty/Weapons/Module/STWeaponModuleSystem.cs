@@ -1,8 +1,8 @@
-using Content.Shared._Duty.Weapon.Module;
+using Content.Shared._Duty.Weapons.Module;
 using Robust.Client.GameObjects;
 using Robust.Shared.Containers;
 
-namespace Content.Client._Duty.Weapon.Module;
+namespace Content.Client._Duty.Weapons.Module;
 
 // Порт из STALKER-14. Показывает спрайт вставленного модуля как слой на стволе.
 public sealed class STWeaponModuleSystem : STSharedWeaponModuleSystem

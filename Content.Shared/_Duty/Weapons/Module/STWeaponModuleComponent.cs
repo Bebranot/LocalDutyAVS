@@ -1,7 +1,7 @@
-using Content.Shared._Duty.Weapon.Module.Effects;
+using Content.Shared._Duty.Weapons.Module.Effects;
 using Robust.Shared.GameStates;
 
-namespace Content.Shared._Duty.Weapon.Module;
+namespace Content.Shared._Duty.Weapons.Module;
 
 /// <summary>
 /// Помечает сущность как модуль/обвес оружия (порт из STALKER-14).

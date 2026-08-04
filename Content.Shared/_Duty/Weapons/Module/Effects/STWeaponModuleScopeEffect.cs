@@ -1,6 +1,6 @@
 using Robust.Shared.Serialization;
 
-namespace Content.Shared._Duty.Weapon.Module.Effects;
+namespace Content.Shared._Duty.Weapons.Module.Effects;
 
 // Порт из STALKER-14. Параметры зума прицела.
 // ВНИМАНИЕ (Фаза 1 DutyAVS): сам зум-скоупинг НЕ портирован — поведения нет.

@@ -3,7 +3,7 @@ using Robust.Shared.Audio;
 using Robust.Shared.GameObjects;
 using Robust.Shared.Serialization.Manager.Attributes;
 
-namespace Content.Shared._Duty.Bracelets;
+namespace Content.Shared._Duty.Weapons.ComboStrike;
 
 [RegisterComponent]
 public sealed partial class ComboStrikeComponent : Component

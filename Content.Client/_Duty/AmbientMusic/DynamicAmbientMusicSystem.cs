@@ -1,6 +1,6 @@
 using Content.Client.Audio;
 using Content.Client.Gameplay;
-using Content.Shared._Duty;
+using Content.Shared._Duty.AmbientMusic;
 using Content.Shared._Duty.FireAgony;
 using Content.Shared._Duty.FuryStimulator;
 using Content.Shared.CCVar;
@@ -8,7 +8,6 @@ using Content.Shared.CombatMode;
 using Content.Shared.Damage;
 using Content.Shared.Damage.Components;
 using Content.Shared.Damage.Systems;
-using Content.Shared.Duty.Audio;
 using Content.Shared.GameTicking;
 using Content.Shared.Mobs;
 using Content.Shared.Mobs.Components;
@@ -26,7 +25,7 @@ using Robust.Shared.Prototypes;
 using Robust.Shared.Random;
 using Robust.Shared.Timing;
 
-namespace Content.Client.Duty.Audio;
+namespace Content.Client._Duty.AmbientMusic;
 
 /// <summary>
 /// Динамическая фоновая музыка Duty: HP, бой, MobCritical, смерть.
