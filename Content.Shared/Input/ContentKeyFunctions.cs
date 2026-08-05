@@ -7,6 +7,23 @@ namespace Content.Shared.Input
     {
         public static readonly BoundKeyFunction ToggleKnockdown = "ToggleKnockdown";
         public static readonly BoundKeyFunction Block = "Block"; // _Duty: двуручный блок/парирование
+
+        // _Duty: клавиши QTE-дуэли. Живут в отдельном input-контексте "qte", поэтому висят на тех же
+        // физических клавишах, что движение/действия, не конфликтуя с ними вне катсцены.
+        public static readonly BoundKeyFunction QteUp = "QteUp";
+        public static readonly BoundKeyFunction QteLeft = "QteLeft";
+        public static readonly BoundKeyFunction QteDown = "QteDown";
+        public static readonly BoundKeyFunction QteRight = "QteRight";
+        public static readonly BoundKeyFunction QteQ = "QteQ";
+        public static readonly BoundKeyFunction QteT = "QteT";
+        public static readonly BoundKeyFunction QteE = "QteE";
+        public static readonly BoundKeyFunction QteR = "QteR";
+        public static readonly BoundKeyFunction QteG = "QteG";
+        public static readonly BoundKeyFunction QteF = "QteF";
+        public static readonly BoundKeyFunction QteH = "QteH";
+
+        /// <summary>Решающий клик этапа 3. Отдельная функция, поэтому боевой режим на неё не влияет.</summary>
+        public static readonly BoundKeyFunction QteConfirm = "QteConfirm";
         public static readonly BoundKeyFunction Sprint = "Sprint"; // _Duty: третья ступень — спринт (зажать)
         public static readonly BoundKeyFunction UseItemInHand = "ActivateItemInHand";
         public static readonly BoundKeyFunction AltUseItemInHand = "AltActivateItemInHand";

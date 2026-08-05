@@ -562,6 +562,44 @@ binds:
 - function: Block # _Duty: двуручный блок/парирование
   type: State
   key: N
+# _Duty: клавиши QTE-дуэли — активны только в input-контексте "qte" (во время катсцены),
+# поэтому те же физические клавиши вне катсцены работают как обычно.
+- function: QteUp
+  type: State
+  key: W
+- function: QteLeft
+  type: State
+  key: A
+- function: QteDown
+  type: State
+  key: S
+- function: QteRight
+  type: State
+  key: D
+- function: QteQ
+  type: State
+  key: Q
+- function: QteT
+  type: State
+  key: T
+- function: QteE
+  type: State
+  key: E
+- function: QteR
+  type: State
+  key: R
+- function: QteG
+  type: State
+  key: G
+- function: QteF
+  type: State
+  key: F
+- function: QteH
+  type: State
+  key: H
+- function: QteConfirm
+  type: State
+  key: MouseRight
 - function: Sprint
   type: State
   key: C
