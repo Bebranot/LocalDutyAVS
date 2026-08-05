@@ -1,0 +1,12 @@
+# Duty: иконка активного двуручного блока. Рисуется сбоку от персонажа тем же оверлеем,
+# что и job-иконки (StatusIconOverlay), поэтому спрайт 8x8 — оверлей выводит текстуру
+# в натуральную величину, 32x32 закрыла бы персонажа целиком.
+# showTo не задан — блок должны видеть все вокруг, чтобы решать, бить или нет.
+
+- type: dutyStatusIcon
+  id: DutyTwoHandedBlock
+  priority: 1
+  locationPreference: Right
+  icon:
+    sprite: /Textures/_Duty/Interface/block_status.rsi
+    state: block
