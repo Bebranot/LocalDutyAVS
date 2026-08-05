@@ -1,0 +1,10 @@
+# Duty: эмоут для системы двуручного блока (TwoHandedBlockSystem) — "(персонаж) ставит блок".
+# Программный эмоут: не выбирается вручную (available: false), без chat-триггеров,
+# вызывается системой через TryEmoteWithChat(..., forceEmote: true).
+
+- type: emote
+  id: DutyTwoHandedBlock
+  name: chat-emote-name-duty-two-handed-block
+  category: General
+  available: false
+  chatMessages: ["ставит блок"]
