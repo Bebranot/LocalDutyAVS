@@ -1,0 +1,7 @@
+# _Duty: музыка QTE-дуэли. Трек выбирается случайно на старте катсцены — сервер выбирает один
+# раз и рассылает индекс обоим участникам, чтобы они слышали одно и то же.
+- type: soundCollection
+  id: DutyQteSong
+  files:
+    - "/Audio/_Duty/WIP/qtesong/qtesong (1).ogg"
+    - "/Audio/_Duty/WIP/qtesong/qtesong (2).ogg"
