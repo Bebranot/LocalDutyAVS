@@ -8,3 +8,20 @@
   category: General
   available: false
   chatMessages: ["ставит блок"]
+
+# Итог QTE-дуэли. Выдаётся каждому участнику по его исходу, чтобы окружающие поняли,
+# чем закончилась схватка, даже не видя саму катсцену.
+
+- type: emote
+  id: DutyParrySuccess
+  name: chat-emote-name-duty-parry-success
+  category: General
+  available: false
+  chatMessages: ["успешно парирует удар!"]
+
+- type: emote
+  id: DutyParryFail
+  name: chat-emote-name-duty-parry-fail
+  category: General
+  available: false
+  chatMessages: ["неудачно парирует удар"]

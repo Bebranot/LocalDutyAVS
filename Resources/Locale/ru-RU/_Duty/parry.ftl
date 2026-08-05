@@ -1,4 +1,12 @@
 chat-emote-name-duty-two-handed-block = ставит блок
+chat-emote-name-duty-parry-success = успешно парирует
+chat-emote-name-duty-parry-fail = неудачно парирует
+
+# Подписи на экране QTE-катсцены
+duty-qte-key-rmb = ПКМ
+duty-qte-result-win = ПОБЕДА
+duty-qte-result-lose = ПОРАЖЕНИЕ
+duty-qte-result-draw = РАЗМЕН
 
 # Отладочная команда dutyduel (только админ-флаг Debug)
 duty-parry-debug-duel-description = Запускает QTE-дуэль между вами и целью, минуя обычный вход.
