@@ -27,8 +27,6 @@ public sealed class QteCutsceneSystem : EntitySystem
 {
     [Dependency] private readonly IPlayerManager _player = default!;
     [Dependency] private readonly IUserInterfaceManager _ui = default!;
-    [Dependency] private readonly IOverlayManager _overlay = default!;
-    [Dependency] private readonly IClyde _clyde = default!;
     [Dependency] private readonly IInputManager _input = default!;
     [Dependency] private readonly IResourceCache _cache = default!;
     [Dependency] private readonly IGameTiming _timing = default!;
@@ -42,7 +40,7 @@ public sealed class QteCutsceneSystem : EntitySystem
     private const float MusicFadeIn = 1f;
     private const float MusicFadeOut = 0.5f;
 
-    private QteCutsceneOverlay? _overlayInstance;
+    private QteCutsceneControl? _control;
     private EntityUid? _musicStream;
 
     /// <summary>Виджеты HUD, спрятанные на время катсцены — восстанавливаем ровно их.</summary>
@@ -101,7 +99,7 @@ public sealed class QteCutsceneSystem : EntitySystem
     {
         base.FrameUpdate(frameTime);
 
-        if (!_active || _overlayInstance == null)
+        if (!_active || _control == null)
             return;
 
         // Страховка от залипания: если игрок сменил тело (смерть, гост, реконнект), ComponentShutdown
@@ -114,8 +112,8 @@ public sealed class QteCutsceneSystem : EntitySystem
         }
 
         // Состояние приходит с сервера и меняется часто — перечитываем каждый кадр,
-        // чтобы оверлей рисовал актуальную подсказку/шкалу.
-        _overlayInstance.Participant = participant;
+        // чтобы контрол рисовал актуальную подсказку/шкалу.
+        _control.Participant = participant;
     }
 
     private InputCmdHandler PromptHandler(QtePromptKey key)
@@ -164,8 +162,8 @@ public sealed class QteCutsceneSystem : EntitySystem
 
         _active = true;
 
-        _overlayInstance = new QteCutsceneOverlay(_clyde, _timing, _cache) { Participant = participant };
-        _overlay.AddOverlay(_overlayInstance);
+        _control = new QteCutsceneControl(_timing, _cache) { Participant = participant };
+        _ui.RootControl.AddChild(_control);
 
         HideHud();
 
@@ -182,11 +180,11 @@ public sealed class QteCutsceneSystem : EntitySystem
 
         _active = false;
 
-        if (_overlayInstance != null)
+        if (_control != null)
         {
-            _overlayInstance.Participant = null;
-            _overlay.RemoveOverlay(_overlayInstance);
-            _overlayInstance = null;
+            _control.Participant = null;
+            _control.Orphan();
+            _control = null;
         }
 
         RestoreHud();
