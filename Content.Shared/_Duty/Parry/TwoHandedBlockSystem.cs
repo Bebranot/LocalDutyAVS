@@ -146,9 +146,6 @@ public sealed class TwoHandedBlockSystem : EntitySystem
 
         if (isParry)
         {
-            // Замок на повтор дуэли. Окно парирования не открывается вообще — значит защиты нет
-            // и удар проходит в полном объёме. Подставиться под обычный блок в этот момент тоже
-            // нельзя: игрок под StunnedComponent, а обычный блок требует дееспособности.
             if (HasComp<TwoHandedParryCooldownComponent>(uid))
                 return;
         }
@@ -220,7 +217,8 @@ public sealed class TwoHandedBlockSystem : EntitySystem
         {
             // Кулдаун ставится сразу при активации, а не по итогу — попытка парировать «в пустоту»
             // тоже расходует способность, иначе её можно было бы спамить в ожидании удара.
-            SetParryCooldown(uid);
+            var parryCooldown = EnsureComp<TwoHandedParryCooldownComponent>(uid);
+            parryCooldown.EndTime = _timing.CurTime + ParryCooldown;
 
             // Замедление не нужно: игрок и так полностью обездвижен StunnedComponent.
             // Эмоут тоже пропускаем — окно 0.2с, спам в чат ни к чему.
@@ -254,22 +252,6 @@ public sealed class TwoHandedBlockSystem : EntitySystem
         var cooldown = RollCooldown(uid);
         var comp = EnsureComp<TwoHandedBlockCooldownComponent>(uid);
         comp.EndTime = _timing.CurTime + cooldown;
-    }
-
-    /// <summary>
-    /// Ставит (или продлевает) кулдаун парирования. Пока он идёт, окно парирования не открывается,
-    /// то есть новую дуэль запустить нельзя, а удар по игроку проходит без всякой защиты.
-    /// Вызывается и при активации парирования, и системой дуэли — для обоих участников сразу,
-    /// иначе после боя роли менялись местами и сцену можно было запустить заново почти мгновенно.
-    /// </summary>
-    public void SetParryCooldown(EntityUid uid)
-    {
-        var cooldown = EnsureComp<TwoHandedParryCooldownComponent>(uid);
-        var endTime = _timing.CurTime + ParryCooldown;
-
-        // Не укорачиваем уже идущий кулдаун.
-        if (endTime > cooldown.EndTime)
-            cooldown.EndTime = endTime;
     }
 
     /// <summary>Отменяет блок досрочно (оружие разоружили/выронили) — без штрафного кулдауна.</summary>

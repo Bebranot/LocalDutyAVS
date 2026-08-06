@@ -32,7 +32,6 @@ public sealed class QteDuelSystem : EntitySystem
     [Dependency] private readonly DamageableSystem _damageable = default!;
     [Dependency] private readonly SharedTransformSystem _transform = default!;
     [Dependency] private readonly SharedContentEyeSystem _eye = default!;
-    [Dependency] private readonly TwoHandedBlockSystem _block = default!;
 
     /// <summary>Зум камеры на время катсцены. Меньше единицы — камера ближе к бойцам.</summary>
     private static readonly System.Numerics.Vector2 CutsceneZoom = new(0.55f, 0.55f);
@@ -144,14 +143,6 @@ public sealed class QteDuelSystem : EntitySystem
 
         SetupParticipant(duelUid, duel.Blocker, args.Parrier, musicTrack);
         SetupParticipant(duelUid, duel.Parrier, args.Blocker, musicTrack);
-
-        // Замок на повтор сцены вешаем на ОБОИХ. Парировавший получил его ещё при активации, но
-        // без этого блокирующий оставался чистым: сразу после дуэли роли менялись местами (теперь
-        // уже он ловил маркер и парировал), и вторая сцена запускалась почти мгновенно.
-        foreach (var side in Sides(duel))
-        {
-            _block.SetParryCooldown(side.Entity);
-        }
 
         SpawnBarriers(duel);
 
