@@ -6,12 +6,9 @@ using Content.Shared.Damage.Components;
 using Content.Shared.Damage.Systems;
 using Content.Shared.Input;
 using Content.Shared.Interaction.Events;
-using Content.Shared.Hands;
-using Content.Shared.Item;
 using Content.Shared.Mobs.Systems;
-using Content.Shared.Movement.Events;
 using Content.Shared.Movement.Systems;
-using Content.Shared.Throwing;
+using Content.Shared.Stunnable;
 using Content.Shared.Weapons.Melee;
 using Content.Shared.Weapons.Melee.Events;
 using Content.Shared.Wieldable;
@@ -40,6 +37,7 @@ public sealed class TwoHandedBlockSystem : EntitySystem
     [Dependency] private readonly SharedMeleeWeaponSystem _melee = default!;
     [Dependency] private readonly ActionBlockerSystem _actionBlocker = default!;
     [Dependency] private readonly MovementModStatusSystem _movementMod = default!;
+    [Dependency] private readonly SharedStunSystem _stun = default!;
     [Dependency] private readonly MobThresholdSystem _mobThreshold = default!;
     [Dependency] private readonly SharedChatSystem _chat = default!;
 
@@ -55,8 +53,8 @@ public sealed class TwoHandedBlockSystem : EntitySystem
     /// </summary>
     private static readonly TimeSpan ParryCooldown = TimeSpan.FromSeconds(15);
 
-    /// <summary>Наказание атакующего, ударившего в активный блок: обездвиживание без потери оружия.</summary>
-    private static readonly TimeSpan PunishDuration = TimeSpan.FromSeconds(0.8);
+    /// <summary>Оглушение атакующего, ударившего в активный блок.</summary>
+    private static readonly TimeSpan PunishStunDuration = TimeSpan.FromSeconds(0.8);
 
     /// <summary>Доля фактического урона удара, проходящая блокирующему, если атакующее оружие сильнее.</summary>
     private const float StrongHitLeakFraction = 0.2f;
@@ -84,21 +82,6 @@ public sealed class TwoHandedBlockSystem : EntitySystem
         SubscribeLocalEvent<TwoHandedBlockComponent, AttackAttemptEvent>(OnAttackAttempt);
         SubscribeLocalEvent<TwoHandedBlockComponent, AttackedEvent>(OnAttacked);
         SubscribeLocalEvent<TwoHandedBlockComponent, DamageModifyEvent>(OnDamageModify);
-
-        // Наказание за удар в блок: обездвиживаем сами, вместо StunnedComponent — тот роняет
-        // предметы из рук. Набор событий тот же, что глушит стан, минус DropAttemptEvent-побочка.
-        // Шаредные подписки: клиент должен знать о запрете, иначе предскажет движение и его откатит.
-        SubscribeLocalEvent<JustBlockedAttackerComponent, ComponentStartup>(OnPunishStartupShutdown);
-        SubscribeLocalEvent<JustBlockedAttackerComponent, ComponentShutdown>(OnPunishStartupShutdown);
-        SubscribeLocalEvent<JustBlockedAttackerComponent, UpdateCanMoveEvent>(OnPunishMoveAttempt);
-        SubscribeLocalEvent<JustBlockedAttackerComponent, InteractionAttemptEvent>(OnPunishInteractAttempt);
-        SubscribeLocalEvent<JustBlockedAttackerComponent, AttackAttemptEvent>(OnPunishAttempt);
-        SubscribeLocalEvent<JustBlockedAttackerComponent, UseAttemptEvent>(OnPunishAttempt);
-        SubscribeLocalEvent<JustBlockedAttackerComponent, ThrowAttemptEvent>(OnPunishAttempt);
-        SubscribeLocalEvent<JustBlockedAttackerComponent, ChangeDirectionAttemptEvent>(OnPunishAttempt);
-
-        // Предметы намеренно НЕ выпадают — этим наказание и отличается от обычного стана.
-        SubscribeLocalEvent<JustBlockedAttackerComponent, DropAttemptEvent>(OnPunishAttempt);
     }
 
     public override void Shutdown()
@@ -110,11 +93,6 @@ public sealed class TwoHandedBlockSystem : EntitySystem
     public override void Update(float frameTime)
     {
         base.Update(frameTime);
-
-        // Весь жизненный цикл ведёт сервер — см. HandleBlockInput. Если бы клиент тикал здесь сам,
-        // он снимал бы реплицированные компоненты у себя раньше сервера и состояния разъезжались бы.
-        if (_netMan.IsClient)
-            return;
 
         var now = _timing.CurTime;
 
@@ -153,13 +131,6 @@ public sealed class TwoHandedBlockSystem : EntitySystem
 
     private void HandleBlockInput(ICommonSession? session)
     {
-        // Активация целиком серверная. Клиенту нельзя доверять это решение: компоненты кулдаунов
-        // и маркер наказания несетевые, поэтому на клиенте их «не существует» — он открывал бы
-        // окно блока на каждое нажатие. Отсюда были и спам блоком, и иконка, видимая только себе
-        // (сервер-то блок не выдавал). Само окно приезжает клиентам сетевым TwoHandedBlockComponent.
-        if (_netMan.IsClient)
-            return;
-
         if (session?.AttachedEntity is not { Valid: true } uid || !Exists(uid))
             return;
 
@@ -177,7 +148,7 @@ public sealed class TwoHandedBlockSystem : EntitySystem
         {
             // Замок на повтор дуэли. Окно парирования не открывается вообще — значит защиты нет
             // и удар проходит в полном объёме. Подставиться под обычный блок в этот момент тоже
-            // нельзя: наказание запрещает взаимодействие, а обычный блок требует дееспособности.
+            // нельзя: игрок под StunnedComponent, а обычный блок требует дееспособности.
             if (HasComp<TwoHandedParryCooldownComponent>(uid))
                 return;
         }
@@ -187,7 +158,7 @@ public sealed class TwoHandedBlockSystem : EntitySystem
                 return;
 
             // Обычный блок требует дееспособности. Парирующий — намеренно нет: игрок в этот момент
-            // под наказанием, которое иначе зарубило бы саму попытку парировать.
+            // под StunnedComponent, который иначе зарубил бы саму попытку парировать.
             if (!_actionBlocker.CanInteract(uid, null))
                 return;
         }
@@ -251,7 +222,7 @@ public sealed class TwoHandedBlockSystem : EntitySystem
             // тоже расходует способность, иначе её можно было бы спамить в ожидании удара.
             SetParryCooldown(uid);
 
-            // Замедление не нужно: игрок и так полностью обездвижен наказанием.
+            // Замедление не нужно: игрок и так полностью обездвижен StunnedComponent.
             // Эмоут тоже пропускаем — окно 0.2с, спам в чат ни к чему.
             return;
         }
@@ -334,31 +305,6 @@ public sealed class TwoHandedBlockSystem : EntitySystem
         args.Cancel();
     }
 
-    // ── Наказание за удар в блок (замена стана, без выпадения предметов) ──
-
-    private void OnPunishStartupShutdown(EntityUid uid, JustBlockedAttackerComponent component, EntityEventArgs args)
-    {
-        _actionBlocker.UpdateCanMove(uid);
-    }
-
-    private void OnPunishMoveAttempt(EntityUid uid, JustBlockedAttackerComponent component, UpdateCanMoveEvent args)
-    {
-        if (component.LifeStage > ComponentLifeStage.Running)
-            return;
-
-        args.Cancel();
-    }
-
-    private void OnPunishInteractAttempt(Entity<JustBlockedAttackerComponent> ent, ref InteractionAttemptEvent args)
-    {
-        args.Cancelled = true;
-    }
-
-    private void OnPunishAttempt(EntityUid uid, JustBlockedAttackerComponent component, CancellableEntityEventArgs args)
-    {
-        args.Cancel();
-    }
-
     // ── Разрешение удара ───────────────────────────────────────
 
     /// <summary>
@@ -414,14 +360,15 @@ public sealed class TwoHandedBlockSystem : EntitySystem
 
         // Оружие блокирующего не изнашивается — Damageable этого оружия мы нигде не трогаем.
 
-        // Наказание атакующего — серверное решение, не должно применяться из клиентского
-        // предикта чужой атаки. Компонент сам обездвиживает и запрещает атаковать; обычный
-        // стан здесь не используется намеренно, он бы выбил оружие из рук.
+        // Оглушение атакующего и выдача маркера "только что ударил в блок" — серверное решение,
+        // не должно применяться из клиентского предикта чужой атаки.
         if (_netMan.IsClient)
             return;
 
+        _stun.TryUpdateStunDuration(attacker, PunishStunDuration);
+
         var punishMarker = EnsureComp<JustBlockedAttackerComponent>(attacker);
         punishMarker.Blocker = uid;
-        punishMarker.ExpireAt = _timing.CurTime + PunishDuration;
+        punishMarker.ExpireAt = _timing.CurTime + PunishStunDuration;
     }
 }
