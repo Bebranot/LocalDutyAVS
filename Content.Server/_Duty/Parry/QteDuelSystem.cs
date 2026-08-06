@@ -540,7 +540,11 @@ public sealed class QteDuelSystem : EntitySystem
         damage.DamageDict.Add("Blunt", bluntDamage);
         _damageable.TryChangeDamage(uid, damage);
 
-        _stun.TryUpdateStunDuration(uid, stun);
+        // Knockdown вместо обычного StunnedComponent: TryUpdateStunDuration шлёт DropHandItemsEvent,
+        // и оружие роняли под ноги — выглядело странно. drop: false — то же самое, что у алебарды
+        // при промахе в стену (HalberdChargeSystem.KnockdownOnHitWall): персонаж падает от удара,
+        // оружие остаётся при нём.
+        _stun.TryKnockdown(uid, stun, drop: false);
     }
 
     // ── Прерывание и демонтаж ─────────────────────────────────
@@ -582,7 +586,7 @@ public sealed class QteDuelSystem : EntitySystem
 
         foreach (var side in Sides(duel))
         {
-            _stun.TryUpdateStunDuration(side.Entity, InterruptStun);
+            _stun.TryKnockdown(side.Entity, InterruptStun, drop: false);
         }
 
         TeardownDuel(duelUid, duel);
