@@ -9,15 +9,12 @@ using Robust.Shared.Timing;
 namespace Content.Client._Duty.Parry;
 
 /// <summary>
-/// Полноэкранный слой QTE-катсцены: тёмно-серая виньетка по краям, а поверх — картинка этапа.
+/// Полноэкранный слой QTE-катсцены: тёмно-серая виньетка по краям, кнопка-кружок с подписью
+/// клавиши и сходящееся к ней кольцо, а в финале — крупная надпись с исходом дуэли.
 ///
-/// Этапы 1-2 (буквы): кнопка-кружок с подписью клавиши и сходящееся к ней кольцо-таймер —
-/// жать можно в любой момент, пока кольцо идёт.
-///
-/// Этап 3 (решающий, ПКМ): горизонтальная шкала с бегущим маркером и отмеченной на ней
-/// целевой зоной — как в мини-игре взлома Mass Effect. Отдельная фигура для этого этапа
-/// осознанно: кольцо здесь плохо читалось (не видно, «на сколько мимо» промазал), а по
-/// плоской шкале точность видна на глаз.
+/// Кольцо одно на все три этапа: единый визуальный язык читается лучше, чем разные фигуры на
+/// разных этапах. На этапах 1-2 оно просто таймер — жать можно в любой момент, пока оно идёт.
+/// На этапе 3 важен момент совпадения кольца с контуром кнопки.
 ///
 /// Сделан оверлеем, а не UI-контролом: дочерний Control у WindowRoot не растягивается сам
 /// (WindowRoot — не LayoutContainer, привязки якорей там не работают) и остался бы нулевого
@@ -42,20 +39,15 @@ public sealed class QteCutsceneOverlay : Overlay
     /// <summary>Сегментов в окружности: на глаз уже неотличимо от гладкой.</summary>
     private const int CircleSegments = 48;
 
-    // Палитра чуть живее нейтрально-серой: холодный циан на кнопках и кольце вместо
-    // просто белого/серого читается заметно приятнее на тёмной виньетке.
-    private static readonly Color VignetteColor = new(0.05f, 0.06f, 0.09f);
-    private static readonly Color ButtonFill = new(0.08f, 0.11f, 0.15f);
-    private static readonly Color ButtonEdge = new(0.55f, 0.90f, 0.98f);
-    private static readonly Color GlowColor = new(0.35f, 0.80f, 0.95f);
-    private static readonly Color RingColor = new(0.55f, 0.90f, 0.98f);
-    private static readonly Color TrackColor = new(0.20f, 0.24f, 0.30f);
-    private static readonly Color MarkerColor = new(0.95f, 0.85f, 0.40f);
-    private static readonly Color PerfectColor = new(0.35f, 0.90f, 0.55f);
-    private static readonly Color MissColor = new(0.95f, 0.30f, 0.30f);
-    private static readonly Color WinColor = new(0.45f, 0.90f, 0.55f);
-    private static readonly Color LoseColor = new(0.95f, 0.35f, 0.35f);
-    private static readonly Color DrawColor = new(0.95f, 0.80f, 0.35f);
+    private static readonly Color VignetteColor = new(0.06f, 0.06f, 0.08f);
+    private static readonly Color ButtonFill = new(0.10f, 0.10f, 0.13f);
+    private static readonly Color ButtonEdge = new(0.95f, 0.95f, 0.98f);
+    private static readonly Color RingColor = new(0.85f, 0.85f, 0.92f);
+    private static readonly Color PerfectColor = new(0.35f, 0.85f, 0.45f);
+    private static readonly Color MissColor = new(0.90f, 0.25f, 0.25f);
+    private static readonly Color WinColor = new(0.45f, 0.90f, 0.50f);
+    private static readonly Color LoseColor = new(0.90f, 0.30f, 0.30f);
+    private static readonly Color DrawColor = new(0.90f, 0.80f, 0.35f);
 
     private readonly IClyde _clyde;
     private readonly IGameTiming _timing;
@@ -100,7 +92,7 @@ public sealed class QteCutsceneOverlay : Overlay
                 break;
 
             case QteStage.Final:
-                DrawFinalBar(handle, participant, center, scale);
+                DrawFinalRing(handle, participant, center, scale);
                 break;
 
             case QteStage.Result:
@@ -154,66 +146,40 @@ public sealed class QteCutsceneOverlay : Overlay
         var progress = Math.Clamp(elapsed / total, 0f, 1f);
         var ringRadius = MathHelper.Lerp(buttonRadius * 3.2f, buttonRadius, progress);
 
-        // Мягкое свечение под кольцом — просто более широкое и тусклое повторение того же
-        // кольца, без него кружок на тёмной виньетке смотрелся плоско.
-        if (!missed)
-            DrawRing(handle, center, ringRadius, GlowColor.WithAlpha(0.20f), 12f * scale);
-
         DrawRing(handle, center, ringRadius, missed ? MissColor : RingColor, 3f * scale);
     }
 
-    // ── Этап 3: горизонтальная шкала с бегущим маркером ───────
+    // ── Этап 3: кольцо как точность ───────────────────────────
 
-    private void DrawFinalBar(DrawingHandleScreen handle, QteParticipantComponent participant, Vector2 center, float scale)
+    private void DrawFinalRing(DrawingHandleScreen handle, QteParticipantComponent participant, Vector2 center, float scale)
     {
+        var buttonRadius = 46f * scale;
         var missed = IsMissFlashing(participant);
 
         var windup = (float) (participant.FinalPerfect - participant.FinalStart).TotalSeconds;
-        var total = (float) (participant.FinalDeadline - participant.FinalStart).TotalSeconds;
-        if (windup <= 0 || total <= 0)
+        if (windup <= 0)
             return;
 
-        var halfWidth = 260f * scale;
-        var barHeight = 10f * scale;
-        var markerRadius = 15f * scale;
+        // Допуск читается глазами: полоса вокруг контура кнопки шириной в окно попадания,
+        // пересчитанное из секунд в пиксели по той же скорости, с которой сходится кольцо.
+        var ringSpan = buttonRadius * 2.2f;
+        var perfectBand = ringSpan * (QteTuning.PerfectWindowSeconds / windup);
 
-        var left = center.X - halfWidth;
-        var right = center.X + halfWidth;
-        var trackBox = new UIBox2(left, center.Y - barHeight / 2f, right, center.Y + barHeight / 2f);
-
-        // Целевая зона стоит у правого края — маркер доходит до неё ровно к идеальному моменту.
-        // Ширина зоны пересчитана из допуска в секундах через скорость маркера по той же шкале,
-        // так что «идеально» на экране совпадает с тем, что реально засчитает сервер.
-        var pxPerSecond = halfWidth * 2f / windup;
-        var zoneHalfWidth = MathF.Max(pxPerSecond * QteTuning.PerfectWindowSeconds, 6f * scale);
-
-        // Лёгкая пульсация зоны — просто чтобы взгляд сам находил, куда целиться.
-        var pulse = 0.75f + 0.25f * MathF.Sin((float) _timing.CurTime.TotalSeconds * 6f);
-        var zoneColor = PerfectColor.WithAlpha((participant.FinalAnswered ? 0.35f : 0.55f + 0.25f * pulse));
-        var zoneBox = new UIBox2(right - zoneHalfWidth, center.Y - barHeight * 1.6f, right + zoneHalfWidth, center.Y + barHeight * 1.6f);
-
-        handle.DrawRect(trackBox, TrackColor.WithAlpha(0.85f));
-        handle.DrawRect(zoneBox, zoneColor);
-        DrawOutline(handle, trackBox, ButtonEdge.WithAlpha(0.6f), 2f * scale);
-
-        var label = Loc.GetString("duty-qte-key-rmb");
-        var dims = handle.GetDimensions(_font, label, scale);
-        handle.DrawString(_font, new Vector2(center.X, center.Y - barHeight * 4f) - dims / 2f, label, scale, ButtonEdge);
+        DrawRing(handle, center, buttonRadius, PerfectColor.WithAlpha(participant.FinalAnswered ? 0.35f : 0.8f), perfectBand);
+        DrawButton(handle, center, buttonRadius, scale, missed, Loc.GetString("duty-qte-key-rmb"));
 
         if (participant.FinalAnswered)
-            return; // уже кликнул — маркер убираем, ждём соперника
+            return; // уже кликнул — кольцо убираем, ждём соперника
 
         var elapsed = (float) (_timing.CurTime - participant.FinalStart).TotalSeconds;
-        if (elapsed > total)
+
+        // До идеального момента кольцо идёт снаружи к контуру, после — продолжает внутрь:
+        // это и есть grace-период, видно, что момент упущен.
+        var radius = buttonRadius + ringSpan * (1f - elapsed / windup);
+        if (radius <= 1f)
             return;
 
-        var markerX = left + pxPerSecond * elapsed;
-        var markerPos = new Vector2(markerX, center.Y);
-        var markerColor = missed ? MissColor : MarkerColor;
-
-        handle.DrawCircle(markerPos, markerRadius * 1.8f, markerColor.WithAlpha(0.18f));
-        handle.DrawCircle(markerPos, markerRadius, markerColor);
-        DrawOutline(handle, new UIBox2(markerPos.X - markerRadius, markerPos.Y - markerRadius, markerPos.X + markerRadius, markerPos.Y + markerRadius), Color.Black.WithAlpha(0.4f), 1.5f * scale);
+        DrawRing(handle, center, radius, missed ? MissColor : RingColor, 4f * scale);
     }
 
     // ── Экран итога ───────────────────────────────────────────
@@ -244,9 +210,7 @@ public sealed class QteCutsceneOverlay : Overlay
     {
         var edge = missed ? MissColor : ButtonEdge;
 
-        // Мягкая подложка под кнопкой — без нее плоская заливка терялась на тёмной виньетке.
-        handle.DrawCircle(center, radius * 1.35f, (missed ? MissColor : GlowColor).WithAlpha(0.15f));
-        handle.DrawCircle(center, radius, missed ? MissColor.WithAlpha(0.30f) : ButtonFill.WithAlpha(0.85f));
+        handle.DrawCircle(center, radius, missed ? MissColor.WithAlpha(0.30f) : ButtonFill.WithAlpha(0.75f));
         DrawRing(handle, center, radius, edge, 3f * scale);
 
         if (label.Length == 0)
@@ -280,15 +244,6 @@ public sealed class QteCutsceneOverlay : Overlay
         }
 
         handle.DrawPrimitives(DrawPrimitiveTopology.TriangleStrip, _ringVerts, color);
-    }
-
-    /// <summary>Тонкая рамка прямоугольника — четыре узкие полосы по периметру.</summary>
-    private static void DrawOutline(DrawingHandleScreen handle, UIBox2 box, Color color, float thickness)
-    {
-        handle.DrawRect(new UIBox2(box.Left, box.Top, box.Right, box.Top + thickness), color);
-        handle.DrawRect(new UIBox2(box.Left, box.Bottom - thickness, box.Right, box.Bottom), color);
-        handle.DrawRect(new UIBox2(box.Left, box.Top, box.Left + thickness, box.Bottom), color);
-        handle.DrawRect(new UIBox2(box.Right - thickness, box.Top, box.Right, box.Bottom), color);
     }
 
     private bool IsMissFlashing(QteParticipantComponent participant)
