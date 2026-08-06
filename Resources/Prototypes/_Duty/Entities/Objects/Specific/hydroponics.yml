@@ -122,7 +122,7 @@
       seedId: MagnificentMoss
     - type: Sprite
       sprite: _Duty/Specific/Hydroponics/Moss.rsi
-      state: Moss_Spores
+      state: seed
 
 - type: reagent
   id: MossJuice
@@ -282,7 +282,7 @@
       seedId: ElectroCabbage
     - type: Sprite
       sprite: _Duty/Specific/Hydroponics/ElectroCabbage.rsi
-      state: Seed
+      state: seed
 
 - type: entity
   id: CabbageGenerator
