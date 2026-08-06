@@ -1,33 +1,55 @@
+using System.Numerics;
 using Content.Shared._Duty.Parry.Components;
-using Content.Shared._Duty.StatusIcon;
-using Content.Shared.StatusIcon.Components;
-using Robust.Shared.Prototypes;
+using Robust.Client.GameObjects;
+using Robust.Shared.Utility;
 
 namespace Content.Client._Duty.Parry;
 
 /// <summary>
-/// Показывает иконку активного блока сбоку от персонажа — тем же оверлеем, что рисует
-/// job-иконки, а не отдельным слоем спрайта над головой.
-///
-/// Иконка живёт ровно столько, сколько существует сетевой <see cref="TwoHandedBlockComponent"/>:
-/// оверлей опрашивает подписчиков каждый кадр, поэтому снимать её вручную не нужно.
+/// Показывает мир-спейс иконку block.rsi над головой, пока у сущности есть сетевой
+/// TwoHandedBlockComponent (обычный блок или парирующий — Фаза 1/2, разницы в отображении нет).
 /// </summary>
 public sealed class TwoHandedBlockVisualsSystem : EntitySystem
 {
-    [Dependency] private readonly IPrototypeManager _proto = default!;
+    [Dependency] private readonly SpriteSystem _sprite = default!;
 
-    private static readonly ProtoId<DutyStatusIconPrototype> BlockIcon = "DutyTwoHandedBlock";
+    private static readonly ResPath IconRsi = new("/Textures/_Duty/Interface/block.rsi");
+    private static readonly Vector2 IconOffset = new(0, 0.55f);
 
     public override void Initialize()
     {
         base.Initialize();
 
-        SubscribeLocalEvent<TwoHandedBlockComponent, GetStatusIconsEvent>(OnGetStatusIcons);
+        SubscribeLocalEvent<TwoHandedBlockComponent, ComponentStartup>(OnStartup);
+        SubscribeLocalEvent<TwoHandedBlockComponent, ComponentShutdown>(OnShutdown);
     }
 
-    private void OnGetStatusIcons(Entity<TwoHandedBlockComponent> ent, ref GetStatusIconsEvent args)
+    private void OnStartup(Entity<TwoHandedBlockComponent> ent, ref ComponentStartup args)
     {
-        if (_proto.TryIndex(BlockIcon, out var icon))
-            args.StatusIcons.Add(icon);
+        if (!TryComp<SpriteComponent>(ent, out var sprite))
+            return;
+
+        var spriteEnt = (ent.Owner, sprite);
+
+        _sprite.LayerMapReserve(spriteEnt, TwoHandedBlockVisualLayers.Icon);
+        _sprite.LayerSetRsi(spriteEnt, TwoHandedBlockVisualLayers.Icon, IconRsi, "block");
+        _sprite.LayerSetOffset(spriteEnt, TwoHandedBlockVisualLayers.Icon, IconOffset);
+        _sprite.LayerSetVisible(spriteEnt, TwoHandedBlockVisualLayers.Icon, true);
     }
+
+    private void OnShutdown(Entity<TwoHandedBlockComponent> ent, ref ComponentShutdown args)
+    {
+        if (!TryComp<SpriteComponent>(ent, out var sprite))
+            return;
+
+        var spriteEnt = (ent.Owner, sprite);
+
+        if (_sprite.LayerMapTryGet(spriteEnt, TwoHandedBlockVisualLayers.Icon, out var index, false))
+            _sprite.LayerSetVisible(spriteEnt, index, false);
+    }
+}
+
+public enum TwoHandedBlockVisualLayers : byte
+{
+    Icon,
 }
