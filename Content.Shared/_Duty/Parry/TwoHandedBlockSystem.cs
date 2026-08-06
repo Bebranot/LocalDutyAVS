@@ -44,15 +44,6 @@ public sealed class TwoHandedBlockSystem : EntitySystem
     /// <summary>Длительность обычного окна блока.</summary>
     private static readonly TimeSpan BlockDuration = TimeSpan.FromSeconds(0.3);
 
-    /// <summary>Длительность парирующего блока — доступен только под наказанием за удар в блок.</summary>
-    private static readonly TimeSpan ParryDuration = TimeSpan.FromSeconds(0.2);
-
-    /// <summary>
-    /// Кулдаун парирующего блока. Он же служит замком «катсцену нельзя повторить»: нет парирования —
-    /// нет и входа в дуэль, поэтому отдельный таймер на катсцену не нужен.
-    /// </summary>
-    private static readonly TimeSpan ParryCooldown = TimeSpan.FromSeconds(15);
-
     /// <summary>Оглушение атакующего, ударившего в активный блок.</summary>
     private static readonly TimeSpan PunishStunDuration = TimeSpan.FromSeconds(0.8);
 
@@ -111,20 +102,6 @@ public sealed class TwoHandedBlockSystem : EntitySystem
             if (now >= marker.ExpireAt)
                 RemComp<JustBlockedAttackerComponent>(uid);
         }
-
-        var blockCdQuery = EntityQueryEnumerator<TwoHandedBlockCooldownComponent>();
-        while (blockCdQuery.MoveNext(out var uid, out var cooldown))
-        {
-            if (now >= cooldown.EndTime)
-                RemComp<TwoHandedBlockCooldownComponent>(uid);
-        }
-
-        var parryCdQuery = EntityQueryEnumerator<TwoHandedParryCooldownComponent>();
-        while (parryCdQuery.MoveNext(out var uid, out var cooldown))
-        {
-            if (now >= cooldown.EndTime)
-                RemComp<TwoHandedParryCooldownComponent>(uid);
-        }
     }
 
     // ── Активация ──────────────────────────────────────────────
@@ -137,54 +114,19 @@ public sealed class TwoHandedBlockSystem : EntitySystem
         if (HasComp<TwoHandedBlockComponent>(uid))
             return; // уже держит окно блока
 
-        // Во время катсцены клавиша блока не работает — там свой набор клавиш.
-        if (HasComp<QteInputLockComponent>(uid))
+        if (HasComp<TwoHandedBlockCooldownComponent>(uid))
+            return; // ещё на кулдауне
+
+        // Парирование (Фаза 2) сюда подключается отдельной веткой поверх JustBlockedAttackerComponent —
+        // в Фазе 1 клавиша всегда открывает обычное окно блока.
+
+        if (!_actionBlocker.CanInteract(uid, null))
             return;
-
-        // Право на парирование: маркер «только что ударил в чужой блок» ещё жив.
-        var isParry = TryGetLiveMarker(uid, out _);
-
-        if (isParry)
-        {
-            if (HasComp<TwoHandedParryCooldownComponent>(uid))
-                return;
-        }
-        else
-        {
-            if (HasComp<TwoHandedBlockCooldownComponent>(uid))
-                return;
-
-            // Обычный блок требует дееспособности. Парирующий — намеренно нет: игрок в этот момент
-            // под StunnedComponent, который иначе зарубил бы саму попытку парировать.
-            if (!_actionBlocker.CanInteract(uid, null))
-                return;
-        }
 
         if (!TryGetEligibleWeapon(uid, out var weaponUid))
             return;
 
-        OpenBlockWindow(uid, weaponUid, isParry);
-    }
-
-    /// <summary>
-    /// Возвращает живой (не просроченный) маркер «только что ударил в чужой блок».
-    /// Просроченный удаляется лениво прямо здесь — отдельный тик для этого не нужен.
-    /// </summary>
-    private bool TryGetLiveMarker(EntityUid uid, out JustBlockedAttackerComponent marker)
-    {
-        marker = default!;
-
-        if (!TryComp<JustBlockedAttackerComponent>(uid, out var comp))
-            return false;
-
-        if (_timing.CurTime >= comp.ExpireAt)
-        {
-            RemCompDeferred<JustBlockedAttackerComponent>(uid);
-            return false;
-        }
-
-        marker = comp;
-        return true;
+        OpenBlockWindow(uid, weaponUid);
     }
 
     /// <summary>Двуручное оружие = MeleeWeaponComponent + WieldableComponent.Wielded одновременно.</summary>
@@ -202,28 +144,16 @@ public sealed class TwoHandedBlockSystem : EntitySystem
         return true;
     }
 
-    private void OpenBlockWindow(EntityUid uid, EntityUid weaponUid, bool isParry)
+    private void OpenBlockWindow(EntityUid uid, EntityUid weaponUid)
     {
         var block = EnsureComp<TwoHandedBlockComponent>(uid);
         block.Weapon = weaponUid;
-        block.EndTime = _timing.CurTime + (isParry ? ParryDuration : BlockDuration);
-        block.IsParry = isParry;
+        block.EndTime = _timing.CurTime + BlockDuration;
+        block.IsParry = false;
         block.PendingAttacker = null;
 
         var weaponMarker = EnsureComp<TwoHandedBlockWeaponComponent>(weaponUid);
         weaponMarker.Blocker = uid;
-
-        if (isParry)
-        {
-            // Кулдаун ставится сразу при активации, а не по итогу — попытка парировать «в пустоту»
-            // тоже расходует способность, иначе её можно было бы спамить в ожидании удара.
-            var parryCooldown = EnsureComp<TwoHandedParryCooldownComponent>(uid);
-            parryCooldown.EndTime = _timing.CurTime + ParryCooldown;
-
-            // Замедление не нужно: игрок и так полностью обездвижен StunnedComponent.
-            // Эмоут тоже пропускаем — окно 0.2с, спам в чат ни к чему.
-            return;
-        }
 
         _movementMod.TryAddMovementSpeedModDuration(uid, BlockSlowdownEffect, BlockDuration, 0.5f);
 
@@ -245,9 +175,8 @@ public sealed class TwoHandedBlockSystem : EntitySystem
         if (_netMan.IsClient)
             return;
 
-        // Кулдаун парирующего блока уже поставлен при активации (см. OpenBlockWindow).
         if (isParry)
-            return;
+            return; // парирующий блок и его 15с кулдаун — Фаза 2
 
         var cooldown = RollCooldown(uid);
         var comp = EnsureComp<TwoHandedBlockCooldownComponent>(uid);
@@ -306,23 +235,6 @@ public sealed class TwoHandedBlockSystem : EntitySystem
 
         component.PendingAttacker = null;
 
-        // Триггер QTE-дуэли: удар держащему парирующий блок нанёс ИМЕННО тот, кто его перед этим
-        // заблокировал. Урон этого удара гасится полностью, а стан/маркер намеренно НЕ выдаются —
-        // иначе исход дуэли снова давал бы право на парирование и цепочка стала бы бесконечной.
-        if (component.IsParry && TryGetLiveMarker(uid, out var marker) && marker.Blocker == attacker)
-        {
-            args.Damage = new DamageSpecifier();
-
-            if (_netMan.IsClient)
-                return;
-
-            RemCompDeferred<JustBlockedAttackerComponent>(uid);
-
-            var startEv = new QteDuelStartRequestEvent(attacker, uid);
-            RaiseLocalEvent(ref startEv);
-            return;
-        }
-
         if (!TryComp<MeleeWeaponComponent>(component.Weapon, out var blockerWeapon))
             return; // оружие блокирующего пропало — защитная проверка, штатно не должно происходить
 
@@ -349,8 +261,8 @@ public sealed class TwoHandedBlockSystem : EntitySystem
 
         _stun.TryUpdateStunDuration(attacker, PunishStunDuration);
 
-        var punishMarker = EnsureComp<JustBlockedAttackerComponent>(attacker);
-        punishMarker.Blocker = uid;
-        punishMarker.ExpireAt = _timing.CurTime + PunishStunDuration;
+        var marker = EnsureComp<JustBlockedAttackerComponent>(attacker);
+        marker.Blocker = uid;
+        marker.ExpireAt = _timing.CurTime + PunishStunDuration;
     }
 }
