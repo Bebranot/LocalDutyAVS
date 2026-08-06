@@ -559,9 +559,6 @@ binds:
 - function: ToggleKnockdown
   type: State
   key: R
-- function: Block # _Duty: двуручный блок/парирование
-  type: State
-  key: N
 - function: Sprint
   type: State
   key: C

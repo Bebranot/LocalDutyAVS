@@ -6,7 +6,6 @@ namespace Content.Shared.Input
     public static class ContentKeyFunctions
     {
         public static readonly BoundKeyFunction ToggleKnockdown = "ToggleKnockdown";
-        public static readonly BoundKeyFunction Block = "Block"; // _Duty: двуручный блок/парирование
         public static readonly BoundKeyFunction Sprint = "Sprint"; // _Duty: третья ступень — спринт (зажать)
         public static readonly BoundKeyFunction UseItemInHand = "ActivateItemInHand";
         public static readonly BoundKeyFunction AltUseItemInHand = "AltActivateItemInHand";
