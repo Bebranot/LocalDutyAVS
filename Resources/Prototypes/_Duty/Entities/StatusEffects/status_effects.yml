@@ -26,13 +26,3 @@
   id: DutyLazarusSlowdownStatusEffect
   suffix: Duty, Статус-эффект
   name: lazarus aftershock slowdown
-
-# Duty: Замедление на время удержания двуручного блока (TwoHandedBlockSystem).
-# Персонаж не падает, но замедляется на 50% на время окна блока (0.3с).
-# Наследуется от ванильного StatusEffectSlowdown (Resources/Prototypes/Entities/StatusEffects/movement.yml).
-
-- type: entity
-  parent: StatusEffectSlowdown
-  id: DutyTwoHandedBlockSlowdownStatusEffect
-  suffix: Duty, Статус-эффект
-  name: two-handed block slowdown
