@@ -54,9 +54,6 @@ public sealed class QteCutsceneOverlay : Overlay
     private readonly Font _font;
     private readonly Font _resultFont;
 
-    /// <summary>Буфер вершин кольца — размер постоянный, выделяем один раз (см. DrawRing).</summary>
-    private readonly Vector2[] _ringVerts = new Vector2[(CircleSegments + 1) * 2];
-
     /// <summary>Состояние текущего участника; null — катсцены нет и рисовать нечего.</summary>
     public QteParticipantComponent? Participant;
 
@@ -210,7 +207,7 @@ public sealed class QteCutsceneOverlay : Overlay
     {
         var edge = missed ? MissColor : ButtonEdge;
 
-        handle.DrawCircle(center, radius, missed ? MissColor.WithAlpha(0.30f) : ButtonFill.WithAlpha(0.75f));
+        DrawDisc(handle, center, radius, missed ? MissColor.WithAlpha(0.30f) : ButtonFill.WithAlpha(0.75f));
         DrawRing(handle, center, radius, edge, 3f * scale);
 
         if (label.Length == 0)
@@ -220,30 +217,42 @@ public sealed class QteCutsceneOverlay : Overlay
         handle.DrawString(_font, center - dims / 2f, label, scale, edge);
     }
 
+    /// <summary>Залитый круг — веер треугольников от центра.</summary>
+    private static void DrawDisc(DrawingHandleScreen handle, Vector2 center, float radius, Color color)
+    {
+        Span<Vector2> verts = stackalloc Vector2[CircleSegments + 2];
+        verts[0] = center;
+
+        for (var i = 0; i <= CircleSegments; i++)
+        {
+            var angle = MathF.Tau * i / CircleSegments;
+            verts[i + 1] = center + new Vector2(MathF.Cos(angle), MathF.Sin(angle)) * radius;
+        }
+
+        handle.DrawPrimitives(DrawPrimitiveTopology.TriangleFan, verts, color);
+    }
+
     /// <summary>
-    /// Кольцо заданной толщины — полоса треугольников между внутренней и внешней окружностями.
-    /// Готовый DrawCircle(filled: false) не подошёл: он даёт линию в один пиксель, которая на
-    /// больших разрешениях теряется, а толщину ему задать нельзя.
-    ///
-    /// Буфер вершин — поле, а не stackalloc: в песочнице клиента stackalloc запрещён
-    /// (см. комментарий в AtmosphereSystem.Gases.cs), а размер тут всё равно постоянный,
-    /// так что заодно не мусорим в GC каждый кадр.
+    /// Кольцо заданной толщины. Рисуется полосой треугольников между внутренней и внешней
+    /// окружностями — линиями толщину не задать, а тонкая линия на больших экранах теряется.
     /// </summary>
-    private void DrawRing(DrawingHandleScreen handle, Vector2 center, float radius, Color color, float thickness)
+    private static void DrawRing(DrawingHandleScreen handle, Vector2 center, float radius, Color color, float thickness)
     {
         var inner = MathF.Max(radius - thickness / 2f, 0f);
         var outer = radius + thickness / 2f;
+
+        Span<Vector2> verts = stackalloc Vector2[(CircleSegments + 1) * 2];
 
         for (var i = 0; i <= CircleSegments; i++)
         {
             var angle = MathF.Tau * i / CircleSegments;
             var dir = new Vector2(MathF.Cos(angle), MathF.Sin(angle));
 
-            _ringVerts[i * 2] = center + dir * inner;
-            _ringVerts[i * 2 + 1] = center + dir * outer;
+            verts[i * 2] = center + dir * inner;
+            verts[i * 2 + 1] = center + dir * outer;
         }
 
-        handle.DrawPrimitives(DrawPrimitiveTopology.TriangleStrip, _ringVerts, color);
+        handle.DrawPrimitives(DrawPrimitiveTopology.TriangleStrip, verts, color);
     }
 
     private bool IsMissFlashing(QteParticipantComponent participant)
