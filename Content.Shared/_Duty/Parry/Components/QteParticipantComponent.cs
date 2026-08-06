@@ -55,7 +55,7 @@ public sealed partial class QteParticipantComponent : Component
     [AutoNetworkedField]
     public TimeSpan FinalStart;
 
-    /// <summary>Момент идеального клика — кольцо полностью сошлось на контуре кнопки.</summary>
+    /// <summary>Момент идеального клика — шкала полностью сжата.</summary>
     [AutoNetworkedField]
     public TimeSpan FinalPerfect;
 
@@ -66,21 +66,6 @@ public sealed partial class QteParticipantComponent : Component
     /// <summary>Игрок уже кликнул на этапе 3 (повторные клики игнорируются).</summary>
     [AutoNetworkedField]
     public bool FinalAnswered;
-
-    /// <summary>Что показать на экране итога — заполняется при развязке дуэли.</summary>
-    [AutoNetworkedField]
-    public QteOutcome Outcome;
-
-    /// <summary>
-    /// До этого момента кнопка горит красным. Ставится сервером на каждом промахе, чтобы
-    /// провал читался сразу, а не только по итогу дуэли.
-    /// </summary>
-    [AutoNetworkedField]
-    public TimeSpan MissFlashUntil;
-
-    /// <summary>Когда экран итога погаснет — клиенту для анимации, демонтаж ведёт сервер.</summary>
-    [AutoNetworkedField]
-    public TimeSpan ResultUntil;
 
     /// <summary>
     /// Атакующий из последнего AttackedEvent — кэш для отличения ближнего удара от выстрела

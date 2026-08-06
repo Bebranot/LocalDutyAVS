@@ -26,12 +26,6 @@ public sealed partial class QteDuelComponent : Component
     /// (баг в переходах, потеря игрока и т.п.) — принудительно демонтируем её.
     /// </summary>
     public TimeSpan Watchdog;
-
-    /// <summary>
-    /// Когда закончить показ экрана итога и демонтировать сцену. Заполняется в ResolveDuel:
-    /// без этой паузы результат схлопывался в тот же кадр и победителя было не видно.
-    /// </summary>
-    public TimeSpan ResultUntil;
 }
 
 /// <summary>Состояние одной стороны дуэли.</summary>

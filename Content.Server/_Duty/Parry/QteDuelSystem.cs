@@ -1,5 +1,4 @@
 using System.Linq;
-using Content.Server.Chat.Systems;
 using Content.Shared._Duty.Parry;
 using Content.Shared._Duty.Parry.Components;
 using Content.Shared.Damage;
@@ -34,7 +33,6 @@ public sealed class QteDuelSystem : EntitySystem
     [Dependency] private readonly SharedTransformSystem _transform = default!;
     [Dependency] private readonly SharedContentEyeSystem _eye = default!;
     [Dependency] private readonly TwoHandedBlockSystem _block = default!;
-    [Dependency] private readonly ChatSystem _chat = default!;
 
     /// <summary>Зум камеры на время катсцены. Меньше единицы — камера ближе к бойцам.</summary>
     private static readonly System.Numerics.Vector2 CutsceneZoom = new(0.55f, 0.55f);
@@ -42,12 +40,6 @@ public sealed class QteDuelSystem : EntitySystem
     private static readonly EntProtoId BarrierProto = "DutyQteBarrier";
     private static readonly ProtoId<SoundCollectionPrototype> MusicCollection = "DutyQteSong";
     private static readonly SoundSpecifier ParrySound = new SoundPathSpecifier("/Audio/_Duty/WIP/parry.ogg");
-
-    /// <summary>Звук развязки дуэли — слышен всем вокруг.</summary>
-    private static readonly SoundSpecifier ResultSound = new SoundPathSpecifier("/Audio/_Duty/WIP/true.ogg");
-
-    private const string SuccessEmote = "DutyParrySuccess";
-    private const string FailEmote = "DutyParryFail";
 
     private static readonly QtePromptKey[] DirectionKeys = [QtePromptKey.W, QtePromptKey.A, QtePromptKey.S, QtePromptKey.D];
     private static readonly QtePromptKey[] LetterKeys =
@@ -57,11 +49,18 @@ public sealed class QteDuelSystem : EntitySystem
     private const int LetterPromptMin = 4;
     private const int LetterPromptMax = 6;
 
-    /// <summary>Сколько сходится кольцо этапа 3 до идеального момента.</summary>
+    /// <summary>Окно на одну подсказку — случайное в этих границах, чтобы ритм не заучивался.</summary>
+    private static readonly TimeSpan PromptWindowMin = TimeSpan.FromSeconds(0.5);
+    private static readonly TimeSpan PromptWindowMax = TimeSpan.FromSeconds(0.8);
+
+    /// <summary>Сколько сжимается шкала этапа 3 до идеального момента.</summary>
     private static readonly TimeSpan FinalWindup = TimeSpan.FromSeconds(1.2);
 
     /// <summary>Сколько ещё принимается клик после идеального момента, прежде чем этап провален.</summary>
     private static readonly TimeSpan FinalGrace = TimeSpan.FromSeconds(0.4);
+
+    /// <summary>Полуширина идеальной зоны: клик с отклонением меньше этого считается попаданием.</summary>
+    private const float PerfectWindowSeconds = 0.15f;
 
     private static readonly TimeSpan WatchdogTimeout = TimeSpan.FromSeconds(30);
 
@@ -102,17 +101,6 @@ public sealed class QteDuelSystem : EntitySystem
             if (now >= duel.Watchdog)
             {
                 TeardownDuel(duelUid, duel);
-                continue;
-            }
-
-            // Экран итога доигрывает до конца. Проверку живости тут пропускаем намеренно:
-            // проигравший мог только что умереть от добивания, и она оборвала бы показ
-            // результата победителю. От зависания страхует вотчдог выше.
-            if (duel.Stage == QteStage.Result)
-            {
-                if (now >= duel.ResultUntil)
-                    TeardownDuel(duelUid, duel);
-
                 continue;
             }
 
@@ -270,9 +258,9 @@ public sealed class QteDuelSystem : EntitySystem
             return;
 
         var now = _timing.CurTime;
-
-        // Окно фиксированное: рандом 0.5-0.8с оказался слишком нервным, играть было неудобно.
-        var window = QteTuning.PromptWindow;
+        var window = TimeSpan.FromSeconds(_random.NextFloat(
+            (float) PromptWindowMin.TotalSeconds,
+            (float) PromptWindowMax.TotalSeconds));
 
         participant.Stage = duel.Stage;
         participant.CurrentPrompt = side.Sequence[side.Index];
@@ -298,8 +286,6 @@ public sealed class QteDuelSystem : EntitySystem
                 continue;
 
             // Не успел — подсказка просто не засчитывается, этап не проваливается.
-            // Красная вспышка, чтобы промах читался сразу, а не только по итогу дуэли.
-            FlashMiss(side.Entity);
             AdvancePrompt(duel, side);
         }
 
@@ -414,14 +400,10 @@ public sealed class QteDuelSystem : EntitySystem
 
         side.FinalAnswered = true;
         side.FinalError = (float) Math.Abs((clickTime - participant.FinalPerfect).TotalSeconds);
-        side.FinalHit = side.FinalError <= QteTuning.PerfectWindowSeconds;
+        side.FinalHit = side.FinalError <= PerfectWindowSeconds;
 
         participant.FinalAnswered = true;
         Dirty(uid, participant);
-
-        // Мимо идеальной зоны — сразу красным, не дожидаясь развязки.
-        if (!side.FinalHit)
-            FlashMiss(uid);
     }
 
     private void UpdateFinalStage(EntityUid duelUid, QteDuelComponent duel, TimeSpan now)
@@ -438,26 +420,9 @@ public sealed class QteDuelSystem : EntitySystem
 
             if (now < anyParticipant.FinalDeadline)
                 return; // ещё можно кликнуть
-
-            // Дедлайн вышел — кто так и не кликнул, тот промахнулся. Покрасим и его кнопку.
-            foreach (var side in Sides(duel))
-            {
-                if (!side.FinalAnswered)
-                    FlashMiss(side.Entity);
-            }
         }
 
         ResolveDuel(duelUid, duel);
-    }
-
-    /// <summary>Подсветить кнопку промахнувшегося красным — визуальная обратная связь на провал.</summary>
-    private void FlashMiss(EntityUid uid)
-    {
-        if (!TryComp<QteParticipantComponent>(uid, out var participant))
-            return;
-
-        participant.MissFlashUntil = _timing.CurTime + QteTuning.MissFlash;
-        Dirty(uid, participant);
     }
 
     private void ResolveDuel(EntityUid duelUid, QteDuelComponent duel)
@@ -491,44 +456,15 @@ public sealed class QteDuelSystem : EntitySystem
             foreach (var side in Sides(duel))
             {
                 ApplyOutcome(side.Entity, MutualDamage, MutualStun);
-                SetOutcome(side.Entity, QteOutcome.Draw);
             }
         }
         else
         {
             var loser = winner == blocker ? parrier : blocker;
             ApplyOutcome(loser.Entity, WinnerDamage, WinnerStun);
-            SetOutcome(winner.Entity, QteOutcome.Win);
-            SetOutcome(loser.Entity, QteOutcome.Lose);
         }
 
-        // Звук развязки слышат все вокруг, а не только участники — по нему понятно, чем кончилось.
-        _audio.PlayPvs(ResultSound, parrier.Entity);
-
-        // Катсцену НЕ демонтируем сразу: держим её ещё пару секунд, иначе итог схлопывается
-        // в тот же кадр и победителя попросту не видно. Демонтаж — по ResultUntil в Update.
-        duel.Stage = QteStage.Result;
-        duel.ResultUntil = _timing.CurTime + QteTuning.ResultHold;
-    }
-
-    /// <summary>
-    /// Проставляет участнику исход и попутно объявляет его в чат — окружающие видят, чем
-    /// закончилась дуэль, даже не наблюдая саму катсцену.
-    /// </summary>
-    private void SetOutcome(EntityUid uid, QteOutcome outcome)
-    {
-        if (TryComp<QteParticipantComponent>(uid, out var participant))
-        {
-            participant.Outcome = outcome;
-            participant.ResultUntil = _timing.CurTime + QteTuning.ResultHold;
-            Dirty(uid, participant);
-        }
-
-        if (TerminatingOrDeleted(uid))
-            return;
-
-        var emote = outcome == QteOutcome.Win ? SuccessEmote : FailEmote;
-        _chat.TryEmoteWithChat(uid, emote, ignoreActionBlocker: true, forceEmote: true);
+        TeardownDuel(duelUid, duel);
     }
 
     private void ApplyOutcome(EntityUid uid, float bluntDamage, TimeSpan stun)

@@ -9,12 +9,8 @@ using Robust.Shared.Timing;
 namespace Content.Client._Duty.Parry;
 
 /// <summary>
-/// Полноэкранный слой QTE-катсцены: тёмно-серая виньетка по краям, кнопка-кружок с подписью
-/// клавиши и сходящееся к ней кольцо, а в финале — крупная надпись с исходом дуэли.
-///
-/// Кольцо одно на все три этапа: единый визуальный язык читается лучше, чем разные фигуры на
-/// разных этапах. На этапах 1-2 оно просто таймер — жать можно в любой момент, пока оно идёт.
-/// На этапе 3 важен момент совпадения кольца с контуром кнопки.
+/// Полноэкранный слой QTE-катсцены: тёмно-серая виньетка по краям, текущая клавиша-подсказка
+/// (этапы 1-2) и сжимающаяся шкала с идеальной зоной (этап 3).
 ///
 /// Сделан оверлеем, а не UI-контролом: дочерний Control у WindowRoot не растягивается сам
 /// (WindowRoot — не LayoutContainer, привязки якорей там не работают) и остался бы нулевого
@@ -25,8 +21,7 @@ public sealed class QteCutsceneOverlay : Overlay
     public override OverlaySpace Space => OverlaySpace.ScreenSpace;
 
     private const string FontPath = "/Fonts/NotoSans/NotoSans-Bold.ttf";
-    private const int BaseFontSize = 44;
-    private const int ResultFontSize = 72;
+    private const int BaseFontSize = 48;
 
     /// <summary>Глубина виньетки от края экрана, доля от меньшей стороны.</summary>
     private const float VignetteDepthFraction = 0.28f;
@@ -36,23 +31,15 @@ public sealed class QteCutsceneOverlay : Overlay
 
     private const int StepWidth = 4;
 
-    /// <summary>Сегментов в окружности: на глаз уже неотличимо от гладкой.</summary>
-    private const int CircleSegments = 48;
-
     private static readonly Color VignetteColor = new(0.06f, 0.06f, 0.08f);
-    private static readonly Color ButtonFill = new(0.10f, 0.10f, 0.13f);
-    private static readonly Color ButtonEdge = new(0.95f, 0.95f, 0.98f);
-    private static readonly Color RingColor = new(0.85f, 0.85f, 0.92f);
-    private static readonly Color PerfectColor = new(0.35f, 0.85f, 0.45f);
-    private static readonly Color MissColor = new(0.90f, 0.25f, 0.25f);
-    private static readonly Color WinColor = new(0.45f, 0.90f, 0.50f);
-    private static readonly Color LoseColor = new(0.90f, 0.30f, 0.30f);
-    private static readonly Color DrawColor = new(0.90f, 0.80f, 0.35f);
+    private static readonly Color PromptColor = new(0.95f, 0.95f, 0.98f);
+    private static readonly Color PromptPendingColor = new(0.45f, 0.45f, 0.5f);
+    private static readonly Color BarColor = new(0.85f, 0.85f, 0.9f);
+    private static readonly Color PerfectZoneColor = new(0.35f, 0.85f, 0.45f);
 
     private readonly IClyde _clyde;
     private readonly IGameTiming _timing;
     private readonly Font _font;
-    private readonly Font _resultFont;
 
     /// <summary>Состояние текущего участника; null — катсцены нет и рисовать нечего.</summary>
     public QteParticipantComponent? Participant;
@@ -61,10 +48,7 @@ public sealed class QteCutsceneOverlay : Overlay
     {
         _clyde = clyde;
         _timing = timing;
-
-        var res = cache.GetResource<FontResource>(FontPath);
-        _font = new VectorFont(res, BaseFontSize);
-        _resultFont = new VectorFont(res, ResultFontSize);
+        _font = new VectorFont(cache.GetResource<FontResource>(FontPath), BaseFontSize);
     }
 
     protected override void Draw(in OverlayDrawArgs args)
@@ -77,7 +61,6 @@ public sealed class QteCutsceneOverlay : Overlay
 
         // Интерфейс масштабируется под разрешение, иначе на 4K подсказка была бы с ноготь.
         var scale = Math.Clamp(size.Y / 1080f, 0.7f, 2.2f);
-        var center = new Vector2(size.X / 2f, size.Y * 0.6f);
 
         DrawVignette(handle, size);
 
@@ -85,15 +68,11 @@ public sealed class QteCutsceneOverlay : Overlay
         {
             case QteStage.Directions:
             case QteStage.Letters:
-                DrawPromptRing(handle, participant, center, scale);
+                DrawPrompt(handle, participant, size, scale);
                 break;
 
             case QteStage.Final:
-                DrawFinalRing(handle, participant, center, scale);
-                break;
-
-            case QteStage.Result:
-                DrawResult(handle, participant, center, scale);
+                DrawFinalBar(handle, participant, size, scale);
                 break;
         }
     }
@@ -121,143 +100,78 @@ public sealed class QteCutsceneOverlay : Overlay
         }
     }
 
-    // ── Этапы 1-2: кольцо как таймер ──────────────────────────
-
-    private void DrawPromptRing(DrawingHandleScreen handle, QteParticipantComponent participant, Vector2 center, float scale)
+    private void DrawPrompt(DrawingHandleScreen handle, QteParticipantComponent participant, Vector2i size, float scale)
     {
         if (participant.CurrentPrompt == QtePromptKey.None)
             return;
 
-        var buttonRadius = 46f * scale;
-        var missed = IsMissFlashing(participant);
+        var center = new Vector2(size.X / 2f, size.Y * 0.62f);
+        var half = 48f * scale;
+        var box = new UIBox2(center.X - half, center.Y - half, center.X + half, center.Y + half);
 
+        handle.DrawRect(box, PromptPendingColor.WithAlpha(0.35f));
+
+        // Подложка убывает вместе с окном — видно, сколько осталось, без чтения цифр.
         var total = (float) (participant.PromptEnd - participant.PromptStart).TotalSeconds;
-        var elapsed = (float) (_timing.CurTime - participant.PromptStart).TotalSeconds;
-
-        DrawButton(handle, center, buttonRadius, scale, missed, KeyLabel(participant.CurrentPrompt));
-
-        if (total <= 0)
-            return;
-
-        // Кольцо идёт снаружи к контуру кнопки: сошлось — время вышло.
-        var progress = Math.Clamp(elapsed / total, 0f, 1f);
-        var ringRadius = MathHelper.Lerp(buttonRadius * 3.2f, buttonRadius, progress);
-
-        DrawRing(handle, center, ringRadius, missed ? MissColor : RingColor, 3f * scale);
-    }
-
-    // ── Этап 3: кольцо как точность ───────────────────────────
-
-    private void DrawFinalRing(DrawingHandleScreen handle, QteParticipantComponent participant, Vector2 center, float scale)
-    {
-        var buttonRadius = 46f * scale;
-        var missed = IsMissFlashing(participant);
-
-        var windup = (float) (participant.FinalPerfect - participant.FinalStart).TotalSeconds;
-        if (windup <= 0)
-            return;
-
-        // Допуск читается глазами: полоса вокруг контура кнопки шириной в окно попадания,
-        // пересчитанное из секунд в пиксели по той же скорости, с которой сходится кольцо.
-        var ringSpan = buttonRadius * 2.2f;
-        var perfectBand = ringSpan * (QteTuning.PerfectWindowSeconds / windup);
-
-        DrawRing(handle, center, buttonRadius, PerfectColor.WithAlpha(participant.FinalAnswered ? 0.35f : 0.8f), perfectBand);
-        DrawButton(handle, center, buttonRadius, scale, missed, Loc.GetString("duty-qte-key-rmb"));
-
-        if (participant.FinalAnswered)
-            return; // уже кликнул — кольцо убираем, ждём соперника
-
-        var elapsed = (float) (_timing.CurTime - participant.FinalStart).TotalSeconds;
-
-        // До идеального момента кольцо идёт снаружи к контуру, после — продолжает внутрь:
-        // это и есть grace-период, видно, что момент упущен.
-        var radius = buttonRadius + ringSpan * (1f - elapsed / windup);
-        if (radius <= 1f)
-            return;
-
-        DrawRing(handle, center, radius, missed ? MissColor : RingColor, 4f * scale);
-    }
-
-    // ── Экран итога ───────────────────────────────────────────
-
-    private void DrawResult(DrawingHandleScreen handle, QteParticipantComponent participant, Vector2 center, float scale)
-    {
-        var (key, color) = participant.Outcome switch
+        if (total > 0)
         {
-            QteOutcome.Win => ("duty-qte-result-win", WinColor),
-            QteOutcome.Lose => ("duty-qte-result-lose", LoseColor),
-            QteOutcome.Draw => ("duty-qte-result-draw", DrawColor),
-            _ => (string.Empty, Color.White),
-        };
+            var elapsed = (float) (_timing.CurTime - participant.PromptStart).TotalSeconds;
+            var remaining = Math.Clamp(1f - elapsed / total, 0f, 1f);
 
-        if (key.Length == 0)
-            return;
+            var filled = new UIBox2(box.Left, box.Bottom - half * 2f * remaining, box.Right, box.Bottom);
+            handle.DrawRect(filled, PromptColor.WithAlpha(0.28f));
+        }
 
-        var text = Loc.GetString(key);
-        var dims = handle.GetDimensions(_resultFont, text, scale);
+        DrawOutline(handle, box, PromptColor, 3f * scale);
 
-        handle.DrawString(_resultFont, center - dims / 2f + new Vector2(3f, 3f) * scale, text, scale, Color.Black.WithAlpha(0.6f));
-        handle.DrawString(_resultFont, center - dims / 2f, text, scale, color);
-    }
-
-    // ── Примитивы ─────────────────────────────────────────────
-
-    private void DrawButton(DrawingHandleScreen handle, Vector2 center, float radius, float scale, bool missed, string label)
-    {
-        var edge = missed ? MissColor : ButtonEdge;
-
-        DrawDisc(handle, center, radius, missed ? MissColor.WithAlpha(0.30f) : ButtonFill.WithAlpha(0.75f));
-        DrawRing(handle, center, radius, edge, 3f * scale);
-
+        var label = KeyLabel(participant.CurrentPrompt);
         if (label.Length == 0)
             return;
 
+        // Честное центрирование по фактическим метрикам шрифта.
         var dims = handle.GetDimensions(_font, label, scale);
-        handle.DrawString(_font, center - dims / 2f, label, scale, edge);
+        handle.DrawString(_font, center - dims / 2f, label, scale, PromptColor);
     }
 
-    /// <summary>Залитый круг — веер треугольников от центра.</summary>
-    private static void DrawDisc(DrawingHandleScreen handle, Vector2 center, float radius, Color color)
+    private void DrawFinalBar(DrawingHandleScreen handle, QteParticipantComponent participant, Vector2i size, float scale)
     {
-        Span<Vector2> verts = stackalloc Vector2[CircleSegments + 2];
-        verts[0] = center;
+        var center = new Vector2(size.X / 2f, size.Y * 0.62f);
 
-        for (var i = 0; i <= CircleSegments; i++)
-        {
-            var angle = MathF.Tau * i / CircleSegments;
-            verts[i + 1] = center + new Vector2(MathF.Cos(angle), MathF.Sin(angle)) * radius;
-        }
+        var maxHalfWidth = 220f * scale;
+        var barHeight = 54f * scale;
+        var perfectHalf = 14f * scale;
 
-        handle.DrawPrimitives(DrawPrimitiveTopology.TriangleFan, verts, color);
+        var total = (float) (participant.FinalPerfect - participant.FinalStart).TotalSeconds;
+        if (total <= 0)
+            return;
+
+        // Идеальная зона — неподвижная отметка, до которой шкале нужно сжаться.
+        handle.DrawRect(
+            new UIBox2(center.X - perfectHalf, center.Y - barHeight / 2f, center.X + perfectHalf, center.Y + barHeight / 2f),
+            PerfectZoneColor.WithAlpha(participant.FinalAnswered ? 0.25f : 0.55f));
+
+        if (participant.FinalAnswered)
+            return; // уже кликнул — шкалу не рисуем, ждём соперника
+
+        var elapsed = (float) (_timing.CurTime - participant.FinalStart).TotalSeconds;
+        var shrink = Math.Clamp(1f - elapsed / total, 0f, 1f);
+        var halfWidth = maxHalfWidth * shrink;
+
+        // Две сходящиеся к центру створки.
+        var jawWidth = 8f * scale;
+        var left = center.X - halfWidth;
+        var right = center.X + halfWidth;
+
+        handle.DrawRect(new UIBox2(left - jawWidth, center.Y - barHeight / 2f, left, center.Y + barHeight / 2f), BarColor);
+        handle.DrawRect(new UIBox2(right, center.Y - barHeight / 2f, right + jawWidth, center.Y + barHeight / 2f), BarColor);
     }
 
-    /// <summary>
-    /// Кольцо заданной толщины. Рисуется полосой треугольников между внутренней и внешней
-    /// окружностями — линиями толщину не задать, а тонкая линия на больших экранах теряется.
-    /// </summary>
-    private static void DrawRing(DrawingHandleScreen handle, Vector2 center, float radius, Color color, float thickness)
+    private static void DrawOutline(DrawingHandleScreen handle, UIBox2 box, Color color, float thickness)
     {
-        var inner = MathF.Max(radius - thickness / 2f, 0f);
-        var outer = radius + thickness / 2f;
-
-        Span<Vector2> verts = stackalloc Vector2[(CircleSegments + 1) * 2];
-
-        for (var i = 0; i <= CircleSegments; i++)
-        {
-            var angle = MathF.Tau * i / CircleSegments;
-            var dir = new Vector2(MathF.Cos(angle), MathF.Sin(angle));
-
-            verts[i * 2] = center + dir * inner;
-            verts[i * 2 + 1] = center + dir * outer;
-        }
-
-        handle.DrawPrimitives(DrawPrimitiveTopology.TriangleStrip, verts, color);
-    }
-
-    private bool IsMissFlashing(QteParticipantComponent participant)
-    {
-        return _timing.CurTime < participant.MissFlashUntil;
+        handle.DrawRect(new UIBox2(box.Left, box.Top, box.Right, box.Top + thickness), color);
+        handle.DrawRect(new UIBox2(box.Left, box.Bottom - thickness, box.Right, box.Bottom), color);
+        handle.DrawRect(new UIBox2(box.Left, box.Top, box.Left + thickness, box.Bottom), color);
+        handle.DrawRect(new UIBox2(box.Right - thickness, box.Top, box.Right, box.Bottom), color);
     }
 
     private static string KeyLabel(QtePromptKey key) => key switch

@@ -12,51 +12,11 @@ public enum QteStage : byte
     /// <summary>Этап 2 — 4-6 подсказок из Q/T/E/R/G/F/H.</summary>
     Letters,
 
-    /// <summary>Этап 3 (решающий) — сходящееся кольцо, клик ПКМ.</summary>
+    /// <summary>Этап 3 (решающий) — сжимающаяся шкала, клик ПКМ.</summary>
     Final,
-
-    /// <summary>
-    /// Итог посчитан и уже применён (урон, стан), но катсцена ещё держится: показываем,
-    /// кто победил. Без этой паузы сцена схлопывалась в тот же кадр и результат был не виден.
-    /// </summary>
-    Result,
 
     /// <summary>Дуэль завершена, идёт демонтаж катсцены.</summary>
     Finished,
-}
-
-/// <summary>Исход дуэли для конкретного участника — что показать ему на экране итога.</summary>
-[Serializable, NetSerializable]
-public enum QteOutcome : byte
-{
-    None,
-    Win,
-    Lose,
-
-    /// <summary>Обоюдный провал: оба промахнулись мимо идеальной зоны, оба получили размен.</summary>
-    Draw,
-}
-
-/// <summary>
-/// Числа QTE, нужные обеим сторонам: сервер по ним судит, клиент по ним рисует.
-/// Держим в одном месте, чтобы картинка не разъезжалась с механикой.
-/// </summary>
-public static class QteTuning
-{
-    /// <summary>Окно на одно нажатие в этапах 1-2.</summary>
-    public static readonly TimeSpan PromptWindow = TimeSpan.FromSeconds(1.2);
-
-    /// <summary>
-    /// Допуск «идеального» попадания на этапе 3 в секундах: клик засчитан, если отклонение
-    /// от момента полного схождения кольца не больше этого значения.
-    /// </summary>
-    public const float PerfectWindowSeconds = 0.20f;
-
-    /// <summary>Сколько кнопка горит красным после промаха.</summary>
-    public static readonly TimeSpan MissFlash = TimeSpan.FromSeconds(0.35);
-
-    /// <summary>Сколько держится экран итога перед демонтажом катсцены.</summary>
-    public static readonly TimeSpan ResultHold = TimeSpan.FromSeconds(2);
 }
 
 /// <summary>
