@@ -13,6 +13,9 @@ public static class DutyHealthPhrasesPopupDraw
     private static Font? _font;
     private static Color _color;
 
+    private static Font? _screamFont;
+    private static Color _screamColor;
+
     public static void EnsureInitialized(IResourceCache cache)
     {
         if (_font != null)
@@ -22,6 +25,11 @@ public static class DutyHealthPhrasesPopupDraw
             cache.GetResource<FontResource>(DutyHealthPhrasesVisuals.FontPath),
             DutyHealthPhrasesVisuals.PopupFontSize);
         _color = Color.FromHex(DutyHealthPhrasesVisuals.PainColorHex);
+
+        _screamFont = new VectorFont(
+            cache.GetResource<FontResource>(DutyHealthPhrasesVisuals.FontPath),
+            DutyHealthPhrasesVisuals.ScreamFontSize);
+        _screamColor = Color.FromHex(DutyHealthPhrasesVisuals.ScreamColorHex);
     }
 
     public static (Font Font, Color Color) GetStyle()
@@ -30,5 +38,13 @@ public static class DutyHealthPhrasesPopupDraw
             EnsureInitialized(IoCManager.Resolve<IResourceCache>());
 
         return (_font!, _color);
+    }
+
+    public static (Font Font, Color Color) GetScreamStyle()
+    {
+        if (_screamFont == null)
+            EnsureInitialized(IoCManager.Resolve<IResourceCache>());
+
+        return (_screamFont!, _screamColor);
     }
 }

@@ -1,6 +1,7 @@
 using System.Numerics;
 using Content.Client._Duty.HealthPhrases;
 using Content.Client.Gameplay;
+using Content.Shared._Duty.HealthPhrases;
 using Content.Shared.Popups;
 using Robust.Client.Graphics;
 using Robust.Client.ResourceManagement;
@@ -60,6 +61,7 @@ public sealed class PopupUIController : UIController, IOnStateEntered<GameplaySt
         var updatedPosition = position - new Vector2(0f, MathF.Min(8f, 12f * (popup.TotalTime * popup.TotalTime + popup.TotalTime)));
         var font = _smallFont;
         var color = Color.White.WithAlpha(alpha);
+        var shakeOffsetX = 0f;
 
         switch (popup.Type)
         {
@@ -85,10 +87,29 @@ public sealed class PopupUIController : UIController, IOnStateEntered<GameplaySt
             case PopupType.DutyHealthPain:
                 (font, color) = DutyHealthPhrasesPopupDraw.GetStyle();
                 break;
+            case PopupType.DutyHealthScream:
+                (font, color) = DutyHealthPhrasesPopupDraw.GetScreamStyle();
+                shakeOffsetX = GetScreamShakeOffset(popup.TotalTime);
+                break;
         }
 
         var dimensions = handle.GetDimensions(font, popup.Text, scale);
-        handle.DrawString(font, updatedPosition - dimensions / 2f, popup.Text, scale, color.WithAlpha(alpha));
+        var drawPosition = updatedPosition - dimensions / 2f + new Vector2(shakeOffsetX, 0f);
+        handle.DrawString(font, drawPosition, popup.Text, scale, color.WithAlpha(alpha));
+    }
+
+    /// <summary>
+    /// Синусоидальное дрожание текста крика по X, затухающее до нуля через ScreamShakeDuration.
+    /// </summary>
+    private static float GetScreamShakeOffset(float totalTime)
+    {
+        if (totalTime >= DutyHealthPhrasesVisuals.ScreamShakeDuration)
+            return 0f;
+
+        var remaining = 1f - totalTime / DutyHealthPhrasesVisuals.ScreamShakeDuration;
+        return MathF.Sin(totalTime * MathF.PI * DutyHealthPhrasesVisuals.ScreamShakeFrequency)
+               * DutyHealthPhrasesVisuals.ScreamShakeAmplitude
+               * remaining;
     }
 
     /// <summary>
