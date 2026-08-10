@@ -1,5 +1,6 @@
 using System.Numerics;
 using Content.Client.Chat.Managers;
+using Content.Shared._Duty.HealthPhrases;
 using Content.Shared.CCVar;
 using Content.Shared.Chat;
 using Content.Shared.Speech;
@@ -51,6 +52,12 @@ namespace Content.Client.Chat.UI
 
         private readonly EntityUid _senderEntity;
 
+        /// <summary>_Duty: крик боли — трясти пузырь первые доли секунды после создания.</summary>
+        private readonly bool _shake;
+
+        /// <summary>_Duty: момент создания пузыря — точка отсчёта для тряски.</summary>
+        private readonly TimeSpan _birthTime;
+
         /// <summary>
         /// The time at which this bubble will die.
         /// </summary>
@@ -66,30 +73,35 @@ namespace Content.Client.Chat.UI
 
         public static SpeechBubble CreateSpeechBubble(SpeechType type, ChatMessage message, EntityUid senderEntity)
         {
+            // _Duty: крик боли — пузырь дрожит первые доли секунды (см. ChatMessage.DutyScreamShake).
+            var shake = message.DutyScreamShake;
+
             switch (type)
             {
                 case SpeechType.Emote:
-                    return new TextSpeechBubble(message, senderEntity, "emoteBox");
+                    return new TextSpeechBubble(message, senderEntity, "emoteBox", shake: shake);
 
                 case SpeechType.Say:
-                    return new FancyTextSpeechBubble(message, senderEntity, "sayBox");
+                    return new FancyTextSpeechBubble(message, senderEntity, "sayBox", shake: shake);
 
                 case SpeechType.Whisper:
-                    return new FancyTextSpeechBubble(message, senderEntity, "whisperBox");
+                    return new FancyTextSpeechBubble(message, senderEntity, "whisperBox", shake: shake);
 
                 case SpeechType.Looc:
-                    return new TextSpeechBubble(message, senderEntity, "emoteBox", Color.FromHex("#48d1cc"));
+                    return new TextSpeechBubble(message, senderEntity, "emoteBox", Color.FromHex("#48d1cc"), shake: shake);
 
                 default:
                     throw new ArgumentOutOfRangeException();
             }
         }
 
-        public SpeechBubble(ChatMessage message, EntityUid senderEntity, string speechStyleClass, Color? fontColor = null)
+        public SpeechBubble(ChatMessage message, EntityUid senderEntity, string speechStyleClass, Color? fontColor = null, bool shake = false)
         {
             IoCManager.InjectDependencies(this);
             _senderEntity = senderEntity;
             _transformSystem = _entityManager.System<SharedTransformSystem>();
+            _shake = shake;
+            _birthTime = _timing.RealTime;
 
             // Use text clipping so new messages don't overlap old ones being pushed up.
             RectClipContent = true;
@@ -157,12 +169,28 @@ namespace Content.Client.Chat.UI
 
             var lowerCenter = _eyeManager.WorldToScreen(worldPos) / UIScale;
             var screenPos = lowerCenter - new Vector2(ContentSize.X / 2, ContentSize.Y + _verticalOffsetAchieved);
+
+            if (_shake)
+                screenPos += new Vector2(GetScreamShakeOffset((float)(_timing.RealTime - _birthTime).TotalSeconds), 0f);
+
             // Round to nearest 0.5
             screenPos = (screenPos * 2).Rounded() / 2;
             LayoutContainer.SetPosition(this, screenPos);
 
             var height = MathF.Ceiling(MathHelper.Clamp(lowerCenter.Y - screenPos.Y, 0, ContentSize.Y));
             SetHeight = height;
+        }
+
+        /// <summary>_Duty: та же формула тряски, что и у popup-крика (DutyHealthScream).</summary>
+        private static float GetScreamShakeOffset(float elapsed)
+        {
+            if (elapsed >= DutyHealthPhrasesVisuals.ScreamShakeDuration)
+                return 0f;
+
+            var remaining = 1f - elapsed / DutyHealthPhrasesVisuals.ScreamShakeDuration;
+            return MathF.Sin(elapsed * MathF.PI * DutyHealthPhrasesVisuals.ScreamShakeFrequency)
+                   * DutyHealthPhrasesVisuals.ScreamShakeAmplitude
+                   * remaining;
         }
 
         private void Die()
@@ -204,8 +232,8 @@ namespace Content.Client.Chat.UI
 
     public sealed class TextSpeechBubble : SpeechBubble
     {
-        public TextSpeechBubble(ChatMessage message, EntityUid senderEntity, string speechStyleClass, Color? fontColor = null)
-            : base(message, senderEntity, speechStyleClass, fontColor)
+        public TextSpeechBubble(ChatMessage message, EntityUid senderEntity, string speechStyleClass, Color? fontColor = null, bool shake = false)
+            : base(message, senderEntity, speechStyleClass, fontColor, shake)
         {
         }
 
@@ -232,8 +260,8 @@ namespace Content.Client.Chat.UI
     public sealed class FancyTextSpeechBubble : SpeechBubble
     {
 
-        public FancyTextSpeechBubble(ChatMessage message, EntityUid senderEntity, string speechStyleClass, Color? fontColor = null)
-            : base(message, senderEntity, speechStyleClass, fontColor)
+        public FancyTextSpeechBubble(ChatMessage message, EntityUid senderEntity, string speechStyleClass, Color? fontColor = null, bool shake = false)
+            : base(message, senderEntity, speechStyleClass, fontColor, shake)
         {
         }
 
