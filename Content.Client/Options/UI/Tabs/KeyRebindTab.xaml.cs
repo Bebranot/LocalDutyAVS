@@ -144,6 +144,10 @@ namespace Content.Client.Options.UI.Tabs
 
                 KeybindsContainer.AddChild(newCheckBox);
             }
+            // _Duty: наши бинды — отдельным разделом в самом верху, выше оружейных модулей.
+            AddHeader("ui-options-header-duty-general");
+            AddButton(ContentKeyFunctions.Block);
+
             // ADT TWEAK START
             AddHeader("ui-options-header-rmc");
             AddButton(CMKeyFunctions.RMCActivateAttachableBarrel);
@@ -202,7 +206,6 @@ namespace Content.Client.Options.UI.Tabs
             AddButton(ContentKeyFunctions.ExamineEntity);
             AddButton(ContentKeyFunctions.SwapHands);
             AddButton(ContentKeyFunctions.SwapHandsReverse);
-            AddButton(ContentKeyFunctions.Block); // _Duty: блок ближнего удара
             AddButton(ContentKeyFunctions.MoveStoredItem);
             AddButton(ContentKeyFunctions.RotateStoredItem);
             AddButton(ContentKeyFunctions.SaveItemLocation);
