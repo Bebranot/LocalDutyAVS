@@ -7,12 +7,19 @@ namespace Content.Shared._Duty.Block.Components;
 /// переэкипировать оружие в руках. Вешается при ЛЮБОЙ активации полного уровня блока оружием
 /// с <c>GunComponent</c>, независимо от исхода блока. Таймер стартует в момент активации, не в
 /// момент закрытия окна — независим от обычного кулдауна блока.
+///
+/// EndTime сетевой: стрельба предиктится, и клиент должен отказывать в ней сам, а не узнавать
+/// об отказе от сервера.
 /// </summary>
-[RegisterComponent, NetworkedComponent, Access(typeof(BlockGunLockSystem))]
+[RegisterComponent, NetworkedComponent, AutoGenerateComponentState, Access(typeof(BlockGunLockSystem))]
 public sealed partial class BlockGunLockComponent : Component
 {
+    [AutoNetworkedField]
     public TimeSpan EndTime;
 
-    /// <summary>Момент последней строки "не могу прицелиться" в чат — анти-спам дебаунс.</summary>
+    /// <summary>
+    /// Момент последней строки "не могу прицелиться" в чат — анти-спам дебаунс. Строку шлёт
+    /// только сервер, поэтому поле серверное.
+    /// </summary>
     public TimeSpan LastNoticeTime;
 }

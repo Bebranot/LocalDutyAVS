@@ -38,10 +38,8 @@ public sealed class BlockGunLockSystem : EntitySystem
     {
         base.Update(frameTime);
 
-        // Снятие по таймеру — серверное решение, клиент реагирует на реплицированное удаление.
-        if (_netMan.IsClient)
-            return;
-
+        // Снимаем на обеих сторонах по одному сетевому EndTime — стрельба предиктится, клиент
+        // должен разрешать её себе сам ровно в тот же момент, что и сервер.
         var now = _timing.CurTime;
         var query = EntityQueryEnumerator<BlockGunLockComponent>();
         while (query.MoveNext(out var uid, out var comp))
@@ -59,6 +57,8 @@ public sealed class BlockGunLockSystem : EntitySystem
 
         if (endTime > comp.EndTime)
             comp.EndTime = endTime;
+
+        Dirty(uid, comp);
     }
 
     /// <summary>

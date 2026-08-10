@@ -129,10 +129,9 @@ public sealed class BlockSystem : EntitySystem
                 RemCompDeferred<BlockAttackLockComponent>(uid);
         }
 
-        // Розыгрыш/снятие кулдауна — серверное решение, влияет на доступность способности.
-        if (_netMan.IsClient)
-            return;
-
+        // Кулдаун истекает на обеих сторонах по одному и тому же EndTime (он сетевой).
+        // Клиент не ждёт круга пинга, чтобы снова разрешить блок, и при этом не расходится
+        // с сервером — оба считают от одного значения.
         var cdQuery = EntityQueryEnumerator<BlockCooldownComponent>();
         while (cdQuery.MoveNext(out var uid, out var cd))
         {
@@ -204,9 +203,11 @@ public sealed class BlockSystem : EntitySystem
         block.FullTier = fullTier;
         block.HitLanded = false;
         block.PendingAttacker = null;
+        Dirty(uid, block);
 
         var weaponMarker = EnsureComp<BlockWeaponComponent>(weaponUid);
         weaponMarker.Blocker = uid;
+        Dirty(weaponUid, weaponMarker);
 
         _movementMod.TryAddMovementSpeedModDuration(uid, MovementSlowdownEffect, BlockWindowDuration, MovementSlowdownMultiplier);
 
@@ -236,16 +237,16 @@ public sealed class BlockSystem : EntitySystem
         // Пост-блок лок атаки/стрельбы — всегда, независимо от исхода и способа закрытия.
         var lockComp = EnsureComp<BlockAttackLockComponent>(uid);
         lockComp.EndTime = _timing.CurTime + PostBlockAttackLock;
-
-        // Розыгрыш кулдауна — серверное решение.
-        if (_netMan.IsClient)
-            return;
+        Dirty(uid, lockComp);
 
         if (earlyCancel)
             return; // потеря оружия/сбитие с ног — без какого-либо кулдауна вообще
 
+        // Кулдаун считают обе стороны одинаково: hitLanded сетевой, часы общие. Клиент сразу
+        // знает, что блок недоступен, и не предиктит окно, которое сервер отклонит.
         var cd = EnsureComp<BlockCooldownComponent>(uid);
         cd.EndTime = _timing.CurTime + (hitLanded ? CooldownHit : CooldownMiss);
+        Dirty(uid, cd);
     }
 
     /// <summary>
@@ -326,6 +327,7 @@ public sealed class BlockSystem : EntitySystem
 
         component.PendingAttacker = null;
         component.HitLanded = true;
+        Dirty(uid, component);
 
         if (component.FullTier)
         {
@@ -348,12 +350,15 @@ public sealed class BlockSystem : EntitySystem
 
         // Оружие блокирующего никогда не изнашивается — Damageable этого оружия мы нигде не трогаем.
 
-        // Чат/оглушение — серверное решение, не должно применяться из клиентского предикта чужой атаки.
+        // Звук лязга предиктом: удар предиктит клиент атакующего, поэтому у него звук идёт сразу,
+        // а сервер проигрывает его всем остальным (PlayPredicted исключает атакующего из фильтра).
+        _audio.PlayPredicted(HitSound, uid, attacker);
+
+        // Чат/оглушение — серверное решение, не должно применяться из клиентского предикта атаки.
         if (_netMan.IsClient)
             return;
 
         _chat.TryEmoteWithChat(uid, EmoteBlockSuccess, ignoreActionBlocker: true, forceEmote: true);
-        _audio.PlayPvs(HitSound, uid);
 
         if (component.FullTier)
         {

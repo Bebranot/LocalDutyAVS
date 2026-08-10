@@ -7,7 +7,6 @@ using Content.Shared.Item;
 using Content.Shared.Movement.Events;
 using Content.Shared.Throwing;
 using Content.Shared.Weapons.Ranged.Systems;
-using Robust.Shared.Network;
 using Robust.Shared.Timing;
 
 namespace Content.Shared._Duty.Block;
@@ -21,7 +20,6 @@ namespace Content.Shared._Duty.Block;
 public sealed class BlockPunishStunSystem : EntitySystem
 {
     [Dependency] private readonly IGameTiming _timing = default!;
-    [Dependency] private readonly INetManager _netMan = default!;
     [Dependency] private readonly ActionBlockerSystem _actionBlocker = default!;
 
     private const string NoticePunishStun = "duty-block-notice-punish-stun";
@@ -50,10 +48,8 @@ public sealed class BlockPunishStunSystem : EntitySystem
     {
         base.Update(frameTime);
 
-        // Снятие по таймеру — серверное решение, клиент реагирует на реплицированное удаление.
-        if (_netMan.IsClient)
-            return;
-
+        // Снимаем на обеих сторонах по одному сетевому EndTime: клиент возвращает управление
+        // ровно тогда же, когда сервер, а не спустя круг пинга после конца стана.
         var now = _timing.CurTime;
         var query = EntityQueryEnumerator<BlockPunishStunComponent>();
         while (query.MoveNext(out var uid, out var comp))
@@ -71,6 +67,8 @@ public sealed class BlockPunishStunSystem : EntitySystem
 
         if (endTime > comp.EndTime)
             comp.EndTime = endTime;
+
+        Dirty(uid, comp);
 
         // Серая строка в чат вместо алерт-иконки — одна на само оглушение, а не на каждую
         // заблокированную попытку: стан длится всего секунду, спамить не о чем.
