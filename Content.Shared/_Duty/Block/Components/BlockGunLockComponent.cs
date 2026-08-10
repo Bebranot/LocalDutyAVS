@@ -13,6 +13,6 @@ public sealed partial class BlockGunLockComponent : Component
 {
     public TimeSpan EndTime;
 
-    /// <summary>Момент последнего показанного pop-up'а "Не могу прицелиться..." — анти-спам дебаунс.</summary>
-    public TimeSpan LastPopupTime;
+    /// <summary>Момент последней строки "не могу прицелиться" в чат — анти-спам дебаунс.</summary>
+    public TimeSpan LastNoticeTime;
 }

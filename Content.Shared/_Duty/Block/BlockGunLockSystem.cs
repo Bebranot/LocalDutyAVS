@@ -1,12 +1,9 @@
 using Content.Shared._Duty.Block.Components;
-using Content.Shared.Alert;
 using Content.Shared.Hands;
 using Content.Shared.Inventory.Events;
 using Content.Shared.Item;
-using Content.Shared.Popups;
 using Content.Shared.Weapons.Ranged.Systems;
 using Robust.Shared.Network;
-using Robust.Shared.Prototypes;
 using Robust.Shared.Timing;
 
 namespace Content.Shared._Duty.Block;
@@ -20,21 +17,19 @@ public sealed class BlockGunLockSystem : EntitySystem
 {
     [Dependency] private readonly IGameTiming _timing = default!;
     [Dependency] private readonly INetManager _netMan = default!;
-    [Dependency] private readonly AlertsSystem _alerts = default!;
-    [Dependency] private readonly SharedPopupSystem _popup = default!;
 
-    /// <summary>Не чаще раза в этот интервал — иначе pop-up спамит при частой стрельбе/попытках.</summary>
-    private static readonly TimeSpan PopupDebounce = TimeSpan.FromSeconds(0.6);
+    /// <summary>Не чаще раза в этот интервал — иначе строка в чат спамит при частых попытках.</summary>
+    private static readonly TimeSpan NoticeDebounce = TimeSpan.FromSeconds(1);
 
-    private static readonly ProtoId<AlertPrototype> GunLockAlert = "DutyBlockGunLock";
+    private const string NoticeGunLock = "duty-block-notice-gun-lock";
 
     public override void Initialize()
     {
         base.Initialize();
 
         SubscribeLocalEvent<AttemptShootEvent>(OnShootAttempt);
-        SubscribeLocalEvent<BlockGunLockComponent, DropAttemptEvent>(OnCancelPopup);
-        SubscribeLocalEvent<BlockGunLockComponent, PickupAttemptEvent>(OnCancelPopup);
+        SubscribeLocalEvent<BlockGunLockComponent, DropAttemptEvent>(OnCancelAttempt);
+        SubscribeLocalEvent<BlockGunLockComponent, PickupAttemptEvent>(OnCancelAttempt);
         SubscribeLocalEvent<BlockGunLockComponent, IsEquippingAttemptEvent>(OnEquipAttempt);
         SubscribeLocalEvent<BlockGunLockComponent, IsUnequippingAttemptEvent>(OnUnequipAttempt);
     }
@@ -64,8 +59,6 @@ public sealed class BlockGunLockSystem : EntitySystem
 
         if (endTime > comp.EndTime)
             comp.EndTime = endTime;
-
-        _alerts.ShowAlert(uid, GunLockAlert, cooldown: (_timing.CurTime, comp.EndTime), autoRemove: true);
     }
 
     /// <summary>
@@ -81,13 +74,13 @@ public sealed class BlockGunLockSystem : EntitySystem
             return;
 
         args.Cancelled = true;
-        TryShowPopup(args.User, comp);
+        TryNotify(args.User, comp);
     }
 
-    private void OnCancelPopup(EntityUid uid, BlockGunLockComponent component, CancellableEntityEventArgs args)
+    private void OnCancelAttempt(EntityUid uid, BlockGunLockComponent component, CancellableEntityEventArgs args)
     {
         args.Cancel();
-        TryShowPopup(uid, component);
+        TryNotify(uid, component);
     }
 
     private void OnEquipAttempt(EntityUid uid, BlockGunLockComponent component, IsEquippingAttemptEvent args)
@@ -96,7 +89,7 @@ public sealed class BlockGunLockSystem : EntitySystem
             return;
 
         args.Cancel();
-        TryShowPopup(uid, component);
+        TryNotify(uid, component);
     }
 
     private void OnUnequipAttempt(EntityUid uid, BlockGunLockComponent component, IsUnequippingAttemptEvent args)
@@ -105,16 +98,25 @@ public sealed class BlockGunLockSystem : EntitySystem
             return;
 
         args.Cancel();
-        TryShowPopup(uid, component);
+        TryNotify(uid, component);
     }
 
-    private void TryShowPopup(EntityUid uid, BlockGunLockComponent component)
+    /// <summary>
+    /// Серая строка "не могу прицелиться" вместо алерт-иконки — только серверу и с дебаунсом,
+    /// иначе зажатая кнопка стрельбы забьёт чат.
+    /// </summary>
+    private void TryNotify(EntityUid uid, BlockGunLockComponent component)
     {
-        var now = _timing.CurTime;
-        if (now - component.LastPopupTime < PopupDebounce)
+        if (_netMan.IsClient)
             return;
 
-        component.LastPopupTime = now;
-        _popup.PopupPredicted(Loc.GetString("duty-block-gun-lock-popup"), uid, uid);
+        var now = _timing.CurTime;
+        if (now - component.LastNoticeTime < NoticeDebounce)
+            return;
+
+        component.LastNoticeTime = now;
+
+        var ev = new BlockNoticeEvent(uid, NoticeGunLock);
+        RaiseLocalEvent(ref ev);
     }
 }

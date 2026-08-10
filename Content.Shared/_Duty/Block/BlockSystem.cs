@@ -1,6 +1,5 @@
 using Content.Shared._Duty.Block.Components;
 using Content.Shared.ActionBlocker;
-using Content.Shared.Alert;
 using Content.Shared.Chat;
 using Content.Shared.Damage;
 using Content.Shared.Damage.Systems;
@@ -39,7 +38,6 @@ public sealed class BlockSystem : EntitySystem
     [Dependency] private readonly MovementModStatusSystem _movementMod = default!;
     [Dependency] private readonly StandingStateSystem _standing = default!;
     [Dependency] private readonly SharedChatSystem _chat = default!;
-    [Dependency] private readonly AlertsSystem _alerts = default!;
     [Dependency] private readonly BlockPunishStunSystem _punishStun = default!;
     [Dependency] private readonly BlockGunLockSystem _gunLock = default!;
 
@@ -70,11 +68,14 @@ public sealed class BlockSystem : EntitySystem
     /// <summary>Множитель урона на ослабленном уровне (-40%).</summary>
     private const float ReducedTierMultiplier = 0.6f;
 
+    /// <summary>Не чаще раза в этот интервал — иначе строка в чат спамит на зажатой клавише.</summary>
+    private static readonly TimeSpan CooldownNoticeDebounce = TimeSpan.FromSeconds(1);
+
     private static readonly EntProtoId MovementSlowdownEffect = "DutyBlockSlowdownStatusEffect";
     private const string EmoteBlockActivate = "DutyBlockActivate";
     private const string EmoteBlockSuccess = "DutyBlockSuccess";
     private const string EmotePunishStun = "DutyBlockPunishStun";
-    private static readonly ProtoId<AlertPrototype> BlockCooldownAlert = "DutyBlockCooldown";
+    private const string NoticeCooldown = "duty-block-notice-cooldown";
 
     public override void Initialize()
     {
@@ -143,8 +144,11 @@ public sealed class BlockSystem : EntitySystem
         if (HasComp<BlockComponent>(uid))
             return; // уже держит окно блока
 
-        if (HasComp<BlockCooldownComponent>(uid))
-            return; // на кулдауне
+        if (TryComp<BlockCooldownComponent>(uid, out var cooldown))
+        {
+            NotifyOnCooldown(uid, cooldown);
+            return;
+        }
 
         if (!_actionBlocker.CanInteract(uid, null))
             return;
@@ -230,12 +234,27 @@ public sealed class BlockSystem : EntitySystem
         if (earlyCancel)
             return; // потеря оружия/сбитие с ног — без какого-либо кулдауна вообще
 
-        var cooldown = hitLanded ? CooldownHit : CooldownMiss;
-        var endTime = _timing.CurTime + cooldown;
         var cd = EnsureComp<BlockCooldownComponent>(uid);
-        cd.EndTime = endTime;
+        cd.EndTime = _timing.CurTime + (hitLanded ? CooldownHit : CooldownMiss);
+    }
 
-        _alerts.ShowAlert(uid, BlockCooldownAlert, cooldown: (_timing.CurTime, endTime), autoRemove: true);
+    /// <summary>
+    /// Серая строка "блок ещё не восстановился" — только серверу и не чаще раза в секунду,
+    /// иначе зажатая клавиша забьёт чат.
+    /// </summary>
+    private void NotifyOnCooldown(EntityUid uid, BlockCooldownComponent cooldown)
+    {
+        if (_netMan.IsClient)
+            return;
+
+        var now = _timing.CurTime;
+        if (now - cooldown.LastNoticeTime < CooldownNoticeDebounce)
+            return;
+
+        cooldown.LastNoticeTime = now;
+
+        var ev = new BlockNoticeEvent(uid, NoticeCooldown);
+        RaiseLocalEvent(ref ev);
     }
 
     // ── Отмена при разоружении/сбитии с ног ───────────────────
@@ -303,16 +322,18 @@ public sealed class BlockSystem : EntitySystem
             if (!TryComp<MeleeWeaponComponent>(component.Weapon, out var blockerWeapon))
                 return; // оружие блокирующего пропало — защитная проверка, штатно не должно происходить
 
+            // Сравниваем именно исходный урон удара с базовым уроном оружия блокирующего —
+            // это сопоставление силы оружия, оно не должно зависеть от брони и прочих модификаторов.
             var attackDamage = args.OriginalDamage.GetTotal();
             var blockerWeaponDamage = blockerWeapon.Damage.GetTotal();
 
             args.Damage = attackDamage <= blockerWeaponDamage
                 ? new DamageSpecifier()
-                : args.OriginalDamage * FullTierLeakFraction;
+                : args.Damage * FullTierLeakFraction;
         }
         else
         {
-            args.Damage = args.OriginalDamage * ReducedTierMultiplier;
+            args.Damage = args.Damage * ReducedTierMultiplier;
         }
 
         // Оружие блокирующего никогда не изнашивается — Damageable этого оружия мы нигде не трогаем.

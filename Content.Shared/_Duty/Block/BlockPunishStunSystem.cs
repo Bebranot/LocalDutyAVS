@@ -1,16 +1,13 @@
 using Content.Shared._Duty.Block.Components;
 using Content.Shared.ActionBlocker;
-using Content.Shared.Alert;
 using Content.Shared.Hands;
 using Content.Shared.Interaction.Events;
 using Content.Shared.Inventory.Events;
 using Content.Shared.Item;
 using Content.Shared.Movement.Events;
-using Content.Shared.Popups;
 using Content.Shared.Throwing;
 using Content.Shared.Weapons.Ranged.Systems;
 using Robust.Shared.Network;
-using Robust.Shared.Prototypes;
 using Robust.Shared.Timing;
 
 namespace Content.Shared._Duty.Block;
@@ -26,13 +23,8 @@ public sealed class BlockPunishStunSystem : EntitySystem
     [Dependency] private readonly IGameTiming _timing = default!;
     [Dependency] private readonly INetManager _netMan = default!;
     [Dependency] private readonly ActionBlockerSystem _actionBlocker = default!;
-    [Dependency] private readonly AlertsSystem _alerts = default!;
-    [Dependency] private readonly SharedPopupSystem _popup = default!;
 
-    /// <summary>Не чаще раза в этот интервал — иначе pop-up спамит на зажатой клавише.</summary>
-    private static readonly TimeSpan PopupDebounce = TimeSpan.FromSeconds(0.6);
-
-    private static readonly ProtoId<AlertPrototype> PunishStunAlert = "DutyBlockPunishStun";
+    private const string NoticePunishStun = "duty-block-notice-punish-stun";
 
     public override void Initialize()
     {
@@ -41,14 +33,14 @@ public sealed class BlockPunishStunSystem : EntitySystem
         SubscribeLocalEvent<BlockPunishStunComponent, ComponentStartup>(OnStartup);
         SubscribeLocalEvent<BlockPunishStunComponent, ComponentShutdown>(OnShutdown);
 
-        SubscribeLocalEvent<BlockPunishStunComponent, ChangeDirectionAttemptEvent>(OnCancelPopup);
-        SubscribeLocalEvent<BlockPunishStunComponent, UpdateCanMoveEvent>(OnCancelPopup);
+        SubscribeLocalEvent<BlockPunishStunComponent, ChangeDirectionAttemptEvent>(OnCancelAttempt);
+        SubscribeLocalEvent<BlockPunishStunComponent, UpdateCanMoveEvent>(OnCancelAttempt);
         SubscribeLocalEvent<BlockPunishStunComponent, InteractionAttemptEvent>(OnInteractionAttempt);
-        SubscribeLocalEvent<BlockPunishStunComponent, UseAttemptEvent>(OnCancelPopup);
-        SubscribeLocalEvent<BlockPunishStunComponent, ThrowAttemptEvent>(OnCancelPopup);
-        SubscribeLocalEvent<BlockPunishStunComponent, DropAttemptEvent>(OnCancelPopup);
-        SubscribeLocalEvent<BlockPunishStunComponent, AttackAttemptEvent>(OnCancelPopup);
-        SubscribeLocalEvent<BlockPunishStunComponent, PickupAttemptEvent>(OnCancelPopup);
+        SubscribeLocalEvent<BlockPunishStunComponent, UseAttemptEvent>(OnCancelAttempt);
+        SubscribeLocalEvent<BlockPunishStunComponent, ThrowAttemptEvent>(OnCancelAttempt);
+        SubscribeLocalEvent<BlockPunishStunComponent, DropAttemptEvent>(OnCancelAttempt);
+        SubscribeLocalEvent<BlockPunishStunComponent, AttackAttemptEvent>(OnCancelAttempt);
+        SubscribeLocalEvent<BlockPunishStunComponent, PickupAttemptEvent>(OnCancelAttempt);
         SubscribeLocalEvent<BlockPunishStunComponent, IsEquippingAttemptEvent>(OnEquipAttempt);
         SubscribeLocalEvent<BlockPunishStunComponent, IsUnequippingAttemptEvent>(OnUnequipAttempt);
         SubscribeLocalEvent<AttemptShootEvent>(OnShootAttempt);
@@ -80,7 +72,10 @@ public sealed class BlockPunishStunSystem : EntitySystem
         if (endTime > comp.EndTime)
             comp.EndTime = endTime;
 
-        _alerts.ShowAlert(uid, PunishStunAlert, cooldown: (_timing.CurTime, comp.EndTime), autoRemove: true);
+        // Серая строка в чат вместо алерт-иконки — одна на само оглушение, а не на каждую
+        // заблокированную попытку: стан длится всего секунду, спамить не о чем.
+        var ev = new BlockNoticeEvent(uid, NoticePunishStun);
+        RaiseLocalEvent(ref ev);
     }
 
     private void OnStartup(Entity<BlockPunishStunComponent> ent, ref ComponentStartup args)
@@ -93,16 +88,14 @@ public sealed class BlockPunishStunSystem : EntitySystem
         _actionBlocker.UpdateCanMove(ent);
     }
 
-    private void OnCancelPopup(EntityUid uid, BlockPunishStunComponent component, CancellableEntityEventArgs args)
+    private void OnCancelAttempt(EntityUid uid, BlockPunishStunComponent component, CancellableEntityEventArgs args)
     {
         args.Cancel();
-        TryShowPopup(uid, component);
     }
 
     private void OnInteractionAttempt(Entity<BlockPunishStunComponent> ent, ref InteractionAttemptEvent args)
     {
         args.Cancelled = true;
-        TryShowPopup(ent, ent.Comp);
     }
 
     private void OnEquipAttempt(EntityUid uid, BlockPunishStunComponent component, IsEquippingAttemptEvent args)
@@ -111,7 +104,6 @@ public sealed class BlockPunishStunSystem : EntitySystem
             return;
 
         args.Cancel();
-        TryShowPopup(uid, component);
     }
 
     private void OnUnequipAttempt(EntityUid uid, BlockPunishStunComponent component, IsUnequippingAttemptEvent args)
@@ -120,7 +112,6 @@ public sealed class BlockPunishStunSystem : EntitySystem
             return;
 
         args.Cancel();
-        TryShowPopup(uid, component);
     }
 
     /// <summary>
@@ -132,20 +123,9 @@ public sealed class BlockPunishStunSystem : EntitySystem
         if (args.Cancelled)
             return;
 
-        if (!TryComp<BlockPunishStunComponent>(args.User, out var comp))
+        if (!HasComp<BlockPunishStunComponent>(args.User))
             return;
 
         args.Cancelled = true;
-        TryShowPopup(args.User, comp);
-    }
-
-    private void TryShowPopup(EntityUid uid, BlockPunishStunComponent component)
-    {
-        var now = _timing.CurTime;
-        if (now - component.LastPopupTime < PopupDebounce)
-            return;
-
-        component.LastPopupTime = now;
-        _popup.PopupPredicted(Loc.GetString("duty-block-punish-stun-popup"), uid, uid);
     }
 }

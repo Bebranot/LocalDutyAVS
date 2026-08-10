@@ -13,7 +13,4 @@ namespace Content.Shared._Duty.Block.Components;
 public sealed partial class BlockPunishStunComponent : Component
 {
     public TimeSpan EndTime;
-
-    /// <summary>Момент последнего показанного pop-up'а "Меня оглушили!" — анти-спам дебаунс.</summary>
-    public TimeSpan LastPopupTime;
 }
