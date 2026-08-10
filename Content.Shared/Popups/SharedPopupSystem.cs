@@ -234,5 +234,11 @@ namespace Content.Shared.Popups
         /// Duty: реплики боли (шрифт Underdog, цвет #B22222).
         /// </summary>
         DutyHealthPain,
+
+        /// <summary>
+        /// Duty: крик боли (шрифт Underdog, крупнее и краснее DutyHealthPain) — текст трясётся
+        /// первые доли секунды после появления. См. Content.Shared._Duty.HealthPhrases.DutyHealthPhrasesVisuals.
+        /// </summary>
+        DutyHealthScream,
     }
 }

@@ -15,4 +15,21 @@ public static class DutyHealthPhrasesVisuals
     public const int WhisperFontSize = 14;
 
     public const string PainColorHex = "#DC143C";
+
+    // ── Крик боли (DutyHealthScream) ─────────────────────────────────────────
+    // Popup крупнее и краснее обычной боли — визуально явно отличим от DutyHealthPain.
+
+    /// <summary>Popup крика — крупнее PopupFontSize.</summary>
+    public const int ScreamFontSize = 20;
+
+    public const string ScreamColorHex = "#FF0000";
+
+    /// <summary>Сколько секунд после появления текст крика трясётся (дальше — неподвижен).</summary>
+    public const float ScreamShakeDuration = 0.85f;
+
+    /// <summary>Частота дрожания (в колебаниях в секунду).</summary>
+    public const float ScreamShakeFrequency = 18f;
+
+    /// <summary>Амплитуда дрожания по X, в пикселях.</summary>
+    public const float ScreamShakeAmplitude = 6f;
 }
