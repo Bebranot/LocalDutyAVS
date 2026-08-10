@@ -62,7 +62,7 @@ public sealed class BlockSystem : EntitySystem
     private static readonly TimeSpan CooldownHit = TimeSpan.FromSeconds(3.5);
 
     /// <summary>Кулдаун блока, если за всё окно никто не попал.</summary>
-    private static readonly TimeSpan CooldownMiss = TimeSpan.FromSeconds(1);
+    private static readonly TimeSpan CooldownMiss = TimeSpan.FromSeconds(1.5);
 
     /// <summary>Штраф за блок огнестрелом — нельзя стрелять/менять оружие.</summary>
     private static readonly TimeSpan GunLockDuration = TimeSpan.FromSeconds(3);
