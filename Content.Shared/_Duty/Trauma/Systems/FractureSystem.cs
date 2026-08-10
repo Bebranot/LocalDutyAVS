@@ -171,12 +171,14 @@ public sealed class FractureSystem : EntitySystem
     /// <summary>
     /// Крик боли в момент перелома/эскалации — видно всем рядом (как крик), реплика случайная из
     /// набора и зависит от того, свежий перелом это или усугубление уже сломанной зоны.
+    /// Полный/открытый перелом (Full/Open) — это уже настоящий крик боли: тряска текста
+    /// (DutyHealthScream). Трещина (Crack) остаётся спокойным предупреждением.
     /// </summary>
     private void PopupFracturePain(EntityUid target, BodyZone zone, FractureTier tier, bool isEscalation)
     {
         var keys = isEscalation ? EscalateFracturePainKeys : NewFracturePainKeys;
         var key = keys[_random.Next(keys.Length)];
-        var popupType = tier >= FractureTier.Full ? PopupType.LargeCaution : PopupType.MediumCaution;
+        var popupType = tier >= FractureTier.Full ? PopupType.DutyHealthScream : PopupType.MediumCaution;
 
         _popup.PopupEntity(
             Loc.GetString(key, ("zone", Loc.GetString(TraumaLoc.ZoneKey(zone)))),
