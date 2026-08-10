@@ -32,4 +32,11 @@ public static class DutyHealthPhrasesVisuals
 
     /// <summary>Амплитуда дрожания по X, в пикселях.</summary>
     public const float ScreamShakeAmplitude = 6f;
+
+    // ── Лёгкая тряска обычных popup боли (DutyHealthPainShake, HP < ~40%) ──────
+    // Заметно слабее крика — это ещё не вопль, а нарастающая дрожь от боли.
+
+    public const float PainShakeDuration = 0.5f;
+    public const float PainShakeFrequency = 14f;
+    public const float PainShakeAmplitude = 2.5f;
 }

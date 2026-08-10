@@ -240,5 +240,11 @@ namespace Content.Shared.Popups
         /// первые доли секунды после появления. См. Content.Shared._Duty.HealthPhrases.DutyHealthPhrasesVisuals.
         /// </summary>
         DutyHealthScream,
+
+        /// <summary>
+        /// Duty: обычная реплика боли (как DutyHealthPain), но с лёгкой тряской — используется
+        /// на HP ниже ~40%, когда боль ещё не кричащая, но уже заметно усилилась.
+        /// </summary>
+        DutyHealthPainShake,
     }
 }

@@ -154,7 +154,8 @@ public sealed class HealthPhrasesSystem : EntitySystem
     /// <summary>
     /// Крик боли на критичном HP (Level10/Level5) — переиспользует существующие FTL-фразы
     /// "-say-" (это уже готовый предсмертный/болевой крик, просто раньше нигде не читался).
-    /// В отличие от обычного popup — публичный (видно всем рядом) и с тряской текста.
+    /// Настоящая say-реплика (чат-лог + дрожащий речевой пузырь), а не popup — см.
+    /// <see cref="ChatSystem.SendDutyHealthScream"/>.
     /// </summary>
     private void TryOutputScream(EntityUid uid, HealthPhrasesComponent phrases, HpLevel level, string raceKey)
     {
@@ -162,7 +163,7 @@ public sealed class HealthPhrasesSystem : EntitySystem
         if (text == null)
             return;
 
-        _popup.PopupEntity(text, uid, PopupType.DutyHealthScream);
+        _chat.SendDutyHealthScream(uid, text);
     }
 
     /// <summary>
@@ -197,7 +198,7 @@ public sealed class HealthPhrasesSystem : EntitySystem
         if (text == null)
             return;
 
-        _popup.PopupEntity(text, ent, PopupType.DutyHealthScream);
+        _chat.SendDutyHealthScream(ent, text);
     }
 
     /// <summary>Короткий крик боли ("АААА!" и расовые варианты) — не привязан к HpLevel.</summary>
@@ -219,7 +220,11 @@ public sealed class HealthPhrasesSystem : EntitySystem
             return;
 
         if (type == PhraseType.Popup)
-            _popup.PopupEntity(text, uid, uid, PopupType.DutyHealthPain);
+        {
+            // Ниже ~40% HP (Level40 и хуже) боль уже не абстрактная — текст слегка дрожит.
+            var popupType = level >= HpLevel.Level40 ? PopupType.DutyHealthPainShake : PopupType.DutyHealthPain;
+            _popup.PopupEntity(text, uid, uid, popupType);
+        }
         else
             _chat.SendDutyHealthPainWhisper(uid, text);
     }

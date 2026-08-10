@@ -89,7 +89,17 @@ public sealed class PopupUIController : UIController, IOnStateEntered<GameplaySt
                 break;
             case PopupType.DutyHealthScream:
                 (font, color) = DutyHealthPhrasesPopupDraw.GetScreamStyle();
-                shakeOffsetX = GetScreamShakeOffset(popup.TotalTime);
+                shakeOffsetX = GetShakeOffset(popup.TotalTime,
+                    DutyHealthPhrasesVisuals.ScreamShakeDuration,
+                    DutyHealthPhrasesVisuals.ScreamShakeFrequency,
+                    DutyHealthPhrasesVisuals.ScreamShakeAmplitude);
+                break;
+            case PopupType.DutyHealthPainShake:
+                (font, color) = DutyHealthPhrasesPopupDraw.GetStyle();
+                shakeOffsetX = GetShakeOffset(popup.TotalTime,
+                    DutyHealthPhrasesVisuals.PainShakeDuration,
+                    DutyHealthPhrasesVisuals.PainShakeFrequency,
+                    DutyHealthPhrasesVisuals.PainShakeAmplitude);
                 break;
         }
 
@@ -99,17 +109,16 @@ public sealed class PopupUIController : UIController, IOnStateEntered<GameplaySt
     }
 
     /// <summary>
-    /// Синусоидальное дрожание текста крика по X, затухающее до нуля через ScreamShakeDuration.
+    /// Синусоидальное дрожание текста по X, затухающее до нуля через <paramref name="duration"/>.
+    /// Общая формула для крика (DutyHealthScream) и лёгкой тряски обычной боли (DutyHealthPainShake).
     /// </summary>
-    private static float GetScreamShakeOffset(float totalTime)
+    private static float GetShakeOffset(float totalTime, float duration, float frequency, float amplitude)
     {
-        if (totalTime >= DutyHealthPhrasesVisuals.ScreamShakeDuration)
+        if (totalTime >= duration)
             return 0f;
 
-        var remaining = 1f - totalTime / DutyHealthPhrasesVisuals.ScreamShakeDuration;
-        return MathF.Sin(totalTime * MathF.PI * DutyHealthPhrasesVisuals.ScreamShakeFrequency)
-               * DutyHealthPhrasesVisuals.ScreamShakeAmplitude
-               * remaining;
+        var remaining = 1f - totalTime / duration;
+        return MathF.Sin(totalTime * MathF.PI * frequency) * amplitude * remaining;
     }
 
     /// <summary>
