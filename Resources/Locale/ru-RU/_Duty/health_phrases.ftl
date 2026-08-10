@@ -929,6 +929,9 @@ duty-health-phrases-drask-scream-3 = ВМ-ММ!
 duty-health-phrases-drask-scream-4 = ММ, БОЛЬНО!
 duty-health-phrases-drask-scream-5 = ВМММ!
 
+# ── Крик боли как say-реплика (SendDutyHealthScream) ───────────────────────────
+duty-health-phrases-scream-verb = кричит
+
 # ── UI вкладки персонализации ─────────────────────────────────────────────────
 duty-health-phrases-tab-name = Реплики боли
 duty-health-phrases-tab-title = Реплики боли

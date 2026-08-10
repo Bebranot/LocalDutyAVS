@@ -10,8 +10,8 @@ namespace Content.Server.Chat.Systems;
 
 public sealed partial class ChatSystem
 {
-    private const string DefaultWhisperFont = "NotoSansDisplayItalic";
-    private const int DefaultWhisperFontSize = 11;
+    private const string DefaultChatFont = "NotoSansDisplayItalic";
+    private const int DefaultChatFontSize = 11;
 
     /// <summary>
     /// Whisper реплики боли: шрифт Underdog, цвет #B22222, язык говорящего для понимания слушателями.
@@ -63,46 +63,46 @@ public sealed partial class ChatSystem
             ("entityName", name),
             ("fontType", font),
             ("fontSize", fontSize),
-            ("defaultFont", DefaultWhisperFont),
-            ("defaultSize", DefaultWhisperFontSize),
+            ("defaultFont", DefaultChatFont),
+            ("defaultSize", DefaultChatFontSize),
             ("message", accentMessage));
 
         var wrappedobfuscatedMessage = Loc.GetString("chat-manager-entity-whisper-wrap-message",
             ("entityName", nameIdentity),
             ("fontType", font),
             ("fontSize", fontSize),
-            ("defaultFont", DefaultWhisperFont),
-            ("defaultSize", DefaultWhisperFontSize),
+            ("defaultFont", DefaultChatFont),
+            ("defaultSize", DefaultChatFontSize),
             ("message", obfuscatedMessage));
 
         var wrappedUnknownMessage = Loc.GetString("chat-manager-entity-whisper-unknown-wrap-message",
             ("fontType", font),
             ("fontSize", fontSize),
-            ("defaultFont", DefaultWhisperFont),
-            ("defaultSize", DefaultWhisperFontSize),
+            ("defaultFont", DefaultChatFont),
+            ("defaultSize", DefaultChatFontSize),
             ("message", obfuscatedMessage));
 
         var wrappedLanguageMessage = Loc.GetString("chat-manager-entity-whisper-wrap-message",
             ("fontType", font),
             ("fontSize", fontSize),
-            ("defaultFont", DefaultWhisperFont),
-            ("defaultSize", DefaultWhisperFontSize),
+            ("defaultFont", DefaultChatFont),
+            ("defaultSize", DefaultChatFontSize),
             ("entityName", name),
             ("message", languageMessage));
 
         var wrappedobfuscatedLanguageMessage = Loc.GetString("chat-manager-entity-whisper-wrap-message",
             ("fontType", font),
             ("fontSize", fontSize),
-            ("defaultFont", DefaultWhisperFont),
-            ("defaultSize", DefaultWhisperFontSize),
+            ("defaultFont", DefaultChatFont),
+            ("defaultSize", DefaultChatFontSize),
             ("entityName", nameIdentity),
             ("message", obfuscatedLanguageMessage));
 
         var wrappedUnknownLanguageMessage = Loc.GetString("chat-manager-entity-whisper-unknown-wrap-message",
             ("fontType", font),
             ("fontSize", fontSize),
-            ("defaultFont", DefaultWhisperFont),
-            ("defaultSize", DefaultWhisperFontSize),
+            ("defaultFont", DefaultChatFont),
+            ("defaultSize", DefaultChatFontSize),
             ("message", obfuscatedLanguageMessage));
 
         SendWhisper(
@@ -124,5 +124,44 @@ public sealed partial class ChatSystem
             var resultObfMessage = FormattedMessage.EscapeText(obfuscatedMessage);
             RaiseLocalEvent(source, new EntitySpokeEvent(source, resultMessage, rawMessage, language, null, resultObfMessage), true);
         }
+    }
+
+    /// <summary>
+    /// Крик боли: настоящая say-реплика (слышно всем в обычной дистанции, идёт в чат-лог) —
+    /// шрифт Underdog, цвет #FF0000, речевой пузырь над головой дрожит (DutyScreamShake).
+    /// В отличие от обычной речи не проходит через акценты/обфускацию языка — крик боли понятен
+    /// независимо от того, на каком языке говорит персонаж.
+    /// </summary>
+    public void SendDutyHealthScream(EntityUid source, string originalMessage)
+    {
+        var message = FormattedMessage.RemoveMarkupOrThrow(originalMessage);
+        if (message.Length == 0)
+            return;
+
+        var colorHex = DutyHealthPhrasesVisuals.ScreamColorHex;
+        var coloredMessage = $"[color={colorHex}]{message}[/color]";
+
+        var nameEv = new TransformSpeakerNameEvent(source, Name(source));
+        RaiseLocalEvent(source, nameEv);
+        var name = FormattedMessage.EscapeText(nameEv.VoiceName);
+
+        var wrappedMessage = Loc.GetString("chat-manager-entity-say-wrap-message",
+            ("entityName", name),
+            ("verb", Loc.GetString("duty-health-phrases-scream-verb")),
+            ("fontType", DutyHealthPhrasesVisuals.FontPrototypeId),
+            ("fontSize", DutyHealthPhrasesVisuals.ScreamFontSize),
+            ("defaultFont", DefaultChatFont),
+            ("defaultSize", DefaultChatFontSize),
+            ("message", coloredMessage));
+
+        SendInVoiceRange(
+            ChatChannel.Local,
+            message,
+            wrappedMessage,
+            wrappedMessage,
+            source,
+            ChatTransmitRange.Normal,
+            ignoreLanguage: true,
+            dutyScreamShake: true);
     }
 }
