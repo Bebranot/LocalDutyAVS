@@ -38,8 +38,11 @@ public sealed class BlockGunLockSystem : EntitySystem
     {
         base.Update(frameTime);
 
-        // Снимаем на обеих сторонах по одному сетевому EndTime — стрельба предиктится, клиент
-        // должен разрешать её себе сам ровно в тот же момент, что и сервер.
+        // Снятие — серверное, по той же причине, что и у окна блока: клиент впереди сервера и
+        // разрешил бы стрельбу на пару тиков раньше, чем её реально разрешил сервер.
+        if (_netMan.IsClient)
+            return;
+
         var now = _timing.CurTime;
         var query = EntityQueryEnumerator<BlockGunLockComponent>();
         while (query.MoveNext(out var uid, out var comp))

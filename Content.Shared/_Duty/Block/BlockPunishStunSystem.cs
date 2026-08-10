@@ -7,6 +7,7 @@ using Content.Shared.Item;
 using Content.Shared.Movement.Events;
 using Content.Shared.Throwing;
 using Content.Shared.Weapons.Ranged.Systems;
+using Robust.Shared.Network;
 using Robust.Shared.Timing;
 
 namespace Content.Shared._Duty.Block;
@@ -20,6 +21,7 @@ namespace Content.Shared._Duty.Block;
 public sealed class BlockPunishStunSystem : EntitySystem
 {
     [Dependency] private readonly IGameTiming _timing = default!;
+    [Dependency] private readonly INetManager _netMan = default!;
     [Dependency] private readonly ActionBlockerSystem _actionBlocker = default!;
 
     private const string NoticePunishStun = "duty-block-notice-punish-stun";
@@ -48,8 +50,11 @@ public sealed class BlockPunishStunSystem : EntitySystem
     {
         base.Update(frameTime);
 
-        // Снимаем на обеих сторонах по одному сетевому EndTime: клиент возвращает управление
-        // ровно тогда же, когда сервер, а не спустя круг пинга после конца стана.
+        // Снятие — серверное. Клиент бежит впереди сервера, и если бы он снимал стан сам, то
+        // на пару тиков разрешал бы действия, которые сервер ещё запрещает, и получал откат.
+        if (_netMan.IsClient)
+            return;
+
         var now = _timing.CurTime;
         var query = EntityQueryEnumerator<BlockPunishStunComponent>();
         while (query.MoveNext(out var uid, out var comp))

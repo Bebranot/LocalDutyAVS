@@ -24,7 +24,7 @@ using Robust.Shared.Timing;
 namespace Content.Shared._Duty.Block;
 
 /// <summary>
-/// Активный блок ближнего удара: игрок жмёт клавишу — открывается окно 0.5с. Двуручное (wielded)
+/// Активный блок ближнего удара: игрок жмёт клавишу — открывается окно 1с. Двуручное (wielded)
 /// оружие/огнестрел даёт полный уровень (негация/протечка удара + оглушение атакующего),
 /// одноручное/голые руки — ослабленный (плоские -40%, без наказания). Дизайн полностью зафиксирован
 /// через grill-me интервью — см. план C:\Users\BebraYep\.claude\plans\moonlit-percolating-kitten.md.
@@ -44,8 +44,13 @@ public sealed class BlockSystem : EntitySystem
     [Dependency] private readonly BlockPunishStunSystem _punishStun = default!;
     [Dependency] private readonly BlockGunLockSystem _gunLock = default!;
 
-    /// <summary>Длительность окна блока — гасит все попадания за это время, не только первое.</summary>
-    private static readonly TimeSpan BlockWindowDuration = TimeSpan.FromSeconds(0.5);
+    /// <summary>
+    /// Длительность окна блока — гасит все попадания за это время, не только первое.
+    /// Секунда, а не полсекунды: окно живёт на сервере, а нажатие доезжает до него с задержкой
+    /// в несколько тиков. Чем короче окно, тем большую его долю съедает эта задержка и тем чаще
+    /// блок "не срабатывает" на глазах у игрока.
+    /// </summary>
+    private static readonly TimeSpan BlockWindowDuration = TimeSpan.FromSeconds(1);
 
     /// <summary>Лок атаки/стрельбы сразу после закрытия окна — при любом закрытии, любой исход.</summary>
     private static readonly TimeSpan PostBlockAttackLock = TimeSpan.FromSeconds(0.2);
@@ -74,6 +79,13 @@ public sealed class BlockSystem : EntitySystem
     /// <summary>Не чаще раза в этот интервал — иначе строка в чат спамит на зажатой клавише.</summary>
     private static readonly TimeSpan CooldownNoticeDebounce = TimeSpan.FromSeconds(1);
 
+    /// <summary>
+    /// Клиент не заводит окно блока сам, поэтому <see cref="BlockComponent"/> не может служить ему
+    /// защитой от повторного нажатия, пока не приедет состояние с сервера. Этот интервал закрывает
+    /// дыру: долбёжка по клавише не превратится в очередь звуков активации.
+    /// </summary>
+    private static readonly TimeSpan ClientRequestDebounce = TimeSpan.FromSeconds(0.25);
+
     private static readonly EntProtoId MovementSlowdownEffect = "DutyBlockSlowdownStatusEffect";
     private const string EmoteBlockActivate = "DutyBlockActivate";
     private const string EmoteBlockSuccess = "DutyBlockSuccess";
@@ -87,6 +99,9 @@ public sealed class BlockSystem : EntitySystem
     /// <summary>Коллекции, а не одиночные файлы — варианты добавляются правкой YAML, без кода.</summary>
     private static readonly SoundSpecifier ActivateSound = new SoundCollectionSpecifier("DutyBlockActivate");
     private static readonly SoundSpecifier HitSound = new SoundCollectionSpecifier("DutyBlockHit");
+
+    /// <summary>Момент последней клиентской заявки на блок — только для дебаунса, см. выше.</summary>
+    private TimeSpan _lastLocalRequest;
 
     public override void Initialize()
     {
@@ -117,6 +132,12 @@ public sealed class BlockSystem : EntitySystem
     {
         base.Update(frameTime);
 
+        // Все переходы состояния блока — серверные, клиент только отображает то, что ему прислали.
+        // Клиент идёт впереди сервера на несколько тиков: если дать ему закрывать окно самому,
+        // иконка гасла бы раньше, чем защита кончилась, и тут же возвращалась состоянием с сервера.
+        if (_netMan.IsClient)
+            return;
+
         var now = _timing.CurTime;
 
         var blockQuery = EntityQueryEnumerator<BlockComponent>();
@@ -133,9 +154,6 @@ public sealed class BlockSystem : EntitySystem
                 RemCompDeferred<BlockAttackLockComponent>(uid);
         }
 
-        // Кулдаун истекает на обеих сторонах по одному и тому же EndTime (он сетевой).
-        // Клиент не ждёт круга пинга, чтобы снова разрешить блок, и при этом не расходится
-        // с сервером — оба считают от одного значения.
         var cdQuery = EntityQueryEnumerator<BlockCooldownComponent>();
         while (cdQuery.MoveNext(out var uid, out var cd))
         {
@@ -175,6 +193,21 @@ public sealed class BlockSystem : EntitySystem
         if (!TryResolveBlock(uid, out var weaponUid, out var fullTier, out var refusal))
         {
             Notify(uid, refusal);
+            return;
+        }
+
+        // Клиент не открывает окно сам — только подтверждает нажатие звуком. Само окно заводит
+        // сервер, и иконка загорается ровно тогда, когда защита реально начала действовать.
+        if (_netMan.IsClient)
+        {
+            if (!_timing.IsFirstTimePredicted)
+                return;
+
+            if (_timing.CurTime - _lastLocalRequest < ClientRequestDebounce)
+                return;
+
+            _lastLocalRequest = _timing.CurTime;
+            _audio.PlayPredicted(ActivateSound, uid, uid);
             return;
         }
 
@@ -241,13 +274,9 @@ public sealed class BlockSystem : EntitySystem
 
         _movementMod.TryAddMovementSpeedModDuration(uid, MovementSlowdownEffect, BlockWindowDuration, MovementSlowdownMultiplier);
 
-        // Предиктом — чтобы звук шёл сразу по нажатию, без сетевой задержки.
+        // Свой звук клиент блокирующего уже проиграл предиктом в HandleBlockInput, поэтому здесь
+        // PlayPredicted шлёт его всем остальным, исключая самого блокирующего из фильтра.
         _audio.PlayPredicted(ActivateSound, uid, uid);
-
-        // Чат/огнестрел-штраф — только на сервере, чтобы не задваивать с клиентским предиктом
-        // того же обработчика (CommandBinds грузятся и на клиенте, и на сервере).
-        if (_netMan.IsClient)
-            return;
 
         _chat.TryEmoteWithChat(uid, EmoteBlockActivate, ignoreActionBlocker: true, forceEmote: true);
 
@@ -255,8 +284,12 @@ public sealed class BlockSystem : EntitySystem
             _gunLock.ApplyGunLock(uid, GunLockDuration);
     }
 
+    /// <summary>Закрытие окна — серверное: клиент только получает снятие компонента состоянием.</summary>
     private void CloseBlockWindow(EntityUid uid, BlockComponent block, bool earlyCancel)
     {
+        if (_netMan.IsClient)
+            return;
+
         var weaponUid = block.Weapon;
         var hitLanded = block.HitLanded;
 
