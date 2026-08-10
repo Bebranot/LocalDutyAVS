@@ -105,6 +105,38 @@ public sealed class DutyCCVars
     public static readonly CVarDef<float> HealthPhrasesWhisperMax =
         CVarDef.Create("duty.health_phrases_whisper_max", 300f, CVar.ARCHIVE | CVar.REPLICATED);
 
+    // ── Крик боли (публичный DutyHealthScream popup с тряской текста) ──────────
+
+    /// <summary>
+    /// Минимальный интервал между криками боли на критичном HP (5-10% и 0-5%), секунды.
+    /// </summary>
+    public static readonly CVarDef<float> HealthPhrasesCritScreamMin =
+        CVarDef.Create("duty.health_phrases_crit_scream_min", 45f, CVar.ARCHIVE | CVar.REPLICATED);
+
+    /// <summary>
+    /// Максимальный интервал между криками боли на критичном HP (5-10% и 0-5%), секунды.
+    /// </summary>
+    public static readonly CVarDef<float> HealthPhrasesCritScreamMax =
+        CVarDef.Create("duty.health_phrases_crit_scream_max", 120f, CVar.ARCHIVE | CVar.REPLICATED);
+
+    /// <summary>
+    /// Минимальный урон за один раз, чтобы вообще рассматривать крик от боли (порог, как EmoteOnDamage в RMC14).
+    /// </summary>
+    public static readonly CVarDef<float> HealthPhrasesDamageScreamThreshold =
+        CVarDef.Create("duty.health_phrases_damage_scream_threshold", 10f, CVar.ARCHIVE | CVar.REPLICATED);
+
+    /// <summary>
+    /// Шанс крика при получении урона выше порога (0-1).
+    /// </summary>
+    public static readonly CVarDef<float> HealthPhrasesDamageScreamChance =
+        CVarDef.Create("duty.health_phrases_damage_scream_chance", 0.5f, CVar.ARCHIVE | CVar.REPLICATED);
+
+    /// <summary>
+    /// Кулдаун между криками боли от урона на одну сущность, секунды.
+    /// </summary>
+    public static readonly CVarDef<float> HealthPhrasesDamageScreamCooldown =
+        CVarDef.Create("duty.health_phrases_damage_scream_cooldown", 6f, CVar.ARCHIVE | CVar.REPLICATED);
+
     // ── Контузия (оглушение от выстрелов и взрывов) ───────────────────────────
 
     /// <summary>

@@ -51,6 +51,14 @@ public sealed partial class HealthPhrasesComponent : Component
 
     [ViewVariables(VVAccess.ReadOnly)]
     public TimeSpan NextSpeechTime = TimeSpan.Zero;
+
+    /// <summary>Не раньше какого момента можно снова выдать амбиентный крик на критичном HP.</summary>
+    [ViewVariables(VVAccess.ReadOnly)]
+    public TimeSpan NextCritScreamTime = TimeSpan.Zero;
+
+    /// <summary>Не раньше какого момента можно снова выдать крик от полученного урона.</summary>
+    [ViewVariables(VVAccess.ReadOnly)]
+    public TimeSpan NextDamageScreamTime = TimeSpan.Zero;
 }
 
 [Serializable, NetSerializable]

@@ -173,6 +173,13 @@ duty-health-phrases-general-5-say-8 = Я... ухо... жу...
 duty-health-phrases-general-5-say-9 = До... свида... ния...
 duty-health-phrases-general-5-say-10 = Мааам...
 
+# Крик боли (DutyHealthScream) — при любом достаточно сильном ударе, вне зависимости от HP.
+duty-health-phrases-general-scream-1 = АААА!
+duty-health-phrases-general-scream-2 = А-А-А!
+duty-health-phrases-general-scream-3 = БЛЯДЬ!
+duty-health-phrases-general-scream-4 = ЧЁРТ, БОЛЬНО!
+duty-health-phrases-general-scream-5 = АААААА!
+
 # ============================================================
 # UNATH — Рептилии-воины
 # ============================================================
@@ -340,6 +347,13 @@ duty-health-phrases-unath-5-say-7 = До... стойно... умираю...
 duty-health-phrases-unath-5-say-8 = Враг... не победил... дух...
 duty-health-phrases-unath-5-say-9 = Прощай... клан... хх...
 duty-health-phrases-unath-5-say-10 = Кххаа... слава...
+
+# Крик боли (DutyHealthScream)
+duty-health-phrases-unath-scream-1 = КХХА!
+duty-health-phrases-unath-scream-2 = ГХХАА!
+duty-health-phrases-unath-scream-3 = РРААХ!
+duty-health-phrases-unath-scream-4 = ХХАА, БОЛЬНО!
+duty-health-phrases-unath-scream-5 = КХХАААА!
 
 # ============================================================
 
@@ -529,6 +543,13 @@ duty-health-phrases-rezomi-5-say-8 = ...
 duty-health-phrases-rezomi-5-say-9 = ...сии...
 duty-health-phrases-rezomi-5-say-10 = ...
 
+# Крик боли (DutyHealthScream)
+duty-health-phrases-rezomi-scream-1 = СИИ!
+duty-health-phrases-rezomi-scream-2 = СИИИ!!
+duty-health-phrases-rezomi-scream-3 = А-СИИ!
+duty-health-phrases-rezomi-scream-4 = СИ-СИ, БОЛЬНО!
+duty-health-phrases-rezomi-scream-5 = СИИИИ!
+
 # ============================================================
 # NIAN — Насекомоподобные (крылья, антенны, мандибулы)
 # Речь: стаккато, жужжание, чириканье (чк, жж, тк)
@@ -710,6 +731,13 @@ duty-health-phrases-nian-5-say-7 = ...чкк...
 duty-health-phrases-nian-5-say-8 = Жжт...
 duty-health-phrases-nian-5-say-9 = ...
 duty-health-phrases-nian-5-say-10 = ...
+
+# Крик боли (DutyHealthScream)
+duty-health-phrases-nian-scream-1 = ЖЖТ!
+duty-health-phrases-nian-scream-2 = ЧКК!
+duty-health-phrases-nian-scream-3 = ЖЖ-ЧКК!
+duty-health-phrases-nian-scream-4 = ЖЖТ, БОЛЬНО!
+duty-health-phrases-nian-scream-5 = ЖЖЖЖТ!
 
 # ============================================================
 # DRASK — Холоднокровные гуманоиды-долгожители с Hoorlm
@@ -893,6 +921,13 @@ duty-health-phrases-drask-5-say-7 = ...
 duty-health-phrases-drask-5-say-8 = ...вм...
 duty-health-phrases-drask-5-say-9 = ...
 duty-health-phrases-drask-5-say-10 = ...мм...
+
+# Крик боли (DutyHealthScream)
+duty-health-phrases-drask-scream-1 = ВМ!
+duty-health-phrases-drask-scream-2 = ММ!
+duty-health-phrases-drask-scream-3 = ВМ-ММ!
+duty-health-phrases-drask-scream-4 = ММ, БОЛЬНО!
+duty-health-phrases-drask-scream-5 = ВМММ!
 
 # ── UI вкладки персонализации ─────────────────────────────────────────────────
 duty-health-phrases-tab-name = Реплики боли
