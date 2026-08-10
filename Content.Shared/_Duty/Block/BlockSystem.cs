@@ -79,6 +79,10 @@ public sealed class BlockSystem : EntitySystem
     private const string EmoteBlockSuccess = "DutyBlockSuccess";
     private const string EmotePunishStun = "DutyBlockPunishStun";
     private const string NoticeCooldown = "duty-block-notice-cooldown";
+    private const string NoticeCantAct = "duty-block-notice-cant-act";
+    private const string NoticeDown = "duty-block-notice-down";
+    private const string NoticeNotWielded = "duty-block-notice-not-wielded";
+    private const string NoticeNoWeapon = "duty-block-notice-no-weapon";
 
     /// <summary>Коллекции, а не одиночные файлы — варианты добавляются правкой YAML, без кода.</summary>
     private static readonly SoundSpecifier ActivateSound = new SoundCollectionSpecifier("DutyBlockActivate");
@@ -157,13 +161,22 @@ public sealed class BlockSystem : EntitySystem
         }
 
         if (!_actionBlocker.CanInteract(uid, null))
+        {
+            Notify(uid, NoticeCantAct);
             return;
+        }
 
         if (_standing.IsDown(uid))
-            return; // нельзя блокировать лёжа
-
-        if (!TryResolveBlock(uid, out var weaponUid, out var fullTier))
+        {
+            Notify(uid, NoticeDown);
             return;
+        }
+
+        if (!TryResolveBlock(uid, out var weaponUid, out var fullTier, out var refusal))
+        {
+            Notify(uid, refusal);
+            return;
+        }
 
         OpenBlockWindow(uid, weaponUid, fullTier);
     }
@@ -171,19 +184,26 @@ public sealed class BlockSystem : EntitySystem
     /// <summary>
     /// Резолвит оружие в активной руке (и голые руки — через тот же TryGetWeapon) в уровень блока.
     /// Двуручное (Wieldable), но не сжатое двумя руками (Wielded == false) — блок недоступен вообще.
+    /// При отказе возвращает ключ строки с причиной: молчаливый отказ невозможно отличить от бага.
     /// </summary>
-    private bool TryResolveBlock(EntityUid uid, out EntityUid weaponUid, out bool fullTier)
+    private bool TryResolveBlock(EntityUid uid, out EntityUid weaponUid, out bool fullTier, out string refusal)
     {
         weaponUid = default;
         fullTier = false;
+        refusal = NoticeNoWeapon;
 
+        // Возвращает false, если в активной руке лежит предмет без MeleeWeaponComponent —
+        // ящиком или бутылкой блок не поставить, и это самая частая причина "не сработало".
         if (!_melee.TryGetWeapon(uid, out var candidate, out _))
             return false;
 
         if (TryComp<WieldableComponent>(candidate, out var wieldable))
         {
             if (!wieldable.Wielded)
+            {
+                refusal = NoticeNotWielded;
                 return false;
+            }
 
             weaponUid = candidate;
             fullTier = true;
@@ -193,6 +213,16 @@ public sealed class BlockSystem : EntitySystem
         weaponUid = candidate;
         fullTier = false;
         return true;
+    }
+
+    /// <summary>Серая строка с причиной отказа. Только сервер — у клиента этот же путь предиктится.</summary>
+    private void Notify(EntityUid uid, string locId)
+    {
+        if (_netMan.IsClient)
+            return;
+
+        var ev = new BlockNoticeEvent(uid, locId);
+        RaiseLocalEvent(ref ev);
     }
 
     private void OpenBlockWindow(EntityUid uid, EntityUid weaponUid, bool fullTier)

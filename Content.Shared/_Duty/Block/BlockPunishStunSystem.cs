@@ -32,7 +32,7 @@ public sealed class BlockPunishStunSystem : EntitySystem
         SubscribeLocalEvent<BlockPunishStunComponent, ComponentShutdown>(OnShutdown);
 
         SubscribeLocalEvent<BlockPunishStunComponent, ChangeDirectionAttemptEvent>(OnCancelAttempt);
-        SubscribeLocalEvent<BlockPunishStunComponent, UpdateCanMoveEvent>(OnCancelAttempt);
+        SubscribeLocalEvent<BlockPunishStunComponent, UpdateCanMoveEvent>(OnMoveAttempt);
         SubscribeLocalEvent<BlockPunishStunComponent, InteractionAttemptEvent>(OnInteractionAttempt);
         SubscribeLocalEvent<BlockPunishStunComponent, UseAttemptEvent>(OnCancelAttempt);
         SubscribeLocalEvent<BlockPunishStunComponent, ThrowAttemptEvent>(OnCancelAttempt);
@@ -88,6 +88,21 @@ public sealed class BlockPunishStunSystem : EntitySystem
 
     private void OnCancelAttempt(EntityUid uid, BlockPunishStunComponent component, CancellableEntityEventArgs args)
     {
+        args.Cancel();
+    }
+
+    /// <summary>
+    /// Отдельно от остальных Attempt'ов: снятие компонента само дёргает UpdateCanMove, а на
+    /// ComponentShutdown компонент ещё жив и подписка ещё висит. Без проверки жизненного цикла мы
+    /// отменили бы движение прямо в момент снятия стана и запретили бы его насовсем — сущность
+    /// стояла бы столбом, пока что-нибудь постороннее (например, чужой оттаскивающий грab)
+    /// не пересчитало бы CanMove заново. Та же защита стоит в ванильном SharedStunSystem.
+    /// </summary>
+    private void OnMoveAttempt(EntityUid uid, BlockPunishStunComponent component, UpdateCanMoveEvent args)
+    {
+        if (component.LifeStage > ComponentLifeStage.Running)
+            return;
+
         args.Cancel();
     }
 

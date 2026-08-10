@@ -5,6 +5,12 @@ duty-block-notice-punish-stun = Вы ударили в блок — вас ог�
 duty-block-notice-cooldown = Блок ещё не восстановился.
 duty-block-notice-gun-lock = Не могу прицелиться — я блокировал удар этим оружием.
 
+## Причины отказа — чтобы "не сработало" не выглядело багом
+duty-block-notice-cant-act = Сейчас не получится поставить блок.
+duty-block-notice-down = Лёжа блок не поставить.
+duty-block-notice-not-wielded = Это оружие нужно взять двумя руками.
+duty-block-notice-no-weapon = Этим предметом не заблокировать — нужно оружие или свободная рука.
+
 ## Эмоуты
 duty-block-emote-activate-name = ставит блок
 duty-block-emote-success-name = блокирует удар
