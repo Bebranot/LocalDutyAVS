@@ -562,6 +562,9 @@ binds:
 - function: Sprint
   type: State
   key: C
+- function: Block
+  type: State
+  key: N
 - function: OpenAbilitiesMenu
   type: State
   key: K
