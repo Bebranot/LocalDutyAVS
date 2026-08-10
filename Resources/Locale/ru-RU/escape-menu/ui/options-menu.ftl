@@ -136,6 +136,7 @@ ui-options-function-move-right = Двигаться направо
 ui-options-function-walk = Идти
 ui-options-function-toggle-knockdown = Переключить ползание
 ui-options-function-sprint = Спринт
+ui-options-function-block = Блок ближнего удара
 ui-options-function-camera-rotate-left = Повернуть налево
 ui-options-function-camera-rotate-right = Повернуть направо
 ui-options-function-camera-reset = Сбросить камеру
