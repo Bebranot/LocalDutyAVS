@@ -1,0 +1,14 @@
+{
+  "version": 1,
+  "license": "CC-BY-SA-3.0",
+  "copyright": "ЗАГЛУШКА: первый кадр состояния MindShield из Resources/Textures/Interface/Misc/job_icons.rsi (Taken and modified from /tg/station13). Заменить на собственную иконку щита 8x8.",
+  "size": {
+    "x": 8,
+    "y": 8
+  },
+  "states": [
+    {
+      "name": "icon"
+    }
+  ]
+}

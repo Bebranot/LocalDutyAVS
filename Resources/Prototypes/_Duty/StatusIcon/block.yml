@@ -1,0 +1,10 @@
+# Иконка активного блока у головы — тот же слот, что и иконка должности.
+# Текстура пока ЗАГЛУШКА (первый кадр MindShield из job_icons.rsi), заменить на свою 8x8.
+- type: dutyBlockIcon
+  id: DutyBlockIcon
+  priority: 1
+  locationPreference: Right # слева обычно висит иконка должности
+  isShaded: true
+  icon:
+    sprite: /Textures/_Duty/Interface/block.rsi
+    state: icon
