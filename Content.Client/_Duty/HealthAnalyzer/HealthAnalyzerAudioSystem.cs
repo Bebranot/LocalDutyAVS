@@ -10,10 +10,11 @@ namespace Content.Client._Duty.HealthAnalyzer;
 /// <summary>
 /// _Duty: сердцебиение сканируемой цели в анализаторе здоровья. Слышит ТОЛЬКО сканирующий
 /// (Filter.Local, не позиционно). Модель воспроизведения:
-///  • вне крита — одиночный сэмпл кардиомонитора (heartthump-heavy-monitor.ogg) по таймеру,
-///    интервал ≥ длины сэмпла (без нахлёста), ниже HP → чаще;
-///  • в крите — ВМЕСТО ударов зацикленный критический тон (criticalloop.ogg): плавно
-///    появляется (fade-in) и РЕЗКО обрывается при выходе из крита; на 0.5 дБ громче обычного;
+///  • вне крита — ТИШИНА. Раньше здесь бил одиночный сэмпл кардиомонитора, но сэмпла
+///    (heartthump-heavy-monitor.ogg) в ассетах нет, сервер ругался «file does not exist»,
+///    и по решению по геймплею стук монитора убран совсем;
+///  • в крите — зацикленный критический тон (criticalloop.ogg): плавно появляется (fade-in)
+///    и РЕЗКО обрывается при выходе из крита;
 ///  • на грани смерти (HP &lt; ~10%) — зацикленная тревога панели (loop);
 ///  • при смерти цели — один раз flatline.ogg.
 /// Все цикличные потоки явно останавливаются при выходе из анализатора / состояния / смерти.
@@ -22,33 +23,23 @@ public sealed class HealthAnalyzerAudioSystem : EntitySystem
 {
     [Dependency] private readonly SharedAudioSystem _audio = default!;
 
-    private readonly SoundSpecifier _beat = new SoundCollectionSpecifier("DutyHeartbeatMonitor");
     private readonly SoundSpecifier _critLoop = new SoundCollectionSpecifier("DutyHeartbeatCriticalLoop");
     private readonly SoundSpecifier _alert = new SoundCollectionSpecifier("DutyHeartbeatPanelAlert");
     private readonly SoundSpecifier _flatline = new SoundCollectionSpecifier("DutyHeartbeatFlatline");
 
-    // Интервалы ударов вне крита (сек). Не короче длины сэмпла монитора (≈ 0.77с).
-    private const float NoneInterval = 1.6f;
-    private const float LightInterval = 1.5f;
-    private const float HeavyInterval = 1.2f;
-
-    private const float BeatVolume = -4f;
     private const float AlertVolume = -6f;
     private const float FlatlineVolume = -3f;
 
-    // Критический тон: плавный fade-in от «тишины» к цели (на 0.5 дБ громче удара).
+    // Критический тон: плавный fade-in от «тишины» к цели.
     private const float CritStartVolume = -32f;
-    private const float CritTargetVolume = BeatVolume + 0.5f;
+    private const float CritTargetVolume = -3.5f;
     private const float CritFadeIn = 1.2f;
 
     private bool _active;
-    private HeartbeatLevel _level;
     private bool _inCrit;
     private bool _nearDeath;
     private bool _flatlineState;
-    private bool _wasFlatline;
 
-    private float _beatAccum;
     private float _critFade;
 
     // Цикличные управляемые потоки (их нужно явно останавливать).
@@ -71,26 +62,23 @@ public sealed class HealthAnalyzerAudioSystem : EntitySystem
     private void OnAudioEvent(HealthAnalyzerAudioEvent ev)
     {
         _active = true;
-        _level = ev.Level;
         _inCrit = ev.InCrit;
         _nearDeath = ev.NearDeath;
         _flatlineState = ev.Flatline;
 
-        if (ev.ForceRestart)
+        // Ровную линию проигрываем строго по одноразовому импульсу от сервера. Сервер сам
+        // решает, кому и когда её слать (один раз на зрителя, см. HealthAnalyzerSystem), поэтому
+        // ни пауза вне радиуса, ни повторный анализ трупа звук здесь не переигрывают.
+        if (ev.PlayFlatline)
         {
-            _beatAccum = float.MaxValue; // ударить сразу на открытии сканирования
-
-            // flatline играем ТОЛЬКО когда смерть происходит при активном просмотре.
-            // Если на открытии скана цель уже мертва — считаем звук уже «сыгранным»,
-            // чтобы он не повторялся при каждом повторном анализе трупа.
-            _wasFlatline = ev.Flatline;
+            StopLoops();
+            Play(_flatline, FlatlineVolume);
         }
     }
 
     private void OnStopAudio(HealthAnalyzerStopAudioEvent ev)
     {
         _active = false;
-        _wasFlatline = false;
         StopLoops();
     }
 
@@ -105,44 +93,26 @@ public sealed class HealthAnalyzerAudioSystem : EntitySystem
             return;
         }
 
-        // Цель мертва — глушим циклы, один раз играем ровную линию.
+        // Цель мертва — тишина, глушим все циклы. Сам звук ровной линии — одноразовый
+        // импульс в OnAudioEvent, здесь не проигрываем (иначе повтор при ре-синке).
         if (_flatlineState)
         {
             StopLoops();
-            if (!_wasFlatline)
-                Play(_flatline, FlatlineVolume);
-            _wasFlatline = true;
             return;
         }
-        _wasFlatline = false;
 
         // Тревога панели на грани смерти.
         UpdateLoop(ref _alertStream, _nearDeath, _alert, AlertVolume);
 
-        // В крите: критический тон ВМЕСТО ударов — плавный fade-in, резкий стоп на выходе.
+        // В крите: критический тон — плавный fade-in, резкий стоп на выходе.
         if (_inCrit)
         {
             TickCritLoop(frameTime);
-            _beatAccum = 0f;
             return;
         }
 
-        StopCritLoop(); // вышел из крита — обрываем тон резко
-
-        // Вне крита — обычные удары кардиомонитора по HP.
-        var interval = _level switch
-        {
-            HeartbeatLevel.Heavy or HeartbeatLevel.Critical => HeavyInterval,
-            HeartbeatLevel.Light => LightInterval,
-            _ => NoneInterval,
-        };
-
-        _beatAccum += frameTime;
-        if (_beatAccum >= interval)
-        {
-            _beatAccum = 0f;
-            Play(_beat, BeatVolume);
-        }
+        // Вне крита анализатор молчит: стук монитора убран совсем (см. коммент класса).
+        StopCritLoop();
     }
 
     /// <summary>Стартует/тянет fade-in зацикленного критического тона.</summary>

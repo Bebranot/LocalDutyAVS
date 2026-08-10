@@ -8,3 +8,15 @@
   id: DutyNightVision
   kind: source
   path: "/Textures/_Duty/Shaders/nightvision.swsl"
+
+# _Duty: экранный шейдер «Агонии от огня» (красная пульсирующая виньетка боли).
+- type: shader
+  id: FireAgonyVision
+  kind: source
+  path: "/Textures/Shaders/_Duty/fire_agony.swsl"
+
+# _Duty: экранный шейдер стимулятора Fury-16 (виньетка + искажение).
+- type: shader
+  id: FuryVision
+  kind: source
+  path: "/Textures/Shaders/_Duty/fury.swsl"

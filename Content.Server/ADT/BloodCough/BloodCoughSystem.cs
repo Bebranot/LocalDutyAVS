@@ -1,5 +1,6 @@
 using Content.Server.Chat.Systems;
 using Content.Server.Fluids.EntitySystems;
+using Content.Shared._Duty.Trauma.Events;
 using Content.Shared.ADT.Silicon.Components;
 using Content.Shared.Body.Components;
 using Content.Shared.Chat;
@@ -63,9 +64,13 @@ public sealed class BloodCoughSystem : EntitySystem
             // Выполняем кашель
             PerformCough(uid, comp);
 
-            // Устанавливаем следующий интервал
-            var nextDelay = _random.Next(comp.CoughTimeMin, comp.CoughTimeMax);
-            comp.NextCough += TimeSpan.FromSeconds(nextDelay);
+            // Устанавливаем следующий интервал (_Duty: травмы торса могут его учащать).
+            // _Duty: считаем ОТ ТЕКУЩЕГО момента, а не прибавляем к прошлому сроку. Со сложением
+            // NextCough отставал от реального времени каждый раз, когда тик пропускался (моб в
+            // крите — см. проверку IsAlive выше), и после возвращения в строй кашель выстреливал
+            // КАЖДЫЙ тик, пока накопленное отставание не выберется. Это и был «спам кашля».
+            var nextDelay = _random.Next(comp.CoughTimeMin, comp.CoughTimeMax) * GetCoughIntervalMultiplier(uid);
+            comp.NextCough = curTime + TimeSpan.FromSeconds(nextDelay);
         }
     }
 
@@ -99,8 +104,8 @@ public sealed class BloodCoughSystem : EntitySystem
 
             if (shouldCough)
             {
-                // Запускаем кашель с первой задержкой
-                var initialDelay = _random.Next(component.CoughTimeMin, component.CoughTimeMax);
+                // Запускаем кашель с первой задержкой (_Duty: травмы торса могут его учащать)
+                var initialDelay = _random.Next(component.CoughTimeMin, component.CoughTimeMax) * GetCoughIntervalMultiplier(uid);
                 component.NextCough = _timing.CurTime + TimeSpan.FromSeconds(initialDelay);
             }
             else
@@ -109,6 +114,17 @@ public sealed class BloodCoughSystem : EntitySystem
                 component.NextCough = TimeSpan.Zero;
             }
         }
+    }
+
+    /// <summary>
+    /// _Duty: даёт другим системам (травмы торса) сократить интервал до следующего кашля через
+    /// <see cref="BloodCoughIntervalModifierEvent"/>, не будучи известными этой (ADT) системе.
+    /// </summary>
+    private float GetCoughIntervalMultiplier(EntityUid uid)
+    {
+        var ev = new BloodCoughIntervalModifierEvent();
+        RaiseLocalEvent(uid, ref ev);
+        return Math.Clamp(ev.Multiplier, 0.1f, 1f);
     }
 
     private void PerformCough(EntityUid uid, BloodCoughComponent component)

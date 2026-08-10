@@ -10,7 +10,6 @@ using Content.Shared.Damage.Systems;
 using Content.Shared.FixedPoint;
 using Content.Shared.Hands;
 using Content.Shared.Hands.EntitySystems;
-using Content.Shared.Humanoid;
 using Content.Shared.Movement.Systems;
 using Content.Shared.Physics;
 using Content.Shared.Popups;
@@ -225,11 +224,7 @@ public sealed class HalberdChargeSystem : EntitySystem
         comp.ChargeDirection = direction;
         comp.ChargeStartPos = userPos;
 
-        // Звук и крик старта — звук подбирается по полу персонажа
-        var crySound = CompOrNull<HumanoidProfileComponent>(user)?.Sex == Sex.Female
-            ? comp.ChargeCryFemaleSound
-            : comp.ChargeCryMaleSound;
-        _audio.PlayPvs(crySound, user);
+        // Фраза старта в чат
         _chat.TrySendInGameICMessage(user, Loc.GetString("halberd-charge-cry-start"), InGameICChatType.Speak, false);
 
         // Зацикленный звук рывка (заглушка — звук шагов) — играет всю длительность рывка, стоится вручную в StopCharge.

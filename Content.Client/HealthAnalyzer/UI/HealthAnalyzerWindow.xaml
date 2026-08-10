@@ -2,16 +2,20 @@
     xmlns="https://spacestation14.io"
     xmlns:controls="clr-namespace:Content.Client.UserInterface.Controls"
     xmlns:ui="clr-namespace:Content.Client.HealthAnalyzer.UI"
-    MaxHeight="525"
-    MinWidth="300">
-    <!-- ADT-Tweak: ScrollContainer закомментирован -->
-    <!-- <ScrollContainer
+    MinWidth="420"
+    MinHeight="200"
+    MaxHeight="700">
+    <!-- _Duty: гибкое окно — растёт под контент, вертикальный скролл при переполнении,
+         чтобы нижние секции (реагенты) не обрезались. -->
+    <ScrollContainer
         Margin="5 5 5 5"
         ReturnMeasure="True"
-        VerticalExpand="True"> -->
+        HScrollEnabled="False"
+        VScrollEnabled="True"
+        VerticalExpand="True">
 
         <ui:HealthAnalyzerControl
             Name="HealthAnalyzer"/>
 
-    <!-- </ScrollContainer> ADT-Tweak -->
+    </ScrollContainer>
 </controls:FancyWindow>

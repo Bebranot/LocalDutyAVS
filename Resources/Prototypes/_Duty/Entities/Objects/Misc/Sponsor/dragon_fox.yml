@@ -1,0 +1,8 @@
+# Customization
+
+- type: marking
+  id: Foxninetaildragon
+  bodyPart: Tail
+  sprites:
+  - sprite: _DeadSpace/Sponsor/DragonFox/ninetails.rsi
+    state: nine_tail_icon

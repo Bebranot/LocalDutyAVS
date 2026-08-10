@@ -6,6 +6,7 @@ using Content.Client.UserInterface.Systems.Hotbar.Widgets;
 using Content.Client.UserInterface.Systems.Inventory.Widgets;
 using Content.Client.UserInterface.Systems.MenuBar.Widgets;
 using Content.Shared._Duty.Aiming;
+using Content.Shared._Duty.FireAgony;
 using Content.Shared.Mobs.Systems;
 using Robust.Client.Player;
 using Robust.Client.UserInterface;
@@ -50,7 +51,11 @@ public sealed class HudAimFadeSystem : EntitySystem
     /// <summary>Длительность плавного возврата к alpha=1 (реверс с текущей точки).</summary>
     private const float FadeInDuration = 1.5f;
 
+    /// <summary>Быстрый фейд HUD при входе/выходе сцены «Агонии от огня» (совпадает с виньеткой).</summary>
+    private const float AgonyFadeDuration = 0.5f;
+
     private TimeSpan? _aimStart;
+    private bool _agonyPrev;
     private EntityUid? _lastPlayer;
 
     private readonly List<HudFadeGroup> _groups = new();
@@ -118,6 +123,7 @@ public sealed class HudAimFadeSystem : EntitySystem
         if (player is not { } user || playerChanged || !_mobState.IsAlive(user))
         {
             _aimStart = null;
+            _agonyPrev = false;
             foreach (var group in _groups)
                 group.HardReset(screen);
             return;
@@ -130,10 +136,17 @@ public sealed class HudAimFadeSystem : EntitySystem
         else
             _aimStart = null;
 
-        var faded = aiming && _aimStart is { } start && _timing.CurTime - start >= AimHoldDelay;
+        // _Duty: сцена «Агонии от огня» тоже гасит HUD — быстро (0.5с) и приоритетнее прицеливания.
+        var agony = TryComp<FireAgonyComponent>(user, out var fireAgony) && fireAgony.Active;
+        var aimFaded = aiming && _aimStart is { } start && _timing.CurTime - start >= AimHoldDelay;
+        var faded = agony || aimFaded;
 
         var target = faded ? 0f : 1f;
-        var duration = faded ? FadeOutDuration : FadeInDuration;
+        // Агония и её обрыв фейдятся быстро; прицеливание — своими длительностями.
+        var duration = agony || _agonyPrev
+            ? AgonyFadeDuration
+            : faded ? FadeOutDuration : FadeInDuration;
+        _agonyPrev = agony;
 
         foreach (var group in _groups)
         {

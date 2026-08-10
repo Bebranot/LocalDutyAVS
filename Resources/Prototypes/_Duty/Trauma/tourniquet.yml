@@ -1,0 +1,43 @@
+# _Duty: самодельный жгут для пошаговой остановки артериального кровотечения.
+# Сделан на основе штатного Tourniquet (наследует тег Tourniquet и лечебные свойства),
+# крафтится из 2 ткани + 1 доски (10с) — доступен без медотсека, в поле.
+
+- type: entity
+  parent: Tourniquet
+  id: DutyImprovisedTourniquet
+  name: improvised tourniquet
+  description: A strip of cloth twisted around a stick. Crude, but it will clamp an artery shut.
+  components:
+    - type: Sprite
+      sprite: _Duty/Objects/Items/Makeshift_Health/improvised_tourniquet.rsi
+      state: icon
+    - type: Item
+      # У самодельной рси нет отдельных инхенд-состояний (только icon) — сбрасываем
+      # унаследованный от штатного Tourniquet heldPrefix, иначе движок искал бы
+      # несуществующие "tourniquet-inhand-*" состояния.
+      heldPrefix: null
+
+- type: constructionGraph
+  id: DutyImprovisedTourniquet
+  start: start
+  graph:
+    - node: start
+      edges:
+        - to: tourniquet
+          steps:
+            - material: Cloth
+              amount: 2
+              doAfter: 5
+            - material: WoodPlank
+              amount: 1
+              doAfter: 5
+    - node: tourniquet
+      entity: DutyImprovisedTourniquet
+
+- type: construction
+  id: DutyImprovisedTourniquet
+  graph: DutyImprovisedTourniquet
+  startNode: start
+  targetNode: tourniquet
+  category: construction-category-tools
+  objectType: Item

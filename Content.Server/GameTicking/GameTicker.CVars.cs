@@ -24,6 +24,10 @@ namespace Content.Server.GameTicking
         [ViewVariables]
         private string? DiscordRoundEndRole { get; set; }
 
+        // LocalDuty — роль, пингуемая при старте раунда
+        [ViewVariables]
+        private string? DiscordRoundStartRole { get; set; }
+
         private WebhookIdentifier? _webhookIdentifier;
 
         [ViewVariables]
@@ -72,6 +76,17 @@ namespace Content.Server.GameTicking
                     DiscordRoundEndRole = null;
                 }
             }, true);
+            // LocalDuty Start — роль, пингуемая при старте раунда
+            Subs.CVar(_cfg, DutyCCVars.DiscordRoundStartRole, value =>
+            {
+                DiscordRoundStartRole = value;
+
+                if (value == string.Empty)
+                {
+                    DiscordRoundStartRole = null;
+                }
+            }, true);
+            // LocalDuty End
             Subs.CVar(_cfg, CCVars.RoundEndSoundCollection, value => RoundEndSoundCollection = value, true);
 #if EXCEPTION_TOLERANCE
             Subs.CVar(_cfg, CCVars.RoundStartFailShutdownCount, value => RoundStartFailShutdownCount = value, true);

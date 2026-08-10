@@ -1,30 +1,28 @@
-using Content.Shared._Duty.Heartbeat;
 using Robust.Shared.Serialization;
 
 namespace Content.Shared._Duty.HealthAnalyzer;
 
 /// <summary>
-/// _Duty: команда клиенту проигрывать сердцебиение сканируемой цели в анализаторе здоровья.
-/// Звук штучными сэмплами по <see cref="Level"/> (ниже HP — чаще и тяжелее). В крите
-/// (<see cref="InCrit"/>) тяжёлое сердцебиение чередуется с писком монитора и играет быстро.
-/// На грани смерти (<see cref="NearDeath"/>, HP &lt; ~10%) добавляется тревога панели.
+/// _Duty: команда клиенту проигрывать звук сканируемой цели в анализаторе здоровья.
+/// Вне крита анализатор МОЛЧИТ — стук кардиомонитора убран совсем. В крите
+/// (<see cref="InCrit"/>) играет зацикленный критический тон, на грани смерти
+/// (<see cref="NearDeath"/>, HP &lt; ~10%) добавляется тревога панели, при смерти —
+/// одноразовая ровная линия.
 /// </summary>
 [Serializable, NetSerializable]
 public sealed class HealthAnalyzerAudioEvent : EntityEventArgs
 {
-    public HeartbeatLevel Level;
     public bool InCrit;
     public bool NearDeath;
     public bool Flatline; // цель мертва — пульса нет (тишина в анализаторе)
-    public bool ForceRestart;
+    public bool PlayFlatline; // одноразовый импульс: проиграть ровную линию прямо сейчас (переход жив→мёртв)
 
-    public HealthAnalyzerAudioEvent(HeartbeatLevel level, bool inCrit, bool nearDeath, bool flatline, bool forceRestart = false)
+    public HealthAnalyzerAudioEvent(bool inCrit, bool nearDeath, bool flatline, bool playFlatline = false)
     {
-        Level = level;
         InCrit = inCrit;
         NearDeath = nearDeath;
         Flatline = flatline;
-        ForceRestart = forceRestart;
+        PlayFlatline = playFlatline;
     }
 }
 

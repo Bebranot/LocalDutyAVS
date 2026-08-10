@@ -1,0 +1,67 @@
+# _Duty: облачка пыли из-под ног при спринте. Порт с Goob Station (ассеты — Goonstation,
+# CC-BY-NC-SA-3.0, см. meta.json в sprint.rsi). Сущности спавнит КЛИЕНТ (DutySprintVisualsSystem),
+# на сервер они не уходят.
+#
+# Анимацию гоняем через AnimationPlayer, а не авто-анимацией RSI: авто-анимация синхронизирована
+# по глобальному времени, поэтому свежезаспавненное облако появлялось бы с середины кадров.
+# Длительность TimedDespawn совпадает с суммой задержек соответствующего состояния.
+
+- type: entity
+  id: DutySprintCloud
+  name: облако пыли
+  description: Кто-то очень спешил.
+  categories: [ HideSpawnMenu ]
+  components:
+  - type: Sprite
+    drawdepth: WallMountedItems
+    sprite: _Duty/Effects/sprint.rsi
+    layers:
+    - map: [ "enum.DutySprintVisualLayers.Base" ]
+      sprite: _Duty/Effects/sprint.rsi
+      state: sprint_cloud
+  - type: TimedDespawn
+    lifetime: 0.48
+  - type: Tag
+    tags:
+    - HideContextMenu
+  - type: AnimationPlayer
+
+- type: entity
+  id: DutySprintCloudSmall
+  name: облачко пыли
+  description: Кто-то очень спешил.
+  categories: [ HideSpawnMenu ]
+  components:
+  - type: Sprite
+    drawdepth: WallMountedItems
+    sprite: _Duty/Effects/sprint.rsi
+    layers:
+    - map: [ "enum.DutySprintVisualLayers.Base" ]
+      sprite: _Duty/Effects/sprint.rsi
+      state: sprint_cloud_small
+  - type: TimedDespawn
+    lifetime: 0.34
+  - type: Tag
+    tags:
+    - HideContextMenu
+  - type: AnimationPlayer
+
+- type: entity
+  id: DutySprintCloudTiny
+  name: пылинки
+  description: Кто-то очень спешил.
+  categories: [ HideSpawnMenu ]
+  components:
+  - type: Sprite
+    drawdepth: WallMountedItems
+    sprite: _Duty/Effects/sprint.rsi
+    layers:
+    - map: [ "enum.DutySprintVisualLayers.Base" ]
+      sprite: _Duty/Effects/sprint.rsi
+      state: sprint_cloud_tiny
+  - type: TimedDespawn
+    lifetime: 0.25
+  - type: Tag
+    tags:
+    - HideContextMenu
+  - type: AnimationPlayer
