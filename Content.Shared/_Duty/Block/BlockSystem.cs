@@ -13,6 +13,8 @@ using Content.Shared.Weapons.Ranged.Components;
 using Content.Shared.Weapons.Ranged.Systems;
 using Content.Shared.Wieldable;
 using Content.Shared.Wieldable.Components;
+using Robust.Shared.Audio;
+using Robust.Shared.Audio.Systems;
 using Robust.Shared.Input.Binding;
 using Robust.Shared.Network;
 using Robust.Shared.Player;
@@ -38,6 +40,7 @@ public sealed class BlockSystem : EntitySystem
     [Dependency] private readonly MovementModStatusSystem _movementMod = default!;
     [Dependency] private readonly StandingStateSystem _standing = default!;
     [Dependency] private readonly SharedChatSystem _chat = default!;
+    [Dependency] private readonly SharedAudioSystem _audio = default!;
     [Dependency] private readonly BlockPunishStunSystem _punishStun = default!;
     [Dependency] private readonly BlockGunLockSystem _gunLock = default!;
 
@@ -76,6 +79,10 @@ public sealed class BlockSystem : EntitySystem
     private const string EmoteBlockSuccess = "DutyBlockSuccess";
     private const string EmotePunishStun = "DutyBlockPunishStun";
     private const string NoticeCooldown = "duty-block-notice-cooldown";
+
+    /// <summary>Коллекции, а не одиночные файлы — варианты добавляются правкой YAML, без кода.</summary>
+    private static readonly SoundSpecifier ActivateSound = new SoundCollectionSpecifier("DutyBlockActivate");
+    private static readonly SoundSpecifier HitSound = new SoundCollectionSpecifier("DutyBlockHit");
 
     public override void Initialize()
     {
@@ -202,6 +209,9 @@ public sealed class BlockSystem : EntitySystem
         weaponMarker.Blocker = uid;
 
         _movementMod.TryAddMovementSpeedModDuration(uid, MovementSlowdownEffect, BlockWindowDuration, MovementSlowdownMultiplier);
+
+        // Предиктом — чтобы звук шёл сразу по нажатию, без сетевой задержки.
+        _audio.PlayPredicted(ActivateSound, uid, uid);
 
         // Чат/огнестрел-штраф — только на сервере, чтобы не задваивать с клиентским предиктом
         // того же обработчика (CommandBinds грузятся и на клиенте, и на сервере).
@@ -343,6 +353,7 @@ public sealed class BlockSystem : EntitySystem
             return;
 
         _chat.TryEmoteWithChat(uid, EmoteBlockSuccess, ignoreActionBlocker: true, forceEmote: true);
+        _audio.PlayPvs(HitSound, uid);
 
         if (component.FullTier)
         {

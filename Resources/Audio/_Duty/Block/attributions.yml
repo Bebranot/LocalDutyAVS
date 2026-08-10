@@ -1,0 +1,4 @@
+- files: ["activate.ogg", "hit1.ogg", "hit2.ogg", "hit3.ogg"]
+  license: "CC-BY-SA-3.0"
+  copyright: "Подготовлено для DutyAVS (_Duty). Сведены в моно и приглушены: hit* на -3 dB, activate на -10 dB."
+  source: "https://github.com/Bebranot/LocalDutyAVS"
