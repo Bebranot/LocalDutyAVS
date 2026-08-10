@@ -770,7 +770,7 @@ public sealed partial class ChatSystem : SharedChatSystem
     /// <summary>
     ///     Sends a chat message to the given players in range of the source entity.
     /// </summary>
-    public void SendInVoiceRange(ChatChannel channel, string message, string wrappedMessage, string wrappedLanguageMessage, EntityUid source, ChatTransmitRange range, NetUserId? author = null, ProtoId<LanguagePrototype>? language = null, bool ignoreLanguage = false, bool checkVisibility = true, bool ignoreWalls = false)  // ADT Languages
+    public void SendInVoiceRange(ChatChannel channel, string message, string wrappedMessage, string wrappedLanguageMessage, EntityUid source, ChatTransmitRange range, NetUserId? author = null, ProtoId<LanguagePrototype>? language = null, bool ignoreLanguage = false, bool checkVisibility = true, bool ignoreWalls = false, bool dutyScreamShake = false)  // ADT Languages
     {
         // ADT Languages start
         var lang = language != null ? _prototypeManager.Index(language.Value) : _language.GetCurrentLanguage(source);
@@ -803,18 +803,21 @@ public sealed partial class ChatSystem : SharedChatSystem
             var entHideChat = entRange == MessageRangeCheckResult.HideChat;
             if (ignoreLanguage)
             {
-                _chatManager.ChatMessageToOne(channel, message, wrappedMessage, source, entHideChat, session.Channel, author: author);
+                _chatManager.ChatMessageToOne(channel, message, wrappedMessage, source, entHideChat, session.Channel, author: author, dutyScreamShake: dutyScreamShake);
                 continue;
             }
 
             if (!_language.CanUnderstand(listener, lang))
-                _chatManager.ChatMessageToOne(channel, message, wrappedLanguageMessage, source, entHideChat, session.Channel, author: author);
+                _chatManager.ChatMessageToOne(channel, message, wrappedLanguageMessage, source, entHideChat, session.Channel, author: author, dutyScreamShake: dutyScreamShake);
             else
-                _chatManager.ChatMessageToOne(channel, message, wrappedMessage, source, entHideChat, session.Channel, author: author);
+                _chatManager.ChatMessageToOne(channel, message, wrappedMessage, source, entHideChat, session.Channel, author: author, dutyScreamShake: dutyScreamShake);
         }
         // ADT Languages end
 
-        _replay.RecordServerMessage(new ChatMessage(channel, message, wrappedMessage, GetNetEntity(source), null, MessageRangeHideChatForReplay(range)));
+        _replay.RecordServerMessage(new ChatMessage(channel, message, wrappedMessage, GetNetEntity(source), null, MessageRangeHideChatForReplay(range))
+        {
+            DutyScreamShake = dutyScreamShake,
+        });
     }
 
     /// <summary>
