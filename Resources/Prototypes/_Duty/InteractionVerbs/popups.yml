@@ -1,0 +1,66 @@
+# Портировано из Goob-Station (Resources/Prototypes/_EinsteinEngines/Interactions/Popups/interaction_popups.yml),
+# изначально Einstein Engines.
+
+# Маленький, не виден другим
+- type: InteractionPopup
+  id: Subtle
+  popupType: Small
+  logChannel: Emotes
+  others: null
+
+# Маленький, виден другим
+- type: InteractionPopup
+  id: Visible
+  popupType: Small
+  logChannel: Emotes
+
+# Маленький, виден другим, но не пишется в чат
+- type: InteractionPopup
+  id: VisibleNoChat
+  popupType: Small
+  logPopup: false
+
+# Средний, виден другим
+- type: InteractionPopup
+  id: Obvious
+  popupType: Medium
+  logChannel: Emotes
+
+# MediumCaution, виден другим
+- type: InteractionPopup
+  id: Dangerous
+  popupType: MediumCaution
+  logChannel: Emotes
+
+# Отложенные попапы (при старте do-after) — в чат не пишутся
+- type: InteractionPopup
+  id: SubtleDelayed
+  popupType: Small
+  logPopup: false
+  logChannel: Emotes
+  others: null
+
+- type: InteractionPopup
+  id: ObviousDelayed
+  popupType: Small
+  logPopup: false
+  logChannel: Emotes
+
+- type: InteractionPopup
+  id: DangerousDelayed
+  popupType: SmallCaution
+  logPopup: false
+  logChannel: Emotes
+
+# Виден только себе
+- type: InteractionPopup
+  id: SubtleFail
+  popupType: SmallCaution
+  target: null
+  others: null
+
+# Виден себе и цели, но не остальным
+- type: InteractionPopup
+  id: Fail
+  popupType: SmallCaution
+  others: null
