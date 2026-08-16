@@ -38,6 +38,12 @@ namespace Content.Shared.Chat
         public string? AudioPath;
         public float AudioVolume;
 
+        /// <summary>
+        /// _Duty: помечает крик боли — клиентский речевой пузырь (SpeechBubble) для такого
+        /// сообщения дрожит первые доли секунды. См. Content.Client.Chat.UI.SpeechBubble.
+        /// </summary>
+        public bool DutyScreamShake;
+
         [NonSerialized]
         public bool Read;
 

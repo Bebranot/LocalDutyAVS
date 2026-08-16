@@ -1,0 +1,6 @@
+# Замедление -80% во время активного окна блока (0.5с). Длительность и множитель передаются
+# рантаймом через MovementModStatusSystem.TryAddMovementSpeedModDuration (см. BlockSystem.OpenBlockWindow).
+- type: entity
+  parent: StatusEffectSlowdown
+  id: DutyBlockSlowdownStatusEffect
+  name: duty block slowdown

@@ -1,0 +1,20 @@
+# Системные эмоуты для BlockSystem — available: false, вызываются только кодом
+# (TryEmoteWithChat(..., forceEmote: true)), никогда вручную/через чат-триггеры.
+
+- type: emote
+  id: DutyBlockActivate
+  name: duty-block-emote-activate-name
+  available: false
+  chatMessages: [ставит блок]
+
+- type: emote
+  id: DutyBlockSuccess
+  name: duty-block-emote-success-name
+  available: false
+  chatMessages: [блокирует удар!]
+
+- type: emote
+  id: DutyBlockPunishStun
+  name: duty-block-emote-punish-stun-name
+  available: false
+  chatMessages: [оглушён ударом в блок!]

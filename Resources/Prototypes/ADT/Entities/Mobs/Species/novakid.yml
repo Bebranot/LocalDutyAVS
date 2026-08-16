@@ -1,9 +1,9 @@
-﻿# Novakid mob (upstream PR#42476). Appearance/body/sprite come from AppearanceNovakid.
+﻿# Novakid mob (upstream PR#42476). Appearance/body/sprite come from ADTAppearanceNovakid.
 - type: entity
   save: false
   name: Urisst' Mzhand Novakid
   parent:
-  - AppearanceNovakid
+  - ADTAppearanceNovakid
   - BaseSpeciesMobOrganic
   id: BaseMobNovakid
   abstract: true

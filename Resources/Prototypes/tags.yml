@@ -1337,6 +1337,9 @@
   id: Spear # CargoBounty: BountySpear
 
 - type: Tag
+  id: Splint # _Duty: FractureTreatmentSystem — материал шинирования перелома
+
+- type: Tag
   id: SpeedLoaderCap # Ammo: RevolverCapGun, RevolverCapGunFake
 
 - type: Tag

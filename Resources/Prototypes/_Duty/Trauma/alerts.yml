@@ -1,0 +1,19 @@
+# _Duty: алерты-иконки тяжёлых травм (тот же алерт-бар, где HP/стамина/кровотечение).
+# Не добавлены в BaseAlertOrder (Alerts/alerts.yml) — не хотим трогать вендорный файл ради
+# позиционирования; непопавшие в список алерты по умолчанию уходят в конец бара.
+
+- type: alert
+  id: DutyBrokenBone
+  icons:
+    - sprite: /Textures/_Duty/Interface/StatusAlerts/brokenbone.rsi
+      state: brokenbones
+  name: trauma-alert-brokenbone-name
+  description: trauma-alert-brokenbone-desc
+
+- type: alert
+  id: DutyArtery
+  icons:
+    - sprite: /Textures/_Duty/Interface/StatusAlerts/artery.rsi
+      state: artery
+  name: trauma-alert-artery-name
+  description: trauma-alert-artery-desc

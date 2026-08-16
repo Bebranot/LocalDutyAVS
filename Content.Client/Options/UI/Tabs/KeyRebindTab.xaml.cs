@@ -144,6 +144,11 @@ namespace Content.Client.Options.UI.Tabs
 
                 KeybindsContainer.AddChild(newCheckBox);
             }
+            // _Duty: наши бинды — отдельным разделом в самом верху, выше оружейных модулей.
+            AddHeader("ui-options-header-duty-general");
+            AddButton(ContentKeyFunctions.Block);
+            AddButton(ContentKeyFunctions.Sprint);
+
             // ADT TWEAK START
             AddHeader("ui-options-header-rmc");
             AddButton(CMKeyFunctions.RMCActivateAttachableBarrel);
@@ -181,7 +186,7 @@ namespace Content.Client.Options.UI.Tabs
             AddCheckBox("ui-options-hotkey-toggle-walk", _cfg.GetCVar(CCVars.ToggleWalk), HandleToggleWalk);
             InitToggleWalk();
             AddButton(ContentKeyFunctions.ToggleKnockdown);
-            AddButton(ContentKeyFunctions.Sprint); // _Duty: спринт (третья ступень)
+            // _Duty: спринт переехал в раздел "LocalDuty - общее" в начале вкладки
 
             AddHeader("ui-options-header-camera");
             AddButton(EngineKeyFunctions.CameraRotateLeft);
@@ -221,6 +226,7 @@ namespace Content.Client.Options.UI.Tabs
             AddButton(ContentKeyFunctions.SmartEquipPocket1);
             AddButton(ContentKeyFunctions.SmartEquipPocket2);
             AddButton(ContentKeyFunctions.SmartEquipSuitStorage);
+            AddButton(ContentKeyFunctions.SmartEquipNeck); // ADT-Tweak-SmartEquipNeck
             AddButton(ContentKeyFunctions.OpenBackpack);
             AddButton(ContentKeyFunctions.OpenBelt);
             AddButton(ContentKeyFunctions.ThrowItemInHand);

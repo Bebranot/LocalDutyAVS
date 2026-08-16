@@ -63,8 +63,9 @@
       - FullAuto
   - type: RechargeBasicEntityAmmo
     rechargeCooldown: 1.5
-    RechargeSound: 
-    volume: 0
+    # Было RechargeSound + volume — таких полей нет, поэтому оружие спамило звуком
+    # перезарядки по умолчанию каждые 1.5 с. Глушим как задумывалось.
+    rechargeSound: null
   - type: AmmoCounter
 
 - type: entity
@@ -114,10 +115,14 @@
               sound:
                 collection: GlassBreak
     - type: Repairable
+      # Было `groups: Brute: -10` — у DamageSpecifier в нашем форке есть только types, поэтому
+      # починка чинила один Heat. Развернули группу так, как её раскрывал бы движок: значение
+      # группы делится между её типами (10 / 3). Если чинить окажется слишком слабо — поднять.
       damage:
-        groups:
-          Brute: -10
         types:
+          Blunt: -3.34
+          Slash: -3.33
+          Piercing: -3.33
           Heat: -10
       fuelCost: 4
       doAfterDelay: 5
@@ -230,26 +235,8 @@
     rechargeCooldown: 5
   - type: AmmoCounter
 
-- type: entity
-  name: Палочка подарков
-  parent: WeaponWandPolymorphBase
-  id: WeaponWandPresentFXXSkirt
-  suffix: FXX  
-  description: раздает подарки.
-  components:
-  - type: BasicEntityAmmoProvider
-    proto: PresentRandomSkirts
-    capacity: 20
-    count: 20
-  - type: Gun
-    projectileSpeed: 10
-    fireRate: 1.5
-    selectedMode: FullAuto
-    availableModes:
-      - FullAuto
-  - type: RechargeBasicEntityAmmo
-    rechargeCooldown: 5
-  - type: AmmoCounter 
+# WeaponWandPresentFXXSkirt удалена: стреляла прототипом PresentRandomSkirts, которого никогда
+# не существовало. Палочка ниоткуда не выдавалась и работать не могла.
 
 - type: entity
   name: Палочка подарков

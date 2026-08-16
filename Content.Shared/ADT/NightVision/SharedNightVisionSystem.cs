@@ -8,6 +8,8 @@ using Content.Shared.Toggleable;
 using Robust.Shared.Audio.Systems;
 using Robust.Shared.Timing;
 using Content.Shared.ADT.Eye.Blinding;
+using Robust.Shared.Audio.Systems;
+using Robust.Shared.Timing;
 
 namespace Content.Shared.ADT.NightVision;
 
@@ -16,8 +18,8 @@ public abstract class SharedNightVisionSystem : EntitySystem
     [Dependency] private readonly SharedActionsSystem _actions = default!;
     [Dependency] private readonly SharedAppearanceSystem _appearance = default!;
     [Dependency] private readonly AlertsSystem _alerts = default!;
-    [Dependency] private readonly IGameTiming _timing = default!;
     [Dependency] private readonly SharedAudioSystem _audio = default!;
+    [Dependency] private readonly IGameTiming _timing = default!;
 
     public override void Initialize()
     {
@@ -88,7 +90,8 @@ public abstract class SharedNightVisionSystem : EntitySystem
         if (ent.Comp.SlotFlags != args.SlotFlags)
             return;
 
-        EnableNightVisionItem(ent, args.Equipee);
+        _appearance.SetData(ent, NightVisionItemVisuals.Active, false);
+        _actions.SetToggled(ent.Comp.Action, false);
     }
 
     private void OnNightVisionItemGotUnequipped(Entity<NightVisionItemComponent> ent, ref GotUnequippedEvent args)
@@ -156,7 +159,7 @@ public abstract class SharedNightVisionSystem : EntitySystem
 
     private void EnableNightVisionItem(Entity<NightVisionItemComponent> item, EntityUid user)
     {
-        DisableNightVisionItem(item, item.Comp.User);
+        DisableNightVisionItem(item, item.Comp.User, playSound: false);
 
         item.Comp.User = user;
         Dirty(item);
@@ -166,11 +169,18 @@ public abstract class SharedNightVisionSystem : EntitySystem
         if (!_timing.ApplyingState)
         {
             var nightVision = EnsureComp<NightVisionComponent>(user);
+            item.Comp.PreviousShader = nightVision.Shader;
+            item.Comp.PreviousEffectPrototype = nightVision.EffectPrototype;
             nightVision.State = NightVisionState.Full;
+            nightVision.Shader = item.Comp.Shader;
+            nightVision.EffectPrototype = item.Comp.EffectPrototype;
+            nightVision.Overlay = true;
             Dirty(user, nightVision);
 
             var eyeDamage = EnsureComp<DamageEyesOnFlashedComponent>(user);
             Dirty(user, eyeDamage);
+
+            _audio.PlayLocal(item.Comp.SoundOn, item, user);
         }
 
         _actions.SetToggled(item.Comp.Action, true);
@@ -184,8 +194,11 @@ public abstract class SharedNightVisionSystem : EntitySystem
     {
     }
 
-    protected void DisableNightVisionItem(Entity<NightVisionItemComponent> item, EntityUid? user)
+    protected void DisableNightVisionItem(Entity<NightVisionItemComponent> item, EntityUid? user, bool playSound = true)
     {
+        var wasActive = item.Comp.User != null;
+        var soundUser = item.Comp.User ?? user;
+
         _actions.SetToggled(item.Comp.Action, false);
 
         item.Comp.User = null;
@@ -193,11 +206,45 @@ public abstract class SharedNightVisionSystem : EntitySystem
 
         _appearance.SetData(item, NightVisionItemVisuals.Active, false);
 
-        if (TryComp(user, out NightVisionComponent? nightVision) &&
-            !nightVision.Innate)
+        if (TryComp(user, out NightVisionComponent? nightVision))
         {
-            RemCompDeferred<NightVisionComponent>(user.Value);
-            RemCompDeferred<DamageEyesOnFlashedComponent>(user.Value);
+            if (!nightVision.Innate)
+            {
+                RemCompDeferred<NightVisionComponent>(user.Value);
+                RemCompDeferred<DamageEyesOnFlashedComponent>(user.Value);
+            }
+            else
+            {
+                if (item.Comp.PreviousShader != null)
+                    nightVision.Shader = item.Comp.PreviousShader;
+
+                if (item.Comp.PreviousEffectPrototype != null)
+                    nightVision.EffectPrototype = item.Comp.PreviousEffectPrototype.Value;
+
+                nightVision.Overlay = false;
+                Dirty(user.Value, nightVision);
+                RemCompDeferred<DamageEyesOnFlashedComponent>(user.Value);
+            }
         }
+
+        item.Comp.PreviousShader = null;
+        item.Comp.PreviousEffectPrototype = null;
+
+        if (playSound && wasActive && !_timing.ApplyingState && soundUser != null)
+            _audio.PlayLocal(item.Comp.SoundOff, item, soundUser);
+    }
+
+    /// <summary>
+    /// Enables or disables night vision on an entity from outside this system.
+    /// </summary>
+    public void SetActive(Entity<NightVisionComponent?> ent, bool active, bool overlay = true)
+    {
+        if (!Resolve(ent, ref ent.Comp, false))
+            return;
+
+        ent.Comp.State = active ? NightVisionState.Full : NightVisionState.Off;
+        ent.Comp.Overlay = overlay;
+        Dirty(ent, ent.Comp);
+        UpdateAlert((ent.Owner, ent.Comp));
     }
 }

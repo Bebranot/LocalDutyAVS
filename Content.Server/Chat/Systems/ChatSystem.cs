@@ -660,7 +660,7 @@ public sealed partial class ChatSystem : SharedChatSystem
             ("entityName", name),
             ("message", FormattedMessage.EscapeText(message)));
 
-        SendInVoiceRange(ChatChannel.LOOC, message, wrappedMessage, wrappedMessage, source, hideChat ? ChatTransmitRange.HideChat : ChatTransmitRange.Normal, player.UserId, ignoreLanguage: true); // ADT Languages
+        SendInVoiceRange(ChatChannel.LOOC, message, wrappedMessage, wrappedMessage, source, hideChat ? ChatTransmitRange.HideChat : ChatTransmitRange.Normal, player.UserId, ignoreLanguage: true, checkVisibility: false); // ADT Languages
         _adminLogger.Add(LogType.Chat, LogImpact.Low, $"LOOC from {source}: {message}");
     }
 
@@ -758,10 +758,19 @@ public sealed partial class ChatSystem : SharedChatSystem
         return initialResult;
     }
 
+    // ADT-Tweak start
+    public bool HasLineOfSight(EntityUid listener, EntityUid? source, float range = VoiceRange, bool ignoreWalls = false)
+    {
+        var ev = new ChatVisibilityCheckEvent(listener, source, range, ignoreWalls);
+        RaiseLocalEvent(ref ev);
+        return ev.Visible;
+    }
+    // ADT-Tweak end
+
     /// <summary>
     ///     Sends a chat message to the given players in range of the source entity.
     /// </summary>
-    public void SendInVoiceRange(ChatChannel channel, string message, string wrappedMessage, string wrappedLanguageMessage, EntityUid source, ChatTransmitRange range, NetUserId? author = null, ProtoId<LanguagePrototype>? language = null, bool ignoreLanguage = false)  // ADT Languages
+    public void SendInVoiceRange(ChatChannel channel, string message, string wrappedMessage, string wrappedLanguageMessage, EntityUid source, ChatTransmitRange range, NetUserId? author = null, ProtoId<LanguagePrototype>? language = null, bool ignoreLanguage = false, bool checkVisibility = true, bool ignoreWalls = false, bool dutyScreamShake = false)  // ADT Languages
     {
         // ADT Languages start
         var lang = language != null ? _prototypeManager.Index(language.Value) : _language.GetCurrentLanguage(source);
@@ -773,6 +782,11 @@ public sealed partial class ChatSystem : SharedChatSystem
             if (session.AttachedEntity is not { Valid: true } playerEntity)
                 continue;
             listener = session.AttachedEntity.Value;
+
+            // ADT-Tweak start
+            if (checkVisibility && !data.Observer && !HasLineOfSight(listener, source, ignoreWalls: ignoreWalls))
+                continue;
+            // ADT-Tweak end
 
             bool condition = true;
             foreach (var item in lang.Conditions.Where(x => x.RaiseOnListener))
@@ -789,18 +803,21 @@ public sealed partial class ChatSystem : SharedChatSystem
             var entHideChat = entRange == MessageRangeCheckResult.HideChat;
             if (ignoreLanguage)
             {
-                _chatManager.ChatMessageToOne(channel, message, wrappedMessage, source, entHideChat, session.Channel, author: author);
+                _chatManager.ChatMessageToOne(channel, message, wrappedMessage, source, entHideChat, session.Channel, author: author, dutyScreamShake: dutyScreamShake);
                 continue;
             }
 
             if (!_language.CanUnderstand(listener, lang))
-                _chatManager.ChatMessageToOne(channel, message, wrappedLanguageMessage, source, entHideChat, session.Channel, author: author);
+                _chatManager.ChatMessageToOne(channel, message, wrappedLanguageMessage, source, entHideChat, session.Channel, author: author, dutyScreamShake: dutyScreamShake);
             else
-                _chatManager.ChatMessageToOne(channel, message, wrappedMessage, source, entHideChat, session.Channel, author: author);
+                _chatManager.ChatMessageToOne(channel, message, wrappedMessage, source, entHideChat, session.Channel, author: author, dutyScreamShake: dutyScreamShake);
         }
         // ADT Languages end
 
-        _replay.RecordServerMessage(new ChatMessage(channel, message, wrappedMessage, GetNetEntity(source), null, MessageRangeHideChatForReplay(range)));
+        _replay.RecordServerMessage(new ChatMessage(channel, message, wrappedMessage, GetNetEntity(source), null, MessageRangeHideChatForReplay(range))
+        {
+            DutyScreamShake = dutyScreamShake,
+        });
     }
 
     /// <summary>

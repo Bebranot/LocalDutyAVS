@@ -68,14 +68,6 @@ public sealed partial class HalberdChargeComponent : Component
     [DataField]
     public SoundSpecifier ChargeLoopSound = new SoundPathSpecifier("/Audio/_Duty/Weapons/Halberd/HalberdCharge.ogg", AudioParams.Default.WithLoop(true));
 
-    /// <summary>Крик при старте рывка для персонажа мужского пола — случайный из коллекции HalberdChargeCryMale (Resources/Prototypes/_Duty/SoundCollections/halberd_charge_cries.yml). Новые варианты добавляются туда, без правок кода.</summary>
-    [DataField]
-    public SoundSpecifier ChargeCryMaleSound = new SoundCollectionSpecifier("HalberdChargeCryMale");
-
-    /// <summary>Крик при старте рывка для персонажа женского пола — случайный из коллекции HalberdChargeCryFemale (Resources/Prototypes/_Duty/SoundCollections/halberd_charge_cries.yml). Новые варианты добавляются туда, без правок кода.</summary>
-    [DataField]
-    public SoundSpecifier ChargeCryFemaleSound = new SoundCollectionSpecifier("HalberdChargeCryFemale");
-
     // ── Состояние рывка (рантайм) ─────────────────────────────
 
     public bool IsCharging = false;

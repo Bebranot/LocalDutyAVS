@@ -3,6 +3,8 @@ using System.Numerics;
 using Content.Client.UserInterface.Controls;
 using Content.Shared._Duty.Heartbeat;
 using Content.Shared._Duty.Lazarus;
+using Content.Shared._Duty.Trauma;
+using Content.Shared.ADT.Addiction;
 using Content.Shared.ADT.Body.Allergies;
 using Content.Shared.Atmos;
 using Content.Shared.Chemistry.Reagent;
@@ -183,7 +185,9 @@ public sealed partial class HealthAnalyzerControl : BoxContainer
 
         var hasLazarusScar = _entityManager.HasComponent<LazarusScarComponent>(target.Value); // _Duty
 
-        var showAlerts = state.Unrevivable == true || state.Bleeding == true || hasLazarusScar;
+        var hasTraumas = state.Traumas is { Count: > 0 }; // _Duty
+
+        var showAlerts = state.Unrevivable == true || state.Bleeding == true || hasLazarusScar || hasTraumas;
 
         AlertsDivider.Visible = showAlerts;
         AlertsContainer.Visible = showAlerts;
@@ -216,6 +220,20 @@ public sealed partial class HealthAnalyzerControl : BoxContainer
                 MaxWidth = 300
             });
 
+        // _Duty: тяжёлые травмы — переломы (с тиром и шиной), вывихи, артериальное кровотечение.
+        if (hasTraumas)
+        {
+            foreach (var trauma in state.Traumas!)
+            {
+                AlertsContainer.AddChild(new RichTextLabel
+                {
+                    Text = FormatTrauma(trauma),
+                    Margin = new Thickness(0, 4),
+                    MaxWidth = 300
+                });
+            }
+        }
+
         // Damage Groups
 
         var damagePerType = _damageable.GetAllDamage(target.Value).DamageDict;
@@ -229,7 +247,32 @@ public sealed partial class HealthAnalyzerControl : BoxContainer
         DrawDiagnosticGroups(sortedGroups, damagePerType);
 
         DrawMetabolizingChemicals(state.MetabolizingReagents);
+
+        DrawAddictions(state.Addictions);
         // ADT-Tweak end
+    }
+
+    // _Duty: строка травмы для анализатора. Локализуется на клиенте по структурным данным.
+    private static string FormatTrauma(TraumaAnalyzerEntry trauma)
+    {
+        var zone = trauma.Zone is { } bodyZone
+            ? Loc.GetString(TraumaLoc.ZoneKey(bodyZone))
+            : string.Empty;
+
+        return trauma.Kind switch
+        {
+            TraumaAnalyzerKind.Fracture => Loc.GetString(
+                trauma.Splinted ? "health-analyzer-trauma-fracture-splinted" : "health-analyzer-trauma-fracture",
+                ("zone", zone),
+                ("tier", Loc.GetString(TraumaLoc.FractureTierKey(trauma.Tier)))),
+            TraumaAnalyzerKind.Dislocation => Loc.GetString("health-analyzer-trauma-dislocation", ("zone", zone)),
+            TraumaAnalyzerKind.DislocationResidual => Loc.GetString("health-analyzer-trauma-residual", ("zone", zone)),
+            TraumaAnalyzerKind.ArterialBleed => Loc.GetString("health-analyzer-trauma-arterial"),
+            TraumaAnalyzerKind.HeadTrauma => Loc.GetString(
+                "health-analyzer-trauma-head",
+                ("tier", Loc.GetString(TraumaLoc.HeadTraumaTierKey(trauma.HeadTier)))),
+            _ => string.Empty,
+        };
     }
 
     private static string GetStatus(MobState mobState)
@@ -528,4 +571,66 @@ public sealed partial class HealthAnalyzerControl : BoxContainer
         CriticalStatusLabel.Modulate = on ? Color.White : Color.White.WithAlpha(0.15f);
     }
     // _Duty end
+
+    // ADT-Tweak-Start: секция зависимостей (по паттерну DrawMetabolizingChemicals)
+    private void DrawAddictions(List<AddictionInfo>? addictions)
+    {
+        AddictionsContainer.RemoveAllChildren();
+
+        var hasAddictions = addictions != null && addictions.Count > 0;
+
+        AddictionsDivider.Visible = hasAddictions;
+        AddictionsContainer.Visible = hasAddictions;
+
+        if (!hasAddictions || addictions == null)
+            return;
+
+        var titleLabel = new Label
+        {
+            Text = Loc.GetString("health-analyzer-window-addictions-title"),
+            Margin = new Thickness(0, 0, 0, 4),
+            FontColorOverride = Color.Orange,
+        };
+        AddictionsContainer.AddChild(titleLabel);
+
+        var anyTreatable = false;
+        foreach (var addiction in addictions)
+        {
+            var kindName = Loc.GetString($"health-analyzer-addiction-{KindLoc(addiction.Kind)}");
+            var stageName = Loc.GetString($"health-analyzer-addiction-stage-{addiction.Stage}");
+            var line = addiction.Permanent
+                ? Loc.GetString("health-analyzer-window-addiction-permanent", ("kind", kindName), ("stage", addiction.Stage), ("stageName", stageName))
+                : Loc.GetString("health-analyzer-window-addiction-line", ("kind", kindName), ("stage", addiction.Stage), ("stageName", stageName));
+
+            AddictionsContainer.AddChild(new Label
+            {
+                Text = line,
+                Margin = new Thickness(0, 2),
+            });
+
+            if (!addiction.Permanent)
+                anyTreatable = true;
+        }
+
+        AddictionsContainer.AddChild(new Label
+        {
+            Text = anyTreatable
+                ? Loc.GetString("health-analyzer-window-addictions-treatment")
+                : Loc.GetString("health-analyzer-window-addictions-untreatable"),
+            Margin = new Thickness(0, 4, 0, 0),
+            FontColorOverride = anyTreatable ? Color.Green : Color.Red,
+        });
+    }
+
+    private static string KindLoc(AddictionKind kind) => kind switch
+    {
+        AddictionKind.Alcohol => "alcohol",
+        AddictionKind.Nicotine => "nicotine",
+        AddictionKind.Drug => "drug",
+        AddictionKind.Medicine => "medicine",
+        AddictionKind.Omnizine => "omnizine",
+        _ => "alcohol",
+    };
+    // ADT-Tweak-End
 }
+

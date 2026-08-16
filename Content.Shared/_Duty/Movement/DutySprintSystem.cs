@@ -2,10 +2,13 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
+using Content.Shared._Duty.Trauma;
+using Content.Shared._Duty.Trauma.Components;
 using Content.Shared.Alert;
 using Content.Shared.CCVar;
 using Content.Shared.Damage.Components;
 using Content.Shared.Damage.Systems;
+using Content.Shared.Gravity;
 using Content.Shared.Hands;
 using Content.Shared.Hands.EntitySystems;
 using Content.Shared.Input;
@@ -16,9 +19,11 @@ using Content.Shared.Mobs.Systems;
 using Content.Shared.Movement.Components;
 using Content.Shared.Movement.Systems;
 using Content.Shared.Popups;
+using Content.Shared.Standing;
 using Content.Shared.Weapons.Melee;
 using Content.Shared.Weapons.Ranged.Components;
 using Content.Shared.Wieldable.Components;
+using Robust.Shared.Audio.Systems;
 using Robust.Shared.Configuration;
 using Robust.Shared.Input.Binding;
 using Robust.Shared.Network;
@@ -47,6 +52,9 @@ public sealed class DutySprintSystem : EntitySystem
     [Dependency] private readonly MovementSpeedModifierSystem _movementSpeed = default!;
     [Dependency] private readonly SharedHandsSystem _hands = default!;
     [Dependency] private readonly SharedPopupSystem _popup = default!;
+    [Dependency] private readonly SharedAudioSystem _audio = default!;
+    [Dependency] private readonly StandingStateSystem _standing = default!;
+    [Dependency] private readonly SharedGravitySystem _gravity = default!;
 
     private bool _enabled = true;
 
@@ -66,6 +74,11 @@ public sealed class DutySprintSystem : EntitySystem
     private const float TwoHandedWeaponFactor = 0.85f;
     private const float SprintFloor = 0.5f;       // абсолютный пол множителя
     private const float RefreshEpsilon = 0.01f;
+
+    // _Duty Trauma: доп. расход выносливости при переломе торса (сложнее дышать на бегу).
+    private const float TorsoFractureCrackDrainPenalty = 0.1f;
+    private const float TorsoFractureFullDrainPenalty = 0.3f;
+    private const float TorsoFractureOpenDrainPenalty = 0.5f;
 
     public override void Initialize()
     {
@@ -89,6 +102,32 @@ public sealed class DutySprintSystem : EntitySystem
         // NB: на вилдинг не подписываемся — пара (WieldableComponent, ItemWieldedEvent) уже занята
         // SharedWieldableSystem, а движок допускает лишь одну подписку на (компонент, событие).
         // Фактор «оружие в руках» и так пересчитывается каждый тик во время спринта.
+
+        // Клавиша held: если игрок отсоединился или слёг с зажатой C, key-up до тела уже не доедет
+        // и WantsSprint залип бы навсегда — тело осталось бы в «вечном спринте». Гасим флаг сами.
+        SubscribeLocalEvent<DutyStaminaComponent, PlayerDetachedEvent>((u, c, _) => ClearWantsSprint(u, c));
+        SubscribeLocalEvent<DutyStaminaComponent, MobStateChangedEvent>(OnMobStateChanged);
+    }
+
+    private void OnMobStateChanged(Entity<DutyStaminaComponent> ent, ref MobStateChangedEvent args)
+    {
+        if (args.NewMobState != MobState.Alive)
+            ClearWantsSprint(ent.Owner, ent.Comp);
+    }
+
+    /// <summary>Принудительно снимает намерение спринтовать (отсоединение, крит, смерть).</summary>
+    private void ClearWantsSprint(EntityUid uid, DutyStaminaComponent comp)
+    {
+        if (!comp.WantsSprint)
+            return;
+
+        comp.WantsSprint = false;
+        comp.SprintElapsed = 0f;
+        // Пауза как при обычном отпускании клавиши — чтобы её нельзя было обойти смертью или
+        // переподключением с зажатой C.
+        comp.NextSprintAllowed = _timing.CurTime + TimeSpan.FromSeconds(comp.SprintCooldown);
+        Dirty(uid, comp);
+        _movementSpeed.RefreshMovementSpeedModifiers(uid);
     }
 
     public override void Shutdown()
@@ -101,8 +140,15 @@ public sealed class DutySprintSystem : EntitySystem
     {
         _enabled = value;
         var query = EntityQueryEnumerator<DutyStaminaComponent>();
-        while (query.MoveNext(out var uid, out _))
+        while (query.MoveNext(out var uid, out var comp))
+        {
+            // Выключили систему на ходу — Update больше не крутится, и недокрученная полоска
+            // выносливости висела бы на экране навсегда. Гасим её здесь.
+            if (!value)
+                _alerts.ClearAlert(uid, comp.EnduranceAlert);
+
             _movementSpeed.RefreshMovementSpeedModifiers(uid);
+        }
     }
 
     private void Refresh(EntityUid uid) => _movementSpeed.RefreshMovementSpeedModifiers(uid);
@@ -122,6 +168,28 @@ public sealed class DutySprintSystem : EntitySystem
             || !TryComp<DutyStaminaComponent>(uid, out var comp)
             || comp.WantsSprint == wants)
             return;
+
+        // Нажатие при запрещающем состоянии — объясняем причину и не даём взвести флаг. Отпускание
+        // пропускаем всегда, иначе флаг залипнет, если состояние изменилось с зажатой клавишей.
+        if (wants)
+        {
+            if (GetSprintBlocker(uid) is { } blocker)
+            {
+                _popup.PopupClient(Loc.GetString(blocker), uid, uid);
+                return;
+            }
+
+            if (_timing.CurTime < comp.NextSprintAllowed)
+            {
+                _popup.PopupClient(Loc.GetString("duty-sprint-blocked-cooldown"), uid, uid);
+                return;
+            }
+        }
+        else
+        {
+            // Отпустили клавишу — заводим паузу до следующего рывка.
+            comp.NextSprintAllowed = _timing.CurTime + TimeSpan.FromSeconds(comp.SprintCooldown);
+        }
 
         comp.WantsSprint = wants;
         Dirty(uid, comp);
@@ -229,16 +297,65 @@ public sealed class DutySprintSystem : EntitySystem
 
     private float GetDrainPenaltyFraction(EntityUid uid)
     {
-        var penalty = (1f - GetHpFactor(uid)) + (1f - GetSlotFactor(uid));
+        var penalty = (1f - GetHpFactor(uid)) + (1f - GetSlotFactor(uid)) + GetTorsoFracturePenalty(uid);
         return Math.Clamp(penalty, 0f, 1f);
     }
 
-    private bool IsSprinting(EntityUid uid, DutyStaminaComponent comp)
+    /// <summary>_Duty: перелом рёбер (торса) — тем сложнее дышать при спринте, чем тяжелее тир.</summary>
+    private float GetTorsoFracturePenalty(EntityUid uid)
+    {
+        if (!TryComp<FractureComponent>(uid, out var fracture)
+            || !fracture.Zones.TryGetValue(BodyZone.Torso, out var state)
+            || state.GetEffectiveTier() is not { } tier)
+        {
+            return 0f;
+        }
+
+        return tier switch
+        {
+            FractureTier.Crack => TorsoFractureCrackDrainPenalty,
+            FractureTier.Full => TorsoFractureFullDrainPenalty,
+            FractureTier.Open => TorsoFractureOpenDrainPenalty,
+            _ => 0f,
+        };
+    }
+
+    /// <summary>
+    /// Реально ли существо сейчас спринтует: клавиша зажата, состояние тела позволяет, ходьба не
+    /// включена и есть ввод направления. Публично — этим же предикатом клиент решает, пора ли
+    /// сыпать пыль под ноги (<c>DutySprintVisualsSystem</c>), чтобы визуал не разъезжался
+    /// с механикой.
+    /// </summary>
+    public bool IsSprinting(EntityUid uid, DutyStaminaComponent comp)
     {
         return comp.WantsSprint
+               && CanSprint(uid)
                && TryComp<InputMoverComponent>(uid, out var mover)
                && mover.Sprinting
                && mover.HasDirectionalMovement;
+    }
+
+    /// <summary>
+    /// Позволяет ли текущее состояние тела разгоняться. Проверяется не только при нажатии, но и
+    /// каждый тик в <see cref="IsSprinting"/>: сбили с ног или заковали посреди забега — спринт
+    /// обязан оборваться сам, а не доработать до отпускания клавиши.
+    /// </summary>
+    public bool CanSprint(EntityUid uid) => GetSprintBlocker(uid) is null;
+
+    /// <summary>Ключ локали причины, по которой спринт запрещён, или null если разрешён.</summary>
+    private string? GetSprintBlocker(EntityUid uid)
+    {
+        if (_standing.IsDown(uid))
+            return "duty-sprint-blocked-lying";
+
+        // Наручники спринт НЕ запрещают — сознательное отступление от Goob: удирающий в браслетах
+        // задержанный это весело и никого не ломает.
+
+        // В невесомости отталкиваться не от чего.
+        if (_gravity.IsWeightless(uid))
+            return "duty-sprint-blocked-weightless";
+
+        return null;
     }
 
     // ── Тик: расход / восстановление / отдышка ────────────────────────────────
@@ -257,6 +374,17 @@ public sealed class DutySprintSystem : EntitySystem
             var sprinting = IsSprinting(uid, comp);
             var old = comp.Current;
             var oldBreathing = comp.Breathing;
+
+            // Звук рывка на фронте «побежал». Фронт держим только в первом предсказанном проходе:
+            // клиентский Update за тик вызывается многократно при ре-предсказании, иначе фронт
+            // съел бы непредсказанный проход и звук не сыграл бы вовсе.
+            if (_timing.IsFirstTimePredicted)
+            {
+                if (sprinting && !comp.WasSprinting)
+                    _audio.PlayPredicted(comp.SprintStartSound, uid, uid);
+
+                comp.WasSprinting = sprinting;
+            }
 
             if (sprinting)
             {
@@ -297,9 +425,9 @@ public sealed class DutySprintSystem : EntitySystem
             // иначе клиентское предсказание выносливости гасит флаг раньше и звук обрывается.
             if (_net.IsServer)
             {
-                if (sprinting && comp.SprintElapsed >= comp.BreathingStartSeconds)
+                if (sprinting && comp.CanGetWinded && comp.SprintElapsed >= comp.BreathingStartSeconds)
                     comp.Breathing = true;
-                else if (comp.Breathing && comp.Current >= comp.Max * comp.BreathingStopFraction)
+                else if (comp.Breathing && (!comp.CanGetWinded || comp.Current >= comp.Max * comp.BreathingStopFraction))
                     comp.Breathing = false;
             }
 
@@ -316,7 +444,11 @@ public sealed class DutySprintSystem : EntitySystem
             if (staminaChanged || comp.Breathing != oldBreathing)
                 Dirty(uid, comp);
 
-            if (!sprinting && comp.Current >= comp.Max && !comp.Breathing)
+            // Пока клавиша зажата, маркер НЕ снимаем, даже если запас полон. Иначе: держим C,
+            // останавливаемся, выносливость дотикивает до максимума, маркер уходит — и дальше
+            // бежать можно бесплатно, потому что SetWantsSprint на зажатой клавише повторно не
+            // вызовется (ранний выход по comp.WantsSprint == wants) и маркер уже не вернётся.
+            if (!sprinting && !comp.WantsSprint && comp.Current >= comp.Max && !comp.Breathing)
                 RemComp<ActiveDutyStaminaComponent>(uid);
         }
     }

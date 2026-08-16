@@ -1,0 +1,13 @@
+# Звуки системы блока. Успешное блокирование — коллекция, чтобы добавлять варианты
+# без правок кода: достаточно положить файл в /Audio/_Duty/Block и дописать строку сюда.
+- type: soundCollection
+  id: DutyBlockHit
+  files:
+  - /Audio/_Duty/Block/hit1.ogg
+  - /Audio/_Duty/Block/hit2.ogg
+  - /Audio/_Duty/Block/hit3.ogg
+
+- type: soundCollection
+  id: DutyBlockActivate
+  files:
+  - /Audio/_Duty/Block/activate.ogg

@@ -2,7 +2,7 @@
   id: SecTechInventory
   startingInventory:
     WeaponPistolMk58: 6
-    MagazinePistolRubber: 12
+    # MagazinePistolRubber убран: такого прототипа в форке нет, 12 слотов были пустыми.
     MagazinePistolHighCapacity: 4
     MagazineBoxPistol: 2
     SpeedLoaderMagnum: 4
@@ -27,7 +27,7 @@
     RiotLaserShield: 2
     ADTClothingBeltJudo: 3 #ADT tweak
     ADTBookPTSD: 4 #ADT tweak
-    ADTWeaponTonfa: 2 #ADT tweak
+    ADTWeaponTonfa: 2 #ADT tweak вернул тонфы
     # RiotBulletShield: 2 ADT no nullet shield
     RadioHandheldSecurity: 5
     Bola: 5 #ADT tweak

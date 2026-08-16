@@ -26,6 +26,7 @@ verb-categories-select-type = Выбрать тип
 verb-categories-fax = Задать место назначения
 verb-categories-power-level = Уровень мощности
 verb-categories-adjust = Отрегулировать
+verb-categories-interaction = Взаимодействовать
 verb-common-toggle-light = Переключить свет
 verb-common-close = Закрыть
 verb-common-open = Открыть

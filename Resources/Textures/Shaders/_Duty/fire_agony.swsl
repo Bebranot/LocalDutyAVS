@@ -1,0 +1,26 @@
+// _Duty: экранный эффект «Агония от огня».
+// Красная радиальная виньетка боли (прозрачный центр, багровое свечение к краям)
+// с быстрой пульсацией. Всё масштабируется юниформой strength (0 = выкл, 1 = пик).
+
+uniform sampler2D SCREEN_TEXTURE;
+uniform highp float strength;
+
+void fragment() {
+    highp vec2 uv = FRAGCOORD.xy * SCREEN_PIXEL_SIZE.xy;
+
+    // Быстрый болевой пульс, удержанный в 0.6..1.0.
+    highp float pulse = 0.5 + 0.5 * sin(TIME * 9.0);
+    highp float s = strength * (0.6 + 0.4 * pulse);
+
+    // Радиальная виньетка: 0 в центре, ~0.707 в углах — «сжатие» поля зрения к центру.
+    highp float dist = length(uv - vec2(0.5));
+    highp float vig = smoothstep(0.25, 0.75, dist);
+    vig *= s;
+
+    highp vec4 col = zTextureSpec(SCREEN_TEXTURE, uv);
+    highp vec3 tint = vec3(1.0, 0.05, 0.0);
+    col.rgb = mix(col.rgb, tint, vig * 0.85);
+    col.rgb *= 1.0 - vig * 0.35;   // затемнение краёв усиливает объём виньетки
+
+    COLOR = col;
+}

@@ -14,12 +14,6 @@
   files:
     - /Audio/_Duty/Effects/Heartbeat/heartthump-heavy.ogg
 
-# Монотонный писк кардиомонитора (мед-алерт в крите).
-- type: soundCollection
-  id: DutyHeartbeatMonitor
-  files:
-    - /Audio/_Duty/Effects/Heartbeat/heartthump-heavy-monitor.ogg
-
 # Тревога панели анализатора (HP пациента ниже ~10%).
 - type: soundCollection
   id: DutyHeartbeatPanelAlert

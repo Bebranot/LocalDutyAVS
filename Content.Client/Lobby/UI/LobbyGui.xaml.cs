@@ -17,6 +17,9 @@ namespace Content.Client.Lobby.UI
 
         private const string DiscordUrl = "https://discord.gg/nPrxW7Yb6b";
 
+        // LocalDuty — открытое окно предупреждения о наблюдении, чтобы повторные нажатия не плодили копии.
+        private ObserveWarningWindow? _observeWarningWindow;
+
         public LobbyGui()
         {
             RobustXamlLoader.Load(this);
@@ -33,8 +36,15 @@ namespace Content.Client.Lobby.UI
             OptionsButton.OnPressed += _ => UserInterfaceManager.GetUIController<OptionsUIController>().ToggleWindow();
             CharacterSetupButton_Duty.OnPressed += _ => SwitchState(LobbyGuiState.CharacterSetup);
 
-            // LocalDuty — ObserveButton теперь LobbyAnimatedButton
-            ObserveButton.OnPressed += _ => _consoleHost.ExecuteCommand("observe");
+            // LocalDuty — ObserveButton теперь LobbyAnimatedButton, а не апстримный UICommandButton,
+            // поэтому окно предупреждения открываем вручную. Сама команда observe (и observe admin
+            // для админов) исполняется кнопками внутри окна.
+            ObserveButton.OnPressed += _ =>
+            {
+                _observeWarningWindow?.Close();
+                _observeWarningWindow = new ObserveWarningWindow();
+                _observeWarningWindow.OpenCentered();
+            };
 
             // LocalDuty — Руководство
             GuideButton.OnPressed += _ => UserInterfaceManager.GetUIController<GuidebookUIController>().ToggleGuidebook();

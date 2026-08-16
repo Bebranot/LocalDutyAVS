@@ -1,0 +1,14 @@
+{
+  "version": 1,
+  "copyright": "Stalker14 CLA",
+  "size": {
+    "x": 64,
+    "y": 64
+  },
+  "states": [
+    {
+      "name": "circle_3"
+    }
+  ],
+  "license": "CC-BY-NC-SA-3.0"
+}

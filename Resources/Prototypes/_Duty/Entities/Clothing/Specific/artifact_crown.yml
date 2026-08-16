@@ -10,7 +10,6 @@
     sprite: _Duty/Clothing/TwistedCrown.rsi
   - type: Item
     sprite: _Duty/Clothing/TwistedCrown.rsi
-    state: icon
   - type: Clothing
     sprite: _Duty/Clothing/TwistedCrown.rsi
   - type: Armor

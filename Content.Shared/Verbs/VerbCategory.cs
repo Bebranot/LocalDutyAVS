@@ -94,5 +94,8 @@ namespace Content.Shared.Verbs
 
         public static readonly VerbCategory Adjust =
             new("verb-categories-adjust", "/Textures/Interface/VerbIcons/screwdriver.png");
+
+        // _Duty: вкладка "Взаимодействовать" (см. Content.Shared/_Duty/InteractionVerbs) — портировано из Goob-Station/Einstein Engines.
+        public static readonly VerbCategory Interaction = new("verb-categories-interaction", null);
     }
 }

@@ -1,0 +1,13 @@
+# _Duty: атмосферные крики агонии от огня (пол-нейтральны, подходят любому персонажу).
+- type: soundCollection
+  id: DutyFireAgonyScreams
+  files:
+    - /Audio/_Duty/Effects/Agony/agony_1.ogg
+    - /Audio/_Duty/Effects/Agony/agony_2.ogg
+    - /Audio/_Duty/Effects/Agony/agony_3.ogg
+    - /Audio/_Duty/Effects/Agony/agony_4.ogg
+    - /Audio/_Duty/Effects/Agony/agony_5.ogg
+    - /Audio/_Duty/Effects/Agony/agony_6.ogg
+
+# Коллекции по полу (DutyFemaleAgonyScreams / DutyMaleAgonyScreams) удалены: сэмплов
+# Male/FemaleAgony никогда не завозили, и на сами коллекции никто не ссылался.

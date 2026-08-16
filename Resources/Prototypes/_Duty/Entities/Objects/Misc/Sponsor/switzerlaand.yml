@@ -1,0 +1,24 @@
+#Markings
+
+- type: marking
+  id: BandagedEyeRightswitzerlaand
+  bodyPart: Head
+  sprites:
+  - sprite: _DeadSpace/Sponsor/switzerlaand/markings.rsi
+    state: bandaged_R_eye
+
+- type: marking
+  id: BandagedEyeLeftswitzerlaand
+  bodyPart: Head
+  sprites:
+  - sprite: _DeadSpace/Sponsor/switzerlaand/markings.rsi
+    state: bandaged_L_eye
+
+- type: marking
+  id: switzerlaandTail
+  bodyPart: Tail
+  sprites:
+  - sprite: _DeadSpace/Sponsor/switzerlaand/markings.rsi
+    state: kitsune_primary
+  - sprite: _DeadSpace/Sponsor/switzerlaand/markings.rsi
+    state: kitsune_secondary

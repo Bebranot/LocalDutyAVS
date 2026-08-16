@@ -882,6 +882,17 @@ namespace Content.Server.GameTicking
                 var payload = new WebhookPayload { Content = content };
 
                 await _discord.CreateMessage(_webhookIdentifier.Value, payload);
+
+                // LocalDuty Start — пинг роли отдельным сообщением, по образцу пинга конца раунда
+                if (DiscordRoundStartRole == null)
+                    return;
+
+                content = Loc.GetString("discord-round-notifications-new-ping", ("roleId", DiscordRoundStartRole));
+                payload = new WebhookPayload { Content = content };
+                payload.AllowedMentions.AllowRoleMentions();
+
+                await _discord.CreateMessage(_webhookIdentifier.Value, payload);
+                // LocalDuty End
             }
             catch (Exception e)
             {

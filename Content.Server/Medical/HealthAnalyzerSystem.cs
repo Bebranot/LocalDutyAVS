@@ -1,4 +1,5 @@
 using Content.Server.Medical.Components;
+using Content.Shared.ADT.Addiction;
 using Content.Shared.Body.Components;
 using Content.Shared.Chemistry.EntitySystems;
 using Content.Shared.Damage.Components;
@@ -21,8 +22,12 @@ using Robust.Shared.Containers;
 using Robust.Shared.Timing;
 using Content.Server.Body.Systems;
 using Content.Shared.Mobs; // _Duty
+using Content.Server._Duty.HealthAnalyzer; // _Duty
 using Content.Shared._Duty.HealthAnalyzer; // _Duty
 using Content.Shared._Duty.Heartbeat; // _Duty
+using Content.Shared._Duty.Trauma.Systems; // _Duty
+using Content.Shared.Inventory;
+using Content.Shared.Verbs;
 
 namespace Content.Server.Medical;
 
@@ -39,6 +44,7 @@ public sealed class HealthAnalyzerSystem : EntitySystem
     [Dependency] private readonly SharedPopupSystem _popupSystem = default!;
     [Dependency] private readonly BloodstreamSystem _bloodstreamSystem = default!;
     [Dependency] private readonly SharedHeartbeatSystem _heartbeat = default!; // _Duty
+    [Dependency] private readonly TraumaAnalyzerSystem _traumaAnalyzer = default!; // _Duty
 
     /// <summary>
     /// _Duty: последнее отправленное сканирующему звуковое состояние пульса, по анализатору.
@@ -46,7 +52,7 @@ public sealed class HealthAnalyzerSystem : EntitySystem
     /// UpdateInterval), а только при реальной смене уровня/крита/грани смерти — как уже
     /// сделано для networked-состояния в <c>HeartbeatSystem.Recalculate</c>.
     /// </summary>
-    private readonly Dictionary<EntityUid, (HeartbeatLevel Level, bool InCrit, bool NearDeath, bool Flatline)> _lastSentAudio = new();
+    private readonly Dictionary<EntityUid, (bool InCrit, bool NearDeath, bool Flatline)> _lastSentAudio = new();
 
     public override void Initialize()
     {
@@ -55,6 +61,34 @@ public sealed class HealthAnalyzerSystem : EntitySystem
         SubscribeLocalEvent<HealthAnalyzerComponent, EntGotInsertedIntoContainerMessage>(OnInsertedIntoContainer);
         SubscribeLocalEvent<HealthAnalyzerComponent, ItemToggledEvent>(OnToggled);
         SubscribeLocalEvent<HealthAnalyzerComponent, DroppedEvent>(OnDropped);
+        SubscribeLocalEvent<HealthAnalyzerComponent, InventoryRelayedEvent<GetVerbsEvent<InnateVerb>>>(AddScanVerb);  // ADT-Tweak
+        SubscribeLocalEvent<HealthAnalyzerComponent, ComponentShutdown>(OnShutdown); // _Duty
+        SubscribeLocalEvent<HealthAnalyzerComponent, BoundUIClosedEvent>(OnUiClosed); // _Duty
+    }
+
+    /// <summary>
+    /// _Duty: закрытие окна анализатора глушит только звук у того, кто его закрыл — прибор
+    /// продолжает сканировать в фоне (ванильное поведение), меняется лишь наш кастомный звук.
+    /// </summary>
+    private void OnUiClosed(Entity<HealthAnalyzerComponent> ent, ref BoundUIClosedEvent args)
+    {
+        if (args.UiKey is not HealthAnalyzerUiKey || ent.Comp.ScannerUser != args.Actor)
+            return;
+
+        _lastSentAudio.Remove(ent.Owner);
+        RaiseNetworkEvent(new HealthAnalyzerStopAudioEvent(), args.Actor);
+    }
+
+    /// <summary>
+    /// _Duty: анализатор уничтожается во время скана — чистим наш кэш звука и глушим сканирующего,
+    /// иначе в <see cref="_lastSentAudio"/> осталась бы висячая запись по удалённому EntityUid.
+    /// </summary>
+    private void OnShutdown(Entity<HealthAnalyzerComponent> ent, ref ComponentShutdown args)
+    {
+        _lastSentAudio.Remove(ent.Owner);
+
+        if (ent.Comp.ScannerUser is { } scannerUser)
+            RaiseNetworkEvent(new HealthAnalyzerStopAudioEvent(), scannerUser);
     }
 
     public override void Update(float frameTime)
@@ -97,23 +131,51 @@ public sealed class HealthAnalyzerSystem : EntitySystem
     /// </summary>
     private void OnAfterInteract(Entity<HealthAnalyzerComponent> uid, ref AfterInteractEvent args)
     {
-        if (args.Target == null || !args.CanReach || !HasComp<MobStateComponent>(args.Target) || !_cell.HasDrawCharge(uid.Owner, user: args.User))
+        // ADT-Tweak-start
+        if (args.Target == null || !args.CanReach || !HasComp<MobStateComponent>(args.Target))
+            return;
+
+        TryStartScan(uid, args.User, args.Target.Value);
+    }
+
+    private void AddScanVerb(Entity<HealthAnalyzerComponent> ent, ref InventoryRelayedEvent<GetVerbsEvent<InnateVerb>> args)
+    {
+        if (!args.Args.CanInteract || !args.Args.CanAccess || !HasComp<MobStateComponent>(args.Args.Target))
+            return;
+
+        var target = args.Args.Target;
+        var user = args.Args.User;
+
+        var verb = new InnateVerb
+        {
+            Act = () => TryStartScan(ent, user, target),
+            Text = Loc.GetString("health-analyzer-verb-scan"),
+            IconEntity = GetNetEntity(ent),
+            Priority = 2,
+        };
+        args.Args.Verbs.Add(verb);
+    }
+
+    private void TryStartScan(Entity<HealthAnalyzerComponent> uid, EntityUid user, EntityUid target)
+    {
+        if (!_cell.HasDrawCharge(uid.Owner, user: user))
             return;
 
         _audio.PlayPvs(uid.Comp.ScanningBeginSound, uid);
 
-        var doAfterCancelled = !_doAfterSystem.TryStartDoAfter(new DoAfterArgs(EntityManager, args.User, uid.Comp.ScanDelay, new HealthAnalyzerDoAfterEvent(), uid, target: args.Target, used: uid)
+        var doAfterCancelled = !_doAfterSystem.TryStartDoAfter(new DoAfterArgs(EntityManager, user, uid.Comp.ScanDelay, new HealthAnalyzerDoAfterEvent(), uid, target: target, used: uid)
         {
             NeedHand = true,
             BreakOnMove = true,
         });
 
-        if (args.Target == args.User || doAfterCancelled || uid.Comp.Silent)
+        if (target == user || doAfterCancelled || uid.Comp.Silent)
             return;
 
-        var msg = Loc.GetString("health-analyzer-popup-scan-target", ("user", Identity.Entity(args.User, EntityManager)));
-        _popupSystem.PopupEntity(msg, args.Target.Value, args.Target.Value, PopupType.Medium);
+        var msg = Loc.GetString("health-analyzer-popup-scan-target", ("user", Identity.Entity(user, EntityManager)));
+        _popupSystem.PopupEntity(msg, target, target, PopupType.Medium);
     }
+    // ADT-Tweak-end
 
     private void OnDoAfter(Entity<HealthAnalyzerComponent> uid, ref HealthAnalyzerDoAfterEvent args)
     {
@@ -281,6 +343,16 @@ public sealed class HealthAnalyzerSystem : EntitySystem
     /// </summary>
     private void SendHeartbeatAudio(EntityUid healthAnalyzer, EntityUid target, EntityUid user, bool forceRestart)
     {
+        // _Duty: окно анализатора у этого зрителя закрыто — прибор продолжает сканировать в фоне
+        // (ванильное поведение, см. Update), но звук ему при этом не шлём. Без этой проверки
+        // фоновый Update() каждую секунду заново вызывал бы SendHeartbeatAudio и перезапускал звук
+        // почти сразу после закрытия окна — одного BoundUIClosedEvent-стопа недостаточно.
+        if (!_uiSystem.IsUiOpen(healthAnalyzer, HealthAnalyzerUiKey.Key, user))
+        {
+            _lastSentAudio.Remove(healthAnalyzer);
+            return;
+        }
+
         // _Duty: «вторая жизнь» (Лазарус) активна — глушим все наши звуки у сканирующего.
         if (_heartbeat.IsSuppressed(target))
         {
@@ -289,17 +361,34 @@ public sealed class HealthAnalyzerSystem : EntitySystem
             return;
         }
 
-        var level = _heartbeat.GetLevel(target);
         var inCrit = _heartbeat.IsInCrit(target);
         var nearDeath = _heartbeat.GetVitalFraction(target) < SharedHeartbeatSystem.NearDeathFraction;
         var flatline = TryComp<MobStateComponent>(target, out var mob) && mob.CurrentState == MobState.Dead;
 
-        var state = (level, inCrit, nearDeath, flatline);
-        if (!forceRestart && _lastSentAudio.TryGetValue(healthAnalyzer, out var last) && last == state)
+        // _Duty: ровная линия — один раз на КАЖДОГО зрителя. Память о том, кто уже слышал, живёт
+        // на пациенте (см. HealthAnalyzerFlatlineHeardComponent): переживает паузу/повторный
+        // анализ, поэтому тот же медик звук не переиграет, а другой, впервые сканирующий тело,
+        // услышит его один раз. Компонент умирает вместе с телом — утечки нет.
+        var playFlatline = false;
+        if (flatline)
+        {
+            var heard = EnsureComp<HealthAnalyzerFlatlineHeardComponent>(target);
+            if (heard.Users.Add(user))
+                playFlatline = true;
+        }
+        else
+        {
+            // Цель жива/воскрешена — сбрасываем «уже слышали» у всех, чтобы новая смерть снова прозвучала.
+            RemComp<HealthAnalyzerFlatlineHeardComponent>(target);
+        }
+
+        var state = (inCrit, nearDeath, flatline);
+        // playFlatline — одноразовый импульс, поэтому его наличие всегда пробивает дедуп.
+        if (!forceRestart && !playFlatline && _lastSentAudio.TryGetValue(healthAnalyzer, out var last) && last == state)
             return;
 
         _lastSentAudio[healthAnalyzer] = state;
-        RaiseNetworkEvent(new HealthAnalyzerAudioEvent(level, inCrit, nearDeath, flatline, forceRestart), user);
+        RaiseNetworkEvent(new HealthAnalyzerAudioEvent(inCrit, nearDeath, flatline, playFlatline), user);
     }
 
     /// <summary>
@@ -354,6 +443,24 @@ public sealed class HealthAnalyzerSystem : EntitySystem
         }
         // ADT-Tweak end
 
+        // _Duty: тяжёлые травмы (переломы с тирами, вывихи, артериальное кровотечение).
+        var traumas = _traumaAnalyzer.GetEntries(entity);
+
+        // ADT-Tweak-Start: список зависимостей пациента (только сформировавшиеся, WasAddicted)
+        List<AddictionInfo>? addictions = null;
+        if (TryComp<AddictionComponent>(entity, out var addictionComp))
+        {
+            foreach (var channel in addictionComp.Channels)
+            {
+                if (!channel.WasAddicted)
+                    continue;
+
+                addictions ??= new List<AddictionInfo>();
+                addictions.Add(new AddictionInfo(channel.Kind, AddictionStage.FromLevel(channel.Level), channel.Permanent));
+            }
+        }
+        // ADT-Tweak-End
+
         return new HealthAnalyzerUiState(
             GetNetEntity(entity),
             bodyTemperature,
@@ -363,7 +470,9 @@ public sealed class HealthAnalyzerSystem : EntitySystem
             unrevivable,
             metabolizingReagents, // ADT-Tweak
             mobState, // _Duty
-            healthFraction // _Duty
+            healthFraction, // _Duty
+            traumas, // _Duty
+            addictions // ADT-Tweak
         );
     }
 }

@@ -79,7 +79,7 @@
       types:
         Blunt: 10
   - type: Damageable
-    damageModifierSet: glass # эм... не знаю что ещё сюда поставить
+    damageModifierSet: Glass # эм... не знаю что ещё сюда поставить (id с большой буквы, иначе не находится)
   - type: Destructible
     thresholds:
     - trigger:
@@ -122,7 +122,7 @@
       seedId: MagnificentMoss
     - type: Sprite
       sprite: _Duty/Specific/Hydroponics/Moss.rsi
-      state: Moss_Spores
+      state: seed
 
 - type: reagent
   id: MossJuice
@@ -282,7 +282,7 @@
       seedId: ElectroCabbage
     - type: Sprite
       sprite: _Duty/Specific/Hydroponics/ElectroCabbage.rsi
-      state: Seed
+      state: seed
 
 - type: entity
   id: CabbageGenerator
@@ -409,6 +409,7 @@
       - material: Cable
         amount: 2
       - tag: ElectroCabbageTag
+        name: construction-graph-tag-electro-cabbage
         icon:
           sprite: _Duty/Specific/Hydroponics/ElectroCabbage.rsi
           state: icon
@@ -431,14 +432,17 @@
       - material: CableMV
         amount: 15
       - tag: ElectroCabbageTag
+        name: construction-graph-tag-electro-cabbage
         icon:
           sprite: _Duty/Specific/Hydroponics/ElectroCabbage.rsi
           state: icon
       - tag: ElectroCabbageTag
+        name: construction-graph-tag-electro-cabbage
         icon:
           sprite: _Duty/Specific/Hydroponics/ElectroCabbage.rsi
           state: icon
       - tag: ElectroCabbageTag
+        name: construction-graph-tag-electro-cabbage
         icon:
           sprite: _Duty/Specific/Hydroponics/ElectroCabbage.rsi
           state: icon

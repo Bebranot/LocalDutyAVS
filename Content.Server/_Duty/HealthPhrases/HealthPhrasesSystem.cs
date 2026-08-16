@@ -37,22 +37,33 @@ public sealed class HealthPhrasesSystem : EntitySystem
     private float _popupMax;
     private float _whisperMin;
     private float _whisperMax;
+    private float _critScreamMin;
+    private float _critScreamMax;
+    private float _damageScreamThreshold;
+    private float _damageScreamChance;
+    private float _damageScreamCooldown;
 
     public override void Initialize()
     {
         base.Initialize();
 
         SubscribeLocalEvent<PlayerSpawnCompleteEvent>(OnPlayerSpawn);
+        SubscribeLocalEvent<HealthPhrasesComponent, DamageDealtEvent>(OnDamageDealt);
 
         _cfg.OnValueChanged(DutyCCVars.HealthPhrasesEnabled,   v => _enabled    = v, true);
         _cfg.OnValueChanged(DutyCCVars.HealthPhrasesPopupMin,  v => _popupMin   = v, true);
         _cfg.OnValueChanged(DutyCCVars.HealthPhrasesPopupMax,  v => _popupMax   = v, true);
         _cfg.OnValueChanged(DutyCCVars.HealthPhrasesWhisperMin, v => _whisperMin = v, true);
         _cfg.OnValueChanged(DutyCCVars.HealthPhrasesWhisperMax, v => _whisperMax = v, true);
+        _cfg.OnValueChanged(DutyCCVars.HealthPhrasesCritScreamMin, v => _critScreamMin = v, true);
+        _cfg.OnValueChanged(DutyCCVars.HealthPhrasesCritScreamMax, v => _critScreamMax = v, true);
+        _cfg.OnValueChanged(DutyCCVars.HealthPhrasesDamageScreamThreshold, v => _damageScreamThreshold = v, true);
+        _cfg.OnValueChanged(DutyCCVars.HealthPhrasesDamageScreamChance, v => _damageScreamChance = v, true);
+        _cfg.OnValueChanged(DutyCCVars.HealthPhrasesDamageScreamCooldown, v => _damageScreamCooldown = v, true);
 
         _console.RegisterCommand("duty_hp_test",
-            "Принудительно вызвать реплику боли у игрока. Использование: duty_hp_test <username> [popup|whisper]",
-            "duty_hp_test <username> [popup|whisper]",
+            "Принудительно вызвать реплику боли у игрока. Использование: duty_hp_test <username> [popup|whisper|say]",
+            "duty_hp_test <username> [popup|whisper|say]",
             TestCommand,
             TestCommandCompletion);
     }
@@ -130,7 +141,76 @@ public sealed class HealthPhrasesSystem : EntitySystem
                 TryOutputPhrase(uid, phrases, level, PhraseType.Whisper, raceKey);
                 phrases.NextSpeechTime = now + TimeSpan.FromSeconds(_random.NextFloat(_whisperMin, _whisperMax));
             }
+
+            // ── Крик боли на критичном HP (5-10% и 0-5%) — публичный, с тряской ─
+            if (level is HpLevel.Level10 or HpLevel.Level5 && now >= phrases.NextCritScreamTime)
+            {
+                TryOutputScream(uid, phrases, level, raceKey);
+                phrases.NextCritScreamTime = now + TimeSpan.FromSeconds(_random.NextFloat(_critScreamMin, _critScreamMax));
+            }
         }
+    }
+
+    /// <summary>
+    /// Крик боли на критичном HP (Level10/Level5) — переиспользует существующие FTL-фразы
+    /// "-say-" (это уже готовый предсмертный/болевой крик, просто раньше нигде не читался).
+    /// Настоящая say-реплика (чат-лог + дрожащий речевой пузырь), а не popup — см.
+    /// <see cref="ChatSystem.SendDutyHealthScream"/>.
+    /// </summary>
+    private void TryOutputScream(EntityUid uid, HealthPhrasesComponent phrases, HpLevel level, string raceKey)
+    {
+        var text = PickPhrase(phrases, level, PhraseType.Say, raceKey);
+        if (text == null)
+            return;
+
+        _chat.SendDutyHealthScream(uid, text);
+    }
+
+    /// <summary>
+    /// Крик боли от любого достаточно сильного урона, с шансом и кулдауном — аналог
+    /// EmoteOnDamage из RussianCM/RMC14, но встроенный в HealthPhrasesComponent, а не отдельная
+    /// система. Не зависит от текущего HP — может сработать даже на полном здоровье.
+    /// </summary>
+    private void OnDamageDealt(Entity<HealthPhrasesComponent> ent, ref DamageDealtEvent args)
+    {
+        if (!_enabled)
+            return;
+
+        if (args.Damage.GetTotal() < _damageScreamThreshold)
+            return;
+
+        if (!TryComp<MobStateComponent>(ent, out var mobState) || mobState.CurrentState != MobState.Alive)
+            return;
+
+        var now = _timing.CurTime;
+        if (now < ent.Comp.NextDamageScreamTime)
+            return;
+
+        if (!_random.Prob(_damageScreamChance))
+            return;
+
+        // Кулдаун выставляем сразу, даже если фразы не найдётся — иначе при отсутствии контента
+        // для расы попытки будут повторяться каждый тик урона впустую.
+        ent.Comp.NextDamageScreamTime = now + TimeSpan.FromSeconds(_damageScreamCooldown);
+
+        var raceKey = TryComp<HumanoidProfileComponent>(ent, out var humanoid) ? GetRaceKey(humanoid.Species.Id) : "general";
+        var text = PickScreamPhrase(raceKey);
+        if (text == null)
+            return;
+
+        _chat.SendDutyHealthScream(ent, text);
+    }
+
+    /// <summary>Короткий крик боли ("АААА!" и расовые варианты) — не привязан к HpLevel.</summary>
+    private string? PickScreamPhrase(string raceKey)
+    {
+        if (TryPickFtlPhrase($"duty-health-phrases-{raceKey}-scream", out var racial))
+            return racial;
+
+        if (TryPickFtlPhrase("duty-health-phrases-general-scream", out var general))
+            return general;
+
+        return null;
     }
 
     public void TryOutputPhrase(EntityUid uid, HealthPhrasesComponent phrases, HpLevel level, PhraseType type, string raceKey)
@@ -140,7 +220,11 @@ public sealed class HealthPhrasesSystem : EntitySystem
             return;
 
         if (type == PhraseType.Popup)
-            _popup.PopupEntity(text, uid, uid, PopupType.DutyHealthPain);
+        {
+            // Ниже ~40% HP (Level40 и хуже) боль уже не абстрактная — текст слегка дрожит.
+            var popupType = level >= HpLevel.Level40 ? PopupType.DutyHealthPainShake : PopupType.DutyHealthPain;
+            _popup.PopupEntity(text, uid, uid, popupType);
+        }
         else
             _chat.SendDutyHealthPainWhisper(uid, text);
     }
@@ -198,7 +282,12 @@ public sealed class HealthPhrasesSystem : EntitySystem
             HpLevel.Level5  => "5",
             _ => "50"
         };
-        var typeStr = type == PhraseType.Whisper ? "whisper" : "popup";
+        var typeStr = type switch
+        {
+            PhraseType.Whisper => "whisper",
+            PhraseType.Say => "say",
+            _ => "popup"
+        };
         return $"duty-health-phrases-{race}-{levelStr}-{typeStr}";
     }
 
@@ -293,10 +382,18 @@ public sealed class HealthPhrasesSystem : EntitySystem
         }
 
         var typeArg = args.Length >= 2 ? args[1].ToLower() : "popup";
-        var type = typeArg == "whisper" ? PhraseType.Whisper : PhraseType.Popup;
+        var type = typeArg switch
+        {
+            "whisper" => PhraseType.Whisper,
+            "say" => PhraseType.Say,
+            _ => PhraseType.Popup
+        };
         var raceKey = GetRaceKey(humanoid.Species.Id);
 
-        TryOutputPhrase(mob.Value, phrases, level, type, raceKey);
+        if (type == PhraseType.Say)
+            TryOutputScream(mob.Value, phrases, level, raceKey);
+        else
+            TryOutputPhrase(mob.Value, phrases, level, type, raceKey);
         shell.WriteLine($"Фраза выдана: уровень {level}, тип {type}, раса {raceKey}.");
     }
 
@@ -309,7 +406,7 @@ public sealed class HealthPhrasesSystem : EntitySystem
         }
 
         if (args.Length == 2)
-            return CompletionResult.FromOptions(new[] { new CompletionOption("popup"), new CompletionOption("whisper") });
+            return CompletionResult.FromOptions(new[] { new CompletionOption("popup"), new CompletionOption("whisper"), new CompletionOption("say") });
 
         return CompletionResult.Empty;
     }
@@ -330,4 +427,7 @@ public enum PhraseType
 {
     Popup,
     Whisper,
+
+    /// <summary>Крик боли на критичном HP — публичный DutyHealthScream popup, ключ "-say-" в FTL.</summary>
+    Say,
 }

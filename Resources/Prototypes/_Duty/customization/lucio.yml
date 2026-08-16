@@ -1,7 +1,0 @@
-- type: marking
-  id: DutyHumanHairLucio
-  bodyPart: Hair
-  markingCategory: Hair
-  sprites:
-    - sprite: _Duty/Mobs/Customization/human_hair.rsi
-      state: lucio

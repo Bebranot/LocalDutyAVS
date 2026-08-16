@@ -13,6 +13,9 @@ namespace Content.Client.Voting.UI
     [GenerateTypedNameReferences]
     public sealed partial class VotePopup : Control
     {
+        // Outer BoxContainer margin (4) on each side; keeps the grid's max width inside the panel.
+        private const float OptionsWidthPadding = 8f;
+
         [Dependency] private readonly IGameTiming _gameTiming = default!;
         [Dependency] private readonly IVoteManager _voteManager = default!;
         [Dependency] private readonly IEntityNetworkManager _net = default!;
@@ -37,6 +40,13 @@ namespace Content.Client.Voting.UI
             }
 
             Modulate = Color.White.WithAlpha(0.75f);
+
+            // Let the grid decide its own column count from how wide the options actually are,
+            // keeping it within the popup's content width (MaxWidth minus the outer margins).
+            // Every cell then takes the widest option's width, so buttons never overflow and
+            // the window grows/shrinks to fit the text. See VotePopup.xaml.
+            VoteOptionsContainer.MaxGridWidth = MaxWidth - OptionsWidthPadding;
+
             _voteButtons = new Button[vote.Entries.Length];
             var group = new ButtonGroup();
 
@@ -45,7 +55,11 @@ namespace Content.Client.Voting.UI
                 var button = new Button
                 {
                     ToggleMode = true,
-                    Group = group
+                    Group = group,
+                    // Fill the uniform grid cell so short options match the widest one
+                    // instead of leaving the text hugging one edge.
+                    HorizontalExpand = true,
+                    TextAlign = Label.AlignMode.Center,
                 };
                 _voteButtons[i] = button;
                 VoteOptionsContainer.AddChild(button);

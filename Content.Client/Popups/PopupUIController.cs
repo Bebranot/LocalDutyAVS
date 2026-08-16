@@ -1,6 +1,7 @@
 using System.Numerics;
 using Content.Client._Duty.HealthPhrases;
 using Content.Client.Gameplay;
+using Content.Shared._Duty.HealthPhrases;
 using Content.Shared.Popups;
 using Robust.Client.Graphics;
 using Robust.Client.ResourceManagement;
@@ -60,6 +61,7 @@ public sealed class PopupUIController : UIController, IOnStateEntered<GameplaySt
         var updatedPosition = position - new Vector2(0f, MathF.Min(8f, 12f * (popup.TotalTime * popup.TotalTime + popup.TotalTime)));
         var font = _smallFont;
         var color = Color.White.WithAlpha(alpha);
+        var shakeOffsetX = 0f;
 
         switch (popup.Type)
         {
@@ -85,10 +87,38 @@ public sealed class PopupUIController : UIController, IOnStateEntered<GameplaySt
             case PopupType.DutyHealthPain:
                 (font, color) = DutyHealthPhrasesPopupDraw.GetStyle();
                 break;
+            case PopupType.DutyHealthScream:
+                (font, color) = DutyHealthPhrasesPopupDraw.GetScreamStyle();
+                shakeOffsetX = GetShakeOffset(popup.TotalTime,
+                    DutyHealthPhrasesVisuals.ScreamShakeDuration,
+                    DutyHealthPhrasesVisuals.ScreamShakeFrequency,
+                    DutyHealthPhrasesVisuals.ScreamShakeAmplitude);
+                break;
+            case PopupType.DutyHealthPainShake:
+                (font, color) = DutyHealthPhrasesPopupDraw.GetStyle();
+                shakeOffsetX = GetShakeOffset(popup.TotalTime,
+                    DutyHealthPhrasesVisuals.PainShakeDuration,
+                    DutyHealthPhrasesVisuals.PainShakeFrequency,
+                    DutyHealthPhrasesVisuals.PainShakeAmplitude);
+                break;
         }
 
         var dimensions = handle.GetDimensions(font, popup.Text, scale);
-        handle.DrawString(font, updatedPosition - dimensions / 2f, popup.Text, scale, color.WithAlpha(alpha));
+        var drawPosition = updatedPosition - dimensions / 2f + new Vector2(shakeOffsetX, 0f);
+        handle.DrawString(font, drawPosition, popup.Text, scale, color.WithAlpha(alpha));
+    }
+
+    /// <summary>
+    /// Синусоидальное дрожание текста по X, затухающее до нуля через <paramref name="duration"/>.
+    /// Общая формула для крика (DutyHealthScream) и лёгкой тряски обычной боли (DutyHealthPainShake).
+    /// </summary>
+    private static float GetShakeOffset(float totalTime, float duration, float frequency, float amplitude)
+    {
+        if (totalTime >= duration)
+            return 0f;
+
+        var remaining = 1f - totalTime / duration;
+        return MathF.Sin(totalTime * MathF.PI * frequency) * amplitude * remaining;
     }
 
     /// <summary>

@@ -332,3 +332,7 @@ fix_migration.py
 
 # codegraph index (local, per-developer)
 .codegraph/
+
+# BuildChecker/git_helper.py запускает git submodule update со своим cwd, из-за чего рядом
+# с ним появляется лишняя копия движка (~30 МБ). Настоящий сабмодуль лежит в /RobustToolbox.
+BuildChecker/RobustToolbox/

@@ -1,0 +1,27 @@
+# _Duty: реагент для сталкерских водоёмов (_Duty/Tiles/water.yml). Раньше тайлы были налиты
+# несуществующим STToxicWater — ведро набиралось пустым, а линтер ругался на каждый водоём.
+# Пьётся как вода, но хуже утоляет жажду и потихоньку травит: мутная вода Зоны.
+- type: reagent
+  id: STToxicWater
+  parent: BaseDrink
+  name: reagent-name-st-toxic-water
+  desc: reagent-desc-st-toxic-water
+  physicalDesc: reagent-physical-desc-opaque
+  flavor: bitter
+  color: "#6d7a52"
+  evaporationSpeed: 0.3
+  absorbent: true
+  boilingPoint: 100.0
+  meltingPoint: 0.0
+  friction: 0.4
+  metabolisms:
+    Digestion:
+      effects:
+      - !type:SatiateThirst
+        factor: 2
+    Bloodstream:
+      effects:
+      - !type:HealthChange
+        damage:
+          types:
+            Poison: 1
