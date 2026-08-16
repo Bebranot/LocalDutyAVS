@@ -1,4 +1,4 @@
-﻿- type: entity
+- type: entity
   name: bat
   parent: [ SimpleMobBase, FlyingMobBase, MobCombat ]
   id: MobBat
@@ -2694,6 +2694,7 @@
     needsHands: false
   - type: NoSlip
   - type: Spider
+    spawnsWebsAsNonPlayer: false # ADT-Tweak
   - type: IgnoreSpiderWeb
   - type: Bloodstream
     bloodReferenceSolution:
