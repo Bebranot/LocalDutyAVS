@@ -234,7 +234,7 @@
     message: nuclear-opps-greatfull-message
     color: "#ff0000"
     sound:
-      path: /Audio/_Duty/WIP/war.ogg
+      path: /Audio/_Duty/Announcement/war_declaration.ogg
   - type: TimedDespawn
     lifetime: 3
 
