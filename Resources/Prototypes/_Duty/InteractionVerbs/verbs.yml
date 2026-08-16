@@ -14,6 +14,7 @@
   allowSelfInteract: true
   icon: /Textures/Interface/Actions/eyeopen.png
   range: {max: 20}
+  predictOwnFeedback: true
   effectSuccess:
     popup: Obvious
   action:
@@ -26,6 +27,7 @@
   requiresCanInteract: false
   contactInteraction: false
   range: {max: 20}
+  predictOwnFeedback: true
   effectSuccess:
     popup: Obvious
   hideByRequirement: true
@@ -54,6 +56,7 @@
   id: KnockOn
   parent: BaseHands
   priority: 20
+  predictOwnFeedback: true
   effectSuccess:
     popup: Visible
     sound: {path: /Audio/Effects/glass_knock.ogg}

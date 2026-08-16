@@ -99,7 +99,12 @@ public abstract class SharedInteractionVerbsSystem : EntitySystem
         if (ev.Cancelled || ev.Handled || !_protoMan.TryIndex(ev.VerbPrototype, out var proto))
             return;
 
-        PerformVerb(proto, ev.VerbArgs!);
+        // VerbArgs не сетевое (см. его комментарий) и сегодня всегда заполнено на сервере —
+        // но это допущение хрупкое, так что защищаемся, а не полагаемся на "!" молча.
+        if (ev.VerbArgs is not { } verbArgs)
+            return;
+
+        PerformVerb(proto, verbArgs);
         ev.Handled = true;
     }
 
@@ -141,6 +146,11 @@ public abstract class SharedInteractionVerbsSystem : EntitySystem
 
         if (proto.Delay <= TimeSpan.Zero)
         {
+            // Клиент показывает свою версию попапа/звука сразу, не дожидаясь ответа сервера —
+            // см. ShowPredictedOwnFeedback. PerformVerb ниже на клиенте всё равно ничего не сделает.
+            if (_net.IsClient && proto.PredictOwnFeedback)
+                ShowPredictedOwnFeedback(proto, args);
+
             PerformVerb(proto, args);
             return true;
         }
@@ -173,8 +183,17 @@ public abstract class SharedInteractionVerbsSystem : EntitySystem
         if (_net.IsClient)
             return; // иначе будут проблемы
 
-        if (!PerformChecks(proto, ref args, out _, out _) && !force
-            || !proto.Action!.CanPerform(args, proto, false, _verbDependencies) && !force
+        if (!PerformChecks(proto, ref args, out _, out _) && !force)
+        {
+            // До Action дело не дошло — спор с клиентом о дальности/доступе (например, из-за
+            // рассинхрона позиции на момент клика), а не настоящая неудачная попытка. Не должно
+            // стоить кулдауна — см. StartVerb, где он стартует ещё до этой проверки.
+            RefundVerbCooldown(proto, args);
+            CreateVerbEffects(proto.EffectFailure, Fail, proto, args);
+            return;
+        }
+
+        if (!proto.Action!.CanPerform(args, proto, false, _verbDependencies) && !force
             || !proto.Action.Perform(args, proto, _verbDependencies))
         {
             CreateVerbEffects(proto.EffectFailure, Fail, proto, args);
@@ -323,6 +342,61 @@ public abstract class SharedInteractionVerbsSystem : EntitySystem
         }
     }
 
+    /// <summary>
+    ///     Отменяет кулдаун, выставленный <see cref="StartVerbCooldown"/> для этой попытки —
+    ///     вызывается, когда выясняется, что попытка не настоящая (PerformChecks не прошёл прямо
+    ///     перед выполнением). Правит только серверную копию кулдауна; клиентская независимая
+    ///     копия не откатывается, но самоисцелится по истечении proto.Cooldown в любом случае
+    ///     (см. комментарий в <see cref="OwnInteractionVerbsComponent"/>).
+    /// </summary>
+    private void RefundVerbCooldown(InteractionVerbPrototype proto, InteractionArgs args, OwnInteractionVerbsComponent? comp = null)
+    {
+        if (!Resolve(args.User, ref comp))
+            return;
+
+        var cooldownTarget = proto.GlobalCooldown ? EntityUid.Invalid : args.Target;
+        comp.Cooldowns.Remove((proto.ID, cooldownTarget));
+    }
+
+    /// <summary>
+    ///     Мгновенно показывает исполнителю его собственную обратную связь (попап+звук) успеха
+    ///     верба, не дожидаясь ответа сервера. Вызывается только на клиенте, только для вербов с
+    ///     PredictOwnFeedback=true и Delay&lt;=0 (см. StartVerb). Настоящая версия всё равно придёт
+    ///     позже с сервера через CreateVerbEffects: попап — ещё раз (сознательно не подавляется,
+    ///     см. её комментарий про чат-лог), звук себе — уже нет.
+    /// </summary>
+    /// <remarks>
+    ///     Формат локали/суффикса self-попапа обязан совпадать с CreateVerbEffects — если один
+    ///     меняется, поправить и другой.
+    /// </remarks>
+    private void ShowPredictedOwnFeedback(InteractionVerbPrototype proto, InteractionArgs args)
+    {
+        if (proto.EffectSuccess is not { } specifier)
+            return;
+
+        var (user, target, used) = (args.User, args.Target, args.Used);
+
+        if (_protoMan.TryIndex(specifier.Popup, out var popup) && (popup.SelfSuffix ?? popup.OthersSuffix) is { } selfSuffix)
+        {
+            var popupTarget = specifier.EffectTarget is User or UserThenTarget or TargetThenUser ? user : target;
+
+            (string, object)[] localeArgs =
+            [
+                ("user", Identity.Entity(user, EntityManager)),
+                ("target", Identity.Entity(target, EntityManager)),
+                ("used", used ?? EntityUid.Invalid),
+                ("selfTarget", user == target),
+                ("hasUsed", used != null)
+            ];
+
+            var message = Loc.GetString($"interaction-{proto.ID}-success-{selfSuffix}-popup", localeArgs);
+            _popups.PopupClient(message, popupTarget, user, popup.PopupType);
+        }
+
+        if (specifier.Sound is { } sound)
+            _audio.PlayPredicted(sound, target, user, specifier.SoundParams);
+    }
+
     private void CreateVerbEffects(InteractionVerbPrototype.EffectSpecifier? specifier, InteractionPopupPrototype.Prefix prefix, InteractionVerbPrototype proto, InteractionArgs args)
     {
         // На клиенте эффекты не создаём — иначе будут проблемы.
@@ -370,8 +444,15 @@ public abstract class SharedInteractionVerbsSystem : EntitySystem
         // Звуки
         if (specifier.Sound is { } sound)
         {
+            // Если исполнитель уже услышал этот звук предиктом на клиенте (PredictOwnFeedback,
+            // см. ShowPredictedOwnFeedback/StartVerb), не проигрываем ему тот же звук второй раз —
+            // цель и наблюдатели всё равно должны услышать его как обычно.
+            var mainFilter = Filter.Entities(user, target);
+            if (proto.PredictOwnFeedback && proto.Delay <= TimeSpan.Zero && prefix == Success)
+                mainFilter.RemovePlayerByAttachedEntity(user);
+
             // TODO: выбор между точным источником звука и лишним спауном сущности...
-            _audio.PlayEntity(sound, Filter.Entities(user, target), target, false, specifier.SoundParams);
+            _audio.PlayEntity(sound, mainFilter, target, false, specifier.SoundParams);
 
             if (specifier.SoundPerceivedByOthers)
                 _audio.PlayEntity(sound, othersFilter, othersTarget, false, specifier.SoundParams);

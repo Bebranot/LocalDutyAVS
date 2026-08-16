@@ -163,6 +163,16 @@ public sealed partial class InteractionVerbPrototype : IPrototype, IInheritingPr
     [DataField]
     public bool Global = false;
 
+    /// <summary>
+    ///     Если true и у верба Delay&lt;=0, клиент предсказывает собственную обратную связь (попап
+    ///     успеха себе + звук) сразу по клику, не дожидаясь ответа сервера — см.
+    ///     <see cref="SharedInteractionVerbsSystem.ShowPredictedOwnFeedback"/>. Ставить только на
+    ///     вербы, чей успех гарантирован (NoOpAction с SuccessChance=1) — Action на клиенте
+    ///     недоступен (serverOnly), клиент не может сам проверить, действительно ли верб пройдёт.
+    /// </summary>
+    [DataField]
+    public bool PredictOwnFeedback = false;
+
     [DataDefinition, Serializable]
     public partial struct RangeSpecifier()
     {
