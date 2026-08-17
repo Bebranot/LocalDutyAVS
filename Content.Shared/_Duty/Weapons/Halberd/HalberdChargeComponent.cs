@@ -77,6 +77,14 @@ public sealed partial class HalberdChargeComponent : Component
 
     /// <summary>Активный зацикленный звук рывка — нужно остановить вручную при StopCharge.</summary>
     public EntityUid? ChargeAudioStream = null;
+
+    /// <summary>
+    /// Кто держит алебарду wielded прямо сейчас (шире, чем <see cref="ChargeUser"/> — тот
+    /// только на время самого рывка). Нужно на ComponentShutdown: снять
+    /// <see cref="HalberdWieldedComponent"/> с юзера, если алебарду удалили/уничтожили, не
+    /// дожидаясь обычного ItemUnwieldedEvent.
+    /// </summary>
+    public EntityUid? WieldedBy = null;
 }
 
 /// <summary>
@@ -93,4 +101,16 @@ public sealed partial class HalberdChargeResistComponent : Component
     public bool HadCanCollide;
 
     public bool CanCollideBefore;
+}
+
+/// <summary>
+/// Компонент-маркер: вешается на пользователя, пока он держит wielded-алебарду (не только во
+/// время рывка). Даёт directed-подписку на события дропа/стана/дизарма НА ЮЗЕРЕ — эти события
+/// движок всегда шлёт на того, с кем это происходит, а не на предмет в его руках.
+/// </summary>
+[RegisterComponent]
+public sealed partial class HalberdWieldedComponent : Component
+{
+    /// <summary>Какую именно алебарду держит юзер — нужно для TryDrop при дизарме.</summary>
+    public EntityUid Halberd;
 }

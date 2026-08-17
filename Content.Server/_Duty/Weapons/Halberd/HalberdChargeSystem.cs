@@ -67,12 +67,15 @@ public sealed class HalberdChargeSystem : EntitySystem
         // HalberdChargeResistComponent вешается на юзера только на время рывка — используем его как маркер.
         SubscribeLocalEvent<HalberdChargeResistComponent, KnockDownAttemptEvent>(OnChargingKnockDownAttempt);
 
-        // Не дропать алебарду при стане
-        SubscribeLocalEvent<HalberdChargeComponent, KnockDownAttemptEvent>(OnKnockDownAttempt);
+        // Не дропать алебарду при стане. ВАЖНО: DropAttempt/KnockDownAttempt/Disarmed движок всегда
+        // шлёт directed на ЮЗЕРА (того, кого дропают/стан-ят/дизармят), а не на предмет в его руках —
+        // поэтому подписка идёт на HalberdWieldedComponent (маркер на юзере), а не на
+        // HalberdChargeComponent (живёт на алебарде и по этим событиям никогда не сработал бы).
+        SubscribeLocalEvent<HalberdWieldedComponent, KnockDownAttemptEvent>(OnKnockDownAttempt);
 
         // Алебарда не выпадает никогда кроме дизарма
-        SubscribeLocalEvent<HalberdChargeComponent, DropAttemptEvent>(OnDropAttempt);
-        SubscribeLocalEvent<HalberdChargeComponent, DisarmedEvent>(OnDisarmed);
+        SubscribeLocalEvent<HalberdWieldedComponent, DropAttemptEvent>(OnDropAttempt);
+        SubscribeLocalEvent<HalberdWieldedComponent, DisarmedEvent>(OnDisarmed);
     }
 
     public override void Update(float frameTime)
@@ -100,6 +103,15 @@ public sealed class HalberdChargeSystem : EntitySystem
     {
         _actions.RemoveAction(ent.Comp.ChargeActionEntity);
         ent.Comp.ChargeActionEntity = null;
+
+        // Алебарду могли уничтожить/удалить прямо во время рывка, минуя обычный unwield.
+        // Без этого юзер навсегда остаётся с CanCollide=false, резистом и зацикленным звуком —
+        // снять их уже нечем, ссылки на них жили только в этом компоненте.
+        if (ent.Comp.IsCharging && ent.Comp.ChargeUser is { } chargingUser)
+            StopChargeEffects(chargingUser, ent.Comp);
+
+        if (ent.Comp.WieldedBy is { } wielder)
+            RemCompDeferred<HalberdWieldedComponent>(wielder);
     }
 
     private void OnWielded(EntityUid uid, HalberdChargeComponent comp, ItemWieldedEvent args)
@@ -113,6 +125,11 @@ public sealed class HalberdChargeSystem : EntitySystem
         var curTime = _timing.CurTime;
         if (comp.ChargeCooldownEnd > curTime && comp.ChargeActionEntity.HasValue)
             _actions.SetCooldown(comp.ChargeActionEntity.Value, curTime, comp.ChargeCooldownEnd);
+
+        // Маркер на юзере — только через него доступны directed-события дропа/стана/дизарма.
+        comp.WieldedBy = args.User;
+        var wielded = EnsureComp<HalberdWieldedComponent>(args.User);
+        wielded.Halberd = uid;
     }
 
     private void OnUnwielded(EntityUid uid, HalberdChargeComponent comp, ItemUnwieldedEvent args)
@@ -128,6 +145,9 @@ public sealed class HalberdChargeSystem : EntitySystem
         // убираем action при unwield/выброске
         _actions.RemoveAction(comp.ChargeActionEntity);
         comp.ChargeActionEntity = null;
+
+        comp.WieldedBy = null;
+        RemCompDeferred<HalberdWieldedComponent>(args.User);
 
         // Прерываем рывок если он шёл
         if (comp.IsCharging)
@@ -338,14 +358,7 @@ public sealed class HalberdChargeSystem : EntitySystem
         comp.IsCharging = false;
         comp.ChargeUser = null;
 
-        // Останавливаем зацикленный звук рывка
-        _audio.Stop(comp.ChargeAudioStream);
-        comp.ChargeAudioStream = null;
-
-        RestoreChargePhysics(user);
-
-        // Убираем резист
-        RemCompDeferred<HalberdChargeResistComponent>(user);
+        StopChargeEffects(user, comp);
 
         // Реакция по ситуации
         switch (reason)
@@ -381,32 +394,41 @@ public sealed class HalberdChargeSystem : EntitySystem
             _actions.StartUseDelay(comp.ChargeActionEntity.Value);
     }
 
+    /// <summary>Аудио/физика/резист рывка — общая часть StopCharge и аварийной очистки на ComponentShutdown.</summary>
+    private void StopChargeEffects(EntityUid user, HalberdChargeComponent comp)
+    {
+        _audio.Stop(comp.ChargeAudioStream);
+        comp.ChargeAudioStream = null;
+
+        RestoreChargePhysics(user);
+        RemCompDeferred<HalberdChargeResistComponent>(user);
+    }
+
     // ── Не дропать алебарду при стане ────────────────────────
 
-    private void OnDropAttempt(EntityUid uid, HalberdChargeComponent comp, DropAttemptEvent args)
+    private void OnDropAttempt(EntityUid uid, HalberdWieldedComponent comp, DropAttemptEvent args)
     {
         // Запрещаем любой дроп — дизарм обрабатывается отдельно
         args.Cancel();
     }
 
-    private void OnDisarmed(EntityUid uid, HalberdChargeComponent comp, ref DisarmedEvent args)
+    private void OnDisarmed(EntityUid uid, HalberdWieldedComponent comp, ref DisarmedEvent args)
     {
         // При дизарме — принудительно выбрасываем алебарду из рук
         // Но только если дизарм успешный (есть IsStunned)
         if (!args.IsStunned)
             return;
 
-        if (_hands.IsHolding(args.Target, uid, out var hand))
-            _hands.TryDrop(args.Target, uid, checkActionBlocker: false);
+        if (_hands.IsHolding(args.Target, comp.Halberd, out _))
+            _hands.TryDrop(args.Target, comp.Halberd, checkActionBlocker: false);
     }
 
     // ── Не дропать алебарду при стане ────────────────────────
 
-    private void OnKnockDownAttempt(EntityUid uid, HalberdChargeComponent comp, ref KnockDownAttemptEvent args)
+    private void OnKnockDownAttempt(EntityUid uid, HalberdWieldedComponent comp, ref KnockDownAttemptEvent args)
     {
-        // Пока алебарда в руках (есть пользователь) — не дропать
-        if (comp.ChargeUser.HasValue)
-            args.Drop = false;
+        // Маркер есть, пока алебарда wielded в руках — не дропать при любом стане/легании.
+        args.Drop = false;
     }
 
     // ── Хелперы ───────────────────────────────────────────────
