@@ -47,7 +47,21 @@ public sealed class ConcussionOverlay : Overlay
     {
         IoCManager.InjectDependencies(this);
         _concussion = _entMan.System<SharedConcussionSystem>();
-        _cfg.OnValueChanged(CCVars.ReducedMotion, b => _reducedMotion = b, invokeImmediately: true);
+        _cfg.OnValueChanged(CCVars.ReducedMotion, OnReducedMotionChanged, invokeImmediately: true);
+    }
+
+    private void OnReducedMotionChanged(bool value) => _reducedMotion = value;
+
+    /// <summary>
+    /// Оверлей создаётся заново в <see cref="ConcussionSystem.Initialize"/> на каждую
+    /// (пере)инициализацию системы — без явной отписки подписка на CVar переживает
+    /// RemoveOverlay и утекает вместе с этим инстансом. Вызывается из
+    /// <see cref="ConcussionSystem.Shutdown"/>.
+    /// </summary>
+    protected override void DisposeBehavior()
+    {
+        _cfg.UnsubValueChanged(CCVars.ReducedMotion, OnReducedMotionChanged);
+        base.DisposeBehavior();
     }
 
     public void SetShot(float intensity)

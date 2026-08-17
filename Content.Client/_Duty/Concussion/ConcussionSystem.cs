@@ -49,6 +49,7 @@ public sealed class ConcussionSystem : SharedConcussionSystem
     {
         base.Shutdown();
         _overlayMan.RemoveOverlay(_overlay);
+        _overlay.Dispose();
         StopRing();
     }
 
