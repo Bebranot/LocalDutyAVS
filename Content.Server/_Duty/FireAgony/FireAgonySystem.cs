@@ -67,6 +67,7 @@ public sealed class FireAgonySystem : EntitySystem
 
         _flammableQuery = GetEntityQuery<FlammableComponent>();
         SubscribeLocalEvent<FireAgonyComponent, MobStateChangedEvent>(OnMobStateChanged);
+        SubscribeLocalEvent<FireAgonyComponent, ComponentShutdown>(OnShutdown);
     }
 
     public override void Update(float frameTime)
@@ -180,6 +181,20 @@ public sealed class FireAgonySystem : EntitySystem
         // При крите/смерти stun снимается движком сам; нам остаётся оборвать сцену (флаг + камера).
         if (args.NewMobState is MobState.Critical or MobState.Dead)
             EndScene(ent, ent.Comp, releaseParalyze: false);
+    }
+
+    /// <summary>
+    /// Защитная сетка на случай, если компонент когда-нибудь снимут без удаления сущности (сейчас
+    /// FireAgonyComponent — статический компонент на базе расы и RemComp нигде не вызывается, поэтому
+    /// сейчас это не активная утечка — звук привязан к сущности и удаляется каскадом). Симметрично
+    /// FuryStimulatorSystem.OnShutdown для того же класса сцен.
+    /// </summary>
+    private void OnShutdown(Entity<FireAgonyComponent> ent, ref ComponentShutdown args)
+    {
+        if (!ent.Comp.Active)
+            return;
+
+        EndScene(ent, ent.Comp, releaseParalyze: false);
     }
 
     private void EndScene(EntityUid uid, FireAgonyComponent agony, bool releaseParalyze = true)
