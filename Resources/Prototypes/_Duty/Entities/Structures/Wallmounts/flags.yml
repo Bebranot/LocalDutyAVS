@@ -1,0 +1,40 @@
+# SPDX-FileCopyrightText: 2026 LocalDuty
+# SPDX-License-Identifier: MIT
+
+# ══════════════════════════════════════════════════════════════
+#  LocalDuty — Настенные флаги союзных федераций
+#  Префикс/суффикс: Duty + Флаг
+# ══════════════════════════════════════════════════════════════
+
+- type: entity
+  id: DutyFlagRU
+  parent: BaseSign
+  name: флаг России
+  description: Бело-сине-красное полотнище с истрёпанными от ветра краями — герб союзной федерации, приколоченный прямо к переборке. Ткань пропахла машинным маслом и застарелым порохом кают-компании.
+  suffix: Duty, Флаг
+  components:
+  - type: Sprite
+    sprite: _Duty/Structures/Wallmounts/Flags/ru_flag.rsi
+    state: RU_flag
+
+- type: entity
+  id: DutyFlagUA
+  parent: BaseSign
+  name: флаг Украины
+  description: Сине-жёлтое полотнище — небо над колосящимся полем, каким его помнят те, кто родился задолго до Зоны. Второй флаг союза, что висит здесь рядом с российским, плечом к плечу.
+  suffix: Duty, Флаг
+  components:
+  - type: Sprite
+    sprite: _Duty/Structures/Wallmounts/Flags/ua_flag.rsi
+    state: UA_flag
+
+- type: entity
+  id: DutyFlagUAVertical
+  parent: BaseSign
+  name: флаг Украины
+  description: Сине-жёлтое полотнище — небо над колосящимся полем, каким его помнят те, кто родился задолго до Зоны. Свисает вертикально вдоль переборки, будто вымпел на корабельной мачте.
+  suffix: Duty, Флаг, Вертикальный
+  components:
+  - type: Sprite
+    sprite: _Duty/Structures/Wallmounts/Flags/ua_flag.rsi
+    state: UA2_flag

@@ -1,0 +1,17 @@
+{
+  "version": 1,
+  "license": "CC-BY-SA-3.0",
+  "copyright": "Original artwork made for the _Duty fork (LocalDutyAVS)",
+  "size": {
+    "x": 32,
+    "y": 32
+  },
+  "states": [
+    {
+      "name": "UA_flag"
+    },
+    {
+      "name": "UA2_flag"
+    }
+  ]
+}
