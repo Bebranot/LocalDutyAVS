@@ -3,6 +3,7 @@ using Content.Server.AlertLevel;
 using Content.Server.Chat.Managers;
 using Content.Server.Chat.Systems;
 using Content.Server.Station.Systems;
+using Content.Shared.GameTicking;
 using Robust.Server.GameObjects;
 using Robust.Shared.Audio;
 using Robust.Shared.Audio.Systems;
@@ -71,6 +72,24 @@ public sealed class DutyErtSystem : EntitySystem
     /// прибытие шаттла для ertcall5min. Когда наступает срок — выполняем.
     /// </summary>
     private readonly List<(TimeSpan DueTime, Action Action)> _pending = new();
+
+    public override void Initialize()
+    {
+        base.Initialize();
+
+        SubscribeLocalEvent<RoundRestartCleanupEvent>(OnRoundRestart);
+    }
+
+    /// <summary>
+    /// Раунд перезапустился — отложенные действия из прошлого раунда (код угрозы на удалённой
+    /// станции, отложенный шаттл ertcall5min) больше не актуальны. IGameTiming.CurTime не
+    /// сбрасывается при рестарте раунда, поэтому без явной очистки эти замыкания рано или поздно
+    /// сработали бы уже в новом раунде — с устаревшим stationUid/вариантом.
+    /// </summary>
+    private void OnRoundRestart(RoundRestartCleanupEvent ev)
+    {
+        _pending.Clear();
+    }
 
     public override void Update(float frameTime)
     {
