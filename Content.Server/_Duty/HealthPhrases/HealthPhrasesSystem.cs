@@ -50,16 +50,16 @@ public sealed class HealthPhrasesSystem : EntitySystem
         SubscribeLocalEvent<PlayerSpawnCompleteEvent>(OnPlayerSpawn);
         SubscribeLocalEvent<HealthPhrasesComponent, DamageDealtEvent>(OnDamageDealt);
 
-        _cfg.OnValueChanged(DutyCCVars.HealthPhrasesEnabled,   v => _enabled    = v, true);
-        _cfg.OnValueChanged(DutyCCVars.HealthPhrasesPopupMin,  v => _popupMin   = v, true);
-        _cfg.OnValueChanged(DutyCCVars.HealthPhrasesPopupMax,  v => _popupMax   = v, true);
-        _cfg.OnValueChanged(DutyCCVars.HealthPhrasesWhisperMin, v => _whisperMin = v, true);
-        _cfg.OnValueChanged(DutyCCVars.HealthPhrasesWhisperMax, v => _whisperMax = v, true);
-        _cfg.OnValueChanged(DutyCCVars.HealthPhrasesCritScreamMin, v => _critScreamMin = v, true);
-        _cfg.OnValueChanged(DutyCCVars.HealthPhrasesCritScreamMax, v => _critScreamMax = v, true);
-        _cfg.OnValueChanged(DutyCCVars.HealthPhrasesDamageScreamThreshold, v => _damageScreamThreshold = v, true);
-        _cfg.OnValueChanged(DutyCCVars.HealthPhrasesDamageScreamChance, v => _damageScreamChance = v, true);
-        _cfg.OnValueChanged(DutyCCVars.HealthPhrasesDamageScreamCooldown, v => _damageScreamCooldown = v, true);
+        _cfg.OnValueChanged(DutyCCVars.HealthPhrasesEnabled, OnEnabledChanged, true);
+        _cfg.OnValueChanged(DutyCCVars.HealthPhrasesPopupMin, OnPopupMinChanged, true);
+        _cfg.OnValueChanged(DutyCCVars.HealthPhrasesPopupMax, OnPopupMaxChanged, true);
+        _cfg.OnValueChanged(DutyCCVars.HealthPhrasesWhisperMin, OnWhisperMinChanged, true);
+        _cfg.OnValueChanged(DutyCCVars.HealthPhrasesWhisperMax, OnWhisperMaxChanged, true);
+        _cfg.OnValueChanged(DutyCCVars.HealthPhrasesCritScreamMin, OnCritScreamMinChanged, true);
+        _cfg.OnValueChanged(DutyCCVars.HealthPhrasesCritScreamMax, OnCritScreamMaxChanged, true);
+        _cfg.OnValueChanged(DutyCCVars.HealthPhrasesDamageScreamThreshold, OnDamageScreamThresholdChanged, true);
+        _cfg.OnValueChanged(DutyCCVars.HealthPhrasesDamageScreamChance, OnDamageScreamChanceChanged, true);
+        _cfg.OnValueChanged(DutyCCVars.HealthPhrasesDamageScreamCooldown, OnDamageScreamCooldownChanged, true);
 
         _console.RegisterCommand("duty_hp_test",
             "Принудительно вызвать реплику боли у игрока. Использование: duty_hp_test <username> [popup|whisper|say]",
@@ -67,6 +67,35 @@ public sealed class HealthPhrasesSystem : EntitySystem
             TestCommand,
             TestCommandCompletion);
     }
+
+    public override void Shutdown()
+    {
+        base.Shutdown();
+
+        // Зеркалит подписки из Initialize — без этого системный инстанс навсегда остаётся
+        // подписанным на IConfigurationManager (утечка при пересоздании системы, напр. в тестах).
+        _cfg.UnsubValueChanged(DutyCCVars.HealthPhrasesEnabled, OnEnabledChanged);
+        _cfg.UnsubValueChanged(DutyCCVars.HealthPhrasesPopupMin, OnPopupMinChanged);
+        _cfg.UnsubValueChanged(DutyCCVars.HealthPhrasesPopupMax, OnPopupMaxChanged);
+        _cfg.UnsubValueChanged(DutyCCVars.HealthPhrasesWhisperMin, OnWhisperMinChanged);
+        _cfg.UnsubValueChanged(DutyCCVars.HealthPhrasesWhisperMax, OnWhisperMaxChanged);
+        _cfg.UnsubValueChanged(DutyCCVars.HealthPhrasesCritScreamMin, OnCritScreamMinChanged);
+        _cfg.UnsubValueChanged(DutyCCVars.HealthPhrasesCritScreamMax, OnCritScreamMaxChanged);
+        _cfg.UnsubValueChanged(DutyCCVars.HealthPhrasesDamageScreamThreshold, OnDamageScreamThresholdChanged);
+        _cfg.UnsubValueChanged(DutyCCVars.HealthPhrasesDamageScreamChance, OnDamageScreamChanceChanged);
+        _cfg.UnsubValueChanged(DutyCCVars.HealthPhrasesDamageScreamCooldown, OnDamageScreamCooldownChanged);
+    }
+
+    private void OnEnabledChanged(bool v) => _enabled = v;
+    private void OnPopupMinChanged(float v) => _popupMin = v;
+    private void OnPopupMaxChanged(float v) => _popupMax = v;
+    private void OnWhisperMinChanged(float v) => _whisperMin = v;
+    private void OnWhisperMaxChanged(float v) => _whisperMax = v;
+    private void OnCritScreamMinChanged(float v) => _critScreamMin = v;
+    private void OnCritScreamMaxChanged(float v) => _critScreamMax = v;
+    private void OnDamageScreamThresholdChanged(float v) => _damageScreamThreshold = v;
+    private void OnDamageScreamChanceChanged(float v) => _damageScreamChance = v;
+    private void OnDamageScreamCooldownChanged(float v) => _damageScreamCooldown = v;
 
     private void OnPlayerSpawn(PlayerSpawnCompleteEvent ev)
     {
