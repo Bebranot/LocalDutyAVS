@@ -181,12 +181,6 @@ public sealed partial class InteractionVerbPrototype : IPrototype, IInheritingPr
         [DataField] public bool Inverse = false;
 
         public bool IsInRange(float value) => (Inverse ? value < Min || value > Max : value >= Min && value <= Max);
-
-        public float Clamp(float value)
-        {
-            DebugTools.Assert(!Inverse, "Inverse ranges do not support clamping.");
-            return Math.Clamp(value, Min, Max);
-        }
     }
 
     [DataDefinition, Serializable]
