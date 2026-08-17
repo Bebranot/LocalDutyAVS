@@ -15,6 +15,9 @@
       Brute:
         collection: GlassSmash
   - type: InteractionOutline
+  - type: InteractionVerbs
+    allowedVerbs:
+    - KnockOn
   - type: StationAiWhitelist
   - type: Physics
   - type: Fixtures

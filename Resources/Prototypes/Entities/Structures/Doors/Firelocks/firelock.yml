@@ -20,6 +20,9 @@
       receiveFrequencyId: AtmosMonitor
     - type: DeviceNetworkRequiresPower
     - type: InteractionOutline
+    - type: InteractionVerbs
+      allowedVerbs:
+      - KnockOn
     - type: Damageable
       damageModifierSet: StrongMetallic # ADT-Tweak (пожарный шлюз не должен быть по прочности как укрепленная стена. сделал как у обычного шлюза)
     - type: Injurable

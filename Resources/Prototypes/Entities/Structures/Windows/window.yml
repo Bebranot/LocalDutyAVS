@@ -22,6 +22,9 @@
     tags:
       - ForceFixRotations
       - Window
+  - type: InteractionVerbs
+    allowedVerbs:
+    - KnockOn
   - type: Sprite
     drawdepth: WallTops
     sprite: Structures/Windows/window.rsi
@@ -141,6 +144,9 @@
   - type: Tag
     tags:
       - Window
+  - type: InteractionVerbs
+    allowedVerbs:
+    - KnockOn
   - type: MeleeSound
     soundGroups:
       Brute:

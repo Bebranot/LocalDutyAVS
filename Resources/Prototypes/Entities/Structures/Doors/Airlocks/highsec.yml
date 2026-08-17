@@ -12,6 +12,9 @@
   - type: Rotatable
   - type: StationAiWhitelist
   - type: InteractionOutline
+  - type: InteractionVerbs
+    allowedVerbs:
+    - KnockOn
   - type: Sprite
     snapCardinals: true
     sprite: Structures/Doors/Airlocks/highsec/highsec.rsi

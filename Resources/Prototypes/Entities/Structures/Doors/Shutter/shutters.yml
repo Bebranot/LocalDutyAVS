@@ -12,6 +12,9 @@
     - Anchorable
   - type: Rotatable
   - type: StationAiWhitelist
+  - type: InteractionVerbs
+    allowedVerbs:
+    - KnockOn
   - type: Sprite
     sprite: Structures/Doors/Shutters/shutters.rsi
     drawdepth: BlastDoors

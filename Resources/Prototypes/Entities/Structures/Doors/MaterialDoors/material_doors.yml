@@ -10,6 +10,9 @@
     - Anchorable
   - type: Rotatable
   - type: InteractionOutline
+  - type: InteractionVerbs
+    allowedVerbs:
+    - KnockOn
   - type: Sprite
     sprite: Structures/Doors/MineralDoors/metal_door.rsi
     layers:
