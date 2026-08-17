@@ -128,6 +128,7 @@ public sealed class DynamicAmbientMusicSystem : EntitySystem
         base.Shutdown();
         UnsubscribeConfig();
         StopCurrent(immediate: true);
+        StopCritStreams();
         DeleteCritReverbChain();
         _critDuck = 0f;
         UpdateMasterGain(force: true);
@@ -186,7 +187,12 @@ public sealed class DynamicAmbientMusicSystem : EntitySystem
         _lastMobState = MobState.Alive;
         _critPlaying = false;
         _critCrossfadeStarted = false;
-        _critStreamNext = null;
+        if (_critStreamNext != null)
+        {
+            ClearCritReverb(_critStreamNext);
+            _audio.Stop(_critStreamNext);
+            _critStreamNext = null;
+        }
         _critDuck = 0f;
         _currentLevel = null;
         if (_critEnterStream != null)
