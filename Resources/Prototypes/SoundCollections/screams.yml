@@ -21,6 +21,13 @@
     - /Audio/_Duty/Effects/Scream/scream (8).ogg
     - /Audio/_Duty/Effects/Scream/scream (9).ogg
     #endddd
+    # _Duty start: крики боли при получении урона (HealthPhrasesSystem.OnDamageDealt)
+    - /Audio/_Duty/Effects/Scream/male_scream_2.ogg
+    - /Audio/_Duty/Effects/Scream/male_scream_3.ogg
+    - /Audio/_Duty/Effects/Scream/male_scream_4.ogg
+    - /Audio/_Duty/Effects/Scream/male_scream_5.ogg
+    - /Audio/_Duty/Effects/Scream/male_scream_6.ogg
+    # _Duty end
 
 - type: soundCollection
   id: FemaleScreams
@@ -34,6 +41,13 @@
     - /Audio/ADT/Voice/Human/scream_f1.ogg
     - /Audio/ADT/Voice/Human/scream_f2.ogg
     # ADT End
+    # _Duty start: крики боли при получении урона (HealthPhrasesSystem.OnDamageDealt)
+    - /Audio/_Duty/Effects/Scream/female_scream_1.ogg
+    - /Audio/_Duty/Effects/Scream/female_scream_2.ogg
+    - /Audio/_Duty/Effects/Scream/female_scream_3.ogg
+    - /Audio/_Duty/Effects/Scream/female_scream_4.ogg
+    - /Audio/_Duty/Effects/Scream/female_scream_5.ogg
+    # _Duty end
 
 - type: soundCollection
   id: ZombieScreams

@@ -14,6 +14,8 @@ using Content.Shared.Mobs.Components;
 using Content.Shared.Mobs;
 using Content.Shared.Popups;
 using Robust.Server.Player;
+using Robust.Shared.Audio;
+using Robust.Shared.Audio.Systems;
 using Robust.Shared.Configuration;
 using Robust.Shared.Console;
 using Robust.Shared.Random;
@@ -31,6 +33,7 @@ public sealed class HealthPhrasesSystem : EntitySystem
     [Dependency] private readonly IConsoleHost _console = default!;
     [Dependency] private readonly IPlayerManager _playerManager = default!;
     [Dependency] private readonly DamageableSystem _damageable = default!;
+    [Dependency] private readonly SharedAudioSystem _audio = default!;
 
     private bool _enabled;
     private float _popupMin;
@@ -223,11 +226,33 @@ public sealed class HealthPhrasesSystem : EntitySystem
         ent.Comp.NextDamageScreamTime = now + TimeSpan.FromSeconds(_damageScreamCooldown);
 
         var raceKey = TryComp<HumanoidProfileComponent>(ent, out var humanoid) ? GetRaceKey(humanoid.Species.Id) : "general";
+        PlayDamageScreamSound(ent, humanoid?.Sex);
+
         var text = PickScreamPhrase(raceKey);
         if (text == null)
             return;
 
         _chat.SendDutyHealthScream(ent, text);
+    }
+
+    /// <summary>
+    /// Звук крика боли при получении урона (в дополнение к текстовой реплике выше) — гендерно
+    /// подобранная коллекция Male/FemaleScreams, независимо от того, найдётся ли текстовая фраза
+    /// для расы. Sex.Unsexed/отсутствие HumanoidProfileComponent — без звука (нет голоса).
+    /// </summary>
+    private void PlayDamageScreamSound(EntityUid uid, Sex? sex)
+    {
+        var collection = sex switch
+        {
+            Sex.Male => "MaleScreams",
+            Sex.Female => "FemaleScreams",
+            _ => null,
+        };
+
+        if (collection == null)
+            return;
+
+        _audio.PlayPvs(new SoundCollectionSpecifier(collection), uid);
     }
 
     /// <summary>Короткий крик боли ("АААА!" и расовые варианты) — не привязан к HpLevel.</summary>

@@ -126,10 +126,10 @@ public sealed class DutyCCVars
         CVarDef.Create("duty.health_phrases_damage_scream_threshold", 10f, CVar.ARCHIVE | CVar.REPLICATED);
 
     /// <summary>
-    /// Шанс крика при получении урона выше порога (0-1). 1/6 — по ощущениям в игре самое то.
+    /// Шанс крика при получении урона выше порога (0-1). 1/3 — по ощущениям в игре самое то.
     /// </summary>
     public static readonly CVarDef<float> HealthPhrasesDamageScreamChance =
-        CVarDef.Create("duty.health_phrases_damage_scream_chance", 1f / 6f, CVar.ARCHIVE | CVar.REPLICATED);
+        CVarDef.Create("duty.health_phrases_damage_scream_chance", 1f / 3f, CVar.ARCHIVE | CVar.REPLICATED);
 
     /// <summary>
     /// Кулдаун между криками боли от урона на одну сущность, секунды.
