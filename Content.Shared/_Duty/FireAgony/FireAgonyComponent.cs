@@ -74,18 +74,20 @@ public sealed partial class FireAgonyComponent : Component
     [DataField]
     public Vector2 SceneZoom = new(0.65f, 0.65f);
 
-    /// <summary>Буст громкости крика в дБ, чтобы он оставался слышен поверх приглушённого мастера.</summary>
+    /// <summary>Буст громкости крика в дБ, чтобы он оставался слышен поверх приглушённого мастера.
+    /// Понижено на 6дБ (~2 ступени) от изначальных 9 — крик был слишком пронзительным.</summary>
     [DataField]
-    public float ScreamVolumeDb = 9f;
+    public float ScreamVolumeDb = 3f;
 
     /// <summary>Звук криков агонии (коллекция из <c>Resources/Audio/_Duty/Effects/Agony</c>).</summary>
     [DataField]
     public SoundSpecifier ScreamSound = new SoundCollectionSpecifier("DutyFireAgonyScreams");
 
     /// <summary>Громкость позиционного крика для ОКРУЖАЮЩИХ (дБ). Их звук не приглушён даком,
-    /// поэтому без буста — в отличие от собственного крика игрока.</summary>
+    /// поэтому без буста — в отличие от собственного крика игрока. Понижено на 6дБ (~2 ступени)
+    /// от изначальных 0 — крик был слишком пронзительным.</summary>
     [DataField]
-    public float BystanderScreamVolumeDb;
+    public float BystanderScreamVolumeDb = -6f;
 
     // ── Серверная рантайм-служебка (не сетится) ─────────────────────────────
     /// <summary>Момент старта сцены (для <see cref="SafetyTimeout"/>).</summary>

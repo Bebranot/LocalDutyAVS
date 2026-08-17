@@ -4,6 +4,25 @@
   - /Audio/Announcements/RoundEnd/apc_destroyed.ogg
   - /Audio/Announcements/RoundEnd/disappointed.ogg
   - /Audio/Announcements/RoundEnd/notevenpaidforthis.ogg
+  - /Audio/_Duty/RoundEnd/lastmanstanding_ciu.ogg
+  - /Audio/_Duty/RoundEnd/lastmanstanding_clf.ogg
+  - /Audio/_Duty/RoundEnd/lastmanstanding_hazops.ogg
+  - /Audio/_Duty/RoundEnd/lastmanstanding_rmc.ogg
+  - /Audio/_Duty/RoundEnd/lastmanstanding_upp.ogg
+  - /Audio/_Duty/RoundEnd/lastmanstanding_uscm.ogg
+  - /Audio/_Duty/RoundEnd/lastmanstanding_wy.ogg
+  - /Audio/_Duty/RoundEnd/neutral_hopeful1.ogg
+  - /Audio/_Duty/RoundEnd/neutral_hopeful2.ogg
+  - /Audio/_Duty/RoundEnd/neutral_melancholy1.ogg
+  - /Audio/_Duty/RoundEnd/neutral_melancholy2.ogg
+  - /Audio/_Duty/RoundEnd/nuclear_detonation1.ogg
+  - /Audio/_Duty/RoundEnd/nuclear_detonation2.ogg
+  - /Audio/_Duty/RoundEnd/outstanding_marines.ogg
+  - /Audio/_Duty/RoundEnd/sad_loss1.ogg
+  - /Audio/_Duty/RoundEnd/sad_loss2.ogg
+  - /Audio/_Duty/RoundEnd/surrounded_by_assholes.ogg
+  - /Audio/_Duty/RoundEnd/winning_triumph1.ogg
+  - /Audio/_Duty/RoundEnd/winning_triumph2.ogg
 
 - type: soundCollection
   id: PowerOn

@@ -1,0 +1,23 @@
+- files:
+  - lastmanstanding_ciu.ogg
+  - lastmanstanding_clf.ogg
+  - lastmanstanding_hazops.ogg
+  - lastmanstanding_rmc.ogg
+  - lastmanstanding_upp.ogg
+  - lastmanstanding_uscm.ogg
+  - lastmanstanding_wy.ogg
+  - neutral_hopeful1.ogg
+  - neutral_hopeful2.ogg
+  - neutral_melancholy1.ogg
+  - neutral_melancholy2.ogg
+  - nuclear_detonation1.ogg
+  - nuclear_detonation2.ogg
+  - outstanding_marines.ogg
+  - sad_loss1.ogg
+  - sad_loss2.ogg
+  - surrounded_by_assholes.ogg
+  - winning_triumph1.ogg
+  - winning_triumph2.ogg
+  license: "unknown"
+  copyright: "Перенесено из RussianCM (Resources/Audio/_AU14/RoundEnd), исходный attributions.yml там отсутствовал — лицензия/источник каждого файла не установлены."
+  source: "https://github.com/RussianCM (локальная копия C:\\Repos\\RussianCM)"
