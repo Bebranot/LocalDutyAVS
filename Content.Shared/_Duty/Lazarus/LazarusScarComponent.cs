@@ -1,3 +1,4 @@
+using Content.Shared.FixedPoint;
 using Robust.Shared.GameStates;
 
 namespace Content.Shared._Duty.Lazarus;
@@ -11,4 +12,9 @@ namespace Content.Shared._Duty.Lazarus;
 [RegisterComponent, NetworkedComponent]
 public sealed partial class LazarusScarComponent : Component
 {
+    /// <summary>Порог крита ДО штрафа — нужен, чтобы вернуть его при снятии шрама смертью.</summary>
+    public FixedPoint2? OriginalCritThreshold;
+
+    /// <summary>Порог смерти ДО штрафа — нужен, чтобы вернуть его при снятии шрама смертью.</summary>
+    public FixedPoint2? OriginalDeadThreshold;
 }

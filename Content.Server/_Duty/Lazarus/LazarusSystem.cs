@@ -55,6 +55,7 @@ public sealed class LazarusSystem : EntitySystem
 
         SubscribeLocalEvent<PlayerSpawnCompleteEvent>(OnPlayerSpawn);
         SubscribeLocalEvent<RoundRestartCleanupEvent>(OnRoundRestart);
+        SubscribeLocalEvent<LazarusScarComponent, MobStateChangedEvent>(OnScarredMobStateChanged);
 
         _console.RegisterCommand("duty_lazarus_test",
             "Принудительно запустить эффект Лазаруса у игрока (в обход шанса, крита и кулдауна).",
@@ -314,7 +315,31 @@ public sealed class LazarusSystem : EntitySystem
         if (dead is { } deadValue)
             _mobThreshold.SetMobStateThreshold(uid, deadValue * fraction, MobState.Dead, thresholds);
 
-        EnsureComp<LazarusScarComponent>(uid);
+        var scar = EnsureComp<LazarusScarComponent>(uid);
+        scar.OriginalCritThreshold = crit;
+        scar.OriginalDeadThreshold = dead;
+    }
+
+    /// <summary>
+    /// "Снимается смертью" по доке LazarusScarComponent — но ничего этого не делало: персонажа
+    /// обычно поднимают тем же EntityUid (дефибриллятор), без настоящего респауна, поэтому штраф
+    /// на -10% HP оставался на весь раунд. Возвращаем пороги как только персонаж реально умер —
+    /// следующее воскрешение (тем же Лазарусом или дефибом) начинается уже без штрафа.
+    /// </summary>
+    private void OnScarredMobStateChanged(Entity<LazarusScarComponent> ent, ref MobStateChangedEvent args)
+    {
+        if (args.NewMobState != MobState.Dead)
+            return;
+
+        if (TryComp<MobThresholdsComponent>(ent, out var thresholds))
+        {
+            if (ent.Comp.OriginalCritThreshold is { } crit)
+                _mobThreshold.SetMobStateThreshold(ent, crit, MobState.Critical, thresholds);
+            if (ent.Comp.OriginalDeadThreshold is { } dead)
+                _mobThreshold.SetMobStateThreshold(ent, dead, MobState.Dead, thresholds);
+        }
+
+        RemCompDeferred<LazarusScarComponent>(ent);
     }
 
     // ── Консольная команда для теста ───────────────────────────────────────────
