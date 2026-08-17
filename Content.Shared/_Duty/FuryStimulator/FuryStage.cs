@@ -16,12 +16,12 @@ public enum FuryStage : byte
     /// <summary>Ввод. Баффов нет, дезориентация. По умолчанию 15 c.</summary>
     Intro = 1,
 
-    /// <summary>Разгон (между вводом и пиком). ⅓ баффов, без дебаффа огнестрела и без иммунитета к боли. 29 c.</summary>
+    /// <summary>Разгон (между вводом и пиком). ⅓ баффов, без дебаффа огнестрела и без иммунитета к боли. По умолчанию 35 c (<c>FuryStimulatorComponent.RampDuration</c>).</summary>
     RampUp = 2,
 
-    /// <summary>Пик. Полные баффы + дебафф огнестрела + неуязвимость к боли. 30 c.</summary>
+    /// <summary>Пик. Полные баффы + дебафф огнестрела + неуязвимость к боли. По умолчанию 35 c (<c>FuryStimulatorComponent.PeakDuration</c>).</summary>
     Peak = 3,
 
-    /// <summary>Спад. ½ пика (включая огнестрел и иммунитет к боли). 29 c.</summary>
+    /// <summary>Спад. ½ пика (включая огнестрел и иммунитет к боли). По умолчанию 24 c (<c>FuryStimulatorComponent.DeclineDuration</c>).</summary>
     Decline = 4,
 }
