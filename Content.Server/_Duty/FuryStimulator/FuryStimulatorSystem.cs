@@ -71,7 +71,7 @@ public sealed class FuryStimulatorSystem : SharedFuryStimulatorSystem
     {
         if (TryComp<FuryStimulatorComponent>(target, out var existing))
         {
-            Overdose((target, existing));
+            Overdose((target, existing), source);
             return;
         }
 
@@ -79,7 +79,7 @@ public sealed class FuryStimulatorSystem : SharedFuryStimulatorSystem
         StartPhase((target, comp), FuryStage.Intro);
     }
 
-    private void Overdose(Entity<FuryStimulatorComponent> ent)
+    private void Overdose(Entity<FuryStimulatorComponent> ent, EntityUid? source = null)
     {
         var uid = ent.Owner;
 
@@ -93,7 +93,10 @@ public sealed class FuryStimulatorSystem : SharedFuryStimulatorSystem
                 ent.Comp.OverdoseExplosionIntensity,
                 1f,
                 ent.Comp.OverdoseExplosionIntensity,
-                user: uid);
+                // Админ-лог взрыва пишет user как виновника. При принудительном уколе (второй
+                // дозой) source — это тот, кто колол, а не жертва; без него передоз от чужой
+                // руки в логе выглядит как самоубийство.
+                user: source ?? uid);
         }
 
         // Расчленение + мгновенная смерть. Удаление сущности вызовет ComponentShutdown → полная очистка.
