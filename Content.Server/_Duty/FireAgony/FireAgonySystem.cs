@@ -2,10 +2,12 @@ using System.Linq;
 using Content.Server.Atmos.EntitySystems;
 using Content.Server.Chat.Systems;
 using Content.Shared._Duty.FireAgony;
+using Content.Shared.Atmos;
 using Content.Shared.Atmos.Components;
 using Content.Shared.Chat;
 using Content.Shared.Hands.Components;
 using Content.Shared.Hands.EntitySystems;
+using Content.Shared.Inventory;
 using Content.Shared.Mobs;
 using Content.Shared.Mobs.Components;
 using Content.Shared.Mobs.Systems;
@@ -42,8 +44,10 @@ public sealed class FireAgonySystem : EntitySystem
     [Dependency] private readonly SharedAudioSystem _audio = default!;
     [Dependency] private readonly IRobustRandom _random = default!;
     [Dependency] private readonly IGameTiming _timing = default!;
+    [Dependency] private readonly InventorySystem _inventory = default!;
 
     private EntityQuery<FlammableComponent> _flammableQuery;
+    private EntityQuery<InventoryComponent> _inventoryQuery;
 
     /// <summary>Как часто крутится машина состояний (сек). Достаточно грубого шага под тик огня.</summary>
     private const float UpdateInterval = 1f;
@@ -66,6 +70,7 @@ public sealed class FireAgonySystem : EntitySystem
         base.Initialize();
 
         _flammableQuery = GetEntityQuery<FlammableComponent>();
+        _inventoryQuery = GetEntityQuery<InventoryComponent>();
         SubscribeLocalEvent<FireAgonyComponent, MobStateChangedEvent>(OnMobStateChanged);
         SubscribeLocalEvent<FireAgonyComponent, ComponentShutdown>(OnShutdown);
     }
@@ -103,6 +108,10 @@ public sealed class FireAgonySystem : EntitySystem
 
         // Не в крите/мёртвых (иначе паралич трупа) и не в рефрактере после прошлого обрыва.
         if (_mobState.IsIncapacitated(uid) || curTime < agony.NextAllowedStart)
+            return;
+
+        // Огнестойкий скафандр (атмос-техник, CE и т.п.) — сцена агонии не начинается вовсе.
+        if (GetFireProtection(uid) >= agony.FireProtectionBlockThreshold)
             return;
 
         agony.Active = true;
@@ -215,6 +224,18 @@ public sealed class FireAgonySystem : EntitySystem
         // Укорачиваем паралич, чтобы персонаж поднялся сам (autoStand по истечении стана).
         if (releaseParalyze)
             _stun.TryUpdateParalyzeDuration(uid, ParalyzeRelease);
+    }
+
+    /// <summary>Суммарная защита от огня надетой брони (0..1, 1 — полная защита). Тот же механизм,
+    /// которым <see cref="FlammableSystem"/> считает итоговый урон от огня — см. GetFireProtectionEvent.</summary>
+    private float GetFireProtection(EntityUid uid)
+    {
+        var ev = new GetFireProtectionEvent();
+        RaiseLocalEvent(uid, ref ev);
+        if (_inventoryQuery.TryComp(uid, out var inv))
+            _inventory.RelayEvent((uid, inv), ref ev);
+
+        return Math.Clamp(1f - ev.Multiplier, 0f, 1f);
     }
 
     /// <summary>Роняет предметы из ОБЕИХ рук и кидает каждый в случайную сторону на 1.0–1.5 тайла.</summary>

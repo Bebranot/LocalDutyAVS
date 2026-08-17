@@ -29,6 +29,12 @@ public sealed partial class FireAgonyComponent : Component
     [DataField]
     public float EnterThreshold = 3f;
 
+    /// <summary>Если суммарная защита от огня надетой брони (0..1, см. <c>GetFireProtectionEvent</c>)
+    /// не меньше этого порога — сцена агонии не начинается вовсе, сколько бы ни горел персонаж.
+    /// Скафандр атмос-техника даёт 0.8, скафандр CE/старшего инженера — 1.0.</summary>
+    [DataField]
+    public float FireProtectionBlockThreshold = 0.75f;
+
     /// <summary>Минимальная длительность сцены — чтобы кратковременный всплеск firestacks не давал
     /// «мигнул и потух»: раньше этого времени выход по потуханию не срабатывает.</summary>
     [DataField]

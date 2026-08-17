@@ -431,7 +431,11 @@ public sealed class DynamicAmbientMusicSystem : EntitySystem
 
     private void UpdateMasterGain(bool force = false)
     {
-        var baseGain = _config.GetCVar(CCVars.AudioMasterVolume) * ContentAudioSystem.MasterVolumeMultiplier;
+        // _Duty: cvar уже хранит финальный (после ×Scale слайдера) gain — см. OptionSliderFloatCVar.Value
+        // и AudioTab.OnMasterVolumeSliderChanged. Повторное умножение на MasterVolumeMultiplier тут было
+        // багом: раздувало мастер-гейн в 3 раза каждый раз, когда крит/агони-дак пересчитывался и пробивал
+        // эпсилон-кэш ниже — снаружи это выглядело как "звук стал громче настроенного после сцены агонии".
+        var baseGain = _config.GetCVar(CCVars.AudioMasterVolume);
         var duckGain = _config.GetCVar(DutyCCVars.CritAudioDuckGain);
         var gain = baseGain * float.Lerp(1f, duckGain, _critDuck) * float.Lerp(1f, AgonyDuckGain, _agonyDuck);
 
