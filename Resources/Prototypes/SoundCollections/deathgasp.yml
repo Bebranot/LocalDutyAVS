@@ -6,6 +6,15 @@
   - /Audio/Effects/Gasp/male_deathgasp_3.ogg
   - /Audio/Effects/Gasp/male_deathgasp_4.ogg
   - /Audio/Effects/Gasp/male_deathgasp_5.ogg
+  # _Duty start
+  - /Audio/_Duty/Effects/Gasp/malegasp1.ogg
+  - /Audio/_Duty/Effects/Gasp/malegasp2.ogg
+  - /Audio/_Duty/Effects/Gasp/malegasp3.ogg
+  - /Audio/_Duty/Effects/Gasp/malegasp4.ogg
+  - /Audio/_Duty/Effects/Gasp/malegasp5.ogg
+  - /Audio/_Duty/Effects/Gasp/malegasp6.ogg
+  - /Audio/_Duty/Effects/Gasp/malegasp7.ogg
+  # _Duty end
 
 - type: soundCollection
   id: FemaleDeathGasp
@@ -15,6 +24,13 @@
   - /Audio/Effects/Gasp/female_deathgasp_3.ogg
   - /Audio/Effects/Gasp/female_deathgasp_4.ogg
   - /Audio/Effects/Gasp/female_deathgasp_5.ogg
+  # _Duty start
+  - /Audio/_Duty/Effects/Gasp/femalegasp1.ogg
+  - /Audio/_Duty/Effects/Gasp/femalegasp2.ogg
+  - /Audio/_Duty/Effects/Gasp/femalegasp3.ogg
+  - /Audio/_Duty/Effects/Gasp/femalegasp4.ogg
+  - /Audio/_Duty/Effects/Gasp/femalegasp5.ogg
+  # _Duty end
 
 - type: soundCollection
   id: DeathGasp
