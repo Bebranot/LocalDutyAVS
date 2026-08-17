@@ -17,12 +17,17 @@ namespace Content.Shared._Duty.InteractionVerbs.Requirements;
 [Serializable, NetSerializable]
 public sealed partial class EntityWhitelistRequirement : InteractionRequirement
 {
-    [DataField] public EntityWhitelist Whitelist = new(), Blacklist = new();
+    // Nullable + IsWhitelistPassOrNull/IsWhitelistFailOrNull: незаполненное поле должно значить
+    // «без ограничения», а не «никогда не проходит». С не-nullable EntityWhitelist() и голым
+    // IsValid() пустой Whitelist (RequireAll по умолчанию false) давал IsValid == false всегда —
+    // верб с одним только blacklist (без whitelist) был бы невидим на любой цели.
+    [DataField] public EntityWhitelist? Whitelist;
+    [DataField] public EntityWhitelist? Blacklist;
 
     public override bool IsMet(InteractionArgs args, InteractionVerbPrototype proto, InteractionAction.VerbDependencies deps)
     {
-        return deps.WhitelistSystem.IsValid(Whitelist, args.Target) &&
-               !deps.WhitelistSystem.IsValid(Blacklist, args.Target);
+        return deps.WhitelistSystem.IsWhitelistPassOrNull(Whitelist, args.Target) &&
+               deps.WhitelistSystem.IsWhitelistFailOrNull(Blacklist, args.Target);
     }
 }
 
