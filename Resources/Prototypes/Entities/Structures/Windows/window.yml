@@ -25,6 +25,7 @@
   - type: InteractionVerbs
     allowedVerbs:
     - KnockOn
+    - LeanOn
   - type: Sprite
     drawdepth: WallTops
     sprite: Structures/Windows/window.rsi
@@ -147,6 +148,7 @@
   - type: InteractionVerbs
     allowedVerbs:
     - KnockOn
+    - LeanOn
   - type: MeleeSound
     soundGroups:
       Brute:

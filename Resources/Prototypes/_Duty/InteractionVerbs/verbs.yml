@@ -62,3 +62,141 @@
     sound: {path: /Audio/Effects/glass_knock.ogg}
   action:
     !type:NoOpAction
+
+# Пожать руку — требует согласия цели: тот же верб, кликнутый в ответ в течение 8 секунд.
+# См. Content.Shared/_Duty/InteractionVerbs/Actions/MutualConsentAction.cs.
+- type: Interaction
+  id: Handshake
+  parent: [BaseGlobal, BaseHands]
+  priority: 6
+  range: {max: 1}
+  hideByRequirement: true
+  requirement:
+    !type:MobStateRequirement
+    inverted: true
+  effectSuccess:
+    popup: Visible
+    sound: {path: /Audio/Effects/thudswoosh.ogg}
+  effectFailure:
+    popup: Visible # переиспользуется как "запрос отправлен/уже жду ответа" — не провал, см. Action
+  action:
+    !type:MutualConsentAction
+
+# Дать пять — та же механика согласия, что и Handshake.
+- type: Interaction
+  id: HighFive
+  parent: [BaseGlobal, BaseHands]
+  priority: 6
+  range: {max: 1}
+  hideByRequirement: true
+  requirement:
+    !type:MobStateRequirement
+    inverted: true
+  effectSuccess:
+    popup: Visible
+    sound: {path: /Audio/Effects/thudswoosh.ogg}
+  effectFailure:
+    popup: Visible
+  action:
+    !type:MutualConsentAction
+
+# Погладить по голове.
+- type: Interaction
+  id: Pat
+  parent: [BaseGlobal, BaseHands]
+  priority: 2
+  delay: 1.5
+  range: {max: 1}
+  hideByRequirement: true
+  requirement:
+    !type:MobStateRequirement
+    inverted: true
+  effectDelayed:
+    popup: ObviousDelayed
+  action:
+    !type:NoOpAction
+    # effectSuccess/effectFailure не переопределены — наследуются от BaseHands (Obvious/Fail,
+    # звук thudswoosh) — тот же звук, что и у Hug.
+
+# Плюнуть в лицо.
+- type: Interaction
+  id: Spit
+  parent: [BaseGlobal, BaseHands]
+  priority: 1
+  delay: 1.5
+  range: {max: 1}
+  icon: /Textures/ADT/Interface/Emotes/spit.png
+  hideByRequirement: true
+  requirement:
+    !type:MobStateRequirement
+    inverted: true
+  effectDelayed:
+    popup: ObviousDelayed
+  effectSuccess:
+    popup: Obvious
+    sound: {collection: HumanSpits}
+  action:
+    !type:NoOpAction
+
+# Пощёчина — чистый РП-эффект, без урона.
+- type: Interaction
+  id: Slap
+  parent: [BaseGlobal, BaseHands]
+  priority: 1
+  delay: 2
+  range: {max: 1}
+  hideByRequirement: true
+  requirement:
+    !type:MobStateRequirement
+    inverted: true
+  effectDelayed:
+    popup: ObviousDelayed
+  action:
+    !type:NoOpAction
+
+# Облокотиться о стойку/стол/стену/окно. Не global — доступен только там, где выдан явно
+# (см. InteractionVerbsComponent на TableBase/CounterBase/BaseWall/Window/WindowDirectional),
+# как и KnockOn.
+- type: Interaction
+  id: LeanOn
+  parent: BaseHands
+  priority: 15
+  delay: 3
+  effectDelayed:
+    popup: ObviousDelayed
+  action:
+    !type:NoOpAction
+
+# Пялиться на — мгновенный, дальнобойный, как LookAt/WaveAt.
+- type: Interaction
+  id: StareAt
+  parent: BaseGlobal
+  priority: 3
+  requiresCanInteract: false
+  contactInteraction: false
+  range: {max: 20}
+  predictOwnFeedback: true
+  hideByRequirement: true
+  requirement:
+    !type:MobStateRequirement
+    inverted: true
+  effectSuccess:
+    popup: Obvious
+  action:
+    !type:NoOpAction
+
+# Указать на цель — с подсветкой на 8 секунд, гаснущей в темноте (см. PointHighlightOutline,
+# HighlightTargetAction). Любая дистанция — range не задан (дефолт {min:0, max:+inf}).
+- type: Interaction
+  id: PointAt
+  parent: BaseGlobal
+  priority: 4
+  requiresCanInteract: false
+  contactInteraction: false
+  delay: 1
+  effectDelayed:
+    popup: ObviousDelayed
+  effectSuccess:
+    popup: Obvious
+  action:
+    !type:HighlightTargetAction

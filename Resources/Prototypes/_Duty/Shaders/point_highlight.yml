@@ -1,0 +1,14 @@
+# _Duty: обводка для верба "Указать" (PointAt) — переиспользует существующий outline.swsl
+# (тот же, что SelectionOutline/SelectionOutlineInrange в Resources/Prototypes/Shaders/outline.yml),
+# но с light_boost/light_gamma/light_whitepoint, подобранными так, чтобы обводка реально гасла в
+# темноте, а не просто тускнела. Цвет отличается от жёлто-зелёной/красной selection-обводки, чтобы
+# не путаться визуально с наведением мыши.
+- type: shader
+  id: PointHighlightOutline
+  kind: source
+  path: "/Textures/Shaders/outline.swsl"
+  params:
+    outline_color: "#FFDD33CC"
+    light_boost: 1
+    light_gamma: 1
+    light_whitepoint: 1

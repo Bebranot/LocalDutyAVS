@@ -6,6 +6,9 @@
   abstract: true
   components:
   - type: Animateable
+  - type: InteractionVerbs # _Duty: наследуется CounterBase (parent: TableBase) — покрывает и стойки
+    allowedVerbs:
+    - LeanOn
   - type: Damageable
     damageModifierSet: Metallic
   - type: Injurable

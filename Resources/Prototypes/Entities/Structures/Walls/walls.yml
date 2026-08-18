@@ -63,6 +63,9 @@
   id: BaseWall
   components:
   - type: Occluder # Breaks on diagonal walls
+  - type: InteractionVerbs # _Duty: облокотиться
+    allowedVerbs:
+    - LeanOn
 
 - type: entity
   abstract: true
