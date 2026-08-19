@@ -120,6 +120,10 @@ public sealed class GhostBarSystem : EntitySystem
         EnsureComp<GhostBarPlayerComponent>(mobUid);
         EnsureComp<MindShieldComponent>(mobUid);
         EnsureComp<AntagImmuneComponent>(mobUid);
+        // _Duty: GhostBarMapPrototype.Componentsadd был описан в комментарии как "компоненты,
+        // добавляемые при заходе в гостбар", но нигде не применялся — поле было полностью мёртвым.
+        if (GhostBarMap.Componentsadd.Count > 0)
+            EntityManager.AddComponents(mobUid, GhostBarMap.Componentsadd);
         if (GhostBarMap.Pacified)
             EnsureComp<PacifiedComponent>(mobUid);
         if (GhostBarMap.Ghosted != 1f)
