@@ -7,7 +7,6 @@ using Content.Shared.Mind;
 using Content.Shared.Popups;
 using Content.Shared.ADT.SS40k.Turrets;
 using Content.Shared.ADT.SS40k.Turrets.Components;
-using Content.Shared.Mind.Components;
 
 namespace Content.Shared.ADT.SS40k.Turrets.Systems;
 
@@ -57,16 +56,19 @@ public sealed class TurretControllerSystem : EntitySystem
             return;
         }
 
-        TryComp<MindContainerComponent>(args.Target, out var mindForTest);//check
-        if (mindForTest is null || !mindForTest.HasMind)
-            if (linkSource.LinkedPorts.Count != 0)
-            {
-                var target = linkSource.LinkedPorts.First().Key;
-                component.CurrentUser = args.User;
-                component.CurrentTurret = target;
-                RaiseLocalEvent(target, new GettingControlledEvent(args.User, uid));
-                _mindSystem.ControlMob(args.User, target);
-            }
+        if (linkSource.LinkedPorts.Count == 0)
+            return;
+
+        var target = linkSource.LinkedPorts.First().Key;
+
+        // не даём захватить турель, которая уже под контролем (у неё уже есть пилот)
+        if (TryComp<TurretControllableComponent>(target, out var turretControllable) && turretControllable.User is not null)
+            return;
+
+        component.CurrentUser = args.User;
+        component.CurrentTurret = target;
+        RaiseLocalEvent(target, new GettingControlledEvent(args.User, uid));
+        _mindSystem.ControlMob(args.User, target);
     }
 
     public void OnShutdown(EntityUid uid, TurretControllerComponent component, ComponentShutdown args)
