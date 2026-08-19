@@ -1,4 +1,5 @@
 using Content.Server.Popups;
+using Content.Shared.ADT.Wizard.Guardian;
 using Content.Shared.Actions;
 using Content.Shared.Damage.Systems;
 using Content.Shared.DoAfter;
@@ -65,6 +66,12 @@ namespace Content.Server.Guardian
         {
             var host = component.Host;
             component.Host = null;
+
+            if (TryComp(uid, out GuardianSharedComponent? guardianShared))
+            {
+                guardianShared.Host = default;
+                Dirty(uid, guardianShared);
+            }
 
             if (!TryComp(host, out GuardianHostComponent? hostComponent))
                 return;
@@ -239,6 +246,11 @@ namespace Content.Server.Guardian
             if (TryComp<GuardianComponent>(guardian, out var guardianComp))
             {
                 guardianComp.Host = args.Args.Target.Value;
+
+                var guardianShared = EnsureComp<GuardianSharedComponent>(guardian);
+                guardianShared.Host = args.Args.Target.Value;
+                Dirty(guardian, guardianShared);
+
                 _audio.PlayPvs(guardianComp.InjectSound, args.Args.Target.Value);
                 _popupSystem.PopupEntity(Loc.GetString("guardian-created"), args.Args.Target.Value, args.Args.Target.Value);
                 // Exhaust the activator

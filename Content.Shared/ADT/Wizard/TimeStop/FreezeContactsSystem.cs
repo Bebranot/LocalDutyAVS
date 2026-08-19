@@ -239,7 +239,10 @@ public sealed class FreezeContactsSystem : EntitySystem
 
         bool IsImmune(EntityUid entity)
         {
-            return false;
+            // Guardians (holoparasites/ifrits) are hard-light constructs, not physical matter,
+            // so TimeStop shouldn't be able to freeze them at all — as long as they actually
+            // have a host (i.e. the guardian link is set up).
+            return entity.Valid && !TerminatingOrDeleted(entity);
         }
     }
 
