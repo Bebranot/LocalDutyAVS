@@ -53,8 +53,11 @@ public sealed class DiscordAdminInfoSenderSystem : EntitySystem
         var sb = new StringBuilder();
         foreach (var admin in _adminMgr.ActiveAdmins)
         {
+            // _Duty: было `return` — при первом же null-элементе в ActiveAdmins прерывало
+            // ВЕСЬ метод (пропуская остальных админов и вообще не отправляя embed в Discord).
+            // Нужно пропустить только эту итерацию.
             if (admin == null)
-                return;
+                continue;
 
             var adminData = _adminMgr.GetAdminData(admin)!;
             DebugTools.AssertNotNull(adminData);
