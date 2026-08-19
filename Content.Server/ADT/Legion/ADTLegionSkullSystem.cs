@@ -86,7 +86,11 @@ public sealed class ADTLegionSkullSystem : EntitySystem
         tracker ??= EnsureComp<ADTLegionTrackingComponent>(target);
         tracker.EndTime = now + tracker.Duration;
 
-        if (tracked && (tracker.Skulls.Contains(ent.Owner) || tracker.Skulls.Count >= ent.Comp.SwarmThreshold))
+        // _Duty: было `tracker.Skulls.Contains(ent.Owner) || ...` — при ПОВТОРНОМ ударе того же
+        // черепа по той же цели он уже есть в Skulls (добавлен на первом ударе), так что Contains
+        // всегда true, и рой считался "готовым" после двух ударов ОДНОГО черепа — полностью в обход
+        // SwarmThreshold (порог числа РАЗНЫХ черепов). Оставляем только проверку по количеству.
+        if (tracked && tracker.Skulls.Count >= ent.Comp.SwarmThreshold)
             return true;
 
         tracker.Skulls.Add(ent.Owner);
