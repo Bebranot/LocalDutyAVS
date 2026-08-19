@@ -72,6 +72,7 @@ public sealed class SandevistanSystem : EntitySystem
                 { 2, () => _stamina.TakeStaminaDamage(uid, comp.StaminaDamage * frameTime)},
                 { 3, () => _damageable.TryChangeDamage(uid, comp.Damage * frameTime, ignoreResistances: true)},
                 { 4, () => _stun.TryKnockdown(uid, comp.StatusEffectTime, true)},
+                { 5, () => Disable(uid, comp)},
                 { 6, () => _damageable.TryChangeDamage(uid, comp.Damage * frameTime, ignoreResistances: true)},
             };
 
