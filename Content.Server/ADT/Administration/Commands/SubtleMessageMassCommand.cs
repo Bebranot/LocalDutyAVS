@@ -104,7 +104,16 @@ public sealed class SubtleMessageMassCommand : LocalizedEntityCommands
                 continue;
             }
 
-            var targetSession = _playerManager.GetSessionById(located.UserId);
+            // _Duty: было `GetSessionById` — бросает KeyNotFoundException, если игрок
+            // сейчас не в сети (located резолвится и по БД, не только по активным
+            // сессиям). Одно офлайн-имя в списке получателей ронял необработанным
+            // исключением всю команду, включая ещё не обработанных получателей.
+            if (!_playerManager.TryGetSessionById(located.UserId, out var targetSession))
+            {
+                shell.WriteError(Loc.GetString("massmsg-player-unable"));
+                continue;
+            }
+
             _prayerSystem.SendSubtleMessage(targetSession, player, message, popupMessage);
         }
     }
