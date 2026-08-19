@@ -25,14 +25,18 @@ public sealed class VulpizatorSystem : EntitySystem
             {
                 return;
             }
-            if (HasComp<MetaDataComponent>(uid))
-            {
-                _antag.SendBriefing(uid, Loc.GetString("vulpa-role-greeting"), Color.Red, null);
-                EnsureComp<RoleBriefingComponent>(uid);
-            }
-            else if (HasComp<MindShieldComponent>(uid))
+            // _Duty: было в обратном порядке — MetaDataComponent есть практически у ЛЮБОЙ
+            // сущности, так что первая ветка всегда срабатывала и специфичная проверка
+            // MindShieldComponent (предупреждение про майндщит) была недостижима.
+            // Специфичная проверка должна идти первой.
+            if (HasComp<MindShieldComponent>(uid))
             {
                 _antag.SendBriefing(uid, Loc.GetString("vulpa-role-mindshild"), Color.Red, null);
+                EnsureComp<RoleBriefingComponent>(uid);
+            }
+            else if (HasComp<MetaDataComponent>(uid))
+            {
+                _antag.SendBriefing(uid, Loc.GetString("vulpa-role-greeting"), Color.Red, null);
                 EnsureComp<RoleBriefingComponent>(uid);
             }
         }
