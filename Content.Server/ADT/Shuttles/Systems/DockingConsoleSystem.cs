@@ -104,7 +104,11 @@ public sealed class DockingConsoleSystem : SharedDockingConsoleSystem
         if (ent.Comp.Shuttle is not { } shuttle || !TryComp<DockingShuttleComponent>(shuttle, out var docking))
             return;
 
-        if (args.Index < 0 || args.Index > docking.Destinations.Count)
+        // _Duty: было `> docking.Destinations.Count` — при `args.Index == Count`
+        // (на 1 больше последнего валидного индекса) проверка пропускала запрос,
+        // и следующая строка `docking.Destinations[args.Index]` падала с
+        // IndexOutOfRangeException.
+        if (args.Index < 0 || args.Index >= docking.Destinations.Count)
             return;
 
         var dest = docking.Destinations[args.Index];
