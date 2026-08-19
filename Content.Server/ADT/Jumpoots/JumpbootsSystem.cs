@@ -14,8 +14,6 @@ using Robust.Shared.Audio;
 using Content.Server.Weapons.Ranged.Systems;
 using Robust.Server.GameObjects;
 using Content.Shared.Throwing;
-using Content.Shared.Inventory.Events;
-using Content.Server.Actions;
 using Content.Shared.Buckle.Components;
 
 namespace Content.Server.Clothing.EntitySystems;
@@ -39,32 +37,14 @@ public sealed partial class JumpbootsSystem : SharedJumpbootsSystem
     [Dependency] private readonly PhysicsSystem _physics = default!;
     [Dependency] private readonly GunSystem _gunSystem = default!;
     [Dependency] private readonly ThrowingSystem _throwing = default!;
-    [Dependency] private readonly ActionsSystem _action = default!;
 
     public override void Initialize()
     {
         base.Initialize();
 
-        SubscribeLocalEvent<JumpbootsComponent, GotEquippedEvent>(OnGotEquipped);
-        SubscribeLocalEvent<JumpbootsComponent, GotUnequippedEvent>(OnGotUnequipped);
-
         SubscribeLocalEvent<JumpbootsComponent, JumpbootsActionEvent>(OnJump);
     }
 
-    private void OnGotUnequipped(EntityUid uid, JumpbootsComponent component, GotUnequippedEvent args)
-    {
-        if (args.Slot == "shoes")
-        {
-            _action.AddAction(uid, ref component.ActionEntity, component.Action);
-        }
-    }
-
-    private void OnGotEquipped(EntityUid uid, JumpbootsComponent component, GotEquippedEvent args)
-    {
-        if (args.Slot == "shoes")
-        {
-        }
-    }
     private void OnJump(EntityUid uid, JumpbootsComponent component, JumpbootsActionEvent args)
     {
         if (args.Handled)
