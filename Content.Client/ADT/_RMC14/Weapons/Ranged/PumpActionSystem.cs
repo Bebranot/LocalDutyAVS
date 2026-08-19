@@ -14,9 +14,12 @@ public sealed class PumpActionSystem : SharedPumpActionSystem
 
     protected override void OnExamined(Entity<PumpActionComponent> ent, ref ExaminedEvent args)
     {
-        if (!_input.TryGetKeyBinding(CMKeyFunctions.CMUniqueAction, out var bind))
-            return;
-
+        // _Duty: было `if (!_input.TryGetKeyBinding(...)) return;` — Examine ("cm-gun-pump-examine")
+        // статичный текст без параметра {$key} (в отличие от Popup/PopupKey ниже), результат
+        // TryGetKeyBinding нигде не используется. Из-за этого у игрока БЕЗ назначенной клавиши
+        // CMUniqueAction (как раз тому, кому эта подсказка нужнее всего) examine вообще не
+        // показывал текст про взвод помпового оружия — базовая (серверная) версия его показывает
+        // всегда. Убрали бессмысленный ранний return.
         args.PushMarkup(Loc.GetString(ent.Comp.Examine), 1);
     }
 
