@@ -256,6 +256,17 @@ public abstract class SharedPickupHumansSystem : EntitySystem
         RemComp<TakenHumansComponent>(target);
         RemComp<KnockedDownComponent>(target);
 
+        // _Duty: PickupHumansComponent живёт на цели постоянно (не удаляется при опускании),
+        // а её поля User/Target выставляются в Pickup() и раньше никогда не сбрасывались обратно.
+        // Из-за этого OnTeleportShadekin видел "comp.User != EntityUid.Invalid" ещё долго после
+        // того, как цель уже опущена, и повторно дёргал DropFromHands с чужим/устаревшим User —
+        // принудительно ставил цель в Stand и лез в чужие руки при обычной телепортации шейдкина.
+        if (TryComp<PickupHumansComponent>(target, out var targetPickupComp))
+        {
+            targetPickupComp.User = default;
+            targetPickupComp.Target = default;
+        }
+
 
         var meleeWeaponCompUid = EnsureComp<MeleeWeaponComponent>(uid);
         var meleeWeaponCompTarget = EnsureComp<MeleeWeaponComponent>(target);
