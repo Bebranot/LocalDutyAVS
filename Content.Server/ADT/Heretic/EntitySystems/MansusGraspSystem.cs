@@ -283,7 +283,12 @@ public sealed partial class MansusGraspSystem : EntitySystem
 
     private void SpendInfusionCharges(Entity<MansusInfusedComponent> ent, float charges = -1)
     {
-        ent.Comp.AvailableCharges -= 1;
+        // _Duty: параметр `charges` принимался, но нигде не использовался — метод всегда
+        // списывал ровно 1 заряд. OnInfusedInteract вызывает
+        // `SpendInfusionCharges(ent, charges: ent.Comp.MaxCharges)` с явным комментарием
+        // "spend all", ожидая полного списания зарядов при контактном ударе по нагрудному
+        // предмету, а по факту списывался только 1 заряд из MaxCharges.
+        ent.Comp.AvailableCharges -= charges > 0 ? charges : 1;
         if (ent.Comp.AvailableCharges <= 0)
             RemComp<MansusInfusedComponent>(ent);
     }
