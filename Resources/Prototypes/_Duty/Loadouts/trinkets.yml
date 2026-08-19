@@ -1,0 +1,9 @@
+# SPDX-FileCopyrightText: 2026 LocalDuty
+# SPDX-License-Identifier: MIT
+
+# _Duty: плеер "Duty" как некритичный лоадаут (см. loadout-group Trinkets)
+- type: loadout
+  id: DutyPocketPlayer
+  storage:
+    back:
+    - DutyPocketPlayer

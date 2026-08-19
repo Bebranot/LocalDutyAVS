@@ -64,6 +64,9 @@
   - OffsetCane
   - OffsetCaneWood
   # ADT-Tweak-End
+  # _Duty start
+  - DutyPocketPlayer
+  # _Duty end
 
 - type: loadoutGroup
   id: Glasses
