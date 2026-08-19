@@ -2,6 +2,7 @@ using Content.Shared.Movement.Components;
 using Content.Shared.Movement.Systems;
 using Content.Shared.Stunnable;
 using Robust.Shared.Physics;
+using Timer = Robust.Shared.Timing.Timer;
 
 /*
     ╔════════════════════════════════════╗
@@ -26,18 +27,29 @@ public sealed class SlippingWakeSystem : EntitySystem
         SubscribeLocalEvent<SpeedBoostWakeComponent, PhysicsWakeEvent>(MobWakeCheck);
     }
 
-    public async void MobWakeCheck(EntityUid uid, SpeedBoostWakeComponent comp, PhysicsWakeEvent args)
+    public void MobWakeCheck(EntityUid uid, SpeedBoostWakeComponent comp, PhysicsWakeEvent args)
     {
         var movementSpeed = EnsureComp<MovementSpeedModifierComponent>(uid);
 
-        var boostedSprintSpeed = movementSpeed.BaseSprintSpeed * comp.SpeedModified;
-        var boostedWalkSpeed = movementSpeed.BaseWalkSpeed * comp.SpeedModified;
+        var baseWalkSpeed = movementSpeed.BaseWalkSpeed;
+        var baseSprintSpeed = movementSpeed.BaseSprintSpeed;
+        var boostedSprintSpeed = baseSprintSpeed * comp.SpeedModified;
+        var boostedWalkSpeed = baseWalkSpeed * comp.SpeedModified;
 
-        _movementSpeedModifierSystem?.ChangeBaseSpeed(uid, boostedWalkSpeed, boostedSprintSpeed, movementSpeed.Acceleration, movementSpeed);
+        _movementSpeedModifierSystem.ChangeBaseSpeed(uid, boostedWalkSpeed, boostedSprintSpeed, movementSpeed.Acceleration, movementSpeed);
 
         _stun.TryUpdateParalyzeDuration(uid, TimeSpan.FromSeconds(comp.ParalyzeTime));
 
-        _movementSpeedModifierSystem?.ChangeBaseSpeed(uid, movementSpeed.BaseWalkSpeed, movementSpeed.BaseSprintSpeed, movementSpeed.Acceleration, movementSpeed);
+        // _Duty: было — второй ChangeBaseSpeed вызывался СРАЗУ следующей строкой, синхронно,
+        // без единого await/задержки, так что буст скорости откатывался в тот же тик, что и
+        // применялся, и фактически никогда не действовал. Откат нужно отложить на ParalyzeTime.
+        Timer.Spawn(TimeSpan.FromSeconds(comp.ParalyzeTime), () =>
+        {
+            if (!Exists(uid) || !TryComp<MovementSpeedModifierComponent>(uid, out var current))
+                return;
+
+            _movementSpeedModifierSystem.ChangeBaseSpeed(uid, baseWalkSpeed, baseSprintSpeed, current.Acceleration, current);
+        });
     }
 
 }
