@@ -33,8 +33,12 @@ public sealed partial class ImmovableVoidRodSystem : EntitySystem
 
             if (rod.Accumulator > rod.Lifetime.TotalSeconds)
             {
+                // _Duty: было `return` — при истечении жизни ОДНОГО стержня выход из
+                // Update() прерывал обработку ВСЕХ остальных ещё активных стержней
+                // в этом тике (тайл-замена/аккумулятор не обновлялись для них). Нужен
+                // continue — пропустить только истёкшую сущность, а не весь цикл.
                 QueueDel(rod.Owner);
-                return;
+                continue;
             }
 
             if (!TryComp<MapGridComponent>(trans.GridUid, out var grid))

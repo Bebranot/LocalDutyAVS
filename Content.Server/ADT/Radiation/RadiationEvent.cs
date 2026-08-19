@@ -14,8 +14,9 @@ public sealed partial class RadiationEvent : EntitySystem
     /// <summary>
     /// Система ставит указанное кол-во радиации. После чего, после n-ного времени, начинает уменьшать радиационый фон на x рады, за y секунд.
     /// </summary>
-    public float TimeSinceStart = 0f;
-    public float TimeSinceLastDecay = 0f;
+    // _Duty: убраны неиспользуемые поля TimeSinceStart/TimeSinceLastDecay на самой системе —
+    // они дублировали одноимённые поля RadiationEventComponent (которые и правда используются
+    // ниже в Update через `comp.`), а на систему нигде не читались/не писались.
 
     public override void Update(float frameTime)
     {
