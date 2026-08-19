@@ -68,13 +68,21 @@ public sealed class PlantAnalyzerSystem : EntitySystem
     private void OnDoAfter(Entity<PlantAnalyzerComponent> ent, ref PlantAnalyzerDoAfterEvent args)
     {
         ent.Comp.DoAfter = null;
+
+        // _Duty: было наоборот — заряд для AdvancedScan списывался ДО проверки args.Cancelled,
+        // так что отменённое сканирование (игрок сдвинулся/получил урон) всё равно тратило заряд
+        // батареи анализатора. Сначала проверяем, что DoAfter реально завершился успешно.
+        if (args.Handled || args.Cancelled || args.Args.Target == null)
+            return;
+
         // Double charge use for advanced scan.
         if (ent.Comp.Settings.AdvancedScan)
         {
             if (!_cell.TryUseActivatableCharge(ent.Owner, user: args.User))
                 return;
         }
-        if (args.Handled || args.Cancelled || args.Args.Target == null || !_cell.TryUseActivatableCharge(ent.Owner, user: args.User))
+
+        if (!_cell.TryUseActivatableCharge(ent.Owner, user: args.User))
             return;
 
         _audio.PlayPvs(ent.Comp.ScanningEndSound, ent);
