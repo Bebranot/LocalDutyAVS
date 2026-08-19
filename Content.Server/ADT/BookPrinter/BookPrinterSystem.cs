@@ -147,11 +147,16 @@ namespace Content.Server.ADT.BookPrinter
             var bookContainer = _itemSlotsSystem.GetItemOrNull(bookPrinter, "bookSlot");
             var cartridgeContainer = _itemSlotsSystem.GetItemOrNull(bookPrinter, "cartridgeSlot");
 
+            // _Duty: было `cartridgeComp.FullCharge > CartridgeUsage` — это проверка ЁМКОСТИ картриджа,
+            // а не текущего заряда, и почти всегда true. Из-за этого при CurrentCharge меньше
+            // CartridgeUsage (но > 0) IsRoutineAllowed всё равно возвращал true: печать "проходила"
+            // (без всплывающего "empty"), а DecreaseCartridgeCharge внутри себя тихо не списывал заряд
+            // (у неё свой корректный guard) — картридж застревал в этом состоянии и печатал бесплатно
+            // и бесконечно. Нужно сравнивать текущий заряд с расходом.
             return bookContainer is not null &&
                 cartridgeContainer is not null &&
                 TryComp<BookPrinterCartridgeComponent>(cartridgeContainer, out var cartridgeComp) &&
-                cartridgeComp.CurrentCharge > 0 &&
-                cartridgeComp.FullCharge > bookPrinter.Comp.CartridgeUsage;
+                cartridgeComp.CurrentCharge >= bookPrinter.Comp.CartridgeUsage;
         }
 
         private void DecreaseCartridgeCharge(Entity<BookPrinterComponent> bookPrinter)

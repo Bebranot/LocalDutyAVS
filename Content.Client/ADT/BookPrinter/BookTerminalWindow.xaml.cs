@@ -266,7 +266,9 @@ namespace Content.Client.ADT.BookPrinter
                 ContainerInfo.Children.Add(noCartridgeLabel);
                 return;
             }
-            else if (state.CartridgeCharge <= -10.0f)
+            // _Duty: было `<= -10.0f` — CartridgeCharge это доля 0..1 (CurrentCharge/FullCharge),
+            // отрицательным никогда не бывает, так что ветка "картридж пуст" была недостижима.
+            else if (state.CartridgeCharge <= 0.0f)
             {
                 var emptyCartridgeLabel = new Label
                 {
