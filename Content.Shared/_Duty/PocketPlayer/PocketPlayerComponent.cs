@@ -21,6 +21,27 @@ public sealed partial class PocketPlayerComponent : Component
     /// </summary>
     [DataField, AutoNetworkedField]
     public EntityUid? AudioStream;
+
+    /// <summary>
+    /// Громкость плеера в единицах слайдера (см. <see cref="MinSlider"/>/<see cref="MaxSlider"/>).
+    /// Сетевое поле — сервер авторитетно задаёт итоговую громкость аудиопотока
+    /// (<see cref="Content.Shared._Duty.PocketPlayer.SharedPocketPlayerSystem.MapToRange"/>),
+    /// поэтому громкость слышат одинаково все игроки рядом, а не только владелец плеера.
+    /// </summary>
+    [DataField, AutoNetworkedField]
+    public float Volume = 40f;
+
+    [DataField]
+    public float MinVolume = -20f;
+
+    [DataField]
+    public float MaxVolume = 0f;
+
+    [DataField]
+    public float MinSlider = 0f;
+
+    [DataField]
+    public float MaxSlider = 100f;
 }
 
 // ── Сообщения UI ─────────────────────────────────────────────
@@ -44,6 +65,12 @@ public sealed class PocketPlayerSelectTrackMessage(ProtoId<DutyTrackPrototype> t
 public sealed class PocketPlayerSetTimeMessage(float time) : BoundUserInterfaceMessage
 {
     public float Time { get; } = time;
+}
+
+[Serializable, NetSerializable]
+public sealed class PocketPlayerSetVolumeMessage(float volume) : BoundUserInterfaceMessage
+{
+    public float Volume { get; } = volume;
 }
 
 // ── UI ключ ───────────────────────────────────────────────────

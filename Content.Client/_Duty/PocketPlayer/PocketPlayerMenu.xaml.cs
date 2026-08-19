@@ -23,11 +23,7 @@ public sealed partial class PocketPlayerMenu : FancyWindow
     private bool _playState;
     private float _lockTimer;
     private EntityUid? _audio;
-
-    // Громкость: 0..100 → -20..0 dB. Дефолт 100 = 0 dB (без изменений).
-    private const float VolumeMin = -20f;
-    private const float VolumeMax = 0f;
-    private float _currentVolume = 100f;
+    private float _lastVolume = -1f;
 
     private readonly Dictionary<string, (Button Header, BoxContainer Tracks, bool Expanded)> _categories = new();
 
@@ -35,6 +31,11 @@ public sealed partial class PocketPlayerMenu : FancyWindow
     public event Action? OnStopPressed;
     public event Action<ProtoId<DutyTrackPrototype>>? OnTrackSelected;
     public event Action<float>? SetTime;
+
+    /// <summary>
+    /// Громкость (значение слайдера 0..100) отпущена — сервер авторитетно применит и разошлёт её всем.
+    /// </summary>
+    public event Action<float>? OnVolumeChanged;
 
     public PocketPlayerMenu()
     {
@@ -46,9 +47,7 @@ public sealed partial class PocketPlayerMenu : FancyWindow
         StopButton.OnPressed += _ => OnStopPressed?.Invoke();
         PlaybackSlider.OnReleased += OnSliderReleased;
 
-        // Слайдер громкости
-        VolumeSlider.SetValueWithoutEvent(_currentVolume);
-        VolumeSlider.OnValueChanged += OnVolumeChanged;  // Range.OnValueChanged: Action<Range>
+        VolumeSlider.OnReleased += OnVolumeSliderReleased;
 
         SetPlayPauseButton(false, force: true);
     }
@@ -126,8 +125,6 @@ public sealed partial class PocketPlayerMenu : FancyWindow
     public void SetAudioStream(EntityUid? audio)
     {
         _audio = audio;
-        // Применяем текущую громкость сразу при смене потока
-        ApplyVolume();
     }
 
     public void SetSelectedTrack(string name, float length)
@@ -152,25 +149,20 @@ public sealed partial class PocketPlayerMenu : FancyWindow
         _lockTimer = 0.5f;
     }
 
-    private void OnVolumeChanged(Robust.Client.UserInterface.Controls.Range range)
+    private void OnVolumeSliderReleased(Slider slider)
     {
-        _currentVolume = range.Value;
-        VolumeLabel.Text = $"{(int) _currentVolume}%";
-        ApplyVolume();
+        OnVolumeChanged?.Invoke(slider.Value);
+        _lockTimer = 0.5f;
     }
 
     /// <summary>
-    /// Применяем громкость напрямую к аудиопотоку на клиенте.
-    /// 100% → 0 dB, 0% → -20 dB — не мут, но очень тихо.
+    /// Ставит позицию слайдера громкости, не поднимая событие изменения (вызывается при синхронизации с сервером).
     /// </summary>
-    private void ApplyVolume()
+    public void SetVolumeSlider(float volume)
     {
-        if (_audio == null || !_entManager.TryGetComponent(_audio, out AudioComponent? audio))
-            return;
-
-        // Линейная интерполяция 0..100 → VolumeMin..вVolumeMax (dB)
-        var db = VolumeMin + (_currentVolume / 100f) * (VolumeMax - VolumeMin);
-        audio.Volume = db;
+        VolumeSlider.SetValueWithoutEvent(volume);
+        _lastVolume = volume;
+        VolumeLabel.Text = $"{(int) volume}%";
     }
 
     protected override void FrameUpdate(FrameEventArgs args)
@@ -181,6 +173,13 @@ public sealed partial class PocketPlayerMenu : FancyWindow
             _lockTimer -= args.DeltaSeconds;
 
         PlaybackSlider.Disabled = _lockTimer > 0f;
+        VolumeSlider.Disabled = _lockTimer > 0f;
+
+        if (Math.Abs(VolumeSlider.Value - _lastVolume) > 0.01f)
+        {
+            _lastVolume = VolumeSlider.Value;
+            VolumeLabel.Text = $"{(int) VolumeSlider.Value}%";
+        }
 
         if (_entManager.TryGetComponent(_audio, out AudioComponent? audio))
         {
@@ -191,9 +190,6 @@ public sealed partial class PocketPlayerMenu : FancyWindow
                 PlaybackSlider.SetValueWithoutEvent(audio.PlaybackPosition);
 
             SetPlayPauseButton(_audioSystem.IsPlaying(_audio, audio));
-
-            // Удерживаем громкость после возможной перезаписи сервером
-            ApplyVolume();
         }
         else
         {

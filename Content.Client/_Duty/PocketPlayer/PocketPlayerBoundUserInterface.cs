@@ -46,8 +46,25 @@ public sealed class PocketPlayerBoundUserInterface : BoundUserInterface
         _menu.SetTime += time =>
             SendMessage(new PocketPlayerSetTimeMessage(time));
 
+        _menu.OnVolumeChanged += SetVolume;
+
         PopulateTracks();
         Reload();
+    }
+
+    /// <summary>
+    /// Предсказываем громкость локально (чтобы не ждать round-trip до сервера),
+    /// затем отправляем авторитетное значение серверу — он разошлёт его всем игрокам рядом.
+    /// </summary>
+    private void SetVolume(float volume)
+    {
+        if (EntMan.TryGetComponent(Owner, out PocketPlayerComponent? player) &&
+            EntMan.TryGetComponent(player.AudioStream, out AudioComponent? audioComp))
+        {
+            audioComp.Volume = SharedPocketPlayerSystem.MapToRange(volume, player.MinSlider, player.MaxSlider, player.MinVolume, player.MaxVolume);
+        }
+
+        SendMessage(new PocketPlayerSetVolumeMessage(volume));
     }
 
     public void PopulateTracks()
@@ -61,6 +78,7 @@ public sealed class PocketPlayerBoundUserInterface : BoundUserInterface
             return;
 
         _menu.SetAudioStream(player.AudioStream);
+        _menu.SetVolumeSlider(player.Volume);
 
         if (_protoManager.TryIndex(player.SelectedTrackId, out var trackProto))
         {

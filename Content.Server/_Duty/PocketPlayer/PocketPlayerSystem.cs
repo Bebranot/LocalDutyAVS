@@ -15,7 +15,6 @@ public sealed class PocketPlayerSystem : SharedPocketPlayerSystem
     [Dependency] private readonly IPrototypeManager _protoManager = default!;
 
     private const float MaxDistance = 14f;
-    private const float BaseVolume = -12f;   // было -3f, снижено до -12f
     private const float RolloffFactor = 2.5f;
     private const float ReferenceDistance = 1.5f;
 
@@ -27,11 +26,30 @@ public sealed class PocketPlayerSystem : SharedPocketPlayerSystem
         SubscribeLocalEvent<PocketPlayerComponent, PocketPlayerPauseMessage>(OnPause);
         SubscribeLocalEvent<PocketPlayerComponent, PocketPlayerStopMessage>(OnStop);
         SubscribeLocalEvent<PocketPlayerComponent, PocketPlayerSetTimeMessage>(OnSetTime);
+        SubscribeLocalEvent<PocketPlayerComponent, PocketPlayerSetVolumeMessage>(OnSetVolume);
         SubscribeLocalEvent<PocketPlayerComponent, ComponentShutdown>(OnShutdown);
+    }
+
+    /// <summary>
+    /// Если аудиопоток уже удаляется (например, доиграл до конца сам), чистим ссылку,
+    /// чтобы не словить PVS-ошибку при обращении к умирающей сущности.
+    /// </summary>
+    private bool ClearIfTerminating(EntityUid uid, PocketPlayerComponent comp)
+    {
+        if (comp.AudioStream.HasValue && TerminatingOrDeleted(comp.AudioStream.Value))
+        {
+            comp.AudioStream = null;
+            Dirty(uid, comp);
+            return true;
+        }
+
+        return false;
     }
 
     private void OnTrackSelected(EntityUid uid, PocketPlayerComponent comp, PocketPlayerSelectTrackMessage args)
     {
+        ClearIfTerminating(uid, comp);
+
         if (Audio.IsPlaying(comp.AudioStream))
             return;
 
@@ -42,6 +60,9 @@ public sealed class PocketPlayerSystem : SharedPocketPlayerSystem
 
     private void OnPlay(EntityUid uid, PocketPlayerComponent comp, PocketPlayerPlayMessage args)
     {
+        if (ClearIfTerminating(uid, comp))
+            return;
+
         if (Exists(comp.AudioStream))
         {
             Audio.SetState(comp.AudioStream, AudioState.Playing);
@@ -56,7 +77,7 @@ public sealed class PocketPlayerSystem : SharedPocketPlayerSystem
 
             var audioParams = AudioParams.Default
                 .WithMaxDistance(MaxDistance)
-                .WithVolume(BaseVolume)
+                .WithVolume(MapToRange(comp.Volume, comp.MinSlider, comp.MaxSlider, comp.MinVolume, comp.MaxVolume))
                 .WithRolloffFactor(RolloffFactor)
                 .WithReferenceDistance(ReferenceDistance);
 
@@ -67,22 +88,48 @@ public sealed class PocketPlayerSystem : SharedPocketPlayerSystem
 
     private void OnPause(EntityUid uid, PocketPlayerComponent comp, PocketPlayerPauseMessage args)
     {
+        if (ClearIfTerminating(uid, comp))
+            return;
+
         Audio.SetState(comp.AudioStream, AudioState.Paused);
     }
 
     private void OnStop(EntityUid uid, PocketPlayerComponent comp, PocketPlayerStopMessage args)
     {
-        Audio.SetState(comp.AudioStream, AudioState.Stopped);
+        // Audio.SetState(..., Stopped) только тормозит поток, а не удаляет сущность —
+        // удаляем явно через Audio.Stop(), иначе аудио-сущность утекает навсегда.
+        comp.AudioStream = Audio.Stop(comp.AudioStream);
         Dirty(uid, comp);
     }
 
     private void OnSetTime(EntityUid uid, PocketPlayerComponent comp, PocketPlayerSetTimeMessage args)
     {
+        if (ClearIfTerminating(uid, comp))
+            return;
+
         if (TryComp(args.Actor, out ActorComponent? actor))
         {
             var offset = actor.PlayerSession.Channel.Ping * 1.5f / 1000f;
             Audio.SetPlaybackPosition(comp.AudioStream, args.Time + offset);
         }
+    }
+
+    /// <summary>
+    /// Громкость авторитетно хранится на сервере и применяется к сетевому AudioComponent,
+    /// поэтому изменение слышат все игроки рядом, а не только владелец плеера.
+    /// </summary>
+    private void OnSetVolume(EntityUid uid, PocketPlayerComponent comp, PocketPlayerSetVolumeMessage args)
+    {
+        if (ClearIfTerminating(uid, comp))
+            return;
+
+        comp.Volume = Math.Clamp(args.Volume, comp.MinSlider, comp.MaxSlider);
+        Dirty(uid, comp);
+
+        if (!comp.AudioStream.HasValue)
+            return;
+
+        Audio.SetVolume(comp.AudioStream, MapToRange(comp.Volume, comp.MinSlider, comp.MaxSlider, comp.MinVolume, comp.MaxVolume));
     }
 
     private void OnShutdown(EntityUid uid, PocketPlayerComponent comp, ComponentShutdown args)
