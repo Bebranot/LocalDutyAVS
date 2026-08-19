@@ -17,9 +17,6 @@ public sealed class GerasSystem : VisualizerSystem<GerasComponent>
         if (!AppearanceSystem.TryGetData(uid, GeraColor.Color, out Color color, args.Component))
             return;
 
-        foreach (var spriteLayer in args.Sprite.AllLayers)
-        {
-            sprite.Color = color;
-        }
+        sprite.Color = color;
     }
 }

@@ -17,8 +17,6 @@ public sealed class MesonVisionOverlay : Overlay
     [Dependency] private readonly IPlayerManager _player = default!;
     private readonly SharedTransformSystem _xformSystem;
     private readonly ContainerSystem _container;
-    private readonly EntityQuery<SpriteComponent> _spriteQuery;
-    private readonly EntityQuery<TransformComponent> _xformQuery;
     private readonly EntityQuery<TagComponent> _tagQuery;
 
     public override OverlaySpace Space => OverlaySpace.WorldSpace;
@@ -32,8 +30,6 @@ public sealed class MesonVisionOverlay : Overlay
         IoCManager.InjectDependencies(this);
         _container = _entity.System<ContainerSystem>();
         _xformSystem = _entity.System<SharedTransformSystem>();
-        _spriteQuery = _entity.GetEntityQuery<SpriteComponent>();
-        _xformQuery = _entity.GetEntityQuery<TransformComponent>();
         _tagQuery = _entity.GetEntityQuery<TagComponent>();
     }
 
@@ -52,11 +48,10 @@ public sealed class MesonVisionOverlay : Overlay
         var worldBounds = args.WorldBounds;
         var worldHandle = args.WorldHandle;
 
-        foreach (EntityUid entity in _entity.GetEntities())
+        var query = _entity.EntityQueryEnumerator<SpriteComponent, TransformComponent>();
+        while (query.MoveNext(out var entity, out var sprite, out var xform))
         {
-            if (!_spriteQuery.TryGetComponent(entity, out var sprite) ||
-                !_xformQuery.TryGetComponent(entity, out var xform) ||
-                xform.MapID != mapId ||
+            if (xform.MapID != mapId ||
                 _container.TryGetOuterContainer(entity, xform, out _))
                 continue;
 

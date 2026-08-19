@@ -84,5 +84,12 @@ public sealed partial class CrewMedalWindow : DefaultWindow
         _maxCharacters = number;
         if (ReasonLineEdit.Text.Length > _maxCharacters)
             ReasonLineEdit.Text = ReasonLineEdit.Text[.._maxCharacters];
+
+        // Счётчик символов инициализируется дефолтным лимитом до первого Reload() —
+        // обновляем его здесь же, иначе он показывает старое значение до первого ввода.
+        CharacterLabel.Text = Loc.GetString(
+            "crew-medal-ui-character-limit",
+            ("number", ReasonLineEdit.Text.Length),
+            ("max", _maxCharacters));
     }
 }

@@ -8,8 +8,6 @@ using Content.Shared.Toggleable;
 using Robust.Shared.Audio.Systems;
 using Robust.Shared.Timing;
 using Content.Shared.ADT.Eye.Blinding;
-using Robust.Shared.Audio.Systems;
-using Robust.Shared.Timing;
 
 namespace Content.Shared.ADT.NightVision;
 
@@ -180,7 +178,10 @@ public abstract class SharedNightVisionSystem : EntitySystem
             var eyeDamage = EnsureComp<DamageEyesOnFlashedComponent>(user);
             Dirty(user, eyeDamage);
 
-            _audio.PlayLocal(item.Comp.SoundOn, item, user);
+            // _Duty: если на предмете задан свой toggleOnSound, он уже проигран в
+            // OnNightVisionItemToggle — не дублировать вендорным SoundOn.
+            if (item.Comp.ToggleOnSound == null)
+                _audio.PlayLocal(item.Comp.SoundOn, item, user);
         }
 
         _actions.SetToggled(item.Comp.Action, true);
@@ -230,7 +231,9 @@ public abstract class SharedNightVisionSystem : EntitySystem
         item.Comp.PreviousShader = null;
         item.Comp.PreviousEffectPrototype = null;
 
-        if (playSound && wasActive && !_timing.ApplyingState && soundUser != null)
+        // _Duty: если на предмете задан свой toggleOffSound, он уже проигран в
+        // OnNightVisionItemToggle — не дублировать вендорным SoundOff.
+        if (playSound && wasActive && !_timing.ApplyingState && soundUser != null && item.Comp.ToggleOffSound == null)
             _audio.PlayLocal(item.Comp.SoundOff, item, soundUser);
     }
 

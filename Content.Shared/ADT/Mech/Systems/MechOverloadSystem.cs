@@ -46,6 +46,14 @@ public sealed class MechOverloadSystem : EntitySystem
     }
     private void OnDamage(EntityUid uid, MechOverloadComponent component, DamageChangedEvent args)
     {
+        // _Duty: без этой проверки обработчик срабатывал на КАЖДОЕ изменение
+        // урона у мехи с низкой Integrity, даже если оверлоад никогда не
+        // включался — и безусловно вычитал 20 из MechEnergyWaste (которые
+        // никогда не добавлялись), уводя его всё глубже в минус при каждом
+        // новом уроне.
+        if (!component.Overload)
+            return;
+
         var movementSpeed = EnsureComp<MovementSpeedModifierComponent>(uid);
         if (!TryComp<MechComponent>(uid, out var mech))
             return;

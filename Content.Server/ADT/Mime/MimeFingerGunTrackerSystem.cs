@@ -18,13 +18,10 @@ public sealed class MimeFingerGunTrackerSystem : EntitySystem
 
     private void OnRemovedFromContainer(EntityUid uid, MimeFingerGunItemComponent component, EntGotRemovedFromContainerMessage args)
     {
+        // _Duty: убрана мёртвая проверка `!Exists(component.MimeUid.Value)` — если сущность
+        // мима удалена, HasComp<HandsComponent> выше уже безопасно возвращает false
+        // (недостижимая ветка с идентичным результатом QueueDel).
         if (!component.MimeUid.HasValue || !HasComp<HandsComponent>(component.MimeUid.Value))
-        {
-            QueueDel(uid);
-            return;
-        }
-
-        if (!Exists(component.MimeUid.Value))
         {
             QueueDel(uid);
             return;

@@ -193,7 +193,10 @@ public sealed partial class XenoVacuumSystem : EntitySystem
             return false;
         }
 
-        if (tankComp.StorageTank.ContainedEntities.Count > tankComp.MaxEntities)
+        // _Duty: было `>` — позволяло затянуть на одну сущность больше
+        // заявленного MaxEntities (см. doc-комментарий поля: "maximum amount
+        // of entities... at a time"), прежде чем бак считался полным.
+        if (tankComp.StorageTank.ContainedEntities.Count >= tankComp.MaxEntities)
         {
             var tankFullPopup = Loc.GetString("xeno-vacuum-suction-fail-tank-full-popup");
             _popup.PopupEntity(tankFullPopup, vacuum, user);

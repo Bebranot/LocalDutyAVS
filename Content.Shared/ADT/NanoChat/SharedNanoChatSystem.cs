@@ -250,14 +250,16 @@ public abstract class SharedNanoChatSystem : EntitySystem
         var removed = card.Comp.Recipients.Remove(recipientNumber);
 
         // Clear messages if requested
-        if (!keepMessages)
-            card.Comp.Messages.Remove(recipientNumber);
+        var messagesRemoved = !keepMessages && card.Comp.Messages.Remove(recipientNumber);
 
         // Clear current chat if we just deleted it
-        if (card.Comp.CurrentChat == recipientNumber)
+        var hadCurrentChat = card.Comp.CurrentChat == recipientNumber;
+        if (hadCurrentChat)
             card.Comp.CurrentChat = null;
 
-        if (removed)
+        // _Duty: раньше Dirty вызывался только при removed — CurrentChat/Messages
+        // могли поменяться без него, что рассинхронило бы клиента с сервером.
+        if (removed || messagesRemoved || hadCurrentChat)
             Dirty(card);
 
         return removed;

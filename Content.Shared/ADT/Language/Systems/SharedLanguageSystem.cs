@@ -118,8 +118,6 @@ public abstract class SharedLanguageSystem : EntitySystem
 
         component.CurrentLanguage = component.Languages.Where(x => (int)x.Value >= 1).ToDictionary().Keys.FirstOrDefault("Universal");
 
-        GetLanguages(uid, out var langs, out var translator, out var current);
-
         UpdateUi(uid);
     }
 
@@ -169,18 +167,31 @@ public abstract class SharedLanguageSystem : EntitySystem
         RaiseLocalEvent(uid, ref ev);
 
         langs = ev.Languages.Where(x => x.Value >= required).ToDictionary();
+
+        // _Duty: было наоборот и сверялось не с тем словарём. Раньше:
+        // - при `ev.Languages[key] <= item.Value` (переводчик знает язык НЕ ХУЖЕ
+        //   родного) ветка `continue`-илась — вклад переводчика отбрасывался
+        //   целиком, даже если родного знания не хватало на `required`
+        //   (в `langs` эта запись тогда вообще отсутствовала, т.к. `langs`
+        //   строится по `ev.Languages`, а не проверяется само по себе);
+        // - при `ev.Languages[key] > item.Value` (родное знание СИЛЬНЕЕ)
+        //   код наоборот ПОНИЖАЛ уже прошедшую фильтр запись в `langs` до
+        //   более слабого уровня переводчика.
+        // Итог — переводчик почти никогда корректно не улучшал знание языка,
+        // а мог его портить. Верно: язык в `langs` должен быть максимумом из
+        // родного знания и знания переводчика, сверяясь с уже отфильтрованным
+        // `langs`, как это делают идентичные по смыслу мерджи в
+        // `SharedTranslatorImplantSystem.OnGetLanguages`/
+        // `SharedTranslatorSystem.OnTranslatorGetLanguages`.
         foreach (var item in ev.Translator)
         {
             if (item.Value < required)
                 continue;
-            if (ev.Languages.ContainsKey(item.Key))
-            {
-                if (ev.Languages[item.Key] <= item.Value)
-                    continue;
-                langs[item.Key] = ev.Translator[item.Key];
-            }
-            else
-                langs.Add(item.Key, item.Value);
+
+            if (langs.TryGetValue(item.Key, out var existing) && existing >= item.Value)
+                continue;
+
+            langs[item.Key] = item.Value;
         }
 
         current = ev.Current;

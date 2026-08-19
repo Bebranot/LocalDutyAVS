@@ -281,8 +281,16 @@ public abstract class SharedFishingSystem : EntitySystem
 
         _popup.PopupPredicted(Loc.GetString("fishing-rod-remove-lure", ("ent", Name(uid))), uid, uid);
 
+        // _Duty: раньше здесь был голый `return` без `args.Handled = true` —
+        // в отличие от всех остальных веток выхода из этого хендлера. При
+        // отсутствии (уже удалённого/десинхронизированного) компонента
+        // поплавка действие не считалось обработанным: не уходило на кулдаун
+        // и могло повторно обрабатываться другими подписчиками.
         if (!FishLureQuery.TryComp(component.FishingLure, out var lureComp))
+        {
+            args.Handled = true;
             return;
+        }
 
         if (lureComp.AttachedEntity != null && Exists(lureComp.AttachedEntity))
         {

@@ -142,14 +142,23 @@ public sealed class BatteryDrinkerSystem : EntitySystem
 
         if (!TryGetFillableBattery(drinker, out var drinkerBattery, out var drinkerBatteryUid))
             return;
-        if (!TryComp<BatteryDrinkerSourceComponent>(source, out var sourceComp))
-            return;
+
+        // _Duty: было `if (!TryComp<BatteryDrinkerSourceComponent>(source, out var sourceComp)) return;`
+        // — жёстко требовало наличие BatteryDrinkerSourceComponent на источнике,
+        // из-за чего у дринкера с DrinkAll=true (TestDrinkableBattery разрешает
+        // пить из ЛЮБОЙ батареи без этого компонента, DrinkBattery корректно
+        // считает doAfterTime через DrinkAllMultiplier для этого случая) сам
+        // DoAfter стартовал, но по завершении ВСЕГДА тихо обрывался здесь без
+        // единого попапа — фича DrinkAll фактически никогда не срабатывала.
+        // Компонент теперь опционален, MaxAmount-лимит применяется только если
+        // он есть — как и было задумано в TestDrinkableBattery/DrinkBattery.
+        TryComp<BatteryDrinkerSourceComponent>(source, out var sourceComp);
 
         var amountToDrink = drinkerBattery.MaxCharge * 0.10f;
         amountToDrink = MathF.Min(amountToDrink, _battery.GetCharge((source, sourceBattery)));
         amountToDrink = MathF.Min(amountToDrink, drinkerBattery.MaxCharge - _battery.GetCharge((drinker, drinkerBattery)));
 
-        if (sourceComp.MaxAmount > 0)
+        if (sourceComp != null && sourceComp.MaxAmount > 0)
             amountToDrink = MathF.Min(amountToDrink, (float)sourceComp.MaxAmount);
 
         if (amountToDrink <= 0)

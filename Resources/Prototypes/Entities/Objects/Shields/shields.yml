@@ -30,6 +30,7 @@
           Slash: 1
           Piercing: 1
           Heat: 1
+    - type: ShieldBash # _Duty: способность «Удар по щиту» — доступна на всех щитах, см. shield_bash.yml
     - type: Damageable
     - type: Injurable
       damageContainer: Shield

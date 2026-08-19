@@ -21,6 +21,14 @@ public sealed partial class CanSee : ILanguageCondition
         var ev = new CanSeeAttemptEvent();
         entMan.EventBus.RaiseLocalEvent(targetEntity, ev);
 
-        return ev.Blind;
+        // _Duty: было `return ev.Blind` — `Condition == true` для слушателя
+        // означает "оставить получателем" (см. вызовы с `RaiseOnListener`
+        // в ChatSystem.cs/ChatSystem.ADT.cs: `if (!item.Condition(...))
+        // condition = false;` → слушатель исключается при false). `ev.Blind`
+        // истинно именно у ОСЛЕПШИХ — то есть раньше условие "сообщение
+        // увидят только зрячие" (см. doc-комментарий класса, `BaseEmoteLanguage`
+        // в base.yml, от которого наследуется SignLanguage) на деле оставляло
+        // получателями ТОЛЬКО слепых и исключало зрячих — ровно наоборот.
+        return !ev.Blind;
     }
 }

@@ -51,7 +51,7 @@ public sealed class PaperOrigamiSystem : EntitySystem
 
             if (showStamp && !isOrigami)
             {
-                sprite.LayerSetState(2, stampState); // штампдоывдлтвалд
+                sprite.LayerSetState(2, stampState); // состояние слоя штампа
             }
         }
     }

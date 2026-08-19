@@ -323,7 +323,12 @@ public sealed class SupermatterSpreaderSystem : EntitySystem
             if (entity == ent)
                 continue;
             DebugTools.Assert(Transform(entity.Value).Anchored);
-            if (_query.HasComponent(ent) && !TerminatingOrDeleted(entity.Value))
+            // _Duty: было `_query.HasComponent(ent)` — `ent` тут это ID ГРИДА (см. присвоения выше:
+            // либо transform.GridUid.Value, либо position.Value.Grid), у грида никогда не будет
+            // EdgeSupermatterSpreaderComponent. Условие было всегда false, и активация
+            // ActiveEdgeSupermatterSpreaderComponent для соседей никогда не срабатывала.
+            // Нужно проверять саму соседнюю сущность из цикла — entity.
+            if (_query.HasComponent(entity.Value) && !TerminatingOrDeleted(entity.Value))
                 EnsureComp<ActiveEdgeSupermatterSpreaderComponent>(entity.Value);
         }
 
@@ -336,7 +341,12 @@ public sealed class SupermatterSpreaderSystem : EntitySystem
             while (anchored.MoveNext(out var entity))
             {
                 DebugTools.Assert(Transform(entity.Value).Anchored);
-                if (_query.HasComponent(ent) && !TerminatingOrDeleted(entity.Value))
+                // _Duty: было `_query.HasComponent(ent)` — `ent` тут это ID ГРИДА (см. присвоения выше:
+            // либо transform.GridUid.Value, либо position.Value.Grid), у грида никогда не будет
+            // EdgeSupermatterSpreaderComponent. Условие было всегда false, и активация
+            // ActiveEdgeSupermatterSpreaderComponent для соседей никогда не срабатывала.
+            // Нужно проверять саму соседнюю сущность из цикла — entity.
+            if (_query.HasComponent(entity.Value) && !TerminatingOrDeleted(entity.Value))
                     EnsureComp<ActiveEdgeSupermatterSpreaderComponent>(entity.Value);
             }
         }

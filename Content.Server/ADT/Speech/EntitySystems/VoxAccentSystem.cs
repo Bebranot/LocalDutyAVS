@@ -19,17 +19,21 @@ public sealed class VoxAccentSystem : EntitySystem
     {
         var message = args.Message;
         // ADT-Localization-Start
+        // _Duty: было `_random.Pick(...)` как строка-замена — значение выбиралось
+        // ОДИН раз на всё сообщение, и все вхождения "к+" в этом сообщении получали
+        // одну и ту же замену. Используем MatchEvaluator, чтобы каждое вхождение
+        // выбиралось независимо (как уже сделано в SickTeethAccentSystem).
         // к => ке
         message = Regex.Replace(
             message,
             "к+",
-            _random.Pick(new List<string>() { "ки", "кик" })
+            match => _random.Pick(new List<string>() { "ки", "кик" })
         );
         // К => Ке
         message = Regex.Replace(
             message,
             "К+",
-            _random.Pick(new List<string>() { "Ки", "Кик" })
+            match => _random.Pick(new List<string>() { "Ки", "Кик" })
         );
         // ADT-Localization-End
         message = Regex.Replace(message, "ч+", "ч");

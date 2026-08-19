@@ -25,11 +25,14 @@ public sealed class RoarAccentSystem : EntitySystem
         message = Regex.Replace(message, "R+", "RRR");
 
         // ADT-Localization-Start
+        // _Duty: было `_random.Pick(...)` как строка-замена — значение выбиралось
+        // ОДИН раз на всё сообщение. Используем MatchEvaluator для независимой
+        // рандомизации каждого вхождения (как в SickTeethAccentSystem).
         // р => ррр
         message = Regex.Replace(
             message,
             "р+",
-            _random.Pick(new List<string>() { "рр", "ррр" })
+            match => _random.Pick(new List<string>() { "рр", "ррр" })
         );
         // ADT-Localization-End
         args.Message = message;

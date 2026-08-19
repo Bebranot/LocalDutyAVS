@@ -282,11 +282,26 @@ public sealed partial class LanguageSystem : SharedLanguageSystem
             return;
         if (!_mind.TryGetMind(uid, out _, out var mind) || mind == null || !_player.TryGetSessionById(mind.UserId, out var session))
             return;
+        // _Duty: было `langs.Remove(item.Key)` прямо внутри `foreach (var item in langs)`
+        // — структурная мутация словаря во время его перебора кидает
+        // InvalidOperationException. Срабатывало реально (не гипотетически):
+        // языки `duty_rough` и `collective-mind` (оба варианта) в yml
+        // задают `showUnderstood: false`, так что у любого игрока с уровнем
+        // знания ниже BadSpeak по одному из них `UpdateUi` (вызывается при
+        // смене языка, MapInit, вставке/удалении транслятор-импланта) падал.
+        // Собираем ключи на удаление отдельным проходом, удаляем после.
+        List<string>? toHide = null;
         foreach (var item in langs)
         {
             var proto = _proto.Index<LanguagePrototype>(item.Key);
             if (!proto.ShowUnderstood && item.Value < LanguageKnowledge.BadSpeak)
-                langs.Remove(item.Key);
+                (toHide ??= new List<string>()).Add(item.Key);
+        }
+
+        if (toHide != null)
+        {
+            foreach (var key in toHide)
+                langs.Remove(key);
         }
 
         var state = new LanguageMenuStateMessage(GetNetEntity(uid), current, langs, translator);

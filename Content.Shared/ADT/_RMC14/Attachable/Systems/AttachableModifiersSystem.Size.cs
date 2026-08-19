@@ -62,8 +62,14 @@ public sealed partial class AttachableModifiersSystem : EntitySystem
     {
         foreach(var modSet in attachable.Comp.Modifiers)
         {
+            // _Duty: было `return` — при нескольких наборах модификаторов в
+            // Modifiers первый же провалившийся CanApplyModifiers (например,
+            // условие WieldedOnly/UnwieldedOnly) обрывал цикл целиком и
+            // отбрасывал ВСЕ последующие наборы, даже подходящие. Соседние
+            // методы (Ranged/Melee/Speed/WieldDelay) в этом же файле-семье
+            // используют `continue` для этого случая — используем его и тут.
             if (!CanApplyModifiers(attachable.Owner, modSet.Conditions))
-                return;
+                continue;
 
             args.Args.Size += modSet.Size;
         }

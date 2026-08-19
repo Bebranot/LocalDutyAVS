@@ -74,12 +74,18 @@ public sealed partial class HereticCombatMarkSystem : EntitySystem
                 if (!TryComp<InventoryComponent>(target, out var inv))
                     break;
 
-                var contrandom = _random.Next(0, inv.Containers.Length - 1);
+                // _Duty: было `Next(0, Length - 1)` — IRobustRandom.Next(min, max)
+                // исключает верхнюю границу (как System.Random), так что
+                // последний контейнер/предмет никогда не мог быть выбран.
+                var contrandom = _random.Next(0, inv.Containers.Length);
                 if (contrandom < 0)
                     break;
                 var cont = inv.Containers[contrandom];
 
-                var itemrandom = _random.Next(0, cont.ContainedEntities.Count - 1);
+                if (cont.ContainedEntities.Count == 0)
+                    break;
+
+                var itemrandom = _random.Next(0, cont.ContainedEntities.Count);
                 if (itemrandom < 0)
                     break;
                 var item = cont.ContainedEntities[itemrandom];

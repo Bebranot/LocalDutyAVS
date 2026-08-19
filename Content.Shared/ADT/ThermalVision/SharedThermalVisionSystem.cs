@@ -147,6 +147,7 @@ public abstract class SharedThermalVisionSystem : EntitySystem
             var nightVision = EnsureComp<ThermalVisionComponent>(user);
             if (TryComp<ThermalVisionComponent>(item, out var thermal))
             {
+                item.Comp.PreviousColor = nightVision.Color;
                 nightVision.Color = thermal.Color;
             }
             nightVision.State = ThermalVisionState.Full;
@@ -173,10 +174,19 @@ public abstract class SharedThermalVisionSystem : EntitySystem
 
         _appearance.SetData(item, ThermalVisionItemVisuals.Active, false);
 
-        if (TryComp(user, out ThermalVisionComponent? nightVision) &&
-            !nightVision.Innate)
+        if (TryComp(user, out ThermalVisionComponent? nightVision))
         {
-            RemCompDeferred<ThermalVisionComponent>(user.Value);
+            if (!nightVision.Innate)
+            {
+                RemCompDeferred<ThermalVisionComponent>(user.Value);
+            }
+            else if (item.Comp.PreviousColor != null)
+            {
+                nightVision.Color = item.Comp.PreviousColor.Value;
+                Dirty(user.Value, nightVision);
+            }
         }
+
+        item.Comp.PreviousColor = null;
     }
 }

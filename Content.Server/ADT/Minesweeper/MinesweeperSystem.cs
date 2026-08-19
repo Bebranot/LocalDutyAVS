@@ -14,6 +14,10 @@ public sealed partial class MinesweeperSystem : EntitySystem
     [Dependency] private readonly EmagSystem _emagSystem = default!;
     [Dependency] private readonly IRobustRandom _random = default!;
 
+    // _Duty: без ограничения Records (networked-поле) растёт бесконечно на КАЖДОМ
+    // автомате за раунд — рекорд транслируется на все автоматы с MinesweeperComponent.
+    private const int MaxRecords = 50;
+
     public override void Initialize()
     {
         base.Initialize();
@@ -63,17 +67,27 @@ public sealed partial class MinesweeperSystem : EntitySystem
 
     private void OnWinMessageReceived(EntityUid uid, MinesweeperComponent component, MinesweeperWinMessage msg)
     {
+        var record = new MinesweeperRecord
+        {
+            Difficulty = msg.Difficulty,
+            TimeSeconds = msg.TimeSeconds,
+            EntityName = msg.NameWin
+        };
+
         // Проходим по всем сущностям с компонентом MinesweeperComponent
         // И при выйгрыше на одном из автоматов, передаём рекорд во все компоненты таких сущностей
         var query = _entityManager.EntityQueryEnumerator<MinesweeperComponent>();
         while (query.MoveNext(out var ent, out var comp))
         {
-            comp.Records.Add(new MinesweeperRecord
+            comp.Records.Add(record);
+
+            // _Duty: обрезаем до MaxRecords лучших результатов, иначе список растёт
+            // бесконечно на каждом автомате за весь раунд.
+            if (comp.Records.Count > MaxRecords)
             {
-                Difficulty = msg.Difficulty,
-                TimeSeconds = msg.TimeSeconds,
-                EntityName = msg.NameWin
-            });
+                comp.Records.Sort((a, b) => a.TimeSeconds.CompareTo(b.TimeSeconds));
+                comp.Records.RemoveRange(MaxRecords, comp.Records.Count - MaxRecords);
+            }
 
             Dirty(ent, comp);
         }

@@ -153,9 +153,11 @@ public sealed class ChaplainSystem : EntitySystem
 
         args.Handled = true;
 
-        if (!TryUseAbility(uid, component, component.BelieverCost))
-            return;
-
+        // _Duty: было — сила списывалась через TryUseAbility ДО всех проверок
+        // валидности цели, так что при провале любой из них (цель уже верующий,
+        // не гуманоид, лимит верующих исчерпан) сила терялась безвозвратно —
+        // возврат в OnMakeBelieverDoAfter срабатывает только при отмене DoAfter,
+        // а не при этих ранних return. Проверяем цель раньше списания.
         if (HasComp<ChaplainComponent>(target))
         {
             _popupSystem.PopupEntity(Loc.GetString("chaplain-believer-already", ("target", Identity.Entity(target, EntityManager))), uid, uid);
@@ -170,6 +172,9 @@ public sealed class ChaplainSystem : EntitySystem
             _popupSystem.PopupEntity(Loc.GetString("chaplain-believer-too-much"), uid, uid);
             return;
         }
+
+        if (!TryUseAbility(uid, component, component.BelieverCost))
+            return;
 
         _popupSystem.PopupEntity(Loc.GetString("chaplain-believer-start-self", ("target", Identity.Entity(target, EntityManager))), uid, uid);
         _popupSystem.PopupEntity(Loc.GetString("chaplain-believer-start-target", ("issuer", Identity.Entity(uid, EntityManager))), target, target);

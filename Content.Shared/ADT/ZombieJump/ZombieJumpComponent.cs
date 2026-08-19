@@ -2,7 +2,6 @@ using Content.Shared.Actions;
 using Robust.Shared.Audio;
 using Robust.Shared.GameStates;
 using Robust.Shared.Prototypes;
-using Robust.Shared.Serialization.TypeSerializers.Implementations.Custom;
 
 namespace Content.Shared.ADT.ZombieJump;
 
@@ -30,8 +29,5 @@ public sealed partial class ZombieJumpComponent : Component
 
     [DataField, AutoNetworkedField]
     public LocId? JumpFailedPopup = "jump-ability-failure";
-
-    [DataField(customTypeSerializer: typeof(TimeOffsetSerializer)), AutoNetworkedField]
-    public TimeSpan NextJumpTime;
 }
 public sealed partial class ZombieJumpEvent : InstantActionEvent;

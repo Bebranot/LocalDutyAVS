@@ -154,10 +154,17 @@ public sealed class TapeRecorderSystem : SharedTapeRecorderSystem
             var time = TimeSpan.FromSeconds((double) message.Timestamp);
 
             var language = message.Language ?? _language.Universal;
-            if (_proto.Index(language).LanguageType is not Generic gen)
-                return;
 
-            var languagedMessage = _language.CanUnderstand(uid, language) ? message.Message : _language.ObfuscateMessage(uid, message.Message, gen.Replacement, gen.ObfuscateSyllables, gen.ReplaceEntireMessage);
+            // _Duty: раньше здесь был `return`, который при первом сообщении с
+            // не-Generic языком прерывал печать ВСЕЙ плёнки — уже после спавна
+            // бумаги, выдачи её в руки и проигрывания звука, но до SetContent и
+            // до установки CooldownEndTime (пустая бумага без кулдауна печати).
+            // Пропускаем обфускацию для конкретного сообщения вместо всей печати —
+            // как и при живом воспроизведении (ReplayMessagesInSegment), которое
+            // ручной обфускацией по языку вообще не занимается.
+            var languagedMessage = message.Message;
+            if (_proto.Index(language).LanguageType is Generic gen && !_language.CanUnderstand(uid, language))
+                languagedMessage = _language.ObfuscateMessage(uid, message.Message, gen.Replacement, gen.ObfuscateSyllables, gen.ReplaceEntireMessage);
 
             text.AppendLine(Loc.GetString("tape-recorder-print-message-text",
                 ("time", time.ToString(@"hh\:mm\:ss")),

@@ -1,0 +1,31 @@
+# _Duty: способность «Удар по щиту» — доступна с любым щитом (BaseShield),
+# если в другой руке настоящее оружие (ближнее или огнестрел).
+
+# ── Action ────────────────────────────────────────────────
+
+- type: entity
+  parent: BaseAction
+  id: ActionDutyShieldBash
+  name: Удар по щиту
+  description: Ударьте по щиту, разжигая боевой пыл — резист к урону, скорость, игнор замедления от ран и бонус к ближнему бою, пока щит в руке. Требует оружие в другой руке.
+  suffix: Duty, Экшен
+  components:
+  - type: Action
+    useDelay: 90 # должно совпадать с ShieldBashComponent.Cooldown
+    icon:
+      sprite: Objects/Weapons/Melee/shields.rsi
+      state: riot-icon # ЗАГЛУШКА — переиспользуем спрайт щита, заменить на отдельную иконку удара
+    itemIconStyle: NoItem
+    priority: -1
+  - type: InstantAction
+    event: !type:ShieldBashActionEvent {}
+
+# ── Иконка-статус (справа, под здоровьем) ────────────────────
+
+- type: alert
+  id: DutyShieldBash
+  icons:
+  - sprite: Objects/Weapons/Melee/shields.rsi
+    state: riot-icon # ЗАГЛУШКА — та же временная текстура щита, заменить на отдельную иконку
+  name: alerts-shield-bash-name
+  description: alerts-shield-bash-desc

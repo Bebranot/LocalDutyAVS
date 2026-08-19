@@ -23,4 +23,10 @@ public sealed partial class ThermalVisionItemComponent : Component
     // Only allows for a single slotflag right now because some code uses strings and some code uses enums to determine slots :(
     [DataField, AutoNetworkedField]
     public SlotFlags SlotFlags { get; set; } = SlotFlags.EYES;
+
+    /// <summary>
+    /// Previous wearer color restored when unequipping over innate thermal vision.
+    /// </summary>
+    [ViewVariables]
+    public Color? PreviousColor;
 }

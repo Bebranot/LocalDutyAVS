@@ -126,11 +126,10 @@ public sealed class SpeechBarksSystem : EntitySystem
 
             if (item.Source == null)
             {
-                if (item.HasSource)
-                    _activeBarks.Remove(item);
-                else
-                    _audio.PlayGlobal(_audio.ResolveSound(item.Sound), _player.LocalSession, audioParams);
-
+                // _Duty: Source == null всегда означает превью-барк (PlayDataPreview),
+                // у обычных барков (OnEntitySpoke) Source резолвится до создания ActiveBark
+                // либо событие вообще не создаётся — играем глобально.
+                _audio.PlayGlobal(_audio.ResolveSound(item.Sound), _player.LocalSession, audioParams);
                 continue;
             }
 
@@ -158,7 +157,6 @@ public sealed class SpeechBarksSystem : EntitySystem
         public readonly float Distance = default!;
         public readonly (float, float) DelayVariation = default!;
         public readonly int Length = default!;
-        public readonly bool HasSource;
 
         public TimeSpan NextSound = TimeSpan.Zero;
         public int BarksPlayed = 0;
@@ -166,7 +164,6 @@ public sealed class SpeechBarksSystem : EntitySystem
         public ActiveBark(EntityUid? source, SoundSpecifier sound, float volume, float pitch, float distance, (float, float) delay, int length)
         {
             Source = source;
-            HasSource = source.HasValue;
             Sound = sound;
             Volume = volume;
             Pitch = pitch;

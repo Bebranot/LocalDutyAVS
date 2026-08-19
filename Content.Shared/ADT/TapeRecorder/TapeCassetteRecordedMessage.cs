@@ -61,6 +61,8 @@ public sealed partial class TapeCassetteRecordedMessage : IComparable<TapeCasset
         if (other == null)
             return 0;
 
-        return (int) (Timestamp - other.Timestamp);
+        // _Duty: было (int)(Timestamp - other.Timestamp) — обрезало дробную часть,
+        // из-за чего сообщения с разницей меньше секунды считались "равными".
+        return Timestamp.CompareTo(other.Timestamp);
     }
 }

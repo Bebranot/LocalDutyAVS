@@ -383,7 +383,12 @@ public sealed partial class SupermatterSystem
 
         foreach (var mob in mobLookup)
         {
-            if (HasComp<SiliconLawBoundComponent>(uid))
+            // _Duty: было `HasComp<SiliconLawBoundComponent>(uid)` — проверяло саму
+            // сверхматерию (всегда false), а не текущего моба из цикла, из-за чего
+            // фильтр никогда не срабатывал и силиконы/боты тоже получали параказию.
+            // Соседний метод HandleVision (SupermatterEffectsSystem.cs) делает эту же
+            // проверку правильно — на `mob`.
+            if (HasComp<SiliconLawBoundComponent>(mob))
                 continue;
 
             if (!EnsureComp<ParacusiaComponent>(mob, out var paracusia))

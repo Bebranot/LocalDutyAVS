@@ -95,9 +95,12 @@ namespace Content.Client.ADT.Kitchen.UI
             _menu.IngredientsList.Clear();
             foreach (var entity in containedSolids)
             {
+                // _Duty: было `return` — при удалённой сущности где-то в середине
+                // массива весь список ингредиентов в UI обрывался на этом месте,
+                // остальные (валидные) записи после неё не отображались вовсе.
                 if (EntMan.Deleted(entity))
                 {
-                    return;
+                    continue;
                 }
 
                 // TODO just use sprite view

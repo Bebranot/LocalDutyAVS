@@ -22,7 +22,12 @@ public sealed partial class BZProductionReaction : IGasReactionEffect
 
         var bZFormed = Math.Min(ratioEfficiency * environmentEfficiency, Math.Min(initialNitrousOxide * 4f, initialPlasma * 8f));
 
-        if (initialNitrousOxide - bZFormed * 4f < 0 || initialPlasma - (8f - bZFormed) < 0 || bZFormed <= 0)
+        // _Duty: было `initialPlasma - (8f - bZFormed) < 0` — не соответствует
+        // ни реальному расходу плазмы ниже (`AdjustMoles(Plasma, -8f * bZFormed * ...)`),
+        // ни парному по смыслу условию для NitrousOxide чуть выше (`bZFormed * 4f`).
+        // Формула `8f - bZFormed` не масштабируется с количеством сформированного BZ
+        // вообще — это явная опечатка (вычитание вместо умножения).
+        if (initialNitrousOxide - bZFormed * 4f < 0 || initialPlasma - bZFormed * 8f < 0 || bZFormed <= 0)
             return ReactionResult.NoReaction;
 
         var oldHeatCapacity = atmosphereSystem.GetHeatCapacity(mixture, true);

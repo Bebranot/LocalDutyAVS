@@ -96,6 +96,15 @@ public sealed class NanoChatSystem : SharedNanoChatSystem
 
     private void ScrambleMessages(NanoChatCardComponent component)
     {
+        // _Duty: реассигнации переписки собираем и применяем ПОСЛЕ основного
+        // перебора. Раньше `component.Messages[newRecipient] = new List<>()`
+        // выполнялось прямо внутри `foreach (... in component.Messages)` — если
+        // у выбранного получателя ещё не было сообщений (обычный случай, см.
+        // SetRecipient, который добавляет контакт без гарантии записи в
+        // Messages), это добавление нового ключа мутирует словарь во время его
+        // перебора и кидает InvalidOperationException.
+        var reassignments = new List<(uint From, uint To)>();
+
         foreach (var (recipientNumber, messages) in component.Messages)
         {
             for (var i = 0; i < messages.Count; i++)
@@ -113,15 +122,24 @@ public sealed class NanoChatSystem : SharedNanoChatSystem
             if (_random.Prob(0.25f) && component.Recipients.Count > 0)
             {
                 var newRecipient = _random.Pick(component.Recipients.Keys.ToList());
-                if (newRecipient == recipientNumber)
-                    continue;
-
-                if (!component.Messages.ContainsKey(newRecipient))
-                    component.Messages[newRecipient] = new List<NanoChatMessage>();
-
-                component.Messages[newRecipient].AddRange(messages);
-                component.Messages[recipientNumber].Clear();
+                if (newRecipient != recipientNumber)
+                    reassignments.Add((recipientNumber, newRecipient));
             }
+        }
+
+        foreach (var (from, to) in reassignments)
+        {
+            if (!component.Messages.TryGetValue(from, out var messages) || messages.Count == 0)
+                continue;
+
+            if (!component.Messages.TryGetValue(to, out var targetMessages))
+            {
+                targetMessages = new List<NanoChatMessage>();
+                component.Messages[to] = targetMessages;
+            }
+
+            targetMessages.AddRange(messages);
+            messages.Clear();
         }
     }
 

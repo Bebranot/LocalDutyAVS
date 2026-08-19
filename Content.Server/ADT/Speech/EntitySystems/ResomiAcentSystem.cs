@@ -20,41 +20,44 @@ public sealed class ResomiAccentSystem : EntitySystem
     {
         var message = args.Message;
 
+        // _Duty: было `_random.Pick(...)` как строка-замена (одно значение на всё
+        // сообщение для каждого вызова Replace) — заменено на MatchEvaluator, чтобы
+        // каждое отдельное вхождение буквы рандомизировалось независимо.
         // ш => шшш
         message = Regex.Replace(
             message,
             "ш+",
-            _random.Pick(new List<string>() { "шш", "шшш" })
+            match => _random.Pick(new List<string>() { "шш", "шшш" })
         );
         // Ш => ШШШ
         message = Regex.Replace(
             message,
             "Ш+",
-            _random.Pick(new List<string>() { "ШШ", "ШШШ" })
+            match => _random.Pick(new List<string>() { "ШШ", "ШШШ" })
         );
         // ч => щщщ
         message = Regex.Replace(
             message,
             "ч+",
-            _random.Pick(new List<string>() { "щщ", "щщщ" })
+            match => _random.Pick(new List<string>() { "щщ", "щщщ" })
         );
         // Ч => ЩЩЩ
         message = Regex.Replace(
             message,
             "Ч+",
-            _random.Pick(new List<string>() { "ЩЩ", "ЩЩЩ" })
+            match => _random.Pick(new List<string>() { "ЩЩ", "ЩЩЩ" })
         );
         // р => ррр
         message = Regex.Replace(
             message,
             "р+",
-            _random.Pick(new List<string>() { "рр", "ррр" })
+            match => _random.Pick(new List<string>() { "рр", "ррр" })
         );
         // Р => РРР
         message = Regex.Replace(
             message,
             "Р+",
-            _random.Pick(new List<string>() { "РР", "РРР" })
+            match => _random.Pick(new List<string>() { "РР", "РРР" })
         );
         args.Message = message;
     }

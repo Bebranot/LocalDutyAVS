@@ -155,7 +155,7 @@ public sealed class RMCWieldableSystem : EntitySystem
         RaiseLocalEvent(user.Owner, ref ev);
 
         user.Comp.Walk = ev.Walk;
-        user.Comp.Walk = ev.Sprint;
+        user.Comp.Sprint = ev.Sprint;
     }
 
     private void OnRefreshWieldSlowdownCompensation(Entity<WieldSlowdownCompensationComponent> armour, ref InventoryRelayedEvent<RefreshWieldSlowdownCompensationEvent> args)

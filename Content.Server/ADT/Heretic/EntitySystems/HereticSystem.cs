@@ -171,10 +171,19 @@ public sealed class HereticSystem : EntitySystem
         }
 
         // add whatever more until satisfied
-        for (var i = 0; i <= ent.Comp.MaxTargets - pickedTargets.Count; i++)
+        // _Duty: было `i <= ent.Comp.MaxTargets - pickedTargets.Count` — граница
+        // цикла пересчитывалась на каждой итерации от РАСТУЩЕГО pickedTargets.Count
+        // (список пополняется прямо в теле цикла), из-за чего цикл сходился
+        // примерно к половине от MaxTargets вместо полного добора до MaxTargets
+        // (напр. при MaxTargets=6 реально добавлялось ~4 цели). Фиксируем нужное
+        // число добавлений один раз до цикла.
+        var toAdd = ent.Comp.MaxTargets - pickedTargets.Count;
+        for (var i = 0; i < toAdd; i++)
         {
             if (targets.Count > 0)
                 pickedTargets.Add(_rand.PickAndTake(targets));
+            else
+                break;
         }
 
         // leave only unique entityuids

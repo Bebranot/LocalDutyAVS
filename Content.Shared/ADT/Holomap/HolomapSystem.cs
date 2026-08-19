@@ -33,6 +33,13 @@ public abstract class SharedHolomapSystem : EntitySystem
 
     private void OnPowerChanged(EntityUid uid, HolomapComponent component, ref PowerChangedEvent args)
     {
+        // _Duty: раньше PowerDeviceVisuals.Powered вообще никогда не выставлялся —
+        // клиентский HolomapVisualizerSystem читает именно этот ключ, чтобы решить,
+        // рисовать ли слои (Unshaded/Battlemap/Lavaland), поэтому голомап всегда
+        // выглядел выключенным независимо от реального питания.
+        if (TryComp<AppearanceComponent>(uid, out var appearance))
+            _appearance.SetData(uid, PowerDeviceVisuals.Powered, args.Powered, appearance);
+
         UpdateAppearance(uid, component);
     }
 

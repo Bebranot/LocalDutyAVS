@@ -43,17 +43,29 @@ public sealed partial class BorgSwitchableSubtypeSystem : SharedBorgSwitchableSu
 
         if (_resourceCache.TryGetResource<RSIResource>(rsiPath, out var resource))
         {
-            subtypePrototype.SpriteBodyState = borgType.SpriteBodyState;
-            subtypePrototype.SpriteToggleLightState = borgType.SpriteToggleLightState;
-            subtypePrototype.SpriteHasMindState = borgType.SpriteHasMindState;
-            subtypePrototype.SpriteNoMindState = borgType.SpriteNoMindState;
+            // _Duty: раньше эти четыре поля присваивались прямо в
+            // subtypePrototype (singleton-инстанс из IPrototypeManager,
+            // общий на ВСЕ сущности с этим прототипом) — фактически
+            // перманентно перезаписывало общий прототип значениями
+            // родительского borgType при каждом обновлении внешнего вида
+            // одного конкретного борджа. Сейчас в yml состояния подтипов и
+            // типов совпадают по дефолту ("robot"/"robot_l"/...), поэтому
+            // видимого эффекта пока нет, но при малейшем расхождении
+            // (кастомный подтип/тип со своими спрайт-стейтами, или
+            // hot-reload прототипов) это тихо ломало бы внешний вид ВСЕХ
+            // борджей этого подтипа, а не только текущего. Используем
+            // локальные переменные вместо мутации прототипа.
+            var bodyState = borgType.SpriteBodyState;
+            var toggleLightState = borgType.SpriteToggleLightState;
+            var hasMindState = borgType.SpriteHasMindState;
+            var noMindState = borgType.SpriteNoMindState;
 
             if (!_appearance.TryGetData<bool>(ent, BorgVisuals.HasPlayer, out var hasPlayer))
                 hasPlayer = false;
 
-            sprite.LayerSetState(BorgVisualLayers.Body, subtypePrototype.SpriteBodyState);
-            sprite.LayerSetState(BorgVisualLayers.Light, hasPlayer ? subtypePrototype.SpriteHasMindState : subtypePrototype.SpriteNoMindState);
-            sprite.LayerSetState(BorgVisualLayers.LightStatus, subtypePrototype.SpriteToggleLightState);
+            sprite.LayerSetState(BorgVisualLayers.Body, bodyState);
+            sprite.LayerSetState(BorgVisualLayers.Light, hasPlayer ? hasMindState : noMindState);
+            sprite.LayerSetState(BorgVisualLayers.LightStatus, toggleLightState);
 
             sprite.LayerSetRSI(BorgVisualLayers.Body.GetHashCode(), resource.RSI);
             sprite.LayerSetRSI(BorgVisualLayers.Light.GetHashCode(), resource.RSI);
