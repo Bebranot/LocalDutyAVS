@@ -23,6 +23,13 @@ public abstract class SharedJumpbootsSystem : EntitySystem
 
     private void OnGetActions(EntityUid uid, JumpbootsComponent component, GetItemActionsEvent args)
     {
+        // _Duty: GetItemActionsEvent тоже рейзится при обычном подборе предмета в руку
+        // (DidEquipHandEvent), не только при надевании в слот обуви (DidEquipEvent) — без этой
+        // проверки способность прыжка оставалась у игрока, даже когда ботинки просто держали
+        // в руке, а не носили. См. аналогичный паттерн в ToggleClothingSystem (MustEquip).
+        if (args.InHands)
+            return;
+
         args.AddAction(ref component.ActionEntity, component.Action);
     }
 }
