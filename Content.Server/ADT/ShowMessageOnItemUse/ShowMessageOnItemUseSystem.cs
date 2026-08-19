@@ -49,7 +49,6 @@ public sealed partial class ShowMessageOnItemUseSystem : EntitySystem
                 if (_player.TryGetSessionById(mind.UserId, out var session))
                 {
                     _euiManager.OpenEui(new AdtAmnesiaEui(), session);
-                    Console.WriteLine($"entity {entity} mind was flushed.");
                 }
             }
 
