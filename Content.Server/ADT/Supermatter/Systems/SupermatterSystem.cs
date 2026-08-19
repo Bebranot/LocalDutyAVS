@@ -103,24 +103,15 @@ public sealed partial class SupermatterSystem : EntitySystem
     {
         base.Update(frameTime);
 
-        _zapAccumulator += TimeSpan.FromSeconds(frameTime);
-        var shouldZap = false;
-
-        if (_zapAccumulator.TotalSeconds >= 60)
-        {
-            _zapAccumulator -= TimeSpan.FromSeconds(60);
-            shouldZap = true;
-        }
-
+        // Lightning zaps are driven by SupermatterZap() on each supermatter's own
+        // AtmosDeviceUpdateEvent tick (see OnSupermatterUpdated); that call already
+        // accumulates real elapsed time against SupermatterComponent.ZapAccumulator
+        // and gates firing on ZapTimer. A second, unconditional call from here used
+        // to double-feed the (previously shared) accumulator and was redundant.
         var query = EntityQueryEnumerator<SupermatterComponent>();
         while (query.MoveNext(out var uid, out var sm))
         {
             AnnounceCoreDamage(uid, sm);
-
-            if (shouldZap && EntityManager.EntityExists(uid))
-            {
-                SupermatterZap(uid, sm, frameTime);
-            }
         }
     }
 

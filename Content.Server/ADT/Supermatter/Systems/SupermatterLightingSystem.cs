@@ -11,8 +11,6 @@ namespace Content.Server.ADT.Supermatter.Systems;
 public sealed partial class SupermatterSystem
 
 {
-    private TimeSpan _zapAccumulator = TimeSpan.Zero;
-    
     /// <summary>
     /// Shoot lightning bolts depending on accumulated power, but only once per interval.
     /// </summary>
@@ -21,13 +19,13 @@ public sealed partial class SupermatterSystem
         if (!sm.HasBeenPowered)
             return;
 
-        _zapAccumulator += TimeSpan.FromSeconds(frameTime);
+        sm.ZapAccumulator += TimeSpan.FromSeconds(frameTime);
 
         var zapTimer = sm.ZapTimer;
 
-        while (_zapAccumulator >= zapTimer)
+        while (sm.ZapAccumulator >= zapTimer)
         {
-            _zapAccumulator -= zapTimer;
+            sm.ZapAccumulator -= zapTimer;
 
             var power = sm.Power;
             var integrity = GetIntegrity(sm);

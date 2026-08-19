@@ -294,6 +294,13 @@ public sealed partial class SupermatterComponent : Component
     public TimeSpan ZapTimer { get; set; } = TimeSpan.FromSeconds(44);
 
     /// <summary>
+    /// Accumulated time towards the next lightning zap. Per-entity so multiple
+    /// supermatter crystals on the same server don't share a single zap clock.
+    /// </summary>
+    [DataField]
+    public TimeSpan ZapAccumulator = TimeSpan.Zero;
+
+    /// <summary>
     /// Last time a supermatter accent sound was triggered
     /// </summary>
     [DataField]
