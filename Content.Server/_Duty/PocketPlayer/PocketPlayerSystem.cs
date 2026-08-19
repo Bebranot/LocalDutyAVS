@@ -77,7 +77,7 @@ public sealed class PocketPlayerSystem : SharedPocketPlayerSystem
 
             var audioParams = AudioParams.Default
                 .WithMaxDistance(MaxDistance)
-                .WithVolume(MapToRange(comp.Volume, comp.MinSlider, comp.MaxSlider, comp.MinVolume, comp.MaxVolume))
+                .WithVolume(GetVolumeDb(comp.Volume, comp))
                 .WithRolloffFactor(RolloffFactor)
                 .WithReferenceDistance(ReferenceDistance);
 
@@ -129,7 +129,7 @@ public sealed class PocketPlayerSystem : SharedPocketPlayerSystem
         if (!comp.AudioStream.HasValue)
             return;
 
-        Audio.SetVolume(comp.AudioStream, MapToRange(comp.Volume, comp.MinSlider, comp.MaxSlider, comp.MinVolume, comp.MaxVolume));
+        Audio.SetVolume(comp.AudioStream, GetVolumeDb(comp.Volume, comp));
     }
 
     private void OnShutdown(EntityUid uid, PocketPlayerComponent comp, ComponentShutdown args)

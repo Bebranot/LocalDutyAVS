@@ -61,7 +61,7 @@ public sealed class PocketPlayerBoundUserInterface : BoundUserInterface
         if (EntMan.TryGetComponent(Owner, out PocketPlayerComponent? player) &&
             EntMan.TryGetComponent(player.AudioStream, out AudioComponent? audioComp))
         {
-            audioComp.Volume = SharedPocketPlayerSystem.MapToRange(volume, player.MinSlider, player.MaxSlider, player.MinVolume, player.MaxVolume);
+            audioComp.Volume = SharedPocketPlayerSystem.GetVolumeDb(volume, player);
         }
 
         SendMessage(new PocketPlayerSetVolumeMessage(volume));
