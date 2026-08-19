@@ -47,11 +47,21 @@ namespace Content.Shared.Roles
 
             sb.Append("[/color]");
 
+            // _Duty: не было ветки else для Inverted (в отличие от SpeciesRequirement/TraitsRequirement
+            // и т.п.) — при Inverted=true метод всегда возвращал true, полностью игнорируя
+            // требование (чёрный список пола никогда не срабатывал).
             if (!Inverted)
             {
                 reason = FormattedMessage.FromMarkupPermissive($"{Loc.GetString("role-timer-whitelisted-sex")}\n{sb}");
 
                 if (!AllowedSex.Contains(profile.Sex))
+                    return false;
+            }
+            else
+            {
+                reason = FormattedMessage.FromMarkupPermissive($"{Loc.GetString("role-timer-blacklisted-sex")}\n{sb}");
+
+                if (AllowedSex.Contains(profile.Sex))
                     return false;
             }
 
