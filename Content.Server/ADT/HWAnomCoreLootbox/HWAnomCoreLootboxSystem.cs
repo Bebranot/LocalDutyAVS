@@ -61,25 +61,30 @@ namespace Content.Server.ADT.HWAnomCoreLootbox
         {
             _audio.PlayPvs(ent.Comp.DoAfterSound, ent);
             float choosenumber = _random.NextFloat(0f, 11f);
+            // _Duty: границы были с дырами и перекрытиями (>0&&<4, >3&&<6, >6&&<8, >8&&<10, ==10) —
+            // при точных значениях 6f/8f не совпадал ни один case, а весь диапазон (10f,11f)
+            // (~9% всех бросков) не давал вообще никакого эффекта, потому что последний case
+            // требовал точного равенства 10f. Ширины диапазонов (4,2,2,2,1) в сумме дают 11 —
+            // это явно и было задумано, границы просто сведены без дыр/перекрытий.
             switch (choosenumber)
             {
-                case > 0f and < 4f:
+                case >= 0f and < 4f:
                     ChaplainDo(args.User);
                     QueueDel(ent);
                     break;
-                case > 3f and < 6f:
+                case >= 4f and < 6f:
                     Blind(ent, args.User);
                     QueueDel(ent);
                     break;
-                case > 6f and < 8f:
+                case >= 6f and < 8f:
                     Hemophilia(args.User);
                     QueueDel(ent);
                     break;
-                case > 8f and < 10f:
+                case >= 8f and < 10f:
                     Paracusia(args.User);
                     QueueDel(ent);
                     break;
-                case 10f:
+                case >= 10f:
                     Damageplayer(args.User);
                     QueueDel(ent);
                     break;
