@@ -241,11 +241,30 @@ public sealed class GibtoniteSystem : EntitySystem
         if (TryComp<GibtoniteComponent>(ore, out var oreComp))
         {
             oreComp.Extracted = true;
+
+            // _Duty: копируем Triggered на новую руду. Без этого повторный удар по уже добытой руде
+            // не распознаётся Activate() как "гибтонит уже сработал" и вместо мгновенного дропа
+            // руды сбрасывает накопленный ReactionElapsedTime, обнуляя весь прогресс реакции.
+            oreComp.Triggered = comp.Triggered;
+
             oreComp.ReactionElapsedTime = comp.ReactionElapsedTime;
             oreComp.ReactionMaxTime -= comp.ReactionElapsedTime - 1;
 
+            // _Duty: реакция в руде должна продолжаться с того момента, на котором остановилась
+            // в камне, а не начинаться заново - иначе скопированный ReactionElapsedTime будет тут же
+            // затёрт в Update() (он всегда пересчитывает ElapsedTime от ReactionTime до CurTime).
+            oreComp.ReactionTime = _timing.CurTime - TimeSpan.FromSeconds(oreComp.ReactionElapsedTime);
+            oreComp.Active = true;
+
             var gibtoniteSystem = EntityManager.EntitySysManager.GetEntitySystem<GibtoniteSystem>();
-            gibtoniteSystem.Explosion(ore, oreComp);
+
+            // _Duty: раньше Explosion() всегда была no-op здесь, т.к. Active никогда не выставлялся -
+            // руда просто зависала навсегда, никогда не взрываясь и не продолжая тикать. Теперь: если
+            // скопированное время реакции уже превысило максимум - руда детонирует немедленно (с силой,
+            // рассчитанной по накопленному прогрессу); иначе таймер просто продолжает идти и Update()
+            // взорвёт её позже сам, когда он истечёт.
+            if (oreComp.ReactionElapsedTime >= oreComp.ReactionMaxTime)
+                gibtoniteSystem.Explosion(ore, oreComp);
         }
 
         QueueDel(uid);
