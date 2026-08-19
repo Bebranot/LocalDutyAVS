@@ -221,7 +221,11 @@ public sealed partial class ShadekinSystem : EntitySystem
         if (TryComp<PullableComponent>(uid, out var mainEntityPullable) && _pulling.IsPulled(uid, mainEntityPullable))
             _pulling.TryStopPull(uid, mainEntityPullable);
 
-        while (!coordsValid)
+        // _Duty: было `while (!coordsValid)` без ограничения попыток — если шейдкин заперт в тесном
+        // помещении с препятствиями со всех сторон в радиусе 5 тайлов, валидная точка никогда не
+        // находится, и цикл зависает навсегда (подвешивает серверный тик). Ограничиваем число попыток.
+        const int maxAttempts = 20;
+        for (var attempt = 0; attempt < maxAttempts && !coordsValid; attempt++)
         {
             var newCoords = new EntityCoordinates(Transform(uid).ParentUid, coords.X + _random.NextFloat(-5f, 5f), coords.Y + _random.NextFloat(-5f, 5f));
             if (!_interaction.InRangeUnobstructed(uid, newCoords, -1f))
@@ -254,7 +258,9 @@ public sealed partial class ShadekinSystem : EntitySystem
         var coordsValid = false;
         var coords = Transform(uid).Coordinates;
 
-        while (!coordsValid)
+        // _Duty: тот же риск зависания без ограничения попыток, что и в TeleportRandomly выше.
+        const int maxAttempts = 20;
+        for (var attempt = 0; attempt < maxAttempts && !coordsValid; attempt++)
         {
             var newCoords = new EntityCoordinates(Transform(uid).ParentUid, coords.X + _random.NextFloat(-range, range), coords.Y + _random.NextFloat(-range, range));
             if (!_interaction.InRangeUnobstructed(uid, newCoords, -1f))
