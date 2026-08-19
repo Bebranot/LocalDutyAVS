@@ -138,7 +138,9 @@ namespace Content.Server.ADT.Abilities.XenoQueen
         // Spawn Tipo
         private void OnWorldSpawn(EntityUid uid, XenoQueenComponent component, SpawnXenoQueenEvent args) // SpawnXenoQueenEvent
         {
-            if (component.BloobCount > args.Cost)
+            // _Duty: было `>` — при BloobCount ровно равном стоимости спавн отклонялся, хотя
+            // очков хватало впритык (OnCreateTurret рядом использует `>=` для той же механики).
+            if (component.BloobCount >= args.Cost)
             {
                 component.BloobCount -= args.Cost.Value;
                 Spawn(args.Prototypes[0].PrototypeId, Transform(uid).Coordinates);
