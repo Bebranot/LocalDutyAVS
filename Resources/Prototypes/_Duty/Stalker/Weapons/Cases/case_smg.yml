@@ -1,0 +1,240 @@
+# Кейсы под сталкерские пистолеты-пулемёты. Косметические скины (Celebra, Black, Forest,
+# ruust, Anomaly, Sera, Sera921) отдельного кейса не получают.
+
+- type: entity
+  parent: STBaseWeaponCase
+  id: STWeaponSMGMP5Case
+  suffix: "Stalker, Кейс, H&K MP-5"
+  description: Кейс с оружием «H&K MP-5» и 2 магазина.
+  components:
+  - type: StorageFill
+    contents:
+    - id: STWeaponSMGMP5
+    - id: BaseMP5Mag
+      amount: 2
+  - type: Tag
+    tags:
+    - WeaponCase
+    - StalkerWeaponCase
+    - StalkerWeaponCaseSMG
+
+- type: entity
+  parent: STBaseWeaponCase
+  id: STWeaponSMGVector9Case
+  suffix: "Stalker, Кейс, KRISS Vector 9mm"
+  description: Кейс с оружием «KRISS Vector 9mm» и 2 магазина.
+  components:
+  - type: StorageFill
+    contents:
+    - id: STWeaponSMGVector9
+    - id: BaseMP5Mag
+      amount: 2
+  - type: Tag
+    tags:
+    - WeaponCase
+    - StalkerWeaponCase
+    - StalkerWeaponCaseSMG
+
+- type: entity
+  parent: STBaseWeaponCase
+  id: STWeaponSMGMP40Case
+  suffix: "Stalker, Кейс, MP-40"
+  description: Кейс с оружием «MP-40» и 2 магазина.
+  components:
+  - type: StorageFill
+    contents:
+    - id: STWeaponSMGMP40
+    - id: MP40Mag
+      amount: 2
+  - type: Tag
+    tags:
+    - WeaponCase
+    - StalkerWeaponCase
+    - StalkerWeaponCaseSMG
+
+- type: entity
+  parent: STBaseWeaponCase
+  id: STWeaponSMGPP19Case
+  suffix: "Stalker, Кейс, ПП-19 Бизон"
+  description: Кейс с оружием «ПП-19 Бизон» и 2 магазина.
+  components:
+  - type: StorageFill
+    contents:
+    - id: STWeaponSMGPP19
+    - id: BizonMag
+      amount: 2
+  - type: Tag
+    tags:
+    - WeaponCase
+    - StalkerWeaponCase
+    - StalkerWeaponCaseSMG
+
+- type: entity
+  parent: STBaseWeaponCase
+  id: STWeaponSMGPP19919Case
+  suffix: "Stalker, Кейс, ПП-19 Бизон 9x19"
+  description: Кейс с оружием «ПП-19 Бизон 9x19» и 2 магазина.
+  components:
+  - type: StorageFill
+    contents:
+    - id: STWeaponSMGPP19919
+    - id: BizonMag919
+      amount: 2
+  - type: Tag
+    tags:
+    - WeaponCase
+    - StalkerWeaponCase
+    - StalkerWeaponCaseSMG
+
+- type: entity
+  parent: STBaseWeaponCase
+  id: STWeaponSMGPP1901Case
+  suffix: "Stalker, Кейс, ПП-19-01 Витязь"
+  description: Кейс с оружием «ПП-19-01 Витязь» и 2 магазина.
+  components:
+  - type: StorageFill
+    contents:
+    - id: STWeaponSMGPP1901
+    - id: VityazMag
+      amount: 2
+  - type: Tag
+    tags:
+    - WeaponCase
+    - StalkerWeaponCase
+    - StalkerWeaponCaseSMG
+
+- type: entity
+  parent: STBaseWeaponCase
+  id: STWeaponSMGPP91Case
+  suffix: "Stalker, Кейс, ПП-91 Кедр"
+  description: Кейс с оружием «ПП-91 Кедр» и 2 магазина.
+  components:
+  - type: StorageFill
+    contents:
+    - id: STWeaponSMGPP91
+    - id: PP91Mag
+      amount: 2
+  - type: Tag
+    tags:
+    - WeaponCase
+    - StalkerWeaponCase
+    - StalkerWeaponCaseSMG
+
+- type: entity
+  parent: STBaseWeaponCase
+  id: STWeaponSMGPPS43Case
+  suffix: "Stalker, Кейс, ППС-43"
+  description: Кейс с оружием «ППС-43» и 2 магазина.
+  components:
+  - type: StorageFill
+    contents:
+    - id: STWeaponSMGPPS43
+    - id: BasePPSMag
+      amount: 2
+  - type: Tag
+    tags:
+    - WeaponCase
+    - StalkerWeaponCase
+    - StalkerWeaponCaseSMG
+
+- type: entity
+  parent: STBaseWeaponCase
+  id: STWeaponSMGPPSh41Case
+  suffix: "Stalker, Кейс, ППШ-41"
+  description: Кейс с оружием «ППШ-41» и 2 магазина.
+  components:
+  - type: StorageFill
+    contents:
+    - id: STWeaponSMGPPSh41
+    - id: BasePPSHMag
+      amount: 2
+  - type: Tag
+    tags:
+    - WeaponCase
+    - StalkerWeaponCase
+    - StalkerWeaponCaseSMG
+
+- type: entity
+  parent: STBaseWeaponCase
+  id: STWeaponSMGVZ61Case
+  suffix: "Stalker, Кейс, vz. 61 Скорпион"
+  description: Кейс с оружием «vz. 61 Скорпион» и 2 магазина.
+  components:
+  - type: StorageFill
+    contents:
+    - id: STWeaponSMGVZ61
+    - id: Vz61Mag
+      amount: 2
+  - type: Tag
+    tags:
+    - WeaponCase
+    - StalkerWeaponCase
+    - StalkerWeaponCaseSMG
+
+- type: entity
+  parent: STBaseWeaponCase
+  id: STWeaponSMGThompsonCase
+  suffix: "Stalker, Кейс, Thompson"
+  description: Кейс с оружием «Thompson» и 2 магазина.
+  components:
+  - type: StorageFill
+    contents:
+    - id: STWeaponSMGThompson
+    - id: BaseTommyGunMag
+      amount: 2
+  - type: Tag
+    tags:
+    - WeaponCase
+    - StalkerWeaponCase
+    - StalkerWeaponCaseSMG
+
+- type: entity
+  parent: STBaseWeaponCase
+  id: STWeaponSMGFNP90Case
+  suffix: "Stalker, Кейс, FN P90 PDW"
+  description: Кейс с оружием «FN P90 PDW» и 2 магазина.
+  components:
+  - type: StorageFill
+    contents:
+    - id: STWeaponSMGFNP90
+    - id: P90Mag
+      amount: 2
+  - type: Tag
+    tags:
+    - WeaponCase
+    - StalkerWeaponCase
+    - StalkerWeaponCaseSMG
+
+- type: entity
+  parent: STBaseWeaponCase
+  id: STWeaponSMGStalkerCP2VereskCase
+  suffix: "Stalker, Кейс, СР-2 Вереск"
+  description: Кейс с оружием «СР-2 Вереск» и 2 магазина.
+  components:
+  - type: StorageFill
+    contents:
+    - id: STWeaponSMGStalkerCP2Veresk
+    - id: VityazMag
+      amount: 2
+  - type: Tag
+    tags:
+    - WeaponCase
+    - StalkerWeaponCase
+    - StalkerWeaponCaseSMG
+
+- type: entity
+  parent: STBaseWeaponCase
+  id: STWeaponSMGStalkerCP2Veresk921Case
+  suffix: "Stalker, Кейс, СР-2М Вереск 9x21"
+  description: Кейс с оружием «СР-2М Вереск 9x21» и 2 магазина.
+  components:
+  - type: StorageFill
+    contents:
+    - id: STWeaponSMGStalkerCP2Veresk921
+    - id: SR2MMag30
+      amount: 2
+  - type: Tag
+    tags:
+    - WeaponCase
+    - StalkerWeaponCase
+    - StalkerWeaponCaseSMG

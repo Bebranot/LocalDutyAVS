@@ -1,0 +1,138 @@
+# Кейсы под сталкерские пистолеты. Один кейс на базовое оружие — чистые косметические
+# реskины (например АПС "Хуго") отдельного кейса не получают.
+
+- type: entity
+  parent: STBaseWeaponCase
+  id: WeaponPistolStalkerAPSCase
+  suffix: "Stalker, Кейс, АПС"
+  description: Кейс с оружием «АПС» и 2 магазина.
+  components:
+  - type: StorageFill
+    contents:
+    - id: WeaponPistolStalkerAPS
+    - id: BaseAPSMag
+      amount: 2
+  - type: Tag
+    tags:
+    - WeaponCase
+    - StalkerWeaponCase
+    - StalkerWeaponCasePistol
+
+- type: entity
+  parent: STBaseWeaponCase
+  id: WeaponPistolGSH18Case
+  suffix: "Stalker, Кейс, ГШ-18"
+  description: Кейс с оружием «ГШ-18» и 2 магазина.
+  components:
+  - type: StorageFill
+    contents:
+    - id: WeaponPistolGSH18
+    - id: BaseGSH-18Mag10
+      amount: 2
+  - type: Tag
+    tags:
+    - WeaponCase
+    - StalkerWeaponCase
+    - StalkerWeaponCasePistol
+
+- type: entity
+  parent: STBaseWeaponCase
+  id: WeaponPistolStalkerGlockCase
+  suffix: "Stalker, Кейс, Glock-17"
+  description: Кейс с оружием «Glock-17» и 2 магазина.
+  components:
+  - type: StorageFill
+    contents:
+    - id: WeaponPistolStalkerGlock
+    - id: GlockMag17
+      amount: 2
+  - type: Tag
+    tags:
+    - WeaponCase
+    - StalkerWeaponCase
+    - StalkerWeaponCasePistol
+
+- type: entity
+  parent: STBaseWeaponCase
+  id: WeaponPistolStalkerLP08Case
+  suffix: "Stalker, Кейс, Люгер LP08"
+  description: Кейс с оружием «Люгер LP08» и 2 магазина.
+  components:
+  - type: StorageFill
+    contents:
+    - id: WeaponPistolStalkerLP08
+    - id: LP08Drum
+      amount: 2
+  - type: Tag
+    tags:
+    - WeaponCase
+    - StalkerWeaponCase
+    - StalkerWeaponCasePistol
+
+- type: entity
+  parent: STBaseWeaponCase
+  id: WeaponPistolStalkerPMCase
+  suffix: "Stalker, Кейс, ПМм"
+  description: Кейс с оружием «ПМм» и 2 магазина.
+  components:
+  - type: StorageFill
+    contents:
+    - id: WeaponPistolStalkerPM
+    - id: BasePMMag
+      amount: 2
+  - type: Tag
+    tags:
+    - WeaponCase
+    - StalkerWeaponCase
+    - StalkerWeaponCasePistol
+
+- type: entity
+  parent: STBaseWeaponCase
+  id: WeaponPistolStalkerPMModifedCase
+  suffix: "Stalker, Кейс, ПМм 9x19"
+  description: Кейс с оружием «ПМм 9x19» и 2 магазина.
+  components:
+  - type: StorageFill
+    contents:
+    - id: WeaponPistolStalkerPMModifed
+    - id: GlockMag17
+      amount: 2
+  - type: Tag
+    tags:
+    - WeaponCase
+    - StalkerWeaponCase
+    - StalkerWeaponCasePistol
+
+- type: entity
+  parent: STBaseWeaponCase
+  id: WeaponStalkerPistolTec9Case
+  suffix: "Stalker, Кейс, TEC-9"
+  description: Кейс с оружием «TEC-9» и 2 магазина.
+  components:
+  - type: StorageFill
+    contents:
+    - id: WeaponStalkerPistolTec9
+    - id: BaseTEC9Mag
+      amount: 2
+  - type: Tag
+    tags:
+    - WeaponCase
+    - StalkerWeaponCase
+    - StalkerWeaponCasePistol
+
+- type: entity
+  parent: STBaseWeaponCase
+  id: WeaponPistolStalkerTTCase
+  suffix: "Stalker, Кейс, ТТ"
+  description: Кейс с оружием «Тульский Токарев» и 2 магазина.
+  components:
+  - type: StorageFill
+    contents:
+    - id: WeaponPistolStalkerTT
+    - id: TTMag
+      amount: 2
+  - type: Tag
+    tags:
+    - WeaponCase
+    - StalkerWeaponCase
+    - StalkerWeaponCasePistol

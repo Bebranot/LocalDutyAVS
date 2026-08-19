@@ -1,0 +1,17 @@
+# Кейс под АШ-12 (Stalker, категория "дробовик").
+- type: entity
+  parent: STBaseWeaponCase
+  id: STWeaponRifleAH12Case
+  suffix: "Stalker, Кейс, АШ-12"
+  description: "Кейс с оружием: АШ-12 \"Охотник на мутантов\" и 2 магазина."
+  components:
+  - type: StorageFill
+    contents:
+    - id: STWeaponRifleAH12
+    - id: AS12Mag
+      amount: 2
+  - type: Tag
+    tags:
+    - WeaponCase
+    - StalkerWeaponCase
+    - StalkerWeaponCaseShotgun

@@ -1,0 +1,206 @@
+# Кейсы под винтовки NATO-калибра (5.45/5.56). Косметические скины (v2, Alt, Covenant,
+# WhiteStrawberry) отдельного кейса не получают.
+
+- type: entity
+  parent: STBaseWeaponCase
+  id: STWeaponRifleM16Case
+  suffix: "Stalker, Кейс, M16"
+  description: Кейс с оружием «M16» и 2 магазина.
+  components:
+  - type: StorageFill
+    contents:
+    - id: STWeaponRifleM16
+    - id: Base556Mag10
+      amount: 2
+  - type: Tag
+    tags:
+    - WeaponCase
+    - StalkerWeaponCase
+    - StalkerWeaponCaseRifle
+
+- type: entity
+  parent: STBaseWeaponCase
+  id: STWeaponRifleM4Case
+  suffix: "Stalker, Кейс, Colt M4"
+  description: Кейс с оружием «Colt M4 Cobra» и 2 магазина.
+  components:
+  - type: StorageFill
+    contents:
+    - id: STWeaponRifleM4
+    - id: Base556Mag10
+      amount: 2
+  - type: Tag
+    tags:
+    - WeaponCase
+    - StalkerWeaponCase
+    - StalkerWeaponCaseRifle
+
+- type: entity
+  parent: STBaseWeaponCase
+  id: STWeaponRifleHK416Case
+  suffix: "Stalker, Кейс, HK416"
+  description: Кейс с оружием «HK416» и 2 магазина.
+  components:
+  - type: StorageFill
+    contents:
+    - id: STWeaponRifleHK416
+    - id: Base556Mag10
+      amount: 2
+  - type: Tag
+    tags:
+    - WeaponCase
+    - StalkerWeaponCase
+    - StalkerWeaponCaseRifle
+
+- type: entity
+  parent: STBaseWeaponCase
+  id: STWeaponRifleLR300v1Case
+  suffix: "Stalker, Кейс, LR-300"
+  description: Кейс с оружием «LR-300» и 2 магазина.
+  components:
+  - type: StorageFill
+    contents:
+    - id: STWeaponRifleLR300v1
+    - id: Base556Mag10
+      amount: 2
+  - type: Tag
+    tags:
+    - WeaponCase
+    - StalkerWeaponCase
+    - StalkerWeaponCaseRifle
+
+- type: entity
+  parent: STBaseWeaponCase
+  id: STWeaponRifleSCARLCase
+  suffix: "Stalker, Кейс, SCAR-L"
+  description: Кейс с оружием «SCAR-L» и 2 магазина.
+  components:
+  - type: StorageFill
+    contents:
+    - id: STWeaponRifleSCARL
+    - id: Base556Mag10
+      amount: 2
+  - type: Tag
+    tags:
+    - WeaponCase
+    - StalkerWeaponCase
+    - StalkerWeaponCaseRifle
+
+- type: entity
+  parent: STBaseWeaponCase
+  id: STWeaponRifleG36Case
+  suffix: "Stalker, Кейс, HK G-36"
+  description: Кейс с оружием «HK G-36» и 2 магазина.
+  components:
+  - type: StorageFill
+    contents:
+    - id: STWeaponRifleG36
+    - id: Base556Mag10
+      amount: 2
+  - type: Tag
+    tags:
+    - WeaponCase
+    - StalkerWeaponCase
+    - StalkerWeaponCaseRifle
+
+- type: entity
+  parent: STBaseWeaponCase
+  id: STWeaponRifleAUGCase
+  suffix: "Stalker, Кейс, AUG"
+  description: Кейс с оружием «AUG» и 2 магазина.
+  components:
+  - type: StorageFill
+    contents:
+    - id: STWeaponRifleAUG
+    - id: Base556Mag10
+      amount: 2
+  - type: Tag
+    tags:
+    - WeaponCase
+    - StalkerWeaponCase
+    - StalkerWeaponCaseRifle
+
+- type: entity
+  parent: STBaseWeaponCase
+  id: STWeaponRifleGalilCase
+  suffix: "Stalker, Кейс, Galil ARM"
+  description: Кейс с оружием «Galil ARM» и 2 магазина.
+  components:
+  - type: StorageFill
+    contents:
+    - id: STWeaponRifleGalil
+    - id: Base556Mag10
+      amount: 2
+  - type: Tag
+    tags:
+    - WeaponCase
+    - StalkerWeaponCase
+    - StalkerWeaponCaseRifle
+
+- type: entity
+  parent: STBaseWeaponCase
+  id: STWeaponRifleL85Case
+  suffix: "Stalker, Кейс, L85"
+  description: Кейс с оружием «L85» и 2 магазина.
+  components:
+  - type: StorageFill
+    contents:
+    - id: STWeaponRifleL85
+    - id: Base556Mag10
+      amount: 2
+  - type: Tag
+    tags:
+    - WeaponCase
+    - StalkerWeaponCase
+    - StalkerWeaponCaseRifle
+
+- type: entity
+  parent: STBaseWeaponCase
+  id: STWeaponRifleF2000Case
+  suffix: "Stalker, Кейс, FN-F2000"
+  description: Кейс с оружием «FN-F2000» и 2 магазина.
+  components:
+  - type: StorageFill
+    contents:
+    - id: STWeaponRifleF2000
+    - id: Base556Mag10
+      amount: 2
+  - type: Tag
+    tags:
+    - WeaponCase
+    - StalkerWeaponCase
+    - StalkerWeaponCaseRifle
+
+- type: entity
+  parent: STBaseWeaponCase
+  id: STWeaponRifleStalkerAbakanCase
+  suffix: "Stalker, Кейс, АН-94 Абакан"
+  description: Кейс с оружием «АН-94 Абакан» и 2 магазина.
+  components:
+  - type: StorageFill
+    contents:
+    - id: STWeaponRifleStalkerAbakan
+    - id: Base545Mag10
+      amount: 2
+  - type: Tag
+    tags:
+    - WeaponCase
+    - StalkerWeaponCase
+    - StalkerWeaponCaseRifle
+
+- type: entity
+  parent: STBaseWeaponCase
+  id: STWeaponRifleStalkerAek971Case
+  suffix: "Stalker, Кейс, AEK-971"
+  description: Кейс с оружием «AEK-971» и 2 магазина.
+  components:
+  - type: StorageFill
+    contents:
+    - id: STWeaponRifleStalkerAek971
+    - id: Base545Mag10
+      amount: 2
+  - type: Tag
+    tags:
+    - WeaponCase
+    - StalkerWeaponCase
+    - StalkerWeaponCaseRifle

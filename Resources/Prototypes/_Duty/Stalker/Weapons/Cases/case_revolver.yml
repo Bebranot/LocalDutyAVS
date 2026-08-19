@@ -1,0 +1,173 @@
+# Кейсы под сталкерские револьверы. Патронами в барабан не заряжаются магазином — вместо
+# "2 магазинов" кладём 2 спидлоадера (там, где они есть) или стопку патронов (Штурмовой RH12,
+# у которого спидлоадера в прототипах нет). Матеба "Джокер" — реskин Матебы, свой кейс не получает.
+
+- type: entity
+  parent: STBaseWeaponCase
+  id: STWeaponRevolverChiappaRhino60DSCase
+  suffix: "Stalker, Кейс, Chiappa Rhino 60DS"
+  description: Кейс с оружием «Chiappa Rhino 60DS» и 2 спидлоадера.
+  components:
+  - type: StorageFill
+    contents:
+    - id: STWeaponRevolverChiappaRhino60DS
+    - id: STSpeedLoader45ACP
+      amount: 2
+  - type: Tag
+    tags:
+    - WeaponCase
+    - StalkerWeaponCase
+    - StalkerWeaponCaseRevolver
+
+- type: entity
+  parent: STBaseWeaponCase
+  id: STWeaponRevolverDanWesson715Case
+  suffix: "Stalker, Кейс, Dan Wesson 715"
+  description: Кейс с оружием «Dan Wesson 715» и 2 спидлоадера.
+  components:
+  - type: StorageFill
+    contents:
+    - id: STWeaponRevolverDanWesson715
+    - id: STSpeedLoader45ACP
+      amount: 2
+  - type: Tag
+    tags:
+    - WeaponCase
+    - StalkerWeaponCase
+    - StalkerWeaponCaseRevolver
+
+- type: entity
+  parent: STBaseWeaponCase
+  id: WeaponGameRevolverMatebaCase
+  suffix: "Stalker, Кейс, Матеба"
+  description: Кейс с оружием «Матеба» и 2 спидлоадера.
+  components:
+  - type: StorageFill
+    contents:
+    - id: WeaponGameRevolverMateba
+    - id: SpeedLoaderRemingtonMagnum
+      amount: 2
+  - type: Tag
+    tags:
+    - WeaponCase
+    - StalkerWeaponCase
+    - StalkerWeaponCaseRevolver
+
+- type: entity
+  parent: STBaseWeaponCase
+  id: STWeaponRevolverRH12Case
+  suffix: "Stalker, Кейс, Штурмовой RH12"
+  description: Кейс с оружием «Револьвер Штурмовой 12,7x55» и стопка патронов — отдельного спидлоадера у него нет.
+  components:
+  - type: StorageFill
+    contents:
+    - id: STWeaponRevolverRH12
+    - id: STCartridge1255PS12A
+      amount: 10
+  - type: Tag
+    tags:
+    - WeaponCase
+    - StalkerWeaponCase
+    - StalkerWeaponCaseRevolver
+
+- type: entity
+  parent: STBaseWeaponCase
+  id: STWeaponRevolverRugerRedhawkCase
+  suffix: "Stalker, Кейс, Ruger Redhawk"
+  description: Кейс с оружием «Ruger Redhawk» и 2 спидлоадера.
+  components:
+  - type: StorageFill
+    contents:
+    - id: STWeaponRevolverRugerRedhawk
+    - id: STSpeedLoader45ACP
+      amount: 2
+  - type: Tag
+    tags:
+    - WeaponCase
+    - StalkerWeaponCase
+    - StalkerWeaponCaseRevolver
+
+- type: entity
+  parent: STBaseWeaponCase
+  id: STWeaponRevolverSWModel325Case
+  suffix: "Stalker, Кейс, S&W Model 325"
+  description: Кейс с оружием «S&W Model 325» и 2 спидлоадера.
+  components:
+  - type: StorageFill
+    contents:
+    - id: STWeaponRevolverSWModel325
+    - id: STSpeedLoader45ACP
+      amount: 2
+  - type: Tag
+    tags:
+    - WeaponCase
+    - StalkerWeaponCase
+    - StalkerWeaponCaseRevolver
+
+- type: entity
+  parent: STBaseWeaponCase
+  id: STWeaponRevolverSWModel625Case
+  suffix: "Stalker, Кейс, S&W Model 625"
+  description: Кейс с оружием «S&W Model 625» и 2 спидлоадера.
+  components:
+  - type: StorageFill
+    contents:
+    - id: STWeaponRevolverSWModel625
+    - id: STSpeedLoader45ACP
+      amount: 2
+  - type: Tag
+    tags:
+    - WeaponCase
+    - StalkerWeaponCase
+    - StalkerWeaponCaseRevolver
+
+- type: entity
+  parent: STBaseWeaponCase
+  id: STWeaponRevolverSWPC325TRCase
+  suffix: "Stalker, Кейс, S&W PC 325 TR"
+  description: Кейс с оружием «S&W PC 325 TR» и 2 спидлоадера.
+  components:
+  - type: StorageFill
+    contents:
+    - id: STWeaponRevolverSWPC325TR
+    - id: STSpeedLoader45ACP
+      amount: 2
+  - type: Tag
+    tags:
+    - WeaponCase
+    - StalkerWeaponCase
+    - StalkerWeaponCaseRevolver
+
+- type: entity
+  parent: STBaseWeaponCase
+  id: STWeaponRevolverTaurusJudgeCase
+  suffix: "Stalker, Кейс, Taurus Judge"
+  description: Кейс с оружием «Taurus Judge» и 2 спидлоадера.
+  components:
+  - type: StorageFill
+    contents:
+    - id: STWeaponRevolverTaurusJudge
+    - id: STSpeedLoader45ACP
+      amount: 2
+  - type: Tag
+    tags:
+    - WeaponCase
+    - StalkerWeaponCase
+    - StalkerWeaponCaseRevolver
+
+- type: entity
+  parent: STBaseWeaponCase
+  id: STWeaponRevolverTaurusTracker455Case
+  suffix: "Stalker, Кейс, Taurus Tracker 455"
+  description: Кейс с оружием «Taurus Tracker 455» и 2 спидлоадера.
+  components:
+  - type: StorageFill
+    contents:
+    - id: STWeaponRevolverTaurusTracker455
+    - id: STSpeedLoader45ACP
+      amount: 2
+  - type: Tag
+    tags:
+    - WeaponCase
+    - StalkerWeaponCase
+    - StalkerWeaponCaseRevolver

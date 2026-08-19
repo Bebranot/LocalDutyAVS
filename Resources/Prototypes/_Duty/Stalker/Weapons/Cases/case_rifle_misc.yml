@@ -1,0 +1,274 @@
+# Кейсы под винтовки смешанных калибров/семейств (FAL, Galil, SIG, OC-14 и др.). Чисто
+# косметические скины (Selebra, Black, Alt, Sera, Camo) отдельного кейса не получают.
+
+- type: entity
+  parent: STBaseWeaponCase
+  id: STWeaponRifleFALCase
+  suffix: "Stalker, Кейс, FN FAL"
+  description: Кейс с оружием «FN FAL» и 2 магазина.
+  components:
+  - type: StorageFill
+    contents:
+    - id: STWeaponRifleFAL
+    - id: Base751Mag10
+      amount: 2
+  - type: Tag
+    tags:
+    - WeaponCase
+    - StalkerWeaponCase
+    - StalkerWeaponCaseRifle
+
+- type: entity
+  parent: STBaseWeaponCase
+  id: STWeaponRifleM14Case
+  suffix: "Stalker, Кейс, M14"
+  description: Кейс с оружием «M14» и 2 магазина.
+  components:
+  - type: StorageFill
+    contents:
+    - id: STWeaponRifleM14
+    - id: Base751Mag10
+      amount: 2
+  - type: Tag
+    tags:
+    - WeaponCase
+    - StalkerWeaponCase
+    - StalkerWeaponCaseRifle
+
+- type: entity
+  parent: STBaseWeaponCase
+  id: STWeaponRifleGalatzCase
+  suffix: "Stalker, Кейс, Galatz"
+  description: Кейс с оружием «Galatz Wanderer» и 2 магазина.
+  components:
+  - type: StorageFill
+    contents:
+    - id: STWeaponRifleGalatz
+    - id: Base751Mag10
+      amount: 2
+  - type: Tag
+    tags:
+    - WeaponCase
+    - StalkerWeaponCase
+    - StalkerWeaponCaseRifle
+
+- type: entity
+  parent: STBaseWeaponCase
+  id: STWeaponRifleSCARHCase
+  suffix: "Stalker, Кейс, FN SCAR-H"
+  description: Кейс с оружием «FN SCAR-H» и 2 магазина.
+  components:
+  - type: StorageFill
+    contents:
+    - id: STWeaponRifleSCARH
+    - id: Base751Mag10
+      amount: 2
+  - type: Tag
+    tags:
+    - WeaponCase
+    - StalkerWeaponCase
+    - StalkerWeaponCaseRifle
+
+- type: entity
+  parent: STBaseWeaponCase
+  id: STWeaponRifleSCARHShortCase
+  suffix: "Stalker, Кейс, FN SCAR-H CQC"
+  description: Кейс с оружием «FN SCAR-H CQC» и 2 магазина.
+  components:
+  - type: StorageFill
+    contents:
+    - id: STWeaponRifleSCARHShort
+    - id: Base751Mag10
+      amount: 2
+  - type: Tag
+    tags:
+    - WeaponCase
+    - StalkerWeaponCase
+    - StalkerWeaponCaseRifle
+
+- type: entity
+  parent: STBaseWeaponCase
+  id: STWeaponRifleARX160Case
+  suffix: "Stalker, Кейс, Beretta ARX-160"
+  description: Кейс с оружием «Beretta ARX-160» и 2 магазина.
+  components:
+  - type: StorageFill
+    contents:
+    - id: STWeaponRifleARX160
+    - id: Base751Mag10
+      amount: 2
+  - type: Tag
+    tags:
+    - WeaponCase
+    - StalkerWeaponCase
+    - StalkerWeaponCaseRifle
+
+- type: entity
+  parent: STBaseWeaponCase
+  id: STWeaponRifleASVALCase
+  suffix: "Stalker, Кейс, AS-VAL"
+  description: Кейс с оружием «AS-VAL» и 2 магазина.
+  components:
+  - type: StorageFill
+    contents:
+    - id: STWeaponRifleASVAL
+    - id: Base939Mag10
+      amount: 2
+  - type: Tag
+    tags:
+    - WeaponCase
+    - StalkerWeaponCase
+    - StalkerWeaponCaseRifle
+
+- type: entity
+  parent: STBaseWeaponCase
+  id: STWeaponRifleSIG550Case
+  suffix: "Stalker, Кейс, SIG SG 550"
+  description: Кейс с оружием «SIG SG 550» и 2 магазина.
+  components:
+  - type: StorageFill
+    contents:
+    - id: STWeaponRifleSIG550
+    - id: Base556Mag10
+      amount: 2
+  - type: Tag
+    tags:
+    - WeaponCase
+    - StalkerWeaponCase
+    - StalkerWeaponCaseRifle
+
+- type: entity
+  parent: STBaseWeaponCase
+  id: STWeaponRifleSIG739Case
+  suffix: "Stalker, Кейс, SIG-739"
+  description: Кейс с оружием «SIG-739 Precision» и 2 магазина.
+  components:
+  - type: StorageFill
+    contents:
+    - id: STWeaponRifleSIG739
+    - id: Base739Mag10
+      amount: 2
+  - type: Tag
+    tags:
+    - WeaponCase
+    - StalkerWeaponCase
+    - StalkerWeaponCaseRifle
+
+- type: entity
+  parent: STBaseWeaponCase
+  id: STMetroWeaponRifleVSVCase
+  suffix: "Stalker, Кейс, ВСВ Глухарь"
+  description: Кейс с оружием «ВСВ Глухарь» и 2 магазина.
+  components:
+  - type: StorageFill
+    contents:
+    - id: STMetroWeaponRifleVSV
+    - id: Base545Mag10
+      amount: 2
+  - type: Tag
+    tags:
+    - WeaponCase
+    - StalkerWeaponCase
+    - StalkerWeaponCaseRifle
+
+- type: entity
+  parent: STBaseWeaponCase
+  id: STWeaponRifleOC14Case
+  suffix: "Stalker, Кейс, ОЦ-14 Гроза"
+  description: Кейс с оружием «ОЦ-14 Гроза» и 2 магазина.
+  components:
+  - type: StorageFill
+    contents:
+    - id: STWeaponRifleOC14
+    - id: Base545Mag10
+      amount: 2
+  - type: Tag
+    tags:
+    - WeaponCase
+    - StalkerWeaponCase
+    - StalkerWeaponCaseRifle
+
+- type: entity
+  parent: STBaseWeaponCase
+  id: STWeaponRifleOC14939Case
+  suffix: "Stalker, Кейс, ОЦ-14 Гроза 9x39"
+  description: Кейс с оружием «ОЦ-14 Гроза 9x39» и 2 магазина.
+  components:
+  - type: StorageFill
+    contents:
+    - id: STWeaponRifleOC14939
+    - id: Base939Mag10
+      amount: 2
+  - type: Tag
+    tags:
+    - WeaponCase
+    - StalkerWeaponCase
+    - StalkerWeaponCaseRifle
+
+- type: entity
+  parent: STBaseWeaponCase
+  id: STWeaponRifleStalkerAK104Case
+  suffix: "Stalker, Кейс, АК-104"
+  description: Кейс с оружием «АК-104» и 2 магазина.
+  components:
+  - type: StorageFill
+    contents:
+    - id: STWeaponRifleStalkerAK104
+    - id: Base739Mag10
+      amount: 2
+  - type: Tag
+    tags:
+    - WeaponCase
+    - StalkerWeaponCase
+    - StalkerWeaponCaseRifle
+
+- type: entity
+  parent: STBaseWeaponCase
+  id: STWeaponRifleStalkerAK12Case
+  suffix: "Stalker, Кейс, АК-12"
+  description: Кейс с оружием «АК-12» и 2 магазина.
+  components:
+  - type: StorageFill
+    contents:
+    - id: STWeaponRifleStalkerAK12
+    - id: Base545Mag10
+      amount: 2
+  - type: Tag
+    tags:
+    - WeaponCase
+    - StalkerWeaponCase
+    - StalkerWeaponCaseRifle
+
+- type: entity
+  parent: STBaseWeaponCase
+  id: STWeaponRifleStalkerAK15Case
+  suffix: "Stalker, Кейс, АК-15"
+  description: Кейс с оружием «АК-15» и 2 магазина.
+  components:
+  - type: StorageFill
+    contents:
+    - id: STWeaponRifleStalkerAK15
+    - id: Base739Mag10
+      amount: 2
+  - type: Tag
+    tags:
+    - WeaponCase
+    - StalkerWeaponCase
+    - StalkerWeaponCaseRifle
+
+- type: entity
+  parent: STBaseWeaponCase
+  id: STWeaponRifleStalkerRPK16Case
+  suffix: "Stalker, Кейс, РПК-16"
+  description: Кейс с оружием «РПК-16» и 2 магазина.
+  components:
+  - type: StorageFill
+    contents:
+    - id: STWeaponRifleStalkerRPK16
+    - id: Base545Mag10
+      amount: 2
+  - type: Tag
+    tags:
+    - WeaponCase
+    - StalkerWeaponCase
+    - StalkerWeaponCaseRifle

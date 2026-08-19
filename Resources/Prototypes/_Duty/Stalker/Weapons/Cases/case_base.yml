@@ -1,0 +1,25 @@
+# Общая база кейсов под сталкерское оружие — визуал/грид переиспользуют ADT-конвенцию
+# weaponcase.rsi (см. Resources/Prototypes/ADT/Entities/Objects/Misc/weaponcase.yml).
+# Теги НЕ вешаются здесь: список `tags:` при наследовании компонента заменяется целиком,
+# поэтому каждый дочерний кейс объявляет свой полный набор тегов сам.
+- type: entity
+  abstract: true
+  parent: [ BaseStorageItem, BaseBagOpenClose ]
+  id: STBaseWeaponCase
+  name: weapon case
+  description: Кейс для хранения и переноски оружия.
+  components:
+  - type: Sprite
+    sprite: ADT/Objects/Storage/weaponcase.rsi
+    layers:
+    - state: closed
+    - state: open
+      map: ["openLayer"]
+  - type: Appearance
+  - type: Item
+    sprite: ADT/Objects/Storage/weaponcase.rsi
+    size: Huge
+  - type: Storage
+    maxItemSize: Huge
+    grid:
+    - 0,0,8,3

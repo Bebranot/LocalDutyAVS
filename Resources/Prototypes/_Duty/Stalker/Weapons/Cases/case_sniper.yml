@@ -1,0 +1,123 @@
+# Кейсы под сталкерские снайперки. Мосина и СКС — болтовки/самозарядки без магазина,
+# заряжаются россыпью патронов прямо в ствол, поэтому вместо "2 магазинов" в кейс кладётся
+# стопка патронов размером в ёмкость их ballistic-ammo (5 и 10 соответственно). Косметические
+# скины (Grass, Covenant, Wood-самоделка, Seraphim, Oracle) отдельного кейса не получают.
+
+- type: entity
+  parent: STBaseWeaponCase
+  id: STWeaponSniperMosinCase
+  suffix: "Stalker, Кейс, Мосина"
+  description: Кейс с оружием «Мосина» и стопка патронов — заряжается россыпью, магазина у неё нет.
+  components:
+  - type: StorageFill
+    contents:
+    - id: STWeaponSniperMosin
+    - id: STCartridge754FMJ
+      amount: 5
+  - type: Tag
+    tags:
+    - WeaponCase
+    - StalkerWeaponCase
+    - StalkerWeaponCaseSniper
+
+- type: entity
+  parent: STBaseWeaponCase
+  id: STWeaponSniperSKSCase
+  suffix: "Stalker, Кейс, СКС"
+  description: Кейс с оружием «СКС» и стопка патронов — заряжается россыпью, магазина у неё нет.
+  components:
+  - type: StorageFill
+    contents:
+    - id: STWeaponSniperSKS
+    - id: STCartridge739FMJ
+      amount: 10
+  - type: Tag
+    tags:
+    - WeaponCase
+    - StalkerWeaponCase
+    - StalkerWeaponCaseSniper
+
+- type: entity
+  parent: STBaseWeaponCase
+  id: STWeaponSniperSVDSCase
+  suffix: "Stalker, Кейс, СВДС"
+  description: Кейс с оружием «СВДС Драгунова» и 2 магазина.
+  components:
+  - type: StorageFill
+    contents:
+    - id: STWeaponSniperSVDS
+    - id: 754Mag10
+      amount: 2
+  - type: Tag
+    tags:
+    - WeaponCase
+    - StalkerWeaponCase
+    - StalkerWeaponCaseSniper
+
+- type: entity
+  parent: STBaseWeaponCase
+  id: STWeaponSniperSVUCase
+  suffix: "Stalker, Кейс, СВУ"
+  description: Кейс с оружием «СВУ» и 2 магазина.
+  components:
+  - type: StorageFill
+    contents:
+    - id: STWeaponSniperSVU
+    - id: 754Mag10
+      amount: 2
+  - type: Tag
+    tags:
+    - WeaponCase
+    - StalkerWeaponCase
+    - StalkerWeaponCaseSniper
+
+- type: entity
+  parent: STBaseWeaponCase
+  id: STWeaponSniperVeprCase
+  suffix: "Stalker, Кейс, ВПО-129 Vepr"
+  description: Кейс с оружием «ВПО-129 Vepr 7.62x54» и 2 магазина.
+  components:
+  - type: StorageFill
+    contents:
+    - id: STWeaponSniperVepr
+    - id: Base754Mag5
+      amount: 2
+  - type: Tag
+    tags:
+    - WeaponCase
+    - StalkerWeaponCase
+    - StalkerWeaponCaseSniper
+
+- type: entity
+  parent: STBaseWeaponCase
+  id: STWeaponSniperVSSCase
+  suffix: "Stalker, Кейс, ВСС Винторез"
+  description: Кейс с оружием «ВСС Винторез» и 2 магазина.
+  components:
+  - type: StorageFill
+    contents:
+    - id: STWeaponSniperVSS
+    - id: Base939Mag10
+      amount: 2
+  - type: Tag
+    tags:
+    - WeaponCase
+    - StalkerWeaponCase
+    - StalkerWeaponCaseSniper
+
+- type: entity
+  parent: STBaseWeaponCase
+  id: STWeaponSniperOSV96Case
+  suffix: "Stalker, Кейс, ОСВ-96 Взломщик"
+  description: Кейс с оружием «ОСВ-96 Взломщик» и 2 магазина.
+  components:
+  - type: StorageFill
+    contents:
+    - id: STWeaponSniperOSV96
+    - id: 13x108Mag10
+      amount: 2
+  - type: Tag
+    tags:
+    - WeaponCase
+    - StalkerWeaponCase
+    - StalkerWeaponCaseSniper

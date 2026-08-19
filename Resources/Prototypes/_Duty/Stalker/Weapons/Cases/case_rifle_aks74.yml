@@ -1,0 +1,70 @@
+# Кейсы под семейство АКС-74 (5.45x39). Лесной камо АКС-74 и авто-версия Сайги — реskины,
+# отдельного кейса не получают.
+
+- type: entity
+  parent: STBaseWeaponCase
+  id: STWeaponRifleAKS74Case
+  suffix: "Stalker, Кейс, АКС-74"
+  description: Кейс с оружием «АКС-74» и 2 магазина.
+  components:
+  - type: StorageFill
+    contents:
+    - id: STWeaponRifleAKS74
+    - id: Base545Mag10
+      amount: 2
+  - type: Tag
+    tags:
+    - WeaponCase
+    - StalkerWeaponCase
+    - StalkerWeaponCaseRifle
+
+- type: entity
+  parent: STBaseWeaponCase
+  id: STWeaponRifleAK74MCase
+  suffix: "Stalker, Кейс, АК-74М"
+  description: Кейс с оружием «АК-74М Modern» и 2 магазина.
+  components:
+  - type: StorageFill
+    contents:
+    - id: STWeaponRifleAK74M
+    - id: Base545Mag10
+      amount: 2
+  - type: Tag
+    tags:
+    - WeaponCase
+    - StalkerWeaponCase
+    - StalkerWeaponCaseRifle
+
+- type: entity
+  parent: STBaseWeaponCase
+  id: STWeaponRifleSaiga545Case
+  suffix: "Stalker, Кейс, Сайга 5.45"
+  description: Кейс с оружием «Сайга 5.45 Hunter» и 2 магазина.
+  components:
+  - type: StorageFill
+    contents:
+    - id: STWeaponRifleSaiga545
+    - id: Base545Mag10
+      amount: 2
+  - type: Tag
+    tags:
+    - WeaponCase
+    - StalkerWeaponCase
+    - StalkerWeaponCaseRifle
+
+- type: entity
+  parent: STBaseWeaponCase
+  id: STWeaponRifleA545Case
+  suffix: "Stalker, Кейс, А-545"
+  description: Кейс с оружием «А-545 Балалайка» и 2 магазина.
+  components:
+  - type: StorageFill
+    contents:
+    - id: STWeaponRifleA545
+    - id: Base545Mag10
+      amount: 2
+  - type: Tag
+    tags:
+    - WeaponCase
+    - StalkerWeaponCase
+    - StalkerWeaponCaseRifle

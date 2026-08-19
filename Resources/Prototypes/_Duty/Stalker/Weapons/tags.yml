@@ -113,3 +113,21 @@
   id: STWeaponModulePistolSilencer
 - type: Tag
   id: STModuleGlockSwitch
+
+# ── Кейсы с оружием ──────────────────────────────────────────────────────────
+- type: Tag
+  id: WeaponCase
+- type: Tag
+  id: StalkerWeaponCase
+- type: Tag
+  id: StalkerWeaponCasePistol
+- type: Tag
+  id: StalkerWeaponCaseRevolver
+- type: Tag
+  id: StalkerWeaponCaseRifle
+- type: Tag
+  id: StalkerWeaponCaseSMG
+- type: Tag
+  id: StalkerWeaponCaseSniper
+- type: Tag
+  id: StalkerWeaponCaseShotgun

@@ -1,0 +1,17 @@
+# Кейс под АКМ (7.62x39).
+- type: entity
+  parent: STBaseWeaponCase
+  id: STWeaponRifleAKMCase
+  suffix: "Stalker, Кейс, АКМ"
+  description: Кейс с оружием «АКМ Zone Legend» и 2 магазина.
+  components:
+  - type: StorageFill
+    contents:
+    - id: STWeaponRifleAKM
+    - id: Base739Mag10
+      amount: 2
+  - type: Tag
+    tags:
+    - WeaponCase
+    - StalkerWeaponCase
+    - StalkerWeaponCaseRifle

@@ -75,6 +75,19 @@
     - id: ADTSecShuttleConsoleCircuitboard
     - id: BoxTapeRecorder
     # ADT-Tweak-End
+    # duty nizhe: сталкерские снайперские кейсы, редкая примесь
+    - id: STWeaponSniperSVDSCase
+      prob: 0.35
+    - id: STWeaponSniperSVUCase
+      prob: 0.35
+    - id: STWeaponSniperVeprCase
+      prob: 0.35
+    - id: STWeaponSniperVSSCase
+      prob: 0.35
+    - id: STWeaponSniperOSV96Case
+      prob: 0.35
+    - id: STWeaponSniperMosinCase
+      prob: 0.35
     - id: PlushieLizardJobWarden
       prob: 0.02
 
@@ -296,6 +309,19 @@
       amount: 12
     - id: DutyGunPM
       amount: 2
+    # duty nizhe: сталкерские кейсы (пистолеты + револьверы), редкая примесь
+    - id: WeaponPistolStalkerGlockCase
+      prob: 0.35
+    - id: WeaponPistolStalkerTTCase
+      prob: 0.35
+    - id: WeaponPistolGSH18Case
+      prob: 0.35
+    - id: STWeaponRevolverDanWesson715Case
+      prob: 0.35
+    - id: WeaponGameRevolverMatebaCase
+      prob: 0.35
+    - id: STWeaponRevolverTaurusJudgeCase
+      prob: 0.35
 
 - type: entity
   parent: [GunSafeBaseSecure, BaseSecurityContraband]
@@ -319,6 +345,19 @@
       amount: 2
     - id: MagazineLightRifle
       amount: 4
+    # duty nizhe: сталкерские винтовочные кейсы, редкая примесь
+    - id: STWeaponRifleAK103Case
+      prob: 0.35
+    - id: STWeaponRifleAKMCase
+      prob: 0.35
+    - id: STWeaponRifleAK74MCase
+      prob: 0.35
+    - id: STWeaponRifleM16Case
+      prob: 0.35
+    - id: STWeaponRifleSIG550Case
+      prob: 0.35
+    - id: STWeaponRifleFALCase
+      prob: 0.35
 
 - type: entity
   parent: [GunSafeBaseSecure, BaseSecurityContraband]
@@ -338,6 +377,19 @@
       amount: 2
     - id: MagazinePistolSubMachineGun
       amount: 4
+    # duty nizhe: сталкерские ПП-кейсы, редкая примесь
+    - id: STWeaponSMGMP5Case
+      prob: 0.35
+    - id: STWeaponSMGPP19Case
+      prob: 0.35
+    - id: STWeaponSMGPP1901Case
+      prob: 0.35
+    - id: STWeaponSMGPPSh41Case
+      prob: 0.35
+    - id: STWeaponSMGVZ61Case
+      prob: 0.35
+    - id: STWeaponSMGThompsonCase
+      prob: 0.35
 
 - type: entity
   parent: [GunSafeBaseSecure, BaseSecurityContraband]
@@ -361,6 +413,9 @@
       amount: 2
     - id: MagazineShotgun
       amount: 4
+    # duty nizhe: единственный сталкерский "дробовик" (АШ-12), редкая примесь
+    - id: STWeaponRifleAH12Case
+      prob: 0.35
 
 - type: entity
   parent: [GunSafeBaseSecure, BaseSecurityContraband]
@@ -384,6 +439,9 @@
       amount: 2
     - id: MagazineShotgun
       amount: 4
+    # duty nizhe: единственный сталкерский "дробовик" (АШ-12), редкая примесь
+    - id: STWeaponRifleAH12Case
+      prob: 0.35
 
 - type: entity
   id: GunSafeSubMachineGunWt550
@@ -404,6 +462,19 @@
       amount: 2
     - id: MagazinePistolSubMachineGunTopMounted
       amount: 4
+    # duty nizhe: сталкерские ПП-кейсы, редкая примесь
+    - id: STWeaponSMGMP5Case
+      prob: 0.35
+    - id: STWeaponSMGPP19Case
+      prob: 0.35
+    - id: STWeaponSMGPP1901Case
+      prob: 0.35
+    - id: STWeaponSMGPPSh41Case
+      prob: 0.35
+    - id: STWeaponSMGVZ61Case
+      prob: 0.35
+    - id: STWeaponSMGThompsonCase
+      prob: 0.35
 
 - type: entity
   parent: [GunSafeBaseSecure, BaseSecurityContraband]

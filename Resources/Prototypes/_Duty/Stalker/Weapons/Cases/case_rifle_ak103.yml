@@ -1,0 +1,53 @@
+# Кейсы под семейство АК-103 (7.62x39). "Veteran"-камо и авто-версия Сайги — реskины,
+# отдельного кейса не получают.
+
+- type: entity
+  parent: STBaseWeaponCase
+  id: STWeaponRifleAK103Case
+  suffix: "Stalker, Кейс, АК-103"
+  description: Кейс с оружием «АК-103» и 2 магазина.
+  components:
+  - type: StorageFill
+    contents:
+    - id: STWeaponRifleAK103
+    - id: Base739Mag10
+      amount: 2
+  - type: Tag
+    tags:
+    - WeaponCase
+    - StalkerWeaponCase
+    - StalkerWeaponCaseRifle
+
+- type: entity
+  parent: STBaseWeaponCase
+  id: STWeaponRifleAK203Case
+  suffix: "Stalker, Кейс, АК-203"
+  description: Кейс с оружием «АК-203» и 2 магазина.
+  components:
+  - type: StorageFill
+    contents:
+    - id: STWeaponRifleAK203
+    - id: Base739Mag10
+      amount: 2
+  - type: Tag
+    tags:
+    - WeaponCase
+    - StalkerWeaponCase
+    - StalkerWeaponCaseRifle
+
+- type: entity
+  parent: STBaseWeaponCase
+  id: STWeaponRifleSaiga739Case
+  suffix: "Stalker, Кейс, Сайга 7.39"
+  description: Кейс с оружием «Сайга 7.39» и 2 магазина.
+  components:
+  - type: StorageFill
+    contents:
+    - id: STWeaponRifleSaiga739
+    - id: Base739Mag10
+      amount: 2
+  - type: Tag
+    tags:
+    - WeaponCase
+    - StalkerWeaponCase
+    - StalkerWeaponCaseRifle
