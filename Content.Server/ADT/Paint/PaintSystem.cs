@@ -127,11 +127,15 @@ public sealed class PaintSystem : SharedPaintSystem
                         if (!_inventory.TryGetSlotEntity(target, slot.Name, out var slotEnt))
                             continue;
 
+                        // _Duty: было `return` — один null/чёрно-списочный слот одежды прерывал
+                        // ВЕСЬ OnPaint, хотя цель уже покрашена (Color выставлен, реагент списан),
+                        // но Dirty/попап успеха/args.Handled ещё не выполнены (они ниже цикла).
+                        // Нужно пропустить только этот слот, а не бросать уже успешную покраску.
                         if (slotEnt == null)
-                            return;
+                            continue;
 
                         if (_whitelist.IsWhitelistPass(entity.Comp.Blacklist, slotEnt.Value))
-                            return;
+                            continue;
 
                         EnsureComp<ColorPaintedComponent>(slotEnt.Value, out ColorPaintedComponent? slotpaint);
                         EnsureComp<AppearanceComponent>(slotEnt.Value);
