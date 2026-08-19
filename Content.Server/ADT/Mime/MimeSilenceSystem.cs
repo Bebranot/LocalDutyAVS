@@ -76,8 +76,13 @@ public sealed class MimeSilenceSystem : EntitySystem
         {
             if (_timing.CurTime >= comp.ExpiryTime)
             {
+                // _Duty: было `RemComp<MutedTimerComponent>` — сразу удаляло компонент из того же
+                // словаря трейтов, по которому в этот момент идёт итерация через EntityQueryEnumerator
+                // (обёртка над Dictionary<EntityUid, IComponent>.Enumerator). Первое же истечение
+                // немого таймера кидало InvalidOperationException ("Collection was modified") на
+                // следующем query.MoveNext(). RemCompDeferred откладывает удаление до конца тика.
                 RemComp<MutedComponent>(uid);
-                RemComp<MutedTimerComponent>(uid);
+                RemCompDeferred<MutedTimerComponent>(uid);
                 _alertsSystem.ClearAlert(uid, "Muted");
             }
         }
