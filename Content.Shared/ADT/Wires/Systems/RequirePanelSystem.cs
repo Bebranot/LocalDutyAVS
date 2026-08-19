@@ -31,12 +31,19 @@ public sealed partial class RequirePanelSystem : EntitySystem
         if (slot == null)
             return false;
 
+        // _Duty: было `return false`, но контракт метода — true значит "не отменять
+        // взаимодействие" (см. вызывающий код: `args.Cancelled = !CheckPanelStateForItemSlot(...)`).
+        // Из-за инверсии эта ветка ("слот не требует панели") на самом деле ВСЕГДА отменяла
+        // вставку/извлечение для любого слота, не перечисленного в Slots — противоположно
+        // комментарию "don't cancel interaction".
         // If slot not require wire panel - don't cancel interaction
         if (!comp.Slots.TryGetValue(slot, out var isRequireOpen))
-            return false;
+            return true;
 
+        // _Duty: аналогично — отсутствие WiresPanelComponent не должно намертво
+        // блокировать слот, требующий панели, которой физически не существует.
         if (!TryComp<WiresPanelComponent>(uid, out var wiresPanel))
-            return false;
+            return true;
 
         return wiresPanel.Open == isRequireOpen;
     }
