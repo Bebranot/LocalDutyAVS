@@ -31,8 +31,11 @@ public sealed class EmotionLoopSystem : EntitySystem
         var query = EntityQueryEnumerator<EmotionLoopComponent>();
         while (query.MoveNext(out var uid, out var emotionLoop))
         {
+            // _Duty: было `return` — если хотя бы у одной сущности в мире пуст список Emotes,
+            // весь Update() прерывался досрочно, и все остальные сущности с
+            // EmotionLoopComponent (позже в порядке перебора) переставали тикать вообще.
             if (emotionLoop.Emotes.Count == 0)
-                return;
+                continue;
 
             if (_timing.CurTime < emotionLoop.NextIncidentTime)
                 continue;
