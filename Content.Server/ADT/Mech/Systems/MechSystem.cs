@@ -88,6 +88,13 @@ public sealed partial class MechSystem
         }
         if (!comp.EquipmentOwner.HasValue)
             return;
+
+        // При массовом сносе сущностей (например, на рестарте раунда) мех-владелец может
+        // уже терминироваться раньше своего снаряжения — обращение к его MechComponent
+        // в этот момент падает в "Can't resolve MechComponent".
+        if (TerminatingOrDeleted(comp.EquipmentOwner.Value))
+            return;
+
         UpdateUserInterface(comp.EquipmentOwner.Value);
     }
 }
