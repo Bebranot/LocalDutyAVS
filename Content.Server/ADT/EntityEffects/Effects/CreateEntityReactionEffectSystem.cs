@@ -17,13 +17,21 @@ public sealed partial class CreateEntityReactionEffectSystem : EntityEffectSyste
 
         if (ev.Delay > 0)
         {
+            // _Duty: было — ветка "с задержкой" спавнила сущности точно так же мгновенно,
+            // как и ветка без задержки (просто с координатами, посчитанными до цикла);
+            // само поле Delay нигде не читалось после этого и ни на что не влияло.
             var coords = _transform.GetMapCoordinates(uid, xform);
             _transform.AttachToGridOrMap(uid);
-            for (var i = 0; i < ev.Number; i++)
+            var entityId = ev.Entity;
+            var number = ev.Number;
+            Robust.Shared.Timing.Timer.Spawn(TimeSpan.FromSeconds(ev.Delay), () =>
             {
-                var spawned = Spawn(ev.Entity, coords);
-                _transform.AttachToGridOrMap(spawned);
-            }
+                for (var i = 0; i < number; i++)
+                {
+                    var spawned = Spawn(entityId, coords);
+                    _transform.AttachToGridOrMap(spawned);
+                }
+            });
         }
         else
         {

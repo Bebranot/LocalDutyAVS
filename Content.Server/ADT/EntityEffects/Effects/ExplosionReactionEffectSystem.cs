@@ -15,16 +15,33 @@ public sealed partial class ExplosionReactionEffectSystem : EntityEffectSystem<T
         var uid = entity.Owner;
         var ev = args.Effect;
 
-        _explosion.QueueExplosion(
-            uid,
-            ev.ExplosionType,
-            ev.MaxIntensity * args.Scale,
-            ev.IntensitySlope,
-            ev.MaxTotalIntensity,
-            ev.TileBreakScale,
-            canCreateVacuum: false,
-            user: null,
-            addLog: true
-        );
+        // _Duty: было `ev.MaxIntensity * args.Scale` без ограничения — при большом
+        // Scale (например, много реагента) итоговая интенсивность росла неограниченно,
+        // хотя поле называется "MaxIntensity" (максимум). Поле `IntensityPerUnit` при
+        // этом вообще нигде не читалось. По аналогии с EmpReactionEffect
+        // (RangePerUnit + MaxRange → Min(RangePerUnit * Scale, MaxRange)) интенсивность
+        // теперь считается как per-unit ставка, ограниченная максимумом.
+        var totalIntensity = Math.Min(ev.IntensityPerUnit * args.Scale, ev.MaxIntensity);
+
+        void DoExplosion()
+        {
+            _explosion.QueueExplosion(
+                uid,
+                ev.ExplosionType,
+                totalIntensity,
+                ev.IntensitySlope,
+                ev.MaxTotalIntensity,
+                ev.TileBreakScale,
+                canCreateVacuum: false,
+                user: null,
+                addLog: true
+            );
+        }
+
+        // _Duty: `ev.Delay` тоже нигде не читался — взрыв всегда происходил мгновенно.
+        if (ev.Delay > 0)
+            Robust.Shared.Timing.Timer.Spawn(TimeSpan.FromSeconds(ev.Delay), DoExplosion);
+        else
+            DoExplosion();
     }
 }

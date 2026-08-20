@@ -1,3 +1,4 @@
+using Content.Server.Interaction;
 using Content.Shared.ADT.EntityEffects.Effects;
 using Content.Shared.EntityEffects;
 using Content.Shared.Examine;
@@ -13,6 +14,7 @@ public sealed partial class RandomTeleportNearbySystem : EntityEffectSystem<Tran
 {
     [Dependency] private readonly EntityLookupSystem _lookup = default!;
     [Dependency] private readonly ExamineSystemShared _examine = default!;
+    [Dependency] private readonly InteractionSystem _interaction = default!;
     [Dependency] private readonly SharedTransformSystem _transform = default!;
     [Dependency] private readonly IRobustRandom _random = default!;
     [Dependency] private readonly IMapManager _mapManager = default!;
@@ -40,14 +42,28 @@ public sealed partial class RandomTeleportNearbySystem : EntityEffectSystem<Tran
         foreach (var target in canTarget)
         {
             var targetXform = Transform(target);
-
-            var angle = _random.NextDouble() * 2 * Math.PI;
-            var distance = _random.NextDouble() * (ev.MaxRadius - ev.MinRadius) + ev.MinRadius;
-            var offset = new Vector2((float)(Math.Cos(angle) * distance), (float)(Math.Sin(angle) * distance));
-
             var targetMapCoords = _transform.GetMapCoordinates(target, targetXform);
-            var newPos = targetMapCoords.Position + offset;
             var mapId = targetMapCoords.MapId;
+
+            // _Duty: `ev.TeleportAttempts` нигде не читался — телепорт всегда выполнялся
+            // за одну попытку без проверки препятствий, могло затащить моба внутрь стены.
+            // Теперь пробуем до TeleportAttempts раз, беря первую точку без препятствий на
+            // пути (как в JaunterSystem), а если ни одна не подошла — берём последнюю как
+            // раньше (best-effort, не блокируем эффект целиком).
+            var attempts = Math.Max(1, ev.TeleportAttempts);
+            Vector2 newPos = targetMapCoords.Position;
+
+            for (var attempt = 0; attempt < attempts; attempt++)
+            {
+                var angle = _random.NextDouble() * 2 * Math.PI;
+                var distance = _random.NextDouble() * (ev.MaxRadius - ev.MinRadius) + ev.MinRadius;
+                var offset = new Vector2((float)(Math.Cos(angle) * distance), (float)(Math.Sin(angle) * distance));
+
+                newPos = targetMapCoords.Position + offset;
+
+                if (_interaction.InRangeUnobstructed(target, new MapCoordinates(newPos, mapId), -1f))
+                    break;
+            }
 
             if (_mapManager.TryFindGridAt(mapId, newPos, out var gridUid, out _))
             {
