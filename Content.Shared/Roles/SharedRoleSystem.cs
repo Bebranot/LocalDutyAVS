@@ -281,7 +281,9 @@ public abstract class SharedRoleSystem : EntitySystem
 
         if (comp.OwnedEntity is null)
         {
-            Log.Error($"{ToPrettyString(mind)} does not have an OwnedEntity!");
+            // Тот же штатный случай, что и в AddRole выше (роль выдана до того, как разум
+            // получил тело, например при первичном спавне) — Debug, а не Error.
+            Log.Debug($"{ToPrettyString(mind)} does not have an OwnedEntity!");
             _adminLogger.Add(LogType.Mind,
                 LogImpact.Medium,
                 $"Role Type of {ToPrettyString(mind)} changed to {roleTypeId}, {subtype}");
