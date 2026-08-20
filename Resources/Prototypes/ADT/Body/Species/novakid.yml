@@ -46,14 +46,15 @@
   - BaseSpeciesMobOrganic
   id: MobNovakid
   components:
+  - type: FireImmunity # _Duty: не горят, состоят из плазмы
   - type: Hunger
     baseDecayRate: 0.025
-    lastAuthoritativeHungerValue: 400
+    lastAuthoritativeHungerValue: 300
     thresholds:
-      Overfed: 400
-      Okay: 300
-      Peckish: 200
-      Starving: 100
+      Overfed: 300
+      Okay: 225
+      Peckish: 150
+      Starving: 75
       Dead: 0
     starvationDamage:
       types:
@@ -136,8 +137,7 @@
       types:
         Cold : 0.5 #per second, scales with temperature & other constants
     heatDamage:
-      types:
-        Heat : 0.2 #per second, scales with temperature & other constants.
+      types: {} # _Duty: новакиды состоят из плазмы, урон от амбиентной жары не идёт
   - type: TemperatureSpeed
     thresholds:
       273: 0.75
