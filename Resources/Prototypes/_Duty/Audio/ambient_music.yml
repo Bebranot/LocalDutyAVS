@@ -168,6 +168,8 @@
     - !type:SoundPathSpecifier
       path: /Audio/_Duty/Ambient/tracksAwful/TA (12).ogg
     - !type:SoundPathSpecifier
+      path: /Audio/_Duty/Ambient/tracksAwful/DinnerForTheMaggots.ogg
+    - !type:SoundPathSpecifier
       path: /Audio/_Duty/Ambient/CasualtiesUnknown/Absolute.ogg
     - !type:SoundPathSpecifier
       path: /Audio/_Duty/Ambient/CasualtiesUnknown/BiologicalEclusionZone.ogg
@@ -206,6 +208,8 @@
       path: /Audio/_Duty/Ambient/tracksCritical/TC (9).ogg
     - !type:SoundPathSpecifier
       path: /Audio/_Duty/Ambient/tracksCritical/TC (10).ogg
+    - !type:SoundPathSpecifier
+      path: /Audio/_Duty/Ambient/tracksAwful/DinnerForTheMaggots.ogg
     - !type:SoundPathSpecifier
       path: /Audio/_Duty/Ambient/CasualtiesUnknown/CHASE_IT_DOWN.ogg
     - !type:SoundPathSpecifier
