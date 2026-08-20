@@ -14,6 +14,8 @@
     <PackageReference Include="NetCord" />
     <PackageReference Include="prometheus-net" />
     <PackageReference Include="Microsoft.Extensions.ObjectPool" />
+    <!-- _Duty: нужен тип Serilog.Events.LogEvent для реализации ILogHandler в DutyErrorLogHandler -->
+    <PackageReference Include="Serilog" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Content.Packaging\Content.Packaging.csproj" />

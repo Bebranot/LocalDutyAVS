@@ -43,6 +43,7 @@ using Robust.Shared.Timing;
 using Robust.Shared.Utility;
 using Content.Server.ADT.Antag;
 using Content.Server.ADT.Export;
+using Content.Server._Duty.Logging;
 using Content.Shared.Emp;
 
 namespace Content.Server.Entry
@@ -90,6 +91,11 @@ namespace Content.Server.Entry
         [Dependency] private readonly ServerUpdateManager _updateManager = default!;
         [Dependency] private readonly ServerFeedbackManager _feedbackManager = null!;
 
+#if RELEASE
+        // _Duty: файловый лог только ошибок/фаталов для Release-сборки, см. DutyErrorLogHandler
+        private DutyErrorLogHandler? _dutyErrorLogHandler;
+#endif
+
         public override void PreInit()
         {
             ServerContentIoC.Register(Dependencies);
@@ -131,6 +137,11 @@ namespace Content.Server.Entry
             _log.GetSawmill("db.ef").Level = LogLevel.Info;
             // _Duty: спам "Received late nwVar message" не является ошибкой, глушим Warning
             _log.GetSawmill("cfg").Level = LogLevel.Error;
+
+#if RELEASE
+            _dutyErrorLogHandler = new DutyErrorLogHandler();
+            _log.RootSawmill.AddHandler(_dutyErrorLogHandler);
+#endif
 
             _adminLog.Initialize();
             _chatSan.Initialize();
@@ -237,6 +248,17 @@ namespace Content.Server.Entry
             // We don't care when or how this finishes, just spin the task off into the void.
             _ = _discordLink.Shutdown();
             _discordChatLink.Shutdown();
+
+#if RELEASE
+            // _Duty: снимаем и дораскрываем хендлер последним, чтобы успеть поймать ошибки
+            // из предыдущих шагов остановки сервера.
+            if (_dutyErrorLogHandler != null)
+            {
+                _log.RootSawmill.RemoveHandler(_dutyErrorLogHandler);
+                _dutyErrorLogHandler.Dispose();
+                _dutyErrorLogHandler = null;
+            }
+#endif
         }
 
         private static void LoadConfigPresets(IConfigurationManager cfg, IResourceManager res, ISawmill sawmill)
