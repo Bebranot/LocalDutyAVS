@@ -363,7 +363,12 @@ public sealed class DropPodConsoleSystem : EntitySystem
             }
         }
 
-        comp.WarDeclaredTime = comp.WarDeclaredTime ?? _timing.CurTime;
+        // _Duty: было `comp.WarDeclaredTime = comp.WarDeclaredTime ?? _timing.CurTime;` —
+        // безусловная инициализация "если ещё не задано" на каждое открытие UI консоли.
+        // WarDeclaredTime должен выставляться ТОЛЬКО через OnWarDeclared (реальное событие
+        // объявления войны); эта строка при первом же открытии консоли вне войны
+        // навсегда переводила isAtWar в true и включала военную скидку (WarCost вместо
+        // PeaceCost) даже когда войны не было.
 
         var tcCount = GetTcInSlot(uid);
         var currentCost = isAtWar ? comp.WarCost : comp.PeaceCost;
