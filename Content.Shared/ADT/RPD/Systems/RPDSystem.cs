@@ -487,7 +487,14 @@ public class RPDSystem : EntitySystem
 
     public void UpdateCachedPrototype(EntityUid uid, RPDComponent component)
     {
-        if (component.ProtoId.Id != component.CachedPrototype?.Prototype)
+        // _Duty: было `component.ProtoId.Id != component.CachedPrototype?.Prototype` — сравнивало
+        // ID выбранного RPD-рецепта (напр. "ADTGasPipeBend") с ID сущности, которую этот рецепт
+        // строит (напр. "GasPipeBend") — разные домены имён, условие почти всегда true (кэш
+        // переиндексировался на каждый вызов). При совпадении id RPD-рецепта с prototype другого
+        // (например если бы кто-то назвал RPD-рецепт так же, как целевую сущность) кэш мог бы
+        // ошибочно остаться устаревшим после смены ProtoId. Сверяем с ID самого закэшированного
+        // RPDPrototype, как и задокументировано в комментарии над полем CachedPrototype.
+        if (component.CachedPrototype == null || component.ProtoId.Id != component.CachedPrototype.ID)
             component.CachedPrototype = _protoManager.Index(component.ProtoId);
     }
 
