@@ -112,13 +112,9 @@ public sealed class IvDripSystem : SharedIvDripSystem
             {
                 if (packSol.Volume < packSol.MaxVolume)
                 {
-                    var beforePack = packSol.Volume;
-                    var beforeBlood = streamSol.Volume;
-
+                    // _Duty: убраны неиспользуемые локальные переменные beforePack/beforeBlood/
+                    // afterPack/afterBlood — они нигде не читались (мёртвый отладочный код).
                     _sharedSolutionContainer.TryTransferSolution(packSolEnt.Value, streamSol, ivComp.CurrentTransferAmount);
-
-                    var afterPack = packSol.Volume;
-                    var afterBlood = streamSol.Volume;
 
                     Dirty(streamSolEnt.Value);
                 }

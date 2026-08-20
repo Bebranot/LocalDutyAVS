@@ -29,6 +29,16 @@ public sealed class MedicalRecipeDataSystem : SharedMedicalGuideDataSystem
         ReloadRecipes();
     }
 
+    // _Duty: не было отписки от `_player.PlayerStatusChanged` — подписка на IPlayerManager
+    // (долгоживущий синглтон) переживает пересоздание этой EntitySystem (например, при
+    // перезапуске раунда/интеграционных тестах), и старые делегаты накапливаются, вызывая
+    // RaiseNetworkEvent несколько раз на одно событие подключения игрока.
+    public override void Shutdown()
+    {
+        base.Shutdown();
+        _player.PlayerStatusChanged -= OnPlayerStatusChanged;
+    }
+
     private void OnPrototypesReloaded(PrototypesReloadedEventArgs args)
     {
         if (!args.WasModified<EntityPrototype>()
