@@ -50,29 +50,39 @@ public sealed class RMCMagneticSystem : EntitySystem
                 continue;
 
             var user = comp.User;
-            if (!TerminatingOrDeleted(user))
+            if (TerminatingOrDeleted(user))
             {
-                var slots = _inventory.GetSlotEnumerator(user, SlotFlags.SUITSTORAGE);
-                while (slots.MoveNext(out var slot))
-                {
-                    if (_inventory.TryGetSlotEntity(user, "outerClothing", out _))
-                    {
-                        if (_inventory.TryEquip(user, uid, slot.ID, force: true))
-                        {
-                            var popup = Loc.GetString("rmc-magnetize-return",
-                                ("item", uid),
-                                ("user", user));
-                            _popup.PopupClient(popup, user, user, PopupType.Medium);
+                // _Duty: пользователь исчез — дальше пытаться некуда, чистим маркер.
+                RemCompDeferred<RMCReturnToInventoryComponent>(uid);
+                continue;
+            }
 
-                            comp.Returned = true;
-                            Dirty(uid, comp);
-                            break;
-                        }
+            var slots = _inventory.GetSlotEnumerator(user, SlotFlags.SUITSTORAGE);
+            while (slots.MoveNext(out var slot))
+            {
+                if (_inventory.TryGetSlotEntity(user, "outerClothing", out _))
+                {
+                    if (_inventory.TryEquip(user, uid, slot.ID, force: true))
+                    {
+                        var popup = Loc.GetString("rmc-magnetize-return",
+                            ("item", uid),
+                            ("user", user));
+                        _popup.PopupClient(popup, user, user, PopupType.Medium);
+
+                        comp.Returned = true;
+                        Dirty(uid, comp);
+                        break;
                     }
                 }
             }
 
-            RemCompDeferred<RMCReturnToInventoryComponent>(uid);
+            // _Duty: было безусловно снаружи блока — компонент-маркер удалялся сразу
+            // после первой же (даже неудачной) попытки, из-за чего предмет получал
+            // всего один шанс вернуться в инвентарь за весь Update и навсегда терял
+            // возможность вернуться, если подходящий слот в момент броска был занят.
+            // Удаляем только после успешного возврата — до этого ретраим каждый тик.
+            if (comp.Returned)
+                RemCompDeferred<RMCReturnToInventoryComponent>(uid);
         }
     }
 }
