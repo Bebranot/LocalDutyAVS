@@ -32,7 +32,7 @@
 #
 #  Источник: Resources/Audio/_Duty/PlayerDK/
 #  Категория = относительный путь папки от PlayerDK («Общее» — файлы в корне).
-#  Обновить список:  py -3 Content.Tools/gen_playerdk_tracks.py
+#  Обновить список:  py -3 Content.Tools/gen_playerdk_tracks.py  (мейбе не актуально)
 # ══════════════════════════════════════════════════════════════
 
 # --------- CRYSIS
@@ -1159,7 +1159,7 @@
 
 - type: dutyTrack
   id: dpk_6bc8fed5dc5zxcga6sadf5c
-  name: "Mass Destruction (Persona 3 Reload)"
+  name: "Mass Destruction (Persona 3)"
   category: "Karp/Persona"
   path:
     path: "/Audio/_Duty/PlayerDK/Persona/Mass Destruction.ogg"  
