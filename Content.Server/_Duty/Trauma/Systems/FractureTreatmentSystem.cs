@@ -2,6 +2,7 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
+using Content.Shared._Duty.Trauma;
 using Content.Shared._Duty.Trauma.Components;
 using Content.Shared._Duty.Trauma.Events;
 using Content.Shared._Duty.Trauma.Systems;
@@ -74,6 +75,7 @@ public sealed class FractureTreatmentSystem : EntitySystem
         args.Verbs.Add(new Verb
         {
             Text = Loc.GetString("trauma-verb-splint"),
+            Priority = TraumaLoc.TreatmentVerbPriority,
             Act = () => StartSplint(patient, user),
         });
     }

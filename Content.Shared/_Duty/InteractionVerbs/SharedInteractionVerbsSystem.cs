@@ -32,6 +32,16 @@ namespace Content.Shared._Duty.InteractionVerbs;
 /// </summary>
 public abstract class SharedInteractionVerbsSystem : EntitySystem
 {
+    // Пересортировка ПКМ-меню (2026-08-20): рассматривалось понижение вкладки "Взаимодействовать"
+    // до TypePriority 0 (обычный Verb), чтобы она встала ниже ванильных вкладок вроде "Осмотреть".
+    // Отказались: OnGetOwnVerbs обязан оставаться на InnateVerb — этот верб-тип рейзится движком на
+    // args.User (а не args.Target, как обычный Verb — см. SharedVerbSystem.GetLocalVerbs), что и
+    // позволяет "своим" вербам работать на ЛЮБОЙ цели, а не только при ПКМ по себе. Понижение типа
+    // сломало бы этот механизм. Понижение же InnateVerb.TypePriority глобально задело бы ~15 не
+    // связанных с _Duty систем (HealthAnalyzer, дефибриллятор, стетоскоп и т.д.), которые тоже висят
+    // на InnateVerb. См. константу приоритета лечения травм в TraumaLoc — там понижение безопасно
+    // (обычный Verb уже и был на TypePriority 0).
+
     private readonly InteractionAction.VerbDependencies _verbDependencies = new();
     private List<InteractionVerbPrototype> _globalPrototypes = default!;
 

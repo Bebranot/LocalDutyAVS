@@ -62,6 +62,7 @@ public sealed class DislocationTreatmentSystem : EntitySystem
             // Вправляешь себе — под вкладку «Самолечение», рядом с остановкой артерии; вправляешь
             // другому — обычным пунктом меню.
             Category = isSelf ? TraumaLoc.SelfTreatmentCategory : null,
+            Priority = TraumaLoc.TreatmentVerbPriority,
             Act = () => StartReduce(patient, user),
         });
     }

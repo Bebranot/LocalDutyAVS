@@ -146,6 +146,7 @@ public sealed class ArterialBleedTreatmentSystem : EntitySystem
             Text = Loc.GetString("trauma-verb-treat-arterial"),
             // Самолечение — под своей вкладкой; лечение другого — обычным пунктом.
             Category = isSelf ? TraumaLoc.SelfTreatmentCategory : null,
+            Priority = TraumaLoc.TreatmentVerbPriority,
             Act = () => _ui.OpenUi(patient, ArterialTreatmentUiKey.Key, user),
         };
 

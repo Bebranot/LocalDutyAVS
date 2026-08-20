@@ -36,6 +36,7 @@ bld/
 [Bb]in/
 [Oo]bj/
 [Ll]og/
+[Ll]ogs/
 
 # Visual Studio 2015 cache/options directory
 .vs/
@@ -329,6 +330,10 @@ Resources/MapImages
 
 # duty
 fix_migration.py
+
+# _Duty: файлы лога ошибок/фаталов DutyErrorLogHandler (Content.Server/_Duty/Logging).
+# Уже покрыто [Bb]in/, т.к. каталог создаётся рядом с exe, но добавлено явно.
+logs_duty/
 
 # codegraph index (local, per-developer)
 .codegraph/

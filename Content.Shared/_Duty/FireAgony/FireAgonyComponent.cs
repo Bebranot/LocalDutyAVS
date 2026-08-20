@@ -56,24 +56,37 @@ public sealed partial class FireAgonyComponent : Component
 
     // ── Крики / попапы ──────────────────────────────────────────────────────
     [DataField]
-    public TimeSpan ScreamIntervalMin = TimeSpan.FromSeconds(1.5);
-
-    [DataField]
-    public TimeSpan ScreamIntervalMax = TimeSpan.FromSeconds(3.5);
-
-    [DataField]
     public TimeSpan PopupIntervalMin = TimeSpan.FromSeconds(2);
 
     [DataField]
     public TimeSpan PopupIntervalMax = TimeSpan.FromSeconds(4.5);
 
-    /// <summary>Кол-во строк-криков в локали (fire-agony-scream-1 .. -N).</summary>
+    /// <summary>Кол-во строк стартового эмоута в локали (fire-agony-scream-1 .. -N). Эмоут
+    /// (3-е лицо, без стилизации) звучит один раз при входе в сцену — дальше каждую секунду
+    /// вместо него идёт стилизованный крик боли, см. <see cref="PainScreamLineCount"/>.</summary>
     [DataField]
     public int ScreamLineCount = 4;
+
+    /// <summary>Кол-во строк крика боли в локали (fire-agony-pain-scream-1 .. -N). Один из них
+    /// выкрикивается (say, ИС-чат, красный/Underdog/тряска — см. ChatSystem.SendDutyHealthScream)
+    /// на каждом такте сцены, т.е. примерно раз в секунду.</summary>
+    [DataField]
+    public int PainScreamLineCount = 4;
 
     /// <summary>Кол-во строк-попапов в локали (fire-agony-popup-1 .. -N).</summary>
     [DataField]
     public int PopupLineCount = 3;
+
+    // ── Помощь окружающих (клик ЛКМ = "сбить пламя") ─────────────────────────
+    /// <summary>Насколько один успешный клик "сбить пламя" уменьшает FireStacks
+    /// (отрицательное значение, как и <see cref="ExtinguishRatePerSecond"/>).</summary>
+    [DataField]
+    public float HelpExtinguishAmount = -1.5f;
+
+    /// <summary>Кулдаун между успешными попытками "сбить пламя" — общий на цель, не даёт
+    /// нескольким помощникам спамом резать FireStacks быстрее, чем раз в этот интервал.</summary>
+    [DataField]
+    public TimeSpan HelpExtinguishCooldown = TimeSpan.FromSeconds(1);
 
     // ── Кинематографика (клиент читает эти DataField'ы из прототипа) ─────────
     /// <summary>Целевой зум во время сцены. Меньше 1 = ближе к персонажу.</summary>
@@ -108,13 +121,14 @@ public sealed partial class FireAgonyComponent : Component
     [ViewVariables]
     public EntityUid? ScreamStream;
 
-    /// <summary>Когда в следующий раз кричать.</summary>
-    [ViewVariables]
-    public TimeSpan NextScreamTime;
-
     /// <summary>Когда в следующий раз показать попап.</summary>
     [ViewVariables]
     public TimeSpan NextPopupTime;
+
+    /// <summary>Раньше этого момента новый клик "сбить пламя" не уменьшает FireStacks повторно
+    /// (антиспам-кулдаун, серверно-авторитетный).</summary>
+    [ViewVariables]
+    public TimeSpan NextHelpAllowedTime;
 
     // ── Предсказанная служебка (не сетится) ─────────────────────────────────
     /// <summary>Анти-спам попапа «Вы в агонии!» на попытки действий (общее для клиента/сервера).</summary>

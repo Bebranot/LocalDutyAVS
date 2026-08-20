@@ -22,6 +22,15 @@ public static class TraumaLoc
     public static readonly VerbCategory SelfTreatmentCategory =
         new("trauma-verb-category-self-treatment", "/Textures/Interface/VerbIcons/rejuvenate.svg.192dpi.png");
 
+    /// <summary>
+    /// Пересортировка ПКМ-меню (2026-08-20): все вербы лечения травм (жгут, вправление вывиха,
+    /// шина) — обычный <see cref="Verb"/> (TypePriority 0), как и ванильный Examine. Явно ставим
+    /// приоритет ниже нуля, чтобы вкладка "Самолечение" и одиночные вербы лечения других гарантированно
+    /// оказывались НИЖЕ ванильных вкладок с приоритетом по умолчанию (0), а не полагались на
+    /// алфавитный tie-break.
+    /// </summary>
+    public const int TreatmentVerbPriority = -10;
+
     public static string ZoneKey(BodyZone zone) => zone switch
     {
         BodyZone.Head => "trauma-zone-head",
