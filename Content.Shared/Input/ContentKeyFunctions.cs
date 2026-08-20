@@ -148,5 +148,6 @@ namespace Content.Shared.Input
         public static readonly BoundKeyFunction Aim = "Aim"; // _Duty
         public static readonly BoundKeyFunction ResistGrab = "ResistGrab"; // ADT-Tweak
         public static readonly BoundKeyFunction Block = "Block"; // _Duty
+        public static readonly BoundKeyFunction ADTDoorEmergencyAccess = "ADTDoorEmergencyAccess"; // ADT-Tweak
     }
 }
