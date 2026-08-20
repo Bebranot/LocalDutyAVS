@@ -408,6 +408,10 @@
     stateDoorClosed: warden_door
   - type: AccessReader
     access: [["Armory"]]
+  # duty nizhe: локер и так под завязку набит контентом (~35+ гарантированных предметов
+  # при дефолтном Capacity: 30) плюс сталкерские кейсы поверх — увеличиваем лимит с запасом
+  - type: EntityStorage
+    capacity: 60
 
 # Armory
 - type: entity
@@ -483,6 +487,10 @@
     - entity_storage
   - type: StaticPrice
     price: 660
+  # duty nizhe: наполнение GunSafe*-вариантов расширили сталкерскими кейсами — поднимаем
+  # лимит с запасом на всех наследниках (Mk58/Lecter/Drozd/Enforcer/Kammerer/Wt550 и т.д.)
+  - type: EntityStorage
+    capacity: 60
 
 - type: entity
   id: GunSafeBaseSecure
