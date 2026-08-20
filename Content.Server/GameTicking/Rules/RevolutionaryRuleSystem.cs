@@ -357,6 +357,13 @@ public sealed class RevolutionaryRuleSystem : GameRuleSystem<RevolutionaryRuleCo
         _npcFaction.AddFaction(target, RevolutionaryNpcFaction);
         var revComp = EnsureComp<RevolutionaryComponent>(target);
 
+        // _Duty: этого вызова не было — в отличие от безусловного пути конверсии ниже по
+        // файлу (срабатывающего только когда у обращающего кончился лимит ConvertedCount),
+        // этот EUI-путь (основной, пока ConvertedCount <= 15) добавлял фракцию/компонент
+        // и слал брифинг, но никогда не выдавал саму роль антагониста-революционера —
+        // обращённый не учитывался в вин-кондишне/итогах раунда как револ.
+        if (mindId == default || !_role.MindHasRole<RevolutionaryRoleComponent>(mindId))
+            _role.MindAddRole(mindId, "MindRoleRevolutionary");
 
         _adminLogManager.Add(LogType.Mind, LogImpact.Medium, $"{ToPrettyString(user)} converted {ToPrettyString(target)} into a Revolutionary");
         // ADT TWEAK START
