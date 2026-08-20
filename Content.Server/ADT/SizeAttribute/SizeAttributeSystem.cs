@@ -89,7 +89,4 @@ namespace Content.Server.ADT.SizeAttribute
             }
         }
     }
-
-    [ByRefEvent]
-    public readonly record struct ScaleEntityEvent(EntityUid Uid) { }
 }
