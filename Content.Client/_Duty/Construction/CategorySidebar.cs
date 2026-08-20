@@ -35,7 +35,10 @@ public sealed class CategorySidebar : ScrollContainer
     public CategorySidebar()
     {
         HScrollEnabled = false;
+        // Ширина жёстко фиксирована: длинное название категории не должно
+        // раздвигать сайдбар и перекраивать остальные колонки.
         MinWidth = SidebarWidth;
+        MaxWidth = SidebarWidth;
 
         _list = new BoxContainer
         {
@@ -95,6 +98,7 @@ public sealed class CategorySidebar : ScrollContainer
             Text = Loc.GetString(category),
             ToggleMode = true,
             HorizontalExpand = true,
+            ClipText = true,
             // Group намеренно не задаётся: сгруппированную кнопку движок запрещает снимать
             // кликом, а нам нужен именно тумблер.
         };

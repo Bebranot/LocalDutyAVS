@@ -4,7 +4,8 @@
     <BoxContainer Orientation="Horizontal" HorizontalExpand="True">
         <!-- _Duty: категории вертикальным сайдбаром вместо выпадающего OptionButton. -->
         <duty:CategorySidebar Name="CategoryList" Access="Public" Margin="0 0 5 0"/>
-        <BoxContainer Orientation="Vertical" MinWidth="243" Margin="0 0 5 0">
+        <!-- _Duty: MaxWidth фиксирует колонку: иначе длинная подсказка поиска раздувала бы её. -->
+        <BoxContainer Orientation="Vertical" MinWidth="243" MaxWidth="243" Margin="0 0 5 0">
             <LineEdit Name="SearchBar" PlaceHolder="{Loc 'construction-menu-search'}"
                       HorizontalExpand="True" Margin="0 0 0 5"/>
             <!-- _Duty: подсказка, когда поиск внутри выбранной категории ничего не нашёл. -->
@@ -25,17 +26,20 @@
                 <!-- _Duty: тумблер боковой панели избранного, прижат вправо — под крестиком окна. -->
                 <Button Name="FavoritesPanelToggleButton" Visible="False"/>
             </BoxContainer>
-            <Control>
-                <BoxContainer Orientation="Vertical" HorizontalExpand="True" Margin="0 0 0 5">
-                    <BoxContainer Orientation="Horizontal" Align="Center">
-                        <EntityPrototypeView Name="TargetTexture" HorizontalAlignment="Right" Stretch="Fill" Margin="0 0 10 0"/>
-                        <BoxContainer Orientation="Vertical">
-                            <RichTextLabel Name="TargetName"/>
-                            <RichTextLabel Name="TargetDesc"/>
-                        </BoxContainer>
+            <!-- _Duty: инфо-блок фиксированной высоты. Название и описание лежат в скролле с
+                 выключенным горизонтальным скроллом: он даёт тексту конечную ширину (перенос по
+                 колонке) и сам сообщает нулевую желаемую ширину. Из-за этого длина описания
+                 больше не может растягивать окно — раньше при переключении между рецептами с
+                 разной длиной текста окно дёргалось. -->
+            <BoxContainer Orientation="Horizontal" MinHeight="72" Margin="0 0 0 5">
+                <EntityPrototypeView Name="TargetTexture" VerticalAlignment="Center" Stretch="Fill" Margin="0 0 10 0"/>
+                <ScrollContainer HScrollEnabled="False" HorizontalExpand="True" VerticalExpand="True">
+                    <BoxContainer Orientation="Vertical" HorizontalExpand="True">
+                        <RichTextLabel Name="TargetName"/>
+                        <RichTextLabel Name="TargetDesc"/>
                     </BoxContainer>
-                </BoxContainer>
-            </Control>
+                </ScrollContainer>
+            </BoxContainer>
             <ItemList Name="RecipeStepList" Access="Public" VerticalExpand="True" Margin="0 0 0 5"/>
             <BoxContainer Orientation="Vertical">
                 <Button Name="BuildButton" Disabled="True" ToggleMode="True"

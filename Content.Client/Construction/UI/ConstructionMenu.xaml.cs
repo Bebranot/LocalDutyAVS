@@ -101,10 +101,19 @@ namespace Content.Client.Construction.UI
         /// <summary>
         /// _Duty: ширина окна без панели избранного. Ширина панели прибавляется к ней при показе.
         /// </summary>
-        private const float BaseWidth = 700f;
+        private const float BaseWidth = 880f;
 
-        private const float BaseHeight = 450f;
-        private const float BaseMinHeight = 340f;
+        private const float BaseHeight = 520f;
+
+        /// <summary>
+        /// Нижняя граница ручного ресайза. Подобрана так, чтобы инфо-колонке всегда хватало на
+        /// её верхний тулбар: если растягивающемуся ребёнку не хватает доли до желаемой ширины,
+        /// BoxContainer перестаёт его растягивать и отдаёт ему желаемую ширину целиком, отбирая
+        /// место у соседей — именно так окно и начинало дёргаться.
+        /// </summary>
+        private const float BaseMinWidth = 820f;
+
+        private const float BaseMinHeight = 380f;
 
         public bool BuildButtonPressed
         {
@@ -131,7 +140,7 @@ namespace Content.Client.Construction.UI
         public ConstructionMenu()
         {
             SetSize = new Vector2(BaseWidth, BaseHeight);
-            MinSize = new Vector2(BaseWidth, BaseMinHeight);
+            MinSize = new Vector2(BaseMinWidth, BaseMinHeight);
 
             IoCManager.InjectDependencies(this);
             RobustXamlLoader.Load(this);
@@ -159,6 +168,10 @@ namespace Content.Client.Construction.UI
                 {
                     Text = prototype.Name,
                     Margin = new(5, 0),
+                    // _Duty: ClipText обнуляет желаемую ширину метки, поэтому длинное название
+                    // рецепта больше не раздвигает колонку и не перекраивает соседние.
+                    ClipText = true,
+                    HorizontalExpand = true,
                 };
 
                 var box = new BoxContainer();
@@ -166,7 +179,10 @@ namespace Content.Client.Construction.UI
                 box.AddChild(label);
 
                 button.AddChild(box);
-                button.ToolTip = prototype.Description;
+                // _Duty: название теперь может обрезаться, поэтому оно ушло в тултип.
+                button.ToolTip = string.IsNullOrWhiteSpace(prototype.Description)
+                    ? prototype.Name
+                    : $"{prototype.Name}\n{prototype.Description}";
                 button.AddStyleClass(ListContainer.StyleClassListContainerButton);
             };
 
