@@ -54,7 +54,9 @@ public sealed class TendrilSystem : EntitySystem
 
             var xform = Transform(uid);
             var coords = xform.Coordinates;
-            var newCoords = coords.Offset(_random.NextVector2(4));
+            // _Duty: убрано мёртвое присваивание newCoords до цикла — оно всегда
+            // перезаписывалось первой же итерацией ниже, до того как читалось.
+            EntityCoordinates newCoords;
             for (var i = 0; i < 20; i++)
             {
                 var randVector = _random.NextVector2(4);
@@ -85,9 +87,12 @@ public sealed class TendrilSystem : EntitySystem
     private void OnTendrilDestruction(EntityUid uid, TendrilComponent comp, DestructionEventArgs args)
     {
         var coords = Transform(uid).Coordinates;
+        // _Duty: было хардкожено `SpawnChasm(coords, 2)` — настраиваемое поле
+        // `TendrilComponent.ChasmRadius` (DataField, дефолт 4) нигде не читалось.
+        var radius = comp.ChasmRadius;
         Robust.Shared.Timing.Timer.Spawn(TimeSpan.FromSeconds(comp.ChasmDelay), () =>
         {
-            SpawnChasm(coords, 2);
+            SpawnChasm(coords, radius);
         });
     }
 

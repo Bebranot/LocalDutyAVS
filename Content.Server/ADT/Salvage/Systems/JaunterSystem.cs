@@ -55,9 +55,15 @@ public sealed class JaunterSystem : EntitySystem
         args.Cancelled = true;
         var coordsValid = false;
         var coords = Transform(args.Entity).Coordinates;
-        EntityCoordinates newCoords;
+        EntityCoordinates newCoords = coords;
 
-        while (!coordsValid)
+        // _Duty: было `while (!coordsValid)` без ограничения попыток — если у сущности
+        // не было маячка и все случайные точки в радиусе 5 тайлов оставались
+        // заблокированными/над Chasm (например, в тесной запечатанной комнате), цикл
+        // крутился бесконечно и вешал серверный тик. Добавлен предел попыток с
+        // best-effort фолбэком на последнюю сгенерированную точку.
+        const int maxAttempts = 50;
+        for (var attempt = 0; attempt < maxAttempts && !coordsValid; attempt++)
         {
             var randombeacon = _portal.GetRandomBeacon();
             if (randombeacon != null)
