@@ -54,9 +54,11 @@ public sealed class TendrilSystem : EntitySystem
 
             var xform = Transform(uid);
             var coords = xform.Coordinates;
-            // _Duty: убрано мёртвое присваивание newCoords до цикла — оно всегда
-            // перезаписывалось первой же итерацией ниже, до того как читалось.
-            EntityCoordinates newCoords;
+            // _Duty: раньше здесь был лишний бросок случайных координат до цикла —
+            // он всегда перезаписывался первой же итерацией ниже. Оставлен
+            // осмысленный фолбэк на исходные координаты (не мусорный random-бросок),
+            // на случай если ни одна из 20 попыток не пройдёт проверку на пересечение.
+            var newCoords = coords;
             for (var i = 0; i < 20; i++)
             {
                 var randVector = _random.NextVector2(4);
