@@ -280,7 +280,11 @@ public sealed partial class SlimeLatchSystem : EntitySystem
             {
                 var bloodSolution = blood.SplitSolutionWithout(FixedPoint2.New(bloodTransfer / stomachList.Count), ent.Comp.ToxinReagent);
                 _stomach.TryTransferSolution(stomach.Owner, bloodSolution, stomach);
-                var chemSolution = blood.SplitSolution(FixedPoint2.New(chemTransfer / stomachList.Count));
+                // _Duty: было `blood.SplitSolution(...)` — chemTransfer рассчитан по
+                // chemProportion от объёма именно `chem` (метаболиты), а забирался
+                // повторно из `blood`. Это вдвойне высасывало кровь и ни разу не
+                // трогало метаболиты, хотя пропорции считались для обоих растворов.
+                var chemSolution = chem.SplitSolution(FixedPoint2.New(chemTransfer / stomachList.Count));
                 _stomach.TryTransferSolution(stomach.Owner, chemSolution, stomach);
             }
             chem.AddReagent(ent.Comp.ToxinReagent, FixedPoint2.New(ent.Comp.ToxinUnits));
