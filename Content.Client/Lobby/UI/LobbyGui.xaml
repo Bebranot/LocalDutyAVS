@@ -43,44 +43,52 @@ SPDX-License-Identifier: AGPL-3.0-or-later
                               HorizontalAlignment="Left" VerticalAlignment="Top"
                               Margin="20 40 0 0" />
 
-                <!-- Блок кнопок по центру -->
-                <BoxContainer Name="ButtonsContainer" Orientation="Vertical"
-                              SeparationOverride="2"
+                <!-- Блок кнопок по центру: направляющая полоска + сами кнопки -->
+                <BoxContainer Name="ButtonsRow" Orientation="Horizontal"
+                              SeparationOverride="14"
                               VerticalAlignment="Center"
                               HorizontalAlignment="Left"
                               Margin="20 0 0 0">
 
-                    <!-- Логотип LocalDuty -->
-                    <lobbyUi:LobbyLogoDuty Name="LogoDuty" Margin="0 0 0 14" />
+                    <!-- Серая направляющая слева, во всю высоту блока -->
+                    <lobbyUi:LobbySideStripe_Duty MinWidth="2" VerticalExpand="True" />
 
-                    <!-- Кнопки с анимацией -->
-                    <lobbyUi:LobbyAnimatedButton Name="ObserveButton" Access="Public"
-                            Text="{Loc 'ui-lobby-observe-button'}" />
+                    <BoxContainer Name="ButtonsContainer" Orientation="Vertical"
+                                  SeparationOverride="2">
 
-                    <lobbyUi:LobbyAnimatedButton Name="ReadyButton" Access="Public"
-                            ToggleMode="True"
-                            Text="{Loc 'ui-lobby-ready-up-button'}" />
+                        <!-- Логотип LocalDuty -->
+                        <lobbyUi:LobbyLogoDuty Name="LogoDuty" Margin="0 0 0 14" />
 
-                    <lobbyUi:LobbyAnimatedButton Name="CharacterSetupButton_Duty" Access="Public"
-                            Text="Персонализация" />
+                        <!-- Кнопки с анимацией -->
+                        <lobbyUi:LobbyAnimatedButton Name="ObserveButton" Access="Public"
+                                Text="{Loc 'ui-lobby-observe-button'}" />
 
-                    <lobbyUi:LobbyAnimatedButton Name="OptionsButton" Access="Public"
-                            Text="{Loc 'ui-lobby-options-button'}" />
+                        <lobbyUi:LobbyAnimatedButton Name="ReadyButton" Access="Public"
+                                ToggleMode="True"
+                                Text="{Loc 'ui-lobby-ready-up-button'}" />
 
-                    <lobbyUi:LobbyAnimatedButton Name="AHelpButton" Access="Public"
-                            Text="{Loc 'ui-lobby-ahelp-button'}" />
+                        <lobbyUi:LobbyAnimatedButton Name="CharacterSetupButton_Duty" Access="Public"
+                                Text="Персонализация" />
 
-                    <!-- Визуальный разделитель -->
-                    <Control MinHeight="10" />
+                        <lobbyUi:LobbyAnimatedButton Name="OptionsButton" Access="Public"
+                                Text="{Loc 'ui-lobby-options-button'}" />
 
-                    <lobbyUi:LobbyAnimatedButton Name="GuideButton" Access="Public"
-                            Text="Руководство" />
+                        <lobbyUi:LobbyAnimatedButton Name="AHelpButton" Access="Public"
+                                Text="{Loc 'ui-lobby-ahelp-button'}" />
 
-                    <lobbyUi:LobbyAnimatedButton Name="DiscordButton" Access="Public"
-                            Text="Дискорд" />
+                        <!-- Визуальный разделитель -->
+                        <Control MinHeight="10" />
 
-                    <lobbyUi:LobbyAnimatedButton Name="LeaveButton" Access="Public"
-                            Text="{Loc 'ui-lobby-leave-button'}" />
+                        <lobbyUi:LobbyAnimatedButton Name="GuideButton" Access="Public"
+                                Text="Руководство" />
+
+                        <lobbyUi:LobbyAnimatedButton Name="DiscordButton" Access="Public"
+                                Text="Дискорд" />
+
+                        <lobbyUi:LobbyAnimatedButton Name="LeaveButton" Access="Public"
+                                Text="{Loc 'ui-lobby-leave-button'}" />
+
+                    </BoxContainer>
 
                 </BoxContainer>
 

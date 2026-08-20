@@ -19,7 +19,7 @@ namespace Content.Client.Lobby.UI;
 public sealed class LobbyAnimatedButton : Button
 {
     /// <summary>Скорость интерполяции (единиц в секунду, 0..1).</summary>
-    public float AnimSpeed = 8f;
+    public float AnimSpeed = 14f;
 
     private float _progress = 0f;
 
@@ -32,7 +32,7 @@ public sealed class LobbyAnimatedButton : Button
         // Сбрасываем стандартный StyleBox SS14 через StyleBoxOverride
         // — рисуем только текст, без рамки и фона
         var emptyBox = new StyleBoxEmpty();
-        emptyBox.SetContentMarginOverride(StyleBox.Margin.Vertical, 5);
+        emptyBox.SetContentMarginOverride(StyleBox.Margin.Vertical, 7);
         StyleBoxOverride = emptyBox;
 
         AddStyleClass(StyleLobbyDuty_Const.LobbyButtonDuty);

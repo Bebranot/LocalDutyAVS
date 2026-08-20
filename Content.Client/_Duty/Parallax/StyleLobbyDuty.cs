@@ -13,9 +13,11 @@ namespace Content.Client.Stylesheets;
 
 /// <summary>
 ///     Стили для кнопок левой панели лобби LocalDuty.
-///     Шрифт: Montserrat Alternates
-///     Обычное состояние: #4E5754 (серый)
-///     Hover: #FFFAFA (почти белый) + отступ слева +8px
+///     Шрифт: Montserrat Alternates, 24px.
+///     Обычное состояние: #4E5754 (серый), hover: #FFFAFA (почти белый).
+///     Цвет и сдвиг вправо при наведении анимирует <see cref="LobbyAnimatedButton"/>
+///     через FontColorOverride/Margin — заданные тут цвета и StyleBox'ы служат
+///     фолбэком и источником шрифта.
 /// </summary>
 public static class StyleLobbyDuty
 {
@@ -23,9 +25,9 @@ public static class StyleLobbyDuty
 
     public static StyleRule[] GetRules(IResourceCache resCache)
     {
-        var montserrat20 = resCache.GetFont(
+        var montserratButton = resCache.GetFont(
             "/Fonts/Duty/texts/Montserrat Alternates.ttf",
-            20
+            24
         );
 
         // Обычное состояние — без фона, отступ слева 0
@@ -34,18 +36,20 @@ public static class StyleLobbyDuty
             BackgroundColor = Color.Transparent,
             BorderColor = Color.Transparent,
         };
-        boxNormal.SetContentMarginOverride(StyleBox.Margin.Vertical, 5);
+        boxNormal.SetContentMarginOverride(StyleBox.Margin.Vertical, 7);
         boxNormal.SetContentMarginOverride(StyleBox.Margin.Left, 0);
         boxNormal.SetContentMarginOverride(StyleBox.Margin.Right, 0);
 
-        // Hover состояние — тот же прозрачный фон, но отступ слева +8px для сдвига
+        // Hover состояние — геометрически идентично обычному.
+        // Сдвиг вправо при наведении делает LobbyAnimatedButton.FrameUpdate плавной
+        // анимацией Margin; дублировать его скачком через StyleBox не нужно.
         var boxHover = new StyleBoxFlat
         {
             BackgroundColor = Color.Transparent,
             BorderColor = Color.Transparent,
         };
-        boxHover.SetContentMarginOverride(StyleBox.Margin.Vertical, 5);
-        boxHover.SetContentMarginOverride(StyleBox.Margin.Left, 8);
+        boxHover.SetContentMarginOverride(StyleBox.Margin.Vertical, 7);
+        boxHover.SetContentMarginOverride(StyleBox.Margin.Left, 0);
         boxHover.SetContentMarginOverride(StyleBox.Margin.Right, 0);
 
         var colorNormal   = Color.FromHex("#4E5754");
@@ -61,7 +65,7 @@ public static class StyleLobbyDuty
                 new[]
                 {
                     new StyleProperty(Button.StylePropertyStyleBox, boxNormal),
-                    new StyleProperty("font", montserrat20),
+                    new StyleProperty("font", montserratButton),
                     new StyleProperty(Button.StylePropertyModulateSelf, Color.White),
                 }),
 
@@ -71,7 +75,7 @@ public static class StyleLobbyDuty
                     LobbyButtonDuty, null),
                 new[]
                 {
-                    new StyleProperty("font", montserrat20),
+                    new StyleProperty("font", montserratButton),
                     new StyleProperty(Label.StylePropertyFontColor, colorNormal),
                 }),
 
@@ -82,7 +86,7 @@ public static class StyleLobbyDuty
                 new[]
                 {
                     new StyleProperty(Button.StylePropertyStyleBox, boxHover),
-                    new StyleProperty("font", montserrat20),
+                    new StyleProperty("font", montserratButton),
                     new StyleProperty(Button.StylePropertyModulateSelf, Color.White),
                 }),
 
@@ -92,7 +96,7 @@ public static class StyleLobbyDuty
                     LobbyButtonDuty, new[] { Button.StylePseudoClassHover }),
                 new[]
                 {
-                    new StyleProperty("font", montserrat20),
+                    new StyleProperty("font", montserratButton),
                     new StyleProperty(Label.StylePropertyFontColor, colorHover),
                 }),
 
@@ -103,7 +107,7 @@ public static class StyleLobbyDuty
                 new[]
                 {
                     new StyleProperty(Button.StylePropertyStyleBox, boxHover),
-                    new StyleProperty("font", montserrat20),
+                    new StyleProperty("font", montserratButton),
                     new StyleProperty(Button.StylePropertyModulateSelf, Color.White),
                 }),
 
@@ -112,7 +116,7 @@ public static class StyleLobbyDuty
                     LobbyButtonDuty, new[] { Button.StylePseudoClassPressed }),
                 new[]
                 {
-                    new StyleProperty("font", montserrat20),
+                    new StyleProperty("font", montserratButton),
                     new StyleProperty(Label.StylePropertyFontColor, colorPressed),
                 }),
 
@@ -123,7 +127,7 @@ public static class StyleLobbyDuty
                 new[]
                 {
                     new StyleProperty(Button.StylePropertyStyleBox, boxNormal),
-                    new StyleProperty("font", montserrat20),
+                    new StyleProperty("font", montserratButton),
                     new StyleProperty(Button.StylePropertyModulateSelf, Color.White),
                 }),
 
@@ -132,7 +136,7 @@ public static class StyleLobbyDuty
                     LobbyButtonDuty, new[] { Button.StylePseudoClassDisabled }),
                 new[]
                 {
-                    new StyleProperty("font", montserrat20),
+                    new StyleProperty("font", montserratButton),
                     new StyleProperty(Label.StylePropertyFontColor, colorDisabled),
                 }),
         };
