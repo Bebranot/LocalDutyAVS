@@ -969,7 +969,10 @@ internal sealed partial class PowerMonitoringConsoleSystem : SharedPowerMonitori
 
             if (entDevice.IsCollectionMasterOrChild)
             {
-                if (!entDevice.IsCollectionMaster)
+                // CollectionMaster может быть уже удалён (например, той же сваркой грида,
+                // которая вызвала этот refresh), а ссылка на дочернем устройстве ещё не сброшена —
+                // без проверки GetNetEntity падает в "Can't resolve MetaDataComponent".
+                if (!entDevice.IsCollectionMaster && !TerminatingOrDeleted(entDevice.CollectionMaster))
                 {
                     metaData.CollectionMaster = GetNetEntity(entDevice.CollectionMaster);
                 }
