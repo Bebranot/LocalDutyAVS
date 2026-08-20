@@ -154,7 +154,19 @@ public sealed class DiscordLink : IPostInjectInit
             _client.MessageCreate -= OnCommandReceivedInternal;
             _client.MessageCreate -= OnMessageReceivedInternal;
 
-            await _client.CloseAsync();
+            try
+            {
+                // StartAsync() is fired off via Task.Run in Initialize() without being awaited,
+                // so _client can be non-null before the gateway websocket actually connects.
+                // Closing it in that window throws "Connection not started." — harmless, but if
+                // nothing awaits/observes this Task the exception gets rethrown by the finalizer.
+                await _client.CloseAsync();
+            }
+            catch (InvalidOperationException e)
+            {
+                _sawmill.Debug($"Discord client was never fully started; skipping graceful close: {e.Message}");
+            }
+
             _client.Dispose();
             _client = null;
         }
