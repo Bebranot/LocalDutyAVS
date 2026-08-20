@@ -16,6 +16,13 @@
       # унаследованный от штатного Tourniquet heldPrefix, иначе движок искал бы
       # несуществующие "tourniquet-inhand-*" состояния.
       heldPrefix: null
+    # Без этого компонента ConstructionSystem.Construct не находит ConstructionComponent
+    # на только что заспавненной сущности, логирует "Initial construction does not have
+    # a valid target entity" и удаляет её — жгут не появлялся в руке, а крафт после этого
+    # ломался (ничего кроме построек скрафтить было нельзя).
+    - type: Construction
+      graph: DutyImprovisedTourniquet
+      node: tourniquet
 
 - type: constructionGraph
   id: DutyImprovisedTourniquet
