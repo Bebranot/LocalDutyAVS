@@ -416,7 +416,14 @@ public sealed class BluespaceHarvesterSystem : EntitySystem
 
         int currentDanger = danger ?? harvester.Danger;
 
-        var count = _random.Next(harvester.RiftCount);
+        // _Duty: было `_random.Next(harvester.RiftCount)` — верхняя граница у Next(int)
+        // исключающая (как у System.Random), так что count мог быть только 0..RiftCount-1:
+        // сконфигурированный максимум (RiftCount) не выпадал никогда, а при count == 0
+        // ниже комментарий "We gave all the danger to the rifts" был ложью — весь
+        // накопленный Danger сгорал (harvester.Danger = 0), но ни один портал не
+        // спавнился. Next(1, RiftCount + 1) гарантирует хотя бы 1 портал и достижимость
+        // реального максимума.
+        var count = _random.Next(1, harvester.RiftCount + 1);
         for (var i = 0; i < count; i++)
         {
             // Haha loot!

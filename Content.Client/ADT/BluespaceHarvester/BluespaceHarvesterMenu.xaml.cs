@@ -10,6 +10,11 @@ public sealed partial class BluespaceHarvesterMenu : FancyWindow
 {
     private readonly BluespaceHarvesterBoundUserInterface _owner;
 
+    // _Duty: было жёстко зашито `level > 20` вместо конфигурируемого
+    // BluespaceHarvesterComponent.MaxLevel (DataField, дефолт 20, но не гарантированно
+    // одинаков для всех харвестеров) — при MaxLevel != 20 ввод обрезался бы неверно.
+    private int _maxLevel = 20;
+
     public BluespaceHarvesterMenu(BluespaceHarvesterBoundUserInterface owner)
     {
         RobustXamlLoader.Load(this);
@@ -18,7 +23,7 @@ public sealed partial class BluespaceHarvesterMenu : FancyWindow
 
         InputLevelBar.OnTextEntered += (args) =>
         {
-            if (!int.TryParse(args.Text, out var level) || level < 0 || level > 20)
+            if (!int.TryParse(args.Text, out var level) || level < 0 || level > _maxLevel)
             {
                 InputLevelBar.Text = "0";
                 return;
@@ -30,6 +35,7 @@ public sealed partial class BluespaceHarvesterMenu : FancyWindow
 
     public void UpdateState(BluespaceHarvesterBoundUserInterfaceState state)
     {
+        _maxLevel = state.MaxLevel;
         TargetLevel.Text = $"{state.TargetLevel}";
         CurrentLevel.Text = $"{state.CurrentLevel}";
         DesiredBar.Value = ((float)state.CurrentLevel) / ((float)state.MaxLevel);
