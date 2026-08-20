@@ -1,10 +1,16 @@
 <DefaultWindow xmlns="https://spacestation14.io"
-               xmlns:controls="clr-namespace:Content.Client.UserInterface.Controls">
+               xmlns:controls="clr-namespace:Content.Client.UserInterface.Controls"
+               xmlns:duty="clr-namespace:Content.Client._Duty.Construction">
     <BoxContainer Orientation="Horizontal" HorizontalExpand="True">
+        <!-- _Duty: категории вертикальным сайдбаром вместо выпадающего OptionButton. -->
+        <duty:CategorySidebar Name="CategoryList" Access="Public" Margin="0 0 5 0"/>
         <BoxContainer Orientation="Vertical" MinWidth="243" Margin="0 0 5 0">
-            <BoxContainer Orientation="Horizontal" HorizontalExpand="True" Margin="0 0 0 5">
-                <LineEdit Name="SearchBar" PlaceHolder="{Loc 'construction-menu-search'}" HorizontalExpand="True"/>
-                <OptionButton Name="OptionCategories" Access="Public" MinSize="130 0"/>
+            <LineEdit Name="SearchBar" PlaceHolder="{Loc 'construction-menu-search'}"
+                      HorizontalExpand="True" Margin="0 0 0 5"/>
+            <!-- _Duty: подсказка, когда поиск внутри выбранной категории ничего не нашёл. -->
+            <BoxContainer Name="SearchHintBox" Orientation="Vertical" Visible="False" Margin="0 0 0 5">
+                <RichTextLabel Name="SearchHintLabel"/>
+                <Button Name="SearchEverywhereButton" HorizontalExpand="True"/>
             </BoxContainer>
             <controls:ListContainer Name="Recipes" Access="Public" Group="True" Toggle="True" VerticalExpand="True" />
             <ScrollContainer Name="RecipesGridScrollContainer" VerticalExpand="True" Access="Public" Visible="False">
@@ -15,6 +21,9 @@
             <BoxContainer Orientation="Horizontal">
                 <Button Name="MenuGridViewButton" ToggleMode="True" Text="{Loc construction-menu-grid-view}"/>
                 <Button Name="FavoriteButton" Visible="false"/>
+                <Control HorizontalExpand="True"/>
+                <!-- _Duty: тумблер боковой панели избранного, прижат вправо — под крестиком окна. -->
+                <Button Name="FavoritesPanelToggleButton" Visible="False"/>
             </BoxContainer>
             <Control>
                 <BoxContainer Orientation="Vertical" HorizontalExpand="True" Margin="0 0 0 5">
@@ -38,5 +47,8 @@
                 </BoxContainer>
             </BoxContainer>
         </BoxContainer>
+        <!-- _Duty: панель избранного. Показывается только при наличии избранного; окно при этом
+             расширяется вправо, левый край и остальные колонки не двигаются. -->
+        <duty:FavoritesPanel Name="FavoritesSidePanel" Access="Public" Visible="False"/>
     </BoxContainer>
 </DefaultWindow>
