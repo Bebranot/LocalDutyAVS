@@ -1,6 +1,7 @@
 using Content.Shared.ADT.Silicons.Borgs.Components;
 using Content.Shared.Actions;
 using Content.Shared.Mind;
+using Content.Shared.Radio.Components;
 using Content.Shared.Silicons.StationAi;
 using Robust.Shared.Serialization;
 
@@ -29,6 +30,27 @@ public abstract class SharedAiRemoteControlSystem : EntitySystem
         _stationAiSystem.SwitchRemoteEntityMode(stationAiCore!, true);
         remoteComp.AiHolder = null;
         remoteComp.LinkedMind = null;
+
+        // _Duty: радиоканалы подменялись на каналы ИИ при AiTakeControl (см. Server
+        // AiRemoteControlSystem.AiTakeControl) и раньше восстанавливались ТОЛЬКО в
+        // ComponentShutdown — который срабатывает лишь при физическом извлечении
+        // мозгового модуля из корпуса, а не при обычном возврате контроля (кнопка
+        // "назад в ИИ", потеря сознания, уничтожение борга). В результате после
+        // штатного завершения удалённого контроля сущность навсегда оставалась на
+        // радиоканалах ИИ. Восстанавливаем здесь же, симметрично AiTakeControl.
+        if (remoteComp.PreviouslyTransmitterChannels != null &&
+            TryComp<IntrinsicRadioTransmitterComponent>(entity, out var transmitter))
+        {
+            transmitter.Channels = [.. remoteComp.PreviouslyTransmitterChannels];
+            remoteComp.PreviouslyTransmitterChannels = null;
+        }
+
+        if (remoteComp.PreviouslyActiveRadioChannels != null &&
+            TryComp<ActiveRadioComponent>(entity, out var activeRadio))
+        {
+            activeRadio.Channels = [.. remoteComp.PreviouslyActiveRadioChannels];
+            remoteComp.PreviouslyActiveRadioChannels = null;
+        }
 
         _xformSystem.SetCoordinates(stationAiCore.Comp.RemoteEntity.Value, Transform(entity).Coordinates);
     }
