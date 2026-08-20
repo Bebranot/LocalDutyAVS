@@ -9,7 +9,7 @@
   - type: StorageFill
     contents:
     - id: STWeaponRifleAKM
-    - id: Base739Mag10
+    - id: Magazine739x30
       amount: 2
   - type: Tag
     tags:

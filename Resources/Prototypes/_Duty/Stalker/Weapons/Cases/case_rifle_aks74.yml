@@ -11,7 +11,7 @@
   - type: StorageFill
     contents:
     - id: STWeaponRifleAKS74
-    - id: Base545Mag10
+    - id: Magazine545x30
       amount: 2
   - type: Tag
     tags:
@@ -29,7 +29,7 @@
   - type: StorageFill
     contents:
     - id: STWeaponRifleAK74M
-    - id: Base545Mag10
+    - id: Magazine545x30
       amount: 2
   - type: Tag
     tags:
@@ -47,7 +47,7 @@
   - type: StorageFill
     contents:
     - id: STWeaponRifleSaiga545
-    - id: Base545Mag10
+    - id: Magazine545x30
       amount: 2
   - type: Tag
     tags:
@@ -65,7 +65,7 @@
   - type: StorageFill
     contents:
     - id: STWeaponRifleA545
-    - id: Base545Mag10
+    - id: Magazine545x30
       amount: 2
   - type: Tag
     tags:

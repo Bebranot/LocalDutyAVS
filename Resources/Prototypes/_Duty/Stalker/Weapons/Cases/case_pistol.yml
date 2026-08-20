@@ -29,7 +29,7 @@
   - type: StorageFill
     contents:
     - id: WeaponPistolGSH18
-    - id: BaseGSH-18Mag10
+    - id: GSH-18Mag18
       amount: 2
   - type: Tag
     tags:
@@ -47,7 +47,7 @@
   - type: StorageFill
     contents:
     - id: WeaponPistolStalkerGlock
-    - id: GlockMag17
+    - id: GlockMag33
       amount: 2
   - type: Tag
     tags:
@@ -101,7 +101,7 @@
   - type: StorageFill
     contents:
     - id: WeaponPistolStalkerPMModifed
-    - id: GlockMag17
+    - id: GlockMag33
       amount: 2
   - type: Tag
     tags:

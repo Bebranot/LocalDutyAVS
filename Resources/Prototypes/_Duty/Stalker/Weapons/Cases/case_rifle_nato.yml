@@ -11,7 +11,7 @@
   - type: StorageFill
     contents:
     - id: STWeaponRifleM16
-    - id: Base556Mag10
+    - id: Magazine556x30
       amount: 2
   - type: Tag
     tags:
@@ -29,7 +29,7 @@
   - type: StorageFill
     contents:
     - id: STWeaponRifleM4
-    - id: Base556Mag10
+    - id: Magazine556x30
       amount: 2
   - type: Tag
     tags:
@@ -47,7 +47,7 @@
   - type: StorageFill
     contents:
     - id: STWeaponRifleHK416
-    - id: Base556Mag10
+    - id: Magazine556x30
       amount: 2
   - type: Tag
     tags:
@@ -65,7 +65,7 @@
   - type: StorageFill
     contents:
     - id: STWeaponRifleLR300v1
-    - id: Base556Mag10
+    - id: Magazine556x30
       amount: 2
   - type: Tag
     tags:
@@ -83,7 +83,7 @@
   - type: StorageFill
     contents:
     - id: STWeaponRifleSCARL
-    - id: Base556Mag10
+    - id: Magazine556x30
       amount: 2
   - type: Tag
     tags:
@@ -101,7 +101,7 @@
   - type: StorageFill
     contents:
     - id: STWeaponRifleG36
-    - id: Base556Mag10
+    - id: Magazine556x30
       amount: 2
   - type: Tag
     tags:
@@ -119,7 +119,7 @@
   - type: StorageFill
     contents:
     - id: STWeaponRifleAUG
-    - id: Base556Mag10
+    - id: Magazine556x30
       amount: 2
   - type: Tag
     tags:
@@ -137,7 +137,7 @@
   - type: StorageFill
     contents:
     - id: STWeaponRifleGalil
-    - id: Base556Mag10
+    - id: Magazine556x30
       amount: 2
   - type: Tag
     tags:
@@ -155,7 +155,7 @@
   - type: StorageFill
     contents:
     - id: STWeaponRifleL85
-    - id: Base556Mag10
+    - id: Magazine556x30
       amount: 2
   - type: Tag
     tags:
@@ -173,7 +173,7 @@
   - type: StorageFill
     contents:
     - id: STWeaponRifleF2000
-    - id: Base556Mag10
+    - id: Magazine556x30
       amount: 2
   - type: Tag
     tags:
@@ -191,7 +191,7 @@
   - type: StorageFill
     contents:
     - id: STWeaponRifleStalkerAbakan
-    - id: Base545Mag10
+    - id: Magazine545x30
       amount: 2
   - type: Tag
     tags:
@@ -209,7 +209,7 @@
   - type: StorageFill
     contents:
     - id: STWeaponRifleStalkerAek971
-    - id: Base545Mag10
+    - id: Magazine545x30
       amount: 2
   - type: Tag
     tags:
