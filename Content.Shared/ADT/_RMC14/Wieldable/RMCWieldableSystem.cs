@@ -40,6 +40,12 @@ public sealed class RMCWieldableSystem : EntitySystem
 
         SubscribeLocalEvent<WieldSlowdownCompensationComponent, GotEquippedEvent>(OnGotEquipped);
         SubscribeLocalEvent<WieldSlowdownCompensationComponent, GotUnequippedEvent>(OnGotUnequipped);
+        // _Duty: обработчик OnRefreshWieldSlowdownCompensation был определён, но нигде
+        // не подписан — RefreshWieldSlowdownCompensationEvent долетал до предмета брони
+        // (через InventorySystem.RelayEvent), но некому было прибавить Walk/Sprint из
+        // WieldSlowdownCompensationComponent к результату. Вся компенсация замедления
+        // от удержания двуручного оружия (от брони) всегда считалась нулевой.
+        SubscribeLocalEvent<WieldSlowdownCompensationComponent, InventoryRelayedEvent<RefreshWieldSlowdownCompensationEvent>>(OnRefreshWieldSlowdownCompensation);
 
         SubscribeLocalEvent<WieldDelayComponent, GotEquippedHandEvent>(OnGotEquippedHand);
         SubscribeLocalEvent<WieldDelayComponent, MapInitEvent>(OnMapInit);
