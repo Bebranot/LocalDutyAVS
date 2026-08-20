@@ -167,7 +167,11 @@ public sealed class VisibleImplantSystem : SharedVisibleImplantSystem
     #region Fists
     private void InitFists(EntityUid uid, MistralFistsComponent comp, MapInitEvent args)
     {
-        comp.Container = _container.EnsureContainer<Container>(uid, "MantisDaggersContainer");
+        // _Duty: было "MantisDaggersContainer" — тот же ID, что и у контейнера Daggers/Shields.
+        // Если у сущности одновременно активны два из этих имплантов, EnsureContainer возвращал
+        // ОДИН И ТОТ ЖЕ контейнер для обоих, и ShutdownContainer при снятии одного импланта
+        // уничтожал содержимое (в т.ч. оружие) другого ещё активного импланта.
+        comp.Container = _container.EnsureContainer<Container>(uid, "MistralFistsContainer");
         comp.InnateWeapon = Spawn("ADTMistralFists", Transform(uid).Coordinates);
         _container.Insert(comp.InnateWeapon.Value, comp.Container, force: true);
         Dirty(uid, comp);
@@ -188,7 +192,8 @@ public sealed class VisibleImplantSystem : SharedVisibleImplantSystem
     private void InitShields(EntityUid uid, SundownerShieldsComponent comp, MapInitEvent args)
     {
         _action.AddAction(uid, ref comp.ActionEntity, "ActionToggleSundownerShields");
-        comp.Container = _container.EnsureContainer<Container>(uid, "MantisDaggersContainer");
+        // _Duty: см. аналогичный фикс в InitFists — было тем же "MantisDaggersContainer".
+        comp.Container = _container.EnsureContainer<Container>(uid, "SundownerShieldsContainer");
         comp.InnateWeapon = Spawn("ADTMistralFists", Transform(uid).Coordinates);
         _container.Insert(comp.InnateWeapon.Value, comp.Container, force: true);
         Dirty(uid, comp);
