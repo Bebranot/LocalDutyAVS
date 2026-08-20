@@ -90,7 +90,15 @@ public sealed partial class PTLSystem : EntitySystem
     {
         if (TryComp<RadiationSourceComponent>(ent, out var rad)
             && rad.Intensity > 0)
-            _radiation.SetIntensity(ent.Owner, rad.Intensity - rad.Intensity * 0.2f - .1f);
+        {
+            // _Duty: без клампа к 0 интенсивность на малых значениях (< 0.1) уходила в
+            // отрицательную зону и там и оставалась (следующая проверка `rad.Intensity > 0`
+            // просто переставала срабатывать) — источник радиации навсегда застревал с
+            // отрицательным Intensity, а RadiationSystem.GridCast.cs делит его на дистанцию
+            // и превращает в `rads`, то есть источник начинал ЛЕЧИТЬ урон вместо нанесения.
+            var decayed = rad.Intensity - rad.Intensity * 0.2f - .1f;
+            _radiation.SetIntensity(ent.Owner, MathF.Max(0f, decayed));
+        }
     }
 
     private void Tick(Entity<PowerTransmissionLaserComponent> ent)
