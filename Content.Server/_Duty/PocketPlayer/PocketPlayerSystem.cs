@@ -136,4 +136,22 @@ public sealed class PocketPlayerSystem : SharedPocketPlayerSystem
     {
         comp.AudioStream = Audio.Stop(comp.AudioStream);
     }
+
+    /// <summary>
+    /// ClearIfTerminating чистит AudioStream только в обработчиках UI-сообщений — если трек
+    /// доигрывает сам по себе (сущность аудиопотока самоуничтожается по таймеру) и никто
+    /// не трогает плеер после этого, ссылка виснет навсегда и PVS долбит ошибками
+    /// "Can't resolve MetaDataComponent" на каждый тик, пока плеер кому-то виден.
+    /// Тот же паттерн уже чинили в JukeboxSystem.Update — переносим сюда.
+    /// </summary>
+    public override void Update(float frameTime)
+    {
+        base.Update(frameTime);
+
+        var query = EntityQueryEnumerator<PocketPlayerComponent>();
+        while (query.MoveNext(out var uid, out var comp))
+        {
+            ClearIfTerminating(uid, comp);
+        }
+    }
 }
