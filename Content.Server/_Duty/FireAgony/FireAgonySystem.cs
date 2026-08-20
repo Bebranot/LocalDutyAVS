@@ -2,6 +2,7 @@ using System.Linq;
 using Content.Server.Atmos.EntitySystems;
 using Content.Server.Chat.Systems;
 using Content.Shared._Duty.FireAgony;
+using Content.Shared.ADT.Flammability;
 using Content.Shared.Atmos;
 using Content.Shared.Atmos.Components;
 using Content.Shared.Chat;
@@ -73,6 +74,7 @@ public sealed class FireAgonySystem : EntitySystem
         _inventoryQuery = GetEntityQuery<InventoryComponent>();
         SubscribeLocalEvent<FireAgonyComponent, MobStateChangedEvent>(OnMobStateChanged);
         SubscribeLocalEvent<FireAgonyComponent, ComponentShutdown>(OnShutdown);
+        SubscribeLocalEvent<FireAgonyComponent, FireAgonyHelpExtinguishAttemptEvent>(OnHelpExtinguishAttempt);
     }
 
     public override void Update(float frameTime)
@@ -104,6 +106,10 @@ public sealed class FireAgonySystem : EntitySystem
     {
         // Только горящие игровые (player-controlled) гуманоиды выше порога; NPC горят по-старому.
         if (!flammable.OnFire || flammable.FireStacks < agony.EnterThreshold || !HasComp<ActorComponent>(uid))
+            return;
+
+        // Огнеиммунные существа (новакиды и т.п.) — сцена агонии не запускается вовсе.
+        if (HasComp<FireImmunityComponent>(uid))
             return;
 
         // Не в крите/мёртвых (иначе паралич трупа) и не в рефрактере после прошлого обрыва.
@@ -141,7 +147,6 @@ public sealed class FireAgonySystem : EntitySystem
         // (Звук крика — отдельный непрерывный поток на клиенте, стартует по флагу Active.)
         SendAgonyEmote(uid, agony);
         ShowAgonyPopup(uid, agony);
-        ScheduleEmote(agony, curTime);
         SchedulePopup(agony, curTime);
     }
 
@@ -169,11 +174,9 @@ public sealed class FireAgonySystem : EntitySystem
             return;
         }
 
-        if (curTime >= agony.NextScreamTime)
-        {
-            SendAgonyEmote(uid, agony);
-            ScheduleEmote(agony, curTime);
-        }
+        // Крик боли — на каждом такте машины состояний (тик уже дискретизирован UpdateInterval,
+        // т.е. это ~раз в секунду). Стартовый эмоут (SendAgonyEmote) прозвучал один раз в TryStart.
+        SendPainScream(uid, agony);
 
         if (curTime >= agony.NextPopupTime)
         {
@@ -266,15 +269,34 @@ public sealed class FireAgonySystem : EntitySystem
         _chat.TrySendInGameICMessage(uid, line, InGameICChatType.Emote, hideChat: false, hideLog: true, ignoreActionBlocker: true);
     }
 
+    /// <summary>Крик боли — настоящая say-реплика (переиспользует ChatSystem.SendDutyHealthScream,
+    /// тот же метод, что и HealthPhrases-крики): красный, шрифт Underdog, дрожащий речевой пузырь.</summary>
+    private void SendPainScream(EntityUid uid, FireAgonyComponent agony)
+    {
+        var line = Loc.GetString($"fire-agony-pain-scream-{_random.Next(1, agony.PainScreamLineCount + 1)}");
+        _chat.SendDutyHealthScream(uid, line);
+    }
+
     private void ShowAgonyPopup(EntityUid uid, FireAgonyComponent agony)
     {
         var msg = Loc.GetString($"fire-agony-popup-{_random.Next(1, agony.PopupLineCount + 1)}");
         _popup.PopupEntity(msg, uid, uid, PopupType.LargeCaution);
     }
 
-    private void ScheduleEmote(FireAgonyComponent agony, TimeSpan curTime)
+    /// <summary>Клик ЛКМ окружающего "сбить пламя" (см. SharedFireAgonySystem.OnInteractHand) —
+    /// попап уже показан предсказанно там, здесь только серверно-авторитетная механика:
+    /// уменьшение FireStacks с антиспам-кулдауном, общим на цель.</summary>
+    private void OnHelpExtinguishAttempt(Entity<FireAgonyComponent> ent, ref FireAgonyHelpExtinguishAttemptEvent args)
     {
-        agony.NextScreamTime = curTime + RandomInterval(agony.ScreamIntervalMin, agony.ScreamIntervalMax);
+        if (!ent.Comp.Active || !_flammableQuery.TryComp(ent, out var flammable))
+            return;
+
+        var curTime = _timing.CurTime;
+        if (curTime < ent.Comp.NextHelpAllowedTime)
+            return;
+
+        ent.Comp.NextHelpAllowedTime = curTime + ent.Comp.HelpExtinguishCooldown;
+        _flammable.AdjustFireStacks(ent, ent.Comp.HelpExtinguishAmount, flammable);
     }
 
     private void SchedulePopup(FireAgonyComponent agony, TimeSpan curTime)
