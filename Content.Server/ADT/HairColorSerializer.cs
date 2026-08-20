@@ -42,6 +42,17 @@ public static class HairColorSerializer
             // Fall back to legacy single color format
         }
 
-        return new List<Color> { Color.FromHex(hairColorData) };
+        // _Duty: этот фолбэк раньше был вне try/catch — если строка не парсилась как JSON-
+        // массив (или один из элементов внутри был битым хексом, что тоже уходит в catch
+        // выше), Color.FromHex здесь получал на вход исходную JSON-строку целиком и падал
+        // с необработанным исключением вместо того чтобы просто откатиться к дефолту.
+        try
+        {
+            return new List<Color> { Color.FromHex(hairColorData) };
+        }
+        catch
+        {
+            return new List<Color> { Color.Black };
+        }
     }
 }
