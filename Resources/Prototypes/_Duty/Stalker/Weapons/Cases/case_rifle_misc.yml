@@ -4,6 +4,7 @@
 - type: entity
   parent: STBaseWeaponCase
   id: STWeaponRifleFALCase
+  name: кейс с FN FAL
   suffix: "Stalker, Кейс, FN FAL"
   description: Кейс с оружием «FN FAL» и 2 магазина.
   components:
@@ -21,6 +22,7 @@
 - type: entity
   parent: STBaseWeaponCase
   id: STWeaponRifleM14Case
+  name: кейс с M14
   suffix: "Stalker, Кейс, M14"
   description: Кейс с оружием «M14» и 2 магазина.
   components:
@@ -38,6 +40,7 @@
 - type: entity
   parent: STBaseWeaponCase
   id: STWeaponRifleGalatzCase
+  name: кейс с Galatz
   suffix: "Stalker, Кейс, Galatz"
   description: Кейс с оружием «Galatz Wanderer» и 2 магазина.
   components:
@@ -55,6 +58,7 @@
 - type: entity
   parent: STBaseWeaponCase
   id: STWeaponRifleSCARHCase
+  name: кейс с FN SCAR-H
   suffix: "Stalker, Кейс, FN SCAR-H"
   description: Кейс с оружием «FN SCAR-H» и 2 магазина.
   components:
@@ -72,6 +76,7 @@
 - type: entity
   parent: STBaseWeaponCase
   id: STWeaponRifleSCARHShortCase
+  name: кейс с FN SCAR-H CQC
   suffix: "Stalker, Кейс, FN SCAR-H CQC"
   description: Кейс с оружием «FN SCAR-H CQC» и 2 магазина.
   components:
@@ -89,6 +94,7 @@
 - type: entity
   parent: STBaseWeaponCase
   id: STWeaponRifleARX160Case
+  name: кейс с Beretta ARX-160
   suffix: "Stalker, Кейс, Beretta ARX-160"
   description: Кейс с оружием «Beretta ARX-160» и 2 магазина.
   components:
@@ -106,6 +112,7 @@
 - type: entity
   parent: STBaseWeaponCase
   id: STWeaponRifleASVALCase
+  name: кейс с AS-VAL
   suffix: "Stalker, Кейс, AS-VAL"
   description: Кейс с оружием «AS-VAL» и 2 магазина.
   components:
@@ -123,6 +130,7 @@
 - type: entity
   parent: STBaseWeaponCase
   id: STWeaponRifleSIG550Case
+  name: кейс с SIG SG 550
   suffix: "Stalker, Кейс, SIG SG 550"
   description: Кейс с оружием «SIG SG 550» и 2 магазина.
   components:
@@ -140,6 +148,7 @@
 - type: entity
   parent: STBaseWeaponCase
   id: STWeaponRifleSIG739Case
+  name: кейс с SIG-739
   suffix: "Stalker, Кейс, SIG-739"
   description: Кейс с оружием «SIG-739 Precision» и 2 магазина.
   components:
@@ -157,6 +166,7 @@
 - type: entity
   parent: STBaseWeaponCase
   id: STMetroWeaponRifleVSVCase
+  name: кейс с ВСВ
   suffix: "Stalker, Кейс, ВСВ Глухарь"
   description: Кейс с оружием «ВСВ Глухарь» и 2 магазина.
   components:
@@ -174,6 +184,7 @@
 - type: entity
   parent: STBaseWeaponCase
   id: STWeaponRifleOC14Case
+  name: кейс с ОЦ-14
   suffix: "Stalker, Кейс, ОЦ-14 Гроза"
   description: Кейс с оружием «ОЦ-14 Гроза» и 2 магазина.
   components:
@@ -191,6 +202,7 @@
 - type: entity
   parent: STBaseWeaponCase
   id: STWeaponRifleOC14939Case
+  name: кейс с ОЦ-14 9x39
   suffix: "Stalker, Кейс, ОЦ-14 Гроза 9x39"
   description: Кейс с оружием «ОЦ-14 Гроза 9x39» и 2 магазина.
   components:
@@ -208,6 +220,7 @@
 - type: entity
   parent: STBaseWeaponCase
   id: STWeaponRifleStalkerAK104Case
+  name: кейс с АК-104
   suffix: "Stalker, Кейс, АК-104"
   description: Кейс с оружием «АК-104» и 2 магазина.
   components:
@@ -225,6 +238,7 @@
 - type: entity
   parent: STBaseWeaponCase
   id: STWeaponRifleStalkerAK12Case
+  name: кейс с АК-12
   suffix: "Stalker, Кейс, АК-12"
   description: Кейс с оружием «АК-12» и 2 магазина.
   components:
@@ -242,6 +256,7 @@
 - type: entity
   parent: STBaseWeaponCase
   id: STWeaponRifleStalkerAK15Case
+  name: кейс с АК-15
   suffix: "Stalker, Кейс, АК-15"
   description: Кейс с оружием «АК-15» и 2 магазина.
   components:
@@ -259,6 +274,7 @@
 - type: entity
   parent: STBaseWeaponCase
   id: STWeaponRifleStalkerRPK16Case
+  name: кейс с РПК-16
   suffix: "Stalker, Кейс, РПК-16"
   description: Кейс с оружием «РПК-16» и 2 магазина.
   components:

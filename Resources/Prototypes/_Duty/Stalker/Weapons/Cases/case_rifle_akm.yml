@@ -2,6 +2,7 @@
 - type: entity
   parent: STBaseWeaponCase
   id: STWeaponRifleAKMCase
+  name: кейс с АКМ
   suffix: "Stalker, Кейс, АКМ"
   description: Кейс с оружием «АКМ Zone Legend» и 2 магазина.
   components:

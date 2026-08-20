@@ -2,6 +2,7 @@
 - type: entity
   parent: STBaseWeaponCase
   id: STWeaponRifleAH12Case
+  name: кейс с АШ-12
   suffix: "Stalker, Кейс, АШ-12"
   description: "Кейс с оружием: АШ-12 \"Охотник на мутантов\" и 2 магазина."
   components:

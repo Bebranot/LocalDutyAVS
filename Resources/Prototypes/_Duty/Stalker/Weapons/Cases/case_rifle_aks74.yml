@@ -4,6 +4,7 @@
 - type: entity
   parent: STBaseWeaponCase
   id: STWeaponRifleAKS74Case
+  name: кейс с АКС-74
   suffix: "Stalker, Кейс, АКС-74"
   description: Кейс с оружием «АКС-74» и 2 магазина.
   components:
@@ -21,6 +22,7 @@
 - type: entity
   parent: STBaseWeaponCase
   id: STWeaponRifleAK74MCase
+  name: кейс с АК-74М
   suffix: "Stalker, Кейс, АК-74М"
   description: Кейс с оружием «АК-74М Modern» и 2 магазина.
   components:
@@ -38,6 +40,7 @@
 - type: entity
   parent: STBaseWeaponCase
   id: STWeaponRifleSaiga545Case
+  name: кейс с Сайгой 5.45
   suffix: "Stalker, Кейс, Сайга 5.45"
   description: Кейс с оружием «Сайга 5.45 Hunter» и 2 магазина.
   components:
@@ -55,6 +58,7 @@
 - type: entity
   parent: STBaseWeaponCase
   id: STWeaponRifleA545Case
+  name: кейс с А-545
   suffix: "Stalker, Кейс, А-545"
   description: Кейс с оружием «А-545 Балалайка» и 2 магазина.
   components:

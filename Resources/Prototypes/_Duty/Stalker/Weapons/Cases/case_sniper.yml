@@ -6,8 +6,9 @@
 - type: entity
   parent: STBaseWeaponCase
   id: STWeaponSniperMosinCase
+  name: кейс с винтовкой Мосина
   suffix: "Stalker, Кейс, Мосина"
-  description: Кейс с оружием «Мосина» и стопка патронов — заряжается россыпью, магазина у неё нет.
+  description: "Кейс с оружием: винтовка Мосина и стопка патронов — заряжается россыпью, магазина у неё нет."
   components:
   - type: StorageFill
     contents:
@@ -23,8 +24,9 @@
 - type: entity
   parent: STBaseWeaponCase
   id: STWeaponSniperSKSCase
+  name: кейс с СКС
   suffix: "Stalker, Кейс, СКС"
-  description: Кейс с оружием «СКС» и стопка патронов — заряжается россыпью, магазина у неё нет.
+  description: "Кейс с оружием: СКС и стопка патронов — заряжается россыпью, магазина у неё нет."
   components:
   - type: StorageFill
     contents:
@@ -40,6 +42,7 @@
 - type: entity
   parent: STBaseWeaponCase
   id: STWeaponSniperSVDSCase
+  name: кейс с СВДС
   suffix: "Stalker, Кейс, СВДС"
   description: Кейс с оружием «СВДС Драгунова» и 2 магазина.
   components:
@@ -57,6 +60,7 @@
 - type: entity
   parent: STBaseWeaponCase
   id: STWeaponSniperSVUCase
+  name: кейс с СВУ
   suffix: "Stalker, Кейс, СВУ"
   description: Кейс с оружием «СВУ» и 2 магазина.
   components:
@@ -74,6 +78,7 @@
 - type: entity
   parent: STBaseWeaponCase
   id: STWeaponSniperVeprCase
+  name: кейс с ВПО-129 Vepr
   suffix: "Stalker, Кейс, ВПО-129 Vepr"
   description: Кейс с оружием «ВПО-129 Vepr 7.62x54» и 2 магазина.
   components:
@@ -91,6 +96,7 @@
 - type: entity
   parent: STBaseWeaponCase
   id: STWeaponSniperVSSCase
+  name: кейс с ВСС Винторез
   suffix: "Stalker, Кейс, ВСС Винторез"
   description: Кейс с оружием «ВСС Винторез» и 2 магазина.
   components:
@@ -108,6 +114,7 @@
 - type: entity
   parent: STBaseWeaponCase
   id: STWeaponSniperOSV96Case
+  name: кейс с ОСВ-96
   suffix: "Stalker, Кейс, ОСВ-96 Взломщик"
   description: Кейс с оружием «ОСВ-96 Взломщик» и 2 магазина.
   components:

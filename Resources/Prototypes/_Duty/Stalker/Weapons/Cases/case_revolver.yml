@@ -5,6 +5,7 @@
 - type: entity
   parent: STBaseWeaponCase
   id: STWeaponRevolverChiappaRhino60DSCase
+  name: кейс с Chiappa Rhino 60DS
   suffix: "Stalker, Кейс, Chiappa Rhino 60DS"
   description: Кейс с оружием «Chiappa Rhino 60DS» и 2 спидлоадера.
   components:
@@ -22,6 +23,7 @@
 - type: entity
   parent: STBaseWeaponCase
   id: STWeaponRevolverDanWesson715Case
+  name: кейс с Dan Wesson 715
   suffix: "Stalker, Кейс, Dan Wesson 715"
   description: Кейс с оружием «Dan Wesson 715» и 2 спидлоадера.
   components:
@@ -39,6 +41,7 @@
 - type: entity
   parent: STBaseWeaponCase
   id: WeaponGameRevolverMatebaCase
+  name: кейс с Матебой
   suffix: "Stalker, Кейс, Матеба"
   description: Кейс с оружием «Матеба» и 2 спидлоадера.
   components:
@@ -56,6 +59,7 @@
 - type: entity
   parent: STBaseWeaponCase
   id: STWeaponRevolverRH12Case
+  name: кейс со Штурмовым RH12
   suffix: "Stalker, Кейс, Штурмовой RH12"
   description: Кейс с оружием «Револьвер Штурмовой 12,7x55» и стопка патронов — отдельного спидлоадера у него нет.
   components:
@@ -73,6 +77,7 @@
 - type: entity
   parent: STBaseWeaponCase
   id: STWeaponRevolverRugerRedhawkCase
+  name: кейс с Ruger Redhawk
   suffix: "Stalker, Кейс, Ruger Redhawk"
   description: Кейс с оружием «Ruger Redhawk» и 2 спидлоадера.
   components:
@@ -90,6 +95,7 @@
 - type: entity
   parent: STBaseWeaponCase
   id: STWeaponRevolverSWModel325Case
+  name: кейс с S&W Model 325
   suffix: "Stalker, Кейс, S&W Model 325"
   description: Кейс с оружием «S&W Model 325» и 2 спидлоадера.
   components:
@@ -107,6 +113,7 @@
 - type: entity
   parent: STBaseWeaponCase
   id: STWeaponRevolverSWModel625Case
+  name: кейс с S&W Model 625
   suffix: "Stalker, Кейс, S&W Model 625"
   description: Кейс с оружием «S&W Model 625» и 2 спидлоадера.
   components:
@@ -124,6 +131,7 @@
 - type: entity
   parent: STBaseWeaponCase
   id: STWeaponRevolverSWPC325TRCase
+  name: кейс с S&W PC 325 TR
   suffix: "Stalker, Кейс, S&W PC 325 TR"
   description: Кейс с оружием «S&W PC 325 TR» и 2 спидлоадера.
   components:
@@ -141,6 +149,7 @@
 - type: entity
   parent: STBaseWeaponCase
   id: STWeaponRevolverTaurusJudgeCase
+  name: кейс с Taurus Judge
   suffix: "Stalker, Кейс, Taurus Judge"
   description: Кейс с оружием «Taurus Judge» и 2 спидлоадера.
   components:
@@ -158,6 +167,7 @@
 - type: entity
   parent: STBaseWeaponCase
   id: STWeaponRevolverTaurusTracker455Case
+  name: кейс с Taurus Tracker 455
   suffix: "Stalker, Кейс, Taurus Tracker 455"
   description: Кейс с оружием «Taurus Tracker 455» и 2 спидлоадера.
   components:

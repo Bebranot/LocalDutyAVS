@@ -4,6 +4,7 @@
 - type: entity
   parent: STBaseWeaponCase
   id: WeaponPistolStalkerAPSCase
+  name: кейс с АПС
   suffix: "Stalker, Кейс, АПС"
   description: Кейс с оружием «АПС» и 2 магазина.
   components:
@@ -21,6 +22,7 @@
 - type: entity
   parent: STBaseWeaponCase
   id: WeaponPistolGSH18Case
+  name: кейс с ГШ-18
   suffix: "Stalker, Кейс, ГШ-18"
   description: Кейс с оружием «ГШ-18» и 2 магазина.
   components:
@@ -38,6 +40,7 @@
 - type: entity
   parent: STBaseWeaponCase
   id: WeaponPistolStalkerGlockCase
+  name: кейс с Glock-17
   suffix: "Stalker, Кейс, Glock-17"
   description: Кейс с оружием «Glock-17» и 2 магазина.
   components:
@@ -55,6 +58,7 @@
 - type: entity
   parent: STBaseWeaponCase
   id: WeaponPistolStalkerLP08Case
+  name: кейс с Люгером LP08
   suffix: "Stalker, Кейс, Люгер LP08"
   description: Кейс с оружием «Люгер LP08» и 2 магазина.
   components:
@@ -72,6 +76,7 @@
 - type: entity
   parent: STBaseWeaponCase
   id: WeaponPistolStalkerPMCase
+  name: кейс с ПМм
   suffix: "Stalker, Кейс, ПМм"
   description: Кейс с оружием «ПМм» и 2 магазина.
   components:
@@ -89,6 +94,7 @@
 - type: entity
   parent: STBaseWeaponCase
   id: WeaponPistolStalkerPMModifedCase
+  name: кейс с ПМм 9x19
   suffix: "Stalker, Кейс, ПМм 9x19"
   description: Кейс с оружием «ПМм 9x19» и 2 магазина.
   components:
@@ -106,6 +112,7 @@
 - type: entity
   parent: STBaseWeaponCase
   id: WeaponStalkerPistolTec9Case
+  name: кейс с TEC-9
   suffix: "Stalker, Кейс, TEC-9"
   description: Кейс с оружием «TEC-9» и 2 магазина.
   components:
@@ -123,6 +130,7 @@
 - type: entity
   parent: STBaseWeaponCase
   id: WeaponPistolStalkerTTCase
+  name: кейс с ТТ
   suffix: "Stalker, Кейс, ТТ"
   description: Кейс с оружием «Тульский Токарев» и 2 магазина.
   components:

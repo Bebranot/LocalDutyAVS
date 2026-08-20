@@ -4,6 +4,7 @@
 - type: entity
   parent: STBaseWeaponCase
   id: STWeaponSMGMP5Case
+  name: кейс с H&K MP-5
   suffix: "Stalker, Кейс, H&K MP-5"
   description: Кейс с оружием «H&K MP-5» и 2 магазина.
   components:
@@ -21,6 +22,7 @@
 - type: entity
   parent: STBaseWeaponCase
   id: STWeaponSMGVector9Case
+  name: кейс с KRISS Vector 9mm
   suffix: "Stalker, Кейс, KRISS Vector 9mm"
   description: Кейс с оружием «KRISS Vector 9mm» и 2 магазина.
   components:
@@ -38,6 +40,7 @@
 - type: entity
   parent: STBaseWeaponCase
   id: STWeaponSMGMP40Case
+  name: кейс с MP-40
   suffix: "Stalker, Кейс, MP-40"
   description: Кейс с оружием «MP-40» и 2 магазина.
   components:
@@ -55,6 +58,7 @@
 - type: entity
   parent: STBaseWeaponCase
   id: STWeaponSMGPP19Case
+  name: кейс с ПП-19 Бизон
   suffix: "Stalker, Кейс, ПП-19 Бизон"
   description: Кейс с оружием «ПП-19 Бизон» и 2 магазина.
   components:
@@ -72,6 +76,7 @@
 - type: entity
   parent: STBaseWeaponCase
   id: STWeaponSMGPP19919Case
+  name: кейс с ПП-19 Бизон 9x19
   suffix: "Stalker, Кейс, ПП-19 Бизон 9x19"
   description: Кейс с оружием «ПП-19 Бизон 9x19» и 2 магазина.
   components:
@@ -89,6 +94,7 @@
 - type: entity
   parent: STBaseWeaponCase
   id: STWeaponSMGPP1901Case
+  name: кейс с ПП-19-01 Витязь
   suffix: "Stalker, Кейс, ПП-19-01 Витязь"
   description: Кейс с оружием «ПП-19-01 Витязь» и 2 магазина.
   components:
@@ -106,6 +112,7 @@
 - type: entity
   parent: STBaseWeaponCase
   id: STWeaponSMGPP91Case
+  name: кейс с ПП-91 Кедр
   suffix: "Stalker, Кейс, ПП-91 Кедр"
   description: Кейс с оружием «ПП-91 Кедр» и 2 магазина.
   components:
@@ -123,6 +130,7 @@
 - type: entity
   parent: STBaseWeaponCase
   id: STWeaponSMGPPS43Case
+  name: кейс с ППС-43
   suffix: "Stalker, Кейс, ППС-43"
   description: Кейс с оружием «ППС-43» и 2 магазина.
   components:
@@ -140,6 +148,7 @@
 - type: entity
   parent: STBaseWeaponCase
   id: STWeaponSMGPPSh41Case
+  name: кейс с ППШ-41
   suffix: "Stalker, Кейс, ППШ-41"
   description: Кейс с оружием «ППШ-41» и 2 магазина.
   components:
@@ -157,6 +166,7 @@
 - type: entity
   parent: STBaseWeaponCase
   id: STWeaponSMGVZ61Case
+  name: кейс с vz. 61 Скорпион
   suffix: "Stalker, Кейс, vz. 61 Скорпион"
   description: Кейс с оружием «vz. 61 Скорпион» и 2 магазина.
   components:
@@ -174,6 +184,7 @@
 - type: entity
   parent: STBaseWeaponCase
   id: STWeaponSMGThompsonCase
+  name: кейс с Thompson
   suffix: "Stalker, Кейс, Thompson"
   description: Кейс с оружием «Thompson» и 2 магазина.
   components:
@@ -191,6 +202,7 @@
 - type: entity
   parent: STBaseWeaponCase
   id: STWeaponSMGFNP90Case
+  name: кейс с FN P90
   suffix: "Stalker, Кейс, FN P90 PDW"
   description: Кейс с оружием «FN P90 PDW» и 2 магазина.
   components:
@@ -208,6 +220,7 @@
 - type: entity
   parent: STBaseWeaponCase
   id: STWeaponSMGStalkerCP2VereskCase
+  name: кейс с СР-2 Вереск
   suffix: "Stalker, Кейс, СР-2 Вереск"
   description: Кейс с оружием «СР-2 Вереск» и 2 магазина.
   components:
@@ -225,6 +238,7 @@
 - type: entity
   parent: STBaseWeaponCase
   id: STWeaponSMGStalkerCP2Veresk921Case
+  name: кейс с СР-2М Вереск 9x21
   suffix: "Stalker, Кейс, СР-2М Вереск 9x21"
   description: Кейс с оружием «СР-2М Вереск 9x21» и 2 магазина.
   components:

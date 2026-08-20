@@ -4,6 +4,7 @@
 - type: entity
   parent: STBaseWeaponCase
   id: STWeaponRifleM16Case
+  name: кейс с M16
   suffix: "Stalker, Кейс, M16"
   description: Кейс с оружием «M16» и 2 магазина.
   components:
@@ -21,6 +22,7 @@
 - type: entity
   parent: STBaseWeaponCase
   id: STWeaponRifleM4Case
+  name: кейс с Colt M4
   suffix: "Stalker, Кейс, Colt M4"
   description: Кейс с оружием «Colt M4 Cobra» и 2 магазина.
   components:
@@ -38,6 +40,7 @@
 - type: entity
   parent: STBaseWeaponCase
   id: STWeaponRifleHK416Case
+  name: кейс с HK416
   suffix: "Stalker, Кейс, HK416"
   description: Кейс с оружием «HK416» и 2 магазина.
   components:
@@ -55,6 +58,7 @@
 - type: entity
   parent: STBaseWeaponCase
   id: STWeaponRifleLR300v1Case
+  name: кейс с LR-300
   suffix: "Stalker, Кейс, LR-300"
   description: Кейс с оружием «LR-300» и 2 магазина.
   components:
@@ -72,6 +76,7 @@
 - type: entity
   parent: STBaseWeaponCase
   id: STWeaponRifleSCARLCase
+  name: кейс с SCAR-L
   suffix: "Stalker, Кейс, SCAR-L"
   description: Кейс с оружием «SCAR-L» и 2 магазина.
   components:
@@ -89,6 +94,7 @@
 - type: entity
   parent: STBaseWeaponCase
   id: STWeaponRifleG36Case
+  name: кейс с HK G-36
   suffix: "Stalker, Кейс, HK G-36"
   description: Кейс с оружием «HK G-36» и 2 магазина.
   components:
@@ -106,6 +112,7 @@
 - type: entity
   parent: STBaseWeaponCase
   id: STWeaponRifleAUGCase
+  name: кейс с AUG
   suffix: "Stalker, Кейс, AUG"
   description: Кейс с оружием «AUG» и 2 магазина.
   components:
@@ -123,6 +130,7 @@
 - type: entity
   parent: STBaseWeaponCase
   id: STWeaponRifleGalilCase
+  name: кейс с Galil ARM
   suffix: "Stalker, Кейс, Galil ARM"
   description: Кейс с оружием «Galil ARM» и 2 магазина.
   components:
@@ -140,6 +148,7 @@
 - type: entity
   parent: STBaseWeaponCase
   id: STWeaponRifleL85Case
+  name: кейс с L85
   suffix: "Stalker, Кейс, L85"
   description: Кейс с оружием «L85» и 2 магазина.
   components:
@@ -157,6 +166,7 @@
 - type: entity
   parent: STBaseWeaponCase
   id: STWeaponRifleF2000Case
+  name: кейс с FN-F2000
   suffix: "Stalker, Кейс, FN-F2000"
   description: Кейс с оружием «FN-F2000» и 2 магазина.
   components:
@@ -174,6 +184,7 @@
 - type: entity
   parent: STBaseWeaponCase
   id: STWeaponRifleStalkerAbakanCase
+  name: кейс с АН-94
   suffix: "Stalker, Кейс, АН-94 Абакан"
   description: Кейс с оружием «АН-94 Абакан» и 2 магазина.
   components:
@@ -191,6 +202,7 @@
 - type: entity
   parent: STBaseWeaponCase
   id: STWeaponRifleStalkerAek971Case
+  name: кейс с AEK-971
   suffix: "Stalker, Кейс, AEK-971"
   description: Кейс с оружием «AEK-971» и 2 магазина.
   components:
