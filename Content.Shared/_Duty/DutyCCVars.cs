@@ -171,6 +171,17 @@ public sealed class DutyCCVars
     public static readonly CVarDef<bool> SprintEnabled =
         CVarDef.Create("duty.sprint_enabled", true, CVar.SERVER | CVar.REPLICATED);
 
+    // ── Меню строительства ────────────────────────────────────────────
+
+    /// <summary>
+    /// Показана ли боковая панель избранного в меню строительства.
+    /// Панель всё равно не показывается, пока нет ни одного доступного избранного рецепта,
+    /// поэтому значение по умолчанию true: панель сама появится при первом добавлении
+    /// в избранное. Ручное скрытие ставит false и переживает рестарт.
+    /// </summary>
+    public static readonly CVarDef<bool> ConstructionFavoritesPanelVisible =
+        CVarDef.Create("duty.construction_favorites_panel", true, CVar.ARCHIVE | CVar.CLIENTONLY);
+
     // ── Discord ───────────────────────────────────────────────────────────────
 
     /// <summary>
