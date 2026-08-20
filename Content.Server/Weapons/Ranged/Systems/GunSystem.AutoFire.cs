@@ -38,5 +38,15 @@ public sealed partial class GunSystem
                     AttemptShoot((uid, gun));
             }
         }
+
+        // Цель самонаводящегося снаряда (TargetedProjectileComponent.Target) может быть удалена,
+        // пока сам снаряд ещё летит. Без очистки эта ссылка виснет и PVS долбит
+        // "Can't resolve MetaDataComponent" на каждый тик, пока снаряд кому-то виден.
+        var targetedQuery = EntityQueryEnumerator<TargetedProjectileComponent>();
+        while (targetedQuery.MoveNext(out var projUid, out var targeted))
+        {
+            if (TerminatingOrDeleted(targeted.Target))
+                RemComp<TargetedProjectileComponent>(projUid);
+        }
     }
 }
