@@ -6,6 +6,8 @@ namespace Content.Server.Spawners.EntitySystems;
 
 public sealed class SpawnOnDespawnSystem : EntitySystem
 {
+    [Dependency] private readonly SharedTransformSystem _transform = default!;
+
     public override void Initialize()
     {
         base.Initialize();
@@ -18,7 +20,13 @@ public sealed class SpawnOnDespawnSystem : EntitySystem
         if (!TryComp(uid, out TransformComponent? xform))
             return;
 
-        Spawn(comp.Prototype, xform.Coordinates);
+        // Спавним по MapCoordinates, а не по EntityCoordinates деспавнящейся сущности:
+        // при спавне через координаты, привязанные к её transform-цепочке, у заспавненной
+        // (anchored: true, например FoamedAluminiumMetal) сущности иногда ещё не успевает
+        // проставиться GridUid, и SharedTransformSystem логирует "Tried to anchor entity
+        // to a grid different from its GridUid ()".
+        var mapCoords = _transform.ToMapCoordinates(xform.Coordinates);
+        Spawn(comp.Prototype, mapCoords);
     }
 
     public void SetPrototype(Entity<SpawnOnDespawnComponent> entity, EntProtoId prototype)
