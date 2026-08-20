@@ -20,7 +20,11 @@ public sealed partial class ProtoNitrateTritiumConversionReaction : IGasReaction
         var temperature = mixture.Temperature;
         var producedAmount = Math.Min(temperature / 34f * initialTritium * initialProtoNitrate / (initialTritium + 10f * initialProtoNitrate), Math.Min(initialTritium, initialProtoNitrate * 0.01f));
 
-        if (initialTritium - producedAmount < 0 || initialProtoNitrate - producedAmount * 0.01f < 0)
+        // _Duty: не было проверки `producedAmount <= 0` (в отличие от всех соседних реакций
+        // в этой папке) — при нулевом Tritium/ProtoNitrate producedAmount получался 0, оба
+        // условия `0 - 0 < 0` ложны, и метод возвращал ReactionResult.Reacting без единого
+        // реального изменения молей/температуры.
+        if (producedAmount <= 0 || initialTritium - producedAmount < 0 || initialProtoNitrate - producedAmount * 0.01f < 0)
             return ReactionResult.NoReaction;
 
         var oldHeatCapacity = atmosphereSystem.GetHeatCapacity(mixture, true);

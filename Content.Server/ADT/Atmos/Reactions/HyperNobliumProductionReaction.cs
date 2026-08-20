@@ -14,8 +14,15 @@ public sealed partial class HyperNobliumProductionReaction : IGasReactionEffect
         var initialTritium = mixture.GetMoles(Gas.Tritium);
         var initialBZ = mixture.GetMoles(Gas.BZ);
 
-        var nobFormed = Math.Min((initialNitrogen + initialTritium) * 0.01f, Math.Min(initialTritium * 5f, initialNitrogen * 10f));
-        if (nobFormed <= 0 || (initialTritium - 5f) * nobFormed < 0 || (initialNitrogen - 10f) * nobFormed < 0)
+        // _Duty: было `initialTritium * 5f` / `initialNitrogen * 10f` — расход этих газов
+        // ниже составляет `5f * nobFormed` (Tritium) и `10f * nobFormed` (Nitrogen), то есть
+        // чтобы гарантированно хватало запаса, ограничение должно быть от обратного:
+        // nobFormed <= initialTritium / 5f и nobFormed <= initialNitrogen / 10f. Умножение
+        // вместо деления давало почти всегда сильно завышенный nobFormed и уводило Tritium/
+        // Nitrogen в отрицательные моли. Проверка ниже поправлена аналогично: сравниваем с
+        // реальным расходом (5f * nobFormed / 10f * nobFormed), а не с константой.
+        var nobFormed = Math.Min((initialNitrogen + initialTritium) * 0.01f, Math.Min(initialTritium / 5f, initialNitrogen / 10f));
+        if (nobFormed <= 0 || initialTritium - 5f * nobFormed < 0 || initialNitrogen - 10f * nobFormed < 0)
             return ReactionResult.NoReaction;
 
         var oldHeatCapacity = atmosphereSystem.GetHeatCapacity(mixture, true);
