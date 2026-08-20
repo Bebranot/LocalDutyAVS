@@ -36,7 +36,14 @@ public sealed class CardSystem : EntitySystem
             comp.FrontSprite.Add(new SpriteSpecifier.Rsi(rsi.Path, layer.State.Name));
         }
 
-        comp.BackSprite ??= comp.FrontSprite;
+        // _Duty: было `comp.BackSprite ??= comp.FrontSprite;` — BackSprite объявлено как
+        // `List<SpriteSpecifier> = []`, никогда не null, поэтому `??=` тут никогда не
+        // срабатывал. Сейчас незаметно, т.к. все карты в YAML наследуют backSprite от
+        // общего родителя, но заявленный fallback ("нет заднего спрайта — используем
+        // передний") фактически не работал бы для карты без явного backSprite: рубашка
+        // рисовалась бы пустой (0 слоёв) вместо копии лицевой стороны.
+        if (comp.BackSprite.Count == 0)
+            comp.BackSprite = comp.FrontSprite;
         DirtyEntity(uid);
         UpdateSprite(uid, comp);
     }
