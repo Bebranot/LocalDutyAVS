@@ -1,0 +1,403 @@
+# Рецепты автолата на сталкерские магазины и коробки патронов — печатаются в SecurityTechFab
+# рядом с ванильными (см. staticPacks: StalkerAmmoStatic в Entities/Structures/Machines/lathe.yml).
+#
+# Баланс магазинов калибруется по ванильному MagazineRifle (тот самый магазин, что уже лежит
+# в GunSafeRifleLecter) — Lead: 475 за 25 патронов, т.е. 19 Lead/патрон, без Steel. Это ставка
+# "обычного" магазина (parent: BaseAmmoRecipe, категория "Ammo" из базы).
+# "Большой"/барабанный магазин (второй вариант там, где он существует у ствола) — на 30% дороже
+# по Lead за патрон плюс Steel: 2/патрон (механика барабана сложнее просто пропорции патронов).
+# Крохотные штатные магазины на 5-10 патронов (Base*Mag10, Base754Mag5) сюда не идут —
+# их и так выдаёт сам ствол при спавне, печатать смысла нет.
+#
+# Коробки патронов — по ставке ванильного MagazineBoxPistol (Steel 300 / Lead 600 за 60 шт.).
+
+# ── 9x19 ───────────────────────────────────────────────────────────────────────
+- type: latheRecipe
+  parent: BaseAmmoRecipe
+  id: GlockMag24
+  result: GlockMag24
+  materials:
+    Lead: 455
+
+- type: latheRecipe
+  parent: BaseAmmoRecipe
+  id: GlockMag33
+  result: GlockMag33
+  materials:
+    Steel: 65
+    Lead: 815
+
+- type: latheRecipe
+  parent: BaseAmmoRecipe
+  id: GSH-18Mag18
+  result: GSH-18Mag18
+  materials:
+    Lead: 340
+
+- type: latheRecipe
+  parent: BaseAmmoRecipe
+  id: VityazMag
+  result: VityazMag
+  materials:
+    Lead: 570
+
+- type: latheRecipe
+  parent: BaseAmmoRecipe
+  id: BizonMag919
+  result: BizonMag919
+  materials:
+    Steel: 130
+    Lead: 1580
+
+- type: latheRecipe
+  parent: BaseAmmoRecipe
+  id: BaseTEC9Mag
+  result: BaseTEC9Mag
+  materials:
+    Lead: 380
+
+- type: latheRecipe
+  parent: BaseAmmoRecipe
+  id: MP40Mag
+  result: MP40Mag
+  materials:
+    Lead: 570
+
+- type: latheRecipe
+  parent: BaseAmmoRecipe
+  id: PP91Mag
+  result: PP91Mag
+  materials:
+    Lead: 570
+
+- type: latheRecipe
+  parent: BaseAmmoRecipe
+  id: P90Mag
+  result: P90Mag
+  materials:
+    Lead: 950
+
+- type: latheRecipe
+  parent: BaseAmmoRecipe
+  id: LP08Drum
+  result: LP08Drum
+  materials:
+    Lead: 610
+
+- type: latheRecipe
+  parent: BaseAmmoRecipe
+  id: BaseMP5Mag
+  result: BaseMP5Mag
+  materials:
+    Lead: 665
+
+- type: latheRecipe
+  parent: BaseAmmoRecipe
+  id: MP5Mag50
+  result: MP5Mag50
+  materials:
+    Steel: 100
+    Lead: 1235
+
+# ── 9x18 ───────────────────────────────────────────────────────────────────────
+- type: latheRecipe
+  parent: BaseAmmoRecipe
+  id: BasePMMag
+  result: BasePMMag
+  materials:
+    Lead: 190
+
+- type: latheRecipe
+  parent: BaseAmmoRecipe
+  id: BaseAPSMag
+  result: BaseAPSMag
+  materials:
+    Lead: 380
+
+- type: latheRecipe
+  parent: BaseAmmoRecipe
+  id: BizonMag
+  result: BizonMag
+  materials:
+    Steel: 130
+    Lead: 1580
+
+- type: latheRecipe
+  parent: BaseAmmoRecipe
+  id: Vz61Mag
+  result: Vz61Mag
+  materials:
+    Lead: 380
+
+# ── 7.62x25 ──────────────────────────────────────────────────────────────────
+- type: latheRecipe
+  parent: BaseAmmoRecipe
+  id: BasePPSHMag
+  result: BasePPSHMag
+  materials:
+    Lead: 665
+
+- type: latheRecipe
+  parent: BaseAmmoRecipe
+  id: PPSHDrum
+  result: PPSHDrum
+  materials:
+    Steel: 140
+    Lead: 1755
+
+- type: latheRecipe
+  parent: BaseAmmoRecipe
+  id: BasePPSMag
+  result: BasePPSMag
+  materials:
+    Lead: 665
+
+- type: latheRecipe
+  parent: BaseAmmoRecipe
+  id: TTMag
+  result: TTMag
+  materials:
+    Lead: 150
+
+# ── .45 ACP ──────────────────────────────────────────────────────────────────
+- type: latheRecipe
+  parent: BaseAmmoRecipe
+  id: STSpeedLoader45ACP
+  result: STSpeedLoader45ACP
+  materials:
+    Lead: 115
+
+- type: latheRecipe
+  parent: BaseAmmoRecipe
+  id: BaseTommyGunMag
+  result: BaseTommyGunMag
+  materials:
+    Lead: 760
+
+- type: latheRecipe
+  parent: BaseAmmoRecipe
+  id: TommyGunDrum
+  result: TommyGunDrum
+  materials:
+    Steel: 120
+    Lead: 1480
+
+# ── 9x21 ───────────────────────────────────────────────────────────────────────
+- type: latheRecipe
+  parent: BaseAmmoRecipe
+  id: SR2MMag30
+  result: SR2MMag30
+  materials:
+    Lead: 570
+
+# ── Винтовочные магазины (7.62x39/5.45x39/7.62x51/5.56x45/9x39/7.62x54/12.7x108/12.7x55) ──
+- type: latheRecipe
+  parent: BaseAmmoRecipe
+  id: Magazine739x30
+  result: Magazine739x30
+  materials:
+    Lead: 570
+
+- type: latheRecipe
+  parent: BaseAmmoRecipe
+  id: Magazine545x30
+  result: Magazine545x30
+  materials:
+    Lead: 570
+
+- type: latheRecipe
+  parent: BaseAmmoRecipe
+  id: Magazine751x30
+  result: Magazine751x30
+  materials:
+    Lead: 570
+
+- type: latheRecipe
+  parent: BaseAmmoRecipe
+  id: Magazine556x30
+  result: Magazine556x30
+  materials:
+    Lead: 570
+
+- type: latheRecipe
+  parent: BaseAmmoRecipe
+  id: Magazine939x20
+  result: Magazine939x20
+  materials:
+    Lead: 380
+
+- type: latheRecipe
+  parent: BaseAmmoRecipe
+  id: 754Mag10
+  result: 754Mag10
+  materials:
+    Lead: 190
+
+- type: latheRecipe
+  parent: BaseAmmoRecipe
+  id: 754Mag20
+  result: 754Mag20
+  materials:
+    Steel: 40
+    Lead: 495
+
+- type: latheRecipe
+  parent: BaseAmmoRecipe
+  id: 13x108Mag10
+  result: 13x108Mag10
+  materials:
+    Lead: 190
+
+- type: latheRecipe
+  parent: BaseAmmoRecipe
+  id: AS12Mag
+  result: AS12Mag
+  materials:
+    Lead: 380
+
+# ── Коробки патронов (BallisticAmmoProvider, вместимость 60 у всех) ───────────
+- type: latheRecipe
+  parent: BaseAmmoBoxRecipe
+  id: STAmmoBox545
+  result: STAmmoBox545
+  materials:
+    Steel: 300
+    Lead: 600
+
+- type: latheRecipe
+  parent: BaseAmmoBoxRecipe
+  id: STAmmoBox556
+  result: STAmmoBox556
+  materials:
+    Steel: 300
+    Lead: 600
+
+- type: latheRecipe
+  parent: BaseAmmoBoxRecipe
+  id: STAmmoBox739
+  result: STAmmoBox739
+  materials:
+    Steel: 300
+    Lead: 600
+
+- type: latheRecipe
+  parent: BaseAmmoBoxRecipe
+  id: STAmmoBox751
+  result: STAmmoBox751
+  materials:
+    Steel: 300
+    Lead: 600
+
+- type: latheRecipe
+  parent: BaseAmmoBoxRecipe
+  id: STAmmoBox754
+  result: STAmmoBox754
+  materials:
+    Steel: 300
+    Lead: 600
+
+- type: latheRecipe
+  parent: BaseAmmoBoxRecipe
+  id: STAmmoBox725
+  result: STAmmoBox725
+  materials:
+    Steel: 300
+    Lead: 600
+
+- type: latheRecipe
+  parent: BaseAmmoBoxRecipe
+  id: STAmmoBox918
+  result: STAmmoBox918
+  materials:
+    Steel: 300
+    Lead: 600
+
+- type: latheRecipe
+  parent: BaseAmmoBoxRecipe
+  id: STAmmoBox919
+  result: STAmmoBox919
+  materials:
+    Steel: 300
+    Lead: 600
+
+- type: latheRecipe
+  parent: BaseAmmoBoxRecipe
+  id: STAmmoBox921
+  result: STAmmoBox921
+  materials:
+    Steel: 300
+    Lead: 600
+
+- type: latheRecipe
+  parent: BaseAmmoBoxRecipe
+  id: STAmmoBox939
+  result: STAmmoBox939
+  materials:
+    Steel: 300
+    Lead: 600
+
+- type: latheRecipe
+  parent: BaseAmmoBoxRecipe
+  id: STAmmoBox13x108
+  result: STAmmoBox13x108
+  materials:
+    Steel: 300
+    Lead: 600
+
+- type: latheRecipe
+  parent: BaseAmmoBoxRecipe
+  id: STAmmoBox45ACP
+  result: STAmmoBox45ACP
+  materials:
+    Steel: 300
+    Lead: 600
+
+# ── Пак для SecurityTechFab ─────────────────────────────────────────────────
+- type: latheRecipePack
+  id: StalkerAmmoStatic
+  recipes:
+  - GlockMag24
+  - GlockMag33
+  - GSH-18Mag18
+  - VityazMag
+  - BizonMag919
+  - BaseTEC9Mag
+  - MP40Mag
+  - PP91Mag
+  - P90Mag
+  - LP08Drum
+  - BaseMP5Mag
+  - MP5Mag50
+  - BasePMMag
+  - BaseAPSMag
+  - BizonMag
+  - Vz61Mag
+  - BasePPSHMag
+  - PPSHDrum
+  - BasePPSMag
+  - TTMag
+  - STSpeedLoader45ACP
+  - BaseTommyGunMag
+  - TommyGunDrum
+  - SR2MMag30
+  - Magazine739x30
+  - Magazine545x30
+  - Magazine751x30
+  - Magazine556x30
+  - Magazine939x20
+  - 754Mag10
+  - 754Mag20
+  - 13x108Mag10
+  - AS12Mag
+  - STAmmoBox545
+  - STAmmoBox556
+  - STAmmoBox739
+  - STAmmoBox751
+  - STAmmoBox754
+  - STAmmoBox725
+  - STAmmoBox918
+  - STAmmoBox919
+  - STAmmoBox921
+  - STAmmoBox939
+  - STAmmoBox13x108
+  - STAmmoBox45ACP

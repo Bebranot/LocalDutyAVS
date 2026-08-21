@@ -489,6 +489,8 @@
     - ADTScienceTrigger
     - ADTScienceExplosives
     # ADT-Tweak-End
+    # duty nizhe: сталкерские магазины и коробки патронов
+    - StalkerAmmoStatic
     dynamicPacks:
     - SalvageSecurityBoards
     - SalvageSecurityWeapons
