@@ -1,0 +1,332 @@
+# Коробки патронов россыпью (сталкерские калибры) — используют готовые, но ранее нигде не
+# подключённые спрайты из портированного _Stalker/AmmoBoxes.rsi. По одной общей коробке на
+# калибр (без деления по типу пули — арт для этого есть только у 9x39, разводить неоднородность
+# ради одного калибра не стали). Работают как BallisticAmmoProvider (аналог ванильных
+# MagazineBoxPistol/BoxLethalshot) — оттуда патрон достаётся по одному прямо в оружие/магазин.
+# АШ-12 (12.7x55) в списке нет: среди готового арта нет коробки, которую можно уверенно
+# отнести к этому калибру ("1270"-кластер по виду — деревянный ящик дробовых патронов
+# незнакомого калибра, не наш STCartridge1255), лучше пропустить, чем повесить неверную иконку.
+
+- type: entity
+  parent: BaseItem
+  id: STAmmoBox545
+  name: коробка патронов (5.45x39)
+  suffix: "Stalker, Коробка патронов, 5.45x39"
+  description: Картонная коробка патронов калибра 5.45x39. Вместимость — 60 штук.
+  components:
+  - type: BallisticAmmoProvider
+    mayTransfer: true
+    whitelist:
+      tags:
+      - STCartridge545
+    proto: STCartridge545FMJ
+    capacity: 60
+  - type: Item
+    size: Small
+  - type: ContainerContainer
+    containers:
+      ballistic-ammo: !type:Container
+  - type: Sprite
+    sprite: _Stalker/Objects/Weapons/Guns/Ammunition/AmmoBoxes.rsi
+    state: "545"
+  - type: Tag
+    tags:
+    - AmmoBox
+    - StalkerAmmoBox
+
+- type: entity
+  parent: BaseItem
+  id: STAmmoBox556
+  name: коробка патронов (5.56x45)
+  suffix: "Stalker, Коробка патронов, 5.56x45"
+  description: Картонная коробка патронов калибра 5.56x45. Вместимость — 60 штук.
+  components:
+  - type: BallisticAmmoProvider
+    mayTransfer: true
+    whitelist:
+      tags:
+      - STCartridge556
+    proto: Cartridge556FMJ
+    capacity: 60
+  - type: Item
+    size: Small
+  - type: ContainerContainer
+    containers:
+      ballistic-ammo: !type:Container
+  - type: Sprite
+    sprite: _Stalker/Objects/Weapons/Guns/Ammunition/AmmoBoxes.rsi
+    state: "556"
+  - type: Tag
+    tags:
+    - AmmoBox
+    - StalkerAmmoBox
+
+- type: entity
+  parent: BaseItem
+  id: STAmmoBox739
+  name: коробка патронов (7.62x39)
+  suffix: "Stalker, Коробка патронов, 7.62x39"
+  description: Картонная коробка патронов калибра 7.62x39. Вместимость — 60 штук.
+  components:
+  - type: BallisticAmmoProvider
+    mayTransfer: true
+    whitelist:
+      tags:
+      - STCartridge739
+    proto: STCartridge739FMJ
+    capacity: 60
+  - type: Item
+    size: Small
+  - type: ContainerContainer
+    containers:
+      ballistic-ammo: !type:Container
+  - type: Sprite
+    sprite: _Stalker/Objects/Weapons/Guns/Ammunition/AmmoBoxes.rsi
+    state: "76239"
+  - type: Tag
+    tags:
+    - AmmoBox
+    - StalkerAmmoBox
+
+- type: entity
+  parent: BaseItem
+  id: STAmmoBox751
+  name: коробка патронов (7.62x51)
+  suffix: "Stalker, Коробка патронов, 7.62x51"
+  description: Картонная коробка патронов калибра 7.62x51. Вместимость — 60 штук.
+  components:
+  - type: BallisticAmmoProvider
+    mayTransfer: true
+    whitelist:
+      tags:
+      - STCartridge751
+    proto: Cartridge751M80
+    capacity: 60
+  - type: Item
+    size: Small
+  - type: ContainerContainer
+    containers:
+      ballistic-ammo: !type:Container
+  - type: Sprite
+    sprite: _Stalker/Objects/Weapons/Guns/Ammunition/AmmoBoxes.rsi
+    state: "76251"
+  - type: Tag
+    tags:
+    - AmmoBox
+    - StalkerAmmoBox
+
+- type: entity
+  parent: BaseItem
+  id: STAmmoBox754
+  name: коробка патронов (7.62x54)
+  suffix: "Stalker, Коробка патронов, 7.62x54"
+  description: Картонная коробка патронов калибра 7.62x54. Вместимость — 60 штук.
+  components:
+  - type: BallisticAmmoProvider
+    mayTransfer: true
+    whitelist:
+      tags:
+      - STCartridge754
+    proto: STCartridge754FMJ
+    capacity: 60
+  - type: Item
+    size: Small
+  - type: ContainerContainer
+    containers:
+      ballistic-ammo: !type:Container
+  - type: Sprite
+    sprite: _Stalker/Objects/Weapons/Guns/Ammunition/AmmoBoxes.rsi
+    state: "76254"
+  - type: Tag
+    tags:
+    - AmmoBox
+    - StalkerAmmoBox
+
+- type: entity
+  parent: BaseItem
+  id: STAmmoBox725
+  name: коробка патронов (7.62x25)
+  suffix: "Stalker, Коробка патронов, 7.62x25"
+  description: Картонная коробка патронов калибра 7.62x25. Вместимость — 60 штук.
+  components:
+  - type: BallisticAmmoProvider
+    mayTransfer: true
+    whitelist:
+      tags:
+      - STCartridge725
+    proto: STCartridge725PGL
+    capacity: 60
+  - type: Item
+    size: Small
+  - type: ContainerContainer
+    containers:
+      ballistic-ammo: !type:Container
+  - type: Sprite
+    sprite: _Stalker/Objects/Weapons/Guns/Ammunition/AmmoBoxes.rsi
+    state: "76225"
+  - type: Tag
+    tags:
+    - AmmoBox
+    - StalkerAmmoBox
+
+- type: entity
+  parent: BaseItem
+  id: STAmmoBox918
+  name: коробка патронов (9x18)
+  suffix: "Stalker, Коробка патронов, 9x18"
+  description: Картонная коробка патронов калибра 9x18. Вместимость — 60 штук.
+  components:
+  - type: BallisticAmmoProvider
+    mayTransfer: true
+    whitelist:
+      tags:
+      - STCartridge918
+    proto: STCartridge918PGJ
+    capacity: 60
+  - type: Item
+    size: Small
+  - type: ContainerContainer
+    containers:
+      ballistic-ammo: !type:Container
+  - type: Sprite
+    sprite: _Stalker/Objects/Weapons/Guns/Ammunition/AmmoBoxes.rsi
+    state: "918"
+  - type: Tag
+    tags:
+    - AmmoBox
+    - StalkerAmmoBox
+
+- type: entity
+  parent: BaseItem
+  id: STAmmoBox919
+  name: коробка патронов (9x19)
+  suffix: "Stalker, Коробка патронов, 9x19"
+  description: Картонная коробка патронов калибра 9x19. Вместимость — 60 штук.
+  components:
+  - type: BallisticAmmoProvider
+    mayTransfer: true
+    whitelist:
+      tags:
+      - STCartridge919
+    proto: STCartridge919PSOGJ
+    capacity: 60
+  - type: Item
+    size: Small
+  - type: ContainerContainer
+    containers:
+      ballistic-ammo: !type:Container
+  - type: Sprite
+    sprite: _Stalker/Objects/Weapons/Guns/Ammunition/AmmoBoxes.rsi
+    state: "919"
+  - type: Tag
+    tags:
+    - AmmoBox
+    - StalkerAmmoBox
+
+- type: entity
+  parent: BaseItem
+  id: STAmmoBox921
+  name: коробка патронов (9x21)
+  suffix: "Stalker, Коробка патронов, 9x21"
+  description: Картонная коробка патронов калибра 9x21. Вместимость — 60 штук.
+  components:
+  - type: BallisticAmmoProvider
+    mayTransfer: true
+    whitelist:
+      tags:
+      - STCartridge921
+    proto: STCartridge921PGJ
+    capacity: 60
+  - type: Item
+    size: Small
+  - type: ContainerContainer
+    containers:
+      ballistic-ammo: !type:Container
+  - type: Sprite
+    sprite: _Stalker/Objects/Weapons/Guns/Ammunition/AmmoBoxes.rsi
+    state: "921"
+  - type: Tag
+    tags:
+    - AmmoBox
+    - StalkerAmmoBox
+
+- type: entity
+  parent: BaseItem
+  id: STAmmoBox939
+  name: коробка патронов (9x39)
+  suffix: "Stalker, Коробка патронов, 9x39"
+  description: Картонная коробка патронов калибра 9x39. Вместимость — 60 штук.
+  components:
+  - type: BallisticAmmoProvider
+    mayTransfer: true
+    whitelist:
+      tags:
+      - STCartridge939
+    proto: STCartridge9x39PSO
+    capacity: 60
+  - type: Item
+    size: Small
+  - type: ContainerContainer
+    containers:
+      ballistic-ammo: !type:Container
+  - type: Sprite
+    sprite: _Stalker/Objects/Weapons/Guns/Ammunition/AmmoBoxes.rsi
+    state: "939"
+  - type: Tag
+    tags:
+    - AmmoBox
+    - StalkerAmmoBox
+
+- type: entity
+  parent: BaseItem
+  id: STAmmoBox13x108
+  name: коробка патронов (12.7x108)
+  suffix: "Stalker, Коробка патронов, 12.7x108"
+  description: Металлический цинк патронов калибра 12.7x108. Вместимость — 60 штук.
+  components:
+  - type: BallisticAmmoProvider
+    mayTransfer: true
+    whitelist:
+      tags:
+      - STCartridge13x108
+    proto: STCartridge13x108FMJ
+    capacity: 60
+  - type: Item
+    size: Small
+  - type: ContainerContainer
+    containers:
+      ballistic-ammo: !type:Container
+  - type: Sprite
+    sprite: _Stalker/Objects/Weapons/Guns/Ammunition/AmmoBoxes.rsi
+    state: "13108"
+  - type: Tag
+    tags:
+    - AmmoBox
+    - StalkerAmmoBox
+
+- type: entity
+  parent: BaseItem
+  id: STAmmoBox45ACP
+  name: коробка патронов (.45 ACP)
+  suffix: "Stalker, Коробка патронов, .45 ACP"
+  description: Картонная коробка патронов калибра .45 ACP. Вместимость — 60 штук.
+  components:
+  - type: BallisticAmmoProvider
+    mayTransfer: true
+    whitelist:
+      tags:
+      - Cartridge45ACP
+    proto: Cartridge45ACPLFMJ
+    capacity: 60
+  - type: Item
+    size: Small
+  - type: ContainerContainer
+    containers:
+      ballistic-ammo: !type:Container
+  - type: Sprite
+    sprite: _Stalker/Objects/Weapons/Guns/Ammunition/AmmoBoxes.rsi
+    state: "45(1)"
+  - type: Tag
+    tags:
+    - AmmoBox
+    - StalkerAmmoBox

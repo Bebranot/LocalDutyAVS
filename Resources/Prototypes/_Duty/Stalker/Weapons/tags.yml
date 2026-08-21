@@ -131,3 +131,9 @@
   id: StalkerWeaponCaseSniper
 - type: Tag
   id: StalkerWeaponCaseShotgun
+
+# ── Коробки патронов ─────────────────────────────────────────────────────────
+- type: Tag
+  id: AmmoBox
+- type: Tag
+  id: StalkerAmmoBox
