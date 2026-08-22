@@ -3,9 +3,7 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
 using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Threading.Tasks;
 using Robust.Client.Audio;
 using Robust.Client.ResourceManagement;
 using Robust.Shared.Collections;
@@ -17,32 +15,30 @@ namespace Content.Client._Duty.AmbientMusic;
 /// <summary>
 /// _Duty: ограниченный кэш длинных музыкальных треков.
 ///
-/// Зачем: <see cref="AudioResource"/> держит трек распакованным в 16-битный PCM в буфере OpenAL —
-/// пять минут стерео это ~60 МБ. Раньше <see cref="DynamicAmbientMusicSystem"/> грузил разом весь
-/// список из прототипа (48 уникальных треков, 141 минута) прямо в Initialize: ~1.47 ГБ памяти
-/// клиента и десятки секунд заморозки на старте, причём даже у тех, кто выключил музыку в
-/// настройках.
+/// Зачем: трек живёт в памяти распакованным в 16-битный PCM в буфере OpenAL — пять минут стерео
+/// это ~50 МБ. Раньше <see cref="DynamicAmbientMusicSystem"/> грузил разом весь список из
+/// прототипа (48 уникальных треков, ~141 минута) прямо в Initialize: ~1.5 ГБ памяти клиента и
+/// десятки секунд заморозки при заходе на сервер, причём даже у тех, кто выключил музыку.
 ///
-/// Теперь система заранее выбирает следующий трек для каждого контекста (спокойный / боевой /
-/// боевой-на-низком-HP / крит) и просит прогреть только их: декодирование уходит в фоновый поток,
-/// а на игровом треде остаётся только дешёвая заливка в AL. Всё, что мы загрузили и что больше не
-/// нужно, выгружается через <see cref="IResourceCache.TryRemoveResource{T}(ResPath)"/>. Резидентно
-/// остаётся 3–5 треков вместо 48.
+/// Почему не через <see cref="IResourceCache"/>: движок не умеет выгружать <see cref="AudioResource"/>
+/// (<c>TryRemoveResource</c> для него бросает NotSupportedException), так что любой трек, попавший
+/// в кэш ресурсов, остаётся там до конца сессии. Поэтому музыку мы держим своими руками:
+/// <see cref="AudioStream"/> создаём сами и сами же удаляем через <see cref="AudioStream.Dispose"/>.
 ///
-/// Трогаем только те пути, которые загрузили сами: треки, попавшие в кэш ресурсов другим путём
-/// (лобби-музыка, джукбокс), не наши, и выгружать их мы не имеем права.
+/// Главное правило: буфер нельзя удалять, пока его играет живой источник — OpenAL откажет
+/// (AL_INVALID_OPERATION), буфер утечёт, а движок его уже забудет. Поэтому у каждого трека
+/// запоминается последняя аудио-сущность, которой мы его отдали, и <see cref="Trim"/> ждёт, пока
+/// она умрёт. Это надёжнее таймеров: <c>Stop</c> и фейд-аут удаляют сущность отложенно.
 /// </summary>
 public sealed class DutyMusicCache
 {
+    private static readonly HashSet<ResPath> NothingToKeep = new();
+
     private readonly IResourceCache _resourceCache;
     private readonly IAudioManager _audioManager;
     private readonly ISawmill _sawmill;
 
-    /// <summary>Пути, которые загрузили (или грузим) мы.</summary>
-    private readonly Dictionary<ResPath, TrackState> _owned = new();
-
-    /// <summary>Результаты фоновой декодировки, ждущие заливки в AL на игровом треде.</summary>
-    private readonly ConcurrentQueue<DecodeResult> _decoded = new();
+    private readonly Dictionary<ResPath, Entry> _loaded = new();
 
     public DutyMusicCache(IResourceCache resourceCache, IAudioManager audioManager, ISawmill sawmill)
     {
@@ -52,151 +48,123 @@ public sealed class DutyMusicCache
     }
 
     /// <summary>Сколько треков сейчас держим в памяти.</summary>
-    public int OwnedCount => _owned.Count;
+    public int LoadedCount => _loaded.Count;
 
     /// <summary>
-    /// Просит подготовить трек к воспроизведению. Возврат мгновенный: если трека нет в кэше,
-    /// декодирование стартует в фоне и завершится в одном из следующих <see cref="Pump"/>.
-    /// Если трек не успеет прогреться к моменту проигрывания, движок загрузит его сам — просто
-    /// синхронно, с просадкой кадра.
+    /// Отдаёт готовый к проигрыванию поток, при необходимости загрузив его прямо сейчас.
+    /// Декодирование ogg занимает ~0.6 с на трек, поэтому холодный вызов заметен по кадру —
+    /// его надо избегать через <see cref="WarmNext"/>.
     /// </summary>
-    public void Warm(ResPath path)
+    public AudioStream? Get(ResPath path)
     {
-        if (_owned.ContainsKey(path) || IsAlreadyCached(path))
-            return;
+        if (_loaded.TryGetValue(path, out var entry))
+            return entry.Stream;
 
-        if (!_resourceCache.ContentFileExists(path))
-        {
-            _sawmill.Warning($"Трек не найден: {path}");
-            return;
-        }
-
-        _owned[path] = TrackState.Loading;
-
-        Task.Run(() =>
-        {
-            try
-            {
-                // ContentFileRead потокобезопасен — движок сам читает VFS из Parallel.ForEach
-                // при прогреве текстур на старте.
-                using var stream = _resourceCache.ContentFileRead(path);
-                var pcm = _audioManager.DecodeAudioOggVorbis(stream);
-                _decoded.Enqueue(new DecodeResult(path, pcm, null));
-            }
-            catch (Exception e)
-            {
-                _decoded.Enqueue(new DecodeResult(path, null, e));
-            }
-        });
+        return Load(path);
     }
 
     /// <summary>
-    /// Заливает в OpenAL всё, что успело раскодироваться. Обязана вызываться с игрового треда
-    /// каждый кадр — только оттуда можно трогать AL.
+    /// Запоминает, какой аудио-сущности отдали буфер: пока она жива, трек выгружать нельзя.
     /// </summary>
-    public void Pump()
+    public void NoteUser(ResPath path, EntityUid user)
     {
-        while (_decoded.TryDequeue(out var result))
+        if (_loaded.TryGetValue(path, out var entry))
+            entry.User = user;
+    }
+
+    /// <summary>
+    /// Догружает максимум один ещё не загруженный трек из списка и возвращает true, если что-то
+    /// сделал. По одному за вызов — чтобы не сложить в один кадр несколько декодирований.
+    /// </summary>
+    public bool WarmNext(IEnumerable<ResPath> paths)
+    {
+        foreach (var path in paths)
         {
-            // Трек могли выгрузить (сменился контекст), пока он декодировался — тогда просто
-            // выбрасываем результат, чтобы не заливать в AL то, что уже никому не нужно.
-            if (!_owned.TryGetValue(result.Path, out var state) || state != TrackState.Loading)
+            if (_loaded.ContainsKey(path))
                 continue;
 
-            if (result.Error != null || result.Pcm == null)
-            {
-                _sawmill.Warning($"Не удалось раскодировать трек '{result.Path}': {result.Error?.Message}");
-                _owned.Remove(result.Path);
-                continue;
-            }
-
-            try
-            {
-                var stream = _audioManager.LoadAudioRaw(
-                    result.Pcm.Samples.Span,
-                    result.Pcm.Channels,
-                    result.Pcm.SampleRate,
-                    result.Path.ToString());
-
-                _resourceCache.CacheResource(result.Path, new AudioResource(stream));
-                _owned[result.Path] = TrackState.Loaded;
-
-                _sawmill.Debug(
-                    "Прогрет трек {Path}: {SizeMb:F1} МБ PCM, держим {Count}",
-                    result.Path,
-                    result.Pcm.Samples.Length * 2 / 1048576f,
-                    _owned.Count);
-            }
-            catch (Exception e)
-            {
-                _sawmill.Warning($"Не удалось загрузить трек '{result.Path}' в AL: {e.Message}");
-                _owned.Remove(result.Path);
-            }
-        }
-    }
-
-    /// <summary>
-    /// Выгружает все наши треки, кроме перечисленных в <paramref name="keep"/>. Треки в процессе
-    /// декодирования не трогаем — их отсеет <see cref="Pump"/>, если к тому моменту они станут
-    /// не нужны.
-    /// </summary>
-    public void Trim(IReadOnlySet<ResPath> keep)
-    {
-        if (_owned.Count == 0)
-            return;
-
-        var toRemove = new ValueList<ResPath>();
-
-        foreach (var (path, state) in _owned)
-        {
-            if (state == TrackState.Loaded && !keep.Contains(path))
-                toRemove.Add(path);
-        }
-
-        foreach (var path in toRemove)
-        {
-            _resourceCache.TryRemoveResource<AudioResource>(path);
-            _owned.Remove(path);
-            _sawmill.Debug("Выгружен трек {Path}, держим {Count}", path, _owned.Count);
-        }
-    }
-
-    /// <summary>Выгружает всё, что держим.</summary>
-    public void Clear()
-    {
-        foreach (var (path, state) in _owned)
-        {
-            if (state == TrackState.Loaded)
-                _resourceCache.TryRemoveResource<AudioResource>(path);
-        }
-
-        _owned.Clear();
-
-        while (_decoded.TryDequeue(out _))
-        {
-        }
-    }
-
-    /// <summary>
-    /// Лежит ли трек в кэше ресурсов помимо нас. Нельзя спрашивать через TryGetResource — тот
-    /// грузит ресурс синхронно, если его нет, ровно то, чего мы избегаем.
-    /// </summary>
-    private bool IsAlreadyCached(ResPath path)
-    {
-        foreach (var (cachedPath, _) in _resourceCache.GetAllResources<AudioResource>())
-        {
-            if (cachedPath == path)
-                return true;
+            Load(path);
+            return true;
         }
 
         return false;
     }
 
-    private enum TrackState : byte
+    /// <summary>
+    /// Выгружает всё, кроме перечисленного в <paramref name="keep"/>. Треки, которые всё ещё
+    /// играет живой источник, остаются до следующего вызова.
+    /// </summary>
+    public void Trim(IReadOnlySet<ResPath> keep, Predicate<EntityUid> isAlive)
     {
-        Loading,
-        Loaded,
+        if (_loaded.Count == 0)
+            return;
+
+        var toRemove = new ValueList<ResPath>();
+
+        foreach (var (path, entry) in _loaded)
+        {
+            if (keep.Contains(path))
+                continue;
+
+            if (entry.User is { } user && isAlive(user))
+                continue;
+
+            toRemove.Add(path);
+        }
+
+        foreach (var path in toRemove)
+        {
+            _loaded[path].Stream.Dispose();
+            _loaded.Remove(path);
+            _sawmill.Debug("Выгружен трек {Path}, держим {Count}", path, _loaded.Count);
+        }
     }
 
-    private sealed record DecodeResult(ResPath Path, AudioPcmData? Pcm, Exception? Error);
+    /// <summary>Выгружает всё, что не занято живым источником.</summary>
+    public void Clear(Predicate<EntityUid> isAlive)
+    {
+        Trim(NothingToKeep, isAlive);
+    }
+
+    private AudioStream? Load(ResPath path)
+    {
+        if (!_resourceCache.ContentFileExists(path))
+        {
+            _sawmill.Warning($"Трек не найден: {path}");
+            return null;
+        }
+
+        try
+        {
+            using var file = _resourceCache.ContentFileRead(path);
+            var stream = _audioManager.LoadAudioOggVorbis(file, path.ToString());
+            _loaded[path] = new Entry(stream);
+
+            _sawmill.Debug(
+                "Прогрет трек {Path} ({Length:F0} с), держим {Count}",
+                path,
+                stream.Length.TotalSeconds,
+                _loaded.Count);
+
+            return stream;
+        }
+        catch (Exception e)
+        {
+            _sawmill.Warning($"Не удалось загрузить трек '{path}': {e.Message}");
+            return null;
+        }
+    }
+
+    private sealed class Entry
+    {
+        public readonly AudioStream Stream;
+
+        /// <summary>Последняя аудио-сущность, которой отдали этот буфер.</summary>
+        public EntityUid? User;
+
+        public Entry(AudioStream stream)
+        {
+            Stream = stream;
+        }
+    }
 }

@@ -41,6 +41,7 @@ public sealed class DynamicAmbientMusicSystem : EntitySystem
     [Dependency] private readonly IStateManager _stateManager = default!;
     [Dependency] private readonly DamageableSystem _damageable = default!;
     [Dependency] private readonly SharedAudioSystem _audio = default!;
+    [Dependency] private readonly Robust.Client.Audio.AudioSystem _clientAudio = default!;
     [Dependency] private readonly IResourceCache _resourceCache = default!;
     [Dependency] private readonly IAudioManager _audioManager = default!;
     [Dependency] private readonly ContentAudioSystem _contentAudio = default!;
@@ -93,12 +94,6 @@ public sealed class DynamicAmbientMusicSystem : EntitySystem
     /// <summary>Пути того, что играет прямо сейчас — их нельзя выгружать из-под AL.</summary>
     private ResPath? _currentTrackPath;
     private ResPath? _critNextTrackPath;
-
-    // Остановка через фейд-аут не глушит поток мгновенно: он ещё несколько секунд доигрывает.
-    // Выгружать его буфер в это время нельзя (AL просто откажется удалять занятый буфер, и тот
-    // утечёт), поэтому путь остывает здесь до _recentTrackFreeTime.
-    private ResPath? _recentTrackPath;
-    private TimeSpan _recentTrackFreeTime;
 
     private bool _enabled = true;
     private bool _peacefulDisabled;
@@ -158,7 +153,7 @@ public sealed class DynamicAmbientMusicSystem : EntitySystem
         DeleteCritReverbChain();
         _critDuck = 0f;
         UpdateMasterGain(force: true);
-        _musicCache.Clear();
+        _musicCache.Clear(IsStreamAlive);
     }
 
     private void DeleteCritReverbChain()
@@ -240,10 +235,6 @@ public sealed class DynamicAmbientMusicSystem : EntitySystem
 
         if (!_timing.IsFirstTimePredicted)
             return;
-
-        // Заливка раскодированного в AL обязана идти с игрового треда и до всех ранних выходов,
-        // иначе результаты фоновой декодировки копились бы в очереди.
-        _musicCache.Pump();
 
         if (_timing.CurTime >= _nextWarmupCheck)
         {
@@ -561,8 +552,7 @@ public sealed class DynamicAmbientMusicSystem : EntitySystem
         {
             var entry = _pendingCritTrack ?? _random.Pick(proto.TracksMobCritical);
             _pendingCritTrack = null;
-            _currentStream = _audio.PlayGlobal(entry.Sound, Filter.Local(), false,
-                AudioParams.Default.WithVolume(volume))?.Entity;
+            _currentStream = PlayMusic(entry.Sound, AudioParams.Default.WithVolume(volume));
 
             if (_currentStream != null)
             {
@@ -591,8 +581,7 @@ public sealed class DynamicAmbientMusicSystem : EntitySystem
 
             var next = _pendingCritTrack ?? _random.Pick(proto.TracksMobCritical);
             _pendingCritTrack = null;
-            _critStreamNext = _audio.PlayGlobal(next.Sound, Filter.Local(), false,
-                AudioParams.Default.WithVolume(volume))?.Entity;
+            _critStreamNext = PlayMusic(next.Sound, AudioParams.Default.WithVolume(volume));
 
             if (_critStreamNext != null)
             {
@@ -749,10 +738,32 @@ public sealed class DynamicAmbientMusicSystem : EntitySystem
         PlayCalmTrack(TakePending(ref _pendingCalmTrack, tracks), level, proto);
     }
 
+    /// <summary>
+    /// Проигрывает музыкальный трек через наш кэш, а не через SoundSpecifier. Обычный путь
+    /// (<see cref="SharedAudioSystem.PlayGlobal(SoundSpecifier, Filter, bool, AudioParams?)"/>)
+    /// кладёт буфер в кэш ресурсов движка, откуда его уже никогда не выгрузить — из-за этого
+    /// клиент и держал в памяти все 48 треков разом. Подробности в <see cref="DutyMusicCache"/>.
+    /// </summary>
+    private EntityUid? PlayMusic(SoundSpecifier track, AudioParams audioParams)
+    {
+        // Не путь, а коллекция звуков: сами резолвить не будем, отдаём движку как есть.
+        if (GetTrackPath(track) is not { } path)
+            return _audio.PlayGlobal(track, Filter.Local(), false, audioParams)?.Entity;
+
+        if (_musicCache.Get(path) is not { } stream)
+            return null;
+
+        var uid = _clientAudio.PlayGlobal(stream, new ResolvedPathSpecifier(path), audioParams)?.Entity;
+
+        if (uid != null)
+            _musicCache.NoteUser(path, uid.Value);
+
+        return uid;
+    }
+
     private void PlayCalmTrack(SoundSpecifier track, DutyAmbientMusicLevel level, DynamicAmbientMusicPrototype proto)
     {
-        _currentStream = _audio.PlayGlobal(track, Filter.Local(), false,
-            AudioParams.Default.WithVolume(GetVolumeDb(level)))?.Entity;
+        _currentStream = PlayMusic(track, AudioParams.Default.WithVolume(GetVolumeDb(level)));
 
         if (_currentStream == null)
             return;
@@ -778,8 +789,8 @@ public sealed class DynamicAmbientMusicSystem : EntitySystem
             return;
 
         var track = TakePending(ref _pendingCombatTrack, proto.CombatTracks);
-        _currentStream = _audio.PlayGlobal(track, Filter.Local(), false,
-            AudioParams.Default.WithVolume(GetVolumeDb(DutyAmbientMusicLevel.Combat)).WithLoop(true))?.Entity;
+        _currentStream = PlayMusic(track,
+            AudioParams.Default.WithVolume(GetVolumeDb(DutyAmbientMusicLevel.Combat)).WithLoop(true));
 
         if (_currentStream != null)
         {
@@ -805,8 +816,8 @@ public sealed class DynamicAmbientMusicSystem : EntitySystem
         }
 
         var track = TakePending(ref _pendingCombatLowTrack, proto.CombatLowTracks);
-        _currentStream = _audio.PlayGlobal(track, Filter.Local(), false,
-            AudioParams.Default.WithVolume(GetVolumeDb(DutyAmbientMusicLevel.CombatLow)).WithLoop(true))?.Entity;
+        _currentStream = PlayMusic(track,
+            AudioParams.Default.WithVolume(GetVolumeDb(DutyAmbientMusicLevel.CombatLow)).WithLoop(true));
 
         if (_currentStream != null)
         {
@@ -839,7 +850,6 @@ public sealed class DynamicAmbientMusicSystem : EntitySystem
         if (immediate)
         {
             _audio.Stop(_currentStream);
-            _recentTrackPath = null;
         }
         else
         {
@@ -848,7 +858,6 @@ public sealed class DynamicAmbientMusicSystem : EntitySystem
                 ? proto?.CombatFadeOutDuration ?? 1.5f
                 : proto?.CalmFadeOutDuration ?? 3.5f;
             SafeFadeOut(_currentStream, duration);
-            HoldTrackDuringFadeOut(duration);
         }
 
         _currentTrackPath = null;
@@ -942,48 +951,43 @@ public sealed class DynamicAmbientMusicSystem : EntitySystem
             _pendingCritTrack = null;
         }
 
-        if (_recentTrackPath != null && _timing.CurTime >= _recentTrackFreeTime)
-            _recentTrackPath = null;
-
         // Трек мог доиграть сам, без StopCurrent — тогда защищать его буфер больше не от чего.
         // Проверяем здесь, а не в каждой ветке, которая обнуляет поток: так не забудется.
-        if (_currentStream == null || !Exists(_currentStream.Value))
+        if (!IsStreamAlive(_currentStream))
             _currentTrackPath = null;
 
-        if (_critStreamNext == null || !Exists(_critStreamNext.Value))
+        if (!IsStreamAlive(_critStreamNext))
             _critNextTrackPath = null;
 
         _keepWarm.Clear();
         AddWarmPath(_currentTrackPath);
         AddWarmPath(_critNextTrackPath);
-        AddWarmPath(_recentTrackPath);
         AddWarmPath(GetTrackPath(_pendingCalmTrack));
         AddWarmPath(GetTrackPath(_pendingCombatTrack));
         AddWarmPath(GetTrackPath(_pendingCombatLowTrack));
         AddWarmPath(GetTrackPath(_pendingCritTrack?.Sound));
 
-        foreach (var path in _keepWarm)
-        {
-            _musicCache.Warm(path);
-        }
-
-        _musicCache.Trim(_keepWarm);
+        // Строго по одному треку за проход: декодирование ogg стоит ~0.6 с, и складывать
+        // несколько штук в один кадр — гарантированная просадка.
+        _musicCache.WarmNext(_keepWarm);
+        _musicCache.Trim(_keepWarm, IsStreamAlive);
     }
+
+    /// <summary>
+    /// Жив ли ещё источник. Stop и фейд-аут удаляют аудио-сущность отложенно (QueueDel), так что
+    /// «уже остановленный» поток вполне может доигрывать до конца тика — и его буфер в это время
+    /// трогать нельзя.
+    /// </summary>
+    private bool IsStreamAlive(EntityUid? stream)
+        => stream != null && Exists(stream.Value);
+
+    private bool IsStreamAlive(EntityUid stream)
+        => Exists(stream);
 
     private void AddWarmPath(ResPath? path)
     {
         if (path != null)
             _keepWarm.Add(path.Value);
-    }
-
-    /// <summary>Защищает трек от выгрузки, пока он доигрывает фейд-аут.</summary>
-    private void HoldTrackDuringFadeOut(float fadeDuration)
-    {
-        if (_currentTrackPath == null)
-            return;
-
-        _recentTrackPath = _currentTrackPath;
-        _recentTrackFreeTime = _timing.CurTime + TimeSpan.FromSeconds(fadeDuration + 1f);
     }
 
     /// <summary>
