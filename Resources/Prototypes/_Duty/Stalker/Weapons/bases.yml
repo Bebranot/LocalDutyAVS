@@ -5,7 +5,7 @@
 # ── База рифлов ──────────────────────────────────────────────────────────────
 - type: entity
   abstract: true
-  parent: BaseWeaponRifle
+  parent: [ BaseWeaponRifle, ADTBaseAttachableHolder ]
   id: STBaseWeaponRifle
   name: rifle
   components:
@@ -36,11 +36,23 @@
     range: 260
     sound:
       path: /Audio/_Stalker/Effects/FarGunshots/rifle1.ogg
+  # ADT-обвесы (duty nizhe): планка прицела у рифлов уже занята сталкерским gun_module_scope,
+  # поэтому rmc-aslot-rail сюда не идёт — только подствольное (грип/лазер), место свободно.
+  - type: AttachableHolder
+    slots:
+      rmc-aslot-underbarrel:
+        whitelist:
+          tags:
+          - ADTAttachmentVerticalGrip
+          - ADTAttachmentLaserSight
+  - type: AttachableHolderVisuals
+    offsets:
+      rmc-aslot-underbarrel: 0, 0
 
 # ── База ПП (SMG) ────────────────────────────────────────────────────────────
 - type: entity
   abstract: true
-  parent: BaseWeaponSubMachineGun
+  parent: [ BaseWeaponSubMachineGun, ADTBaseAttachableHolder ]
   id: STBaseWeaponSMG
   name: smg
   components:
@@ -60,11 +72,22 @@
     range: 190
     sound:
       path: /Audio/_Stalker/Effects/FarGunshots/smg1.ogg
+  # ADT-обвесы (duty nizhe): подствол и цевьё у ПП уже заняты сталкерскими gun_module_grip/
+  # muzzle, планка прицела — свободна, добавляем только коллиматор.
+  - type: AttachableHolder
+    slots:
+      rmc-aslot-rail:
+        whitelist:
+          tags:
+          - ADTAttachmentReflexSight
+  - type: AttachableHolderVisuals
+    offsets:
+      rmc-aslot-rail: 0, 0
 
 # ── База пистолетов ──────────────────────────────────────────────────────────
 - type: entity
   abstract: true
-  parent: BaseWeaponPistol
+  parent: [ BaseWeaponPistol, ADTBaseAttachableHolder ]
   id: STBaseWeaponPistol
   name: pistol
   components:
@@ -84,12 +107,24 @@
     range: 120
     sound:
       path: /Audio/_Stalker/Effects/FarGunshots/pistol1.ogg
+  # ADT-обвесы (duty nizhe): у пистолетов занят только gun_module_muzzle (глушитель),
+  # планка сверху свободна — добавляем коллиматор. Подствольные грипы на пистолет
+  # реалистично не вешаем.
+  - type: AttachableHolder
+    slots:
+      rmc-aslot-rail:
+        whitelist:
+          tags:
+          - ADTAttachmentReflexSight
+  - type: AttachableHolderVisuals
+    offsets:
+      rmc-aslot-rail: 0, 0
 
 # ── База снайперок ───────────────────────────────────────────────────────────
 # Болтовки заряжаются прямо в ствол (ballistic-ammo), часть — через магазин.
 - type: entity
   abstract: true
-  parent: BaseWeaponSniper
+  parent: [ BaseWeaponSniper, ADTBaseAttachableHolder ]
   id: STBaseWeaponSniper
   name: sniper
   components:
@@ -126,6 +161,17 @@
     range: 350
     sound:
       path: /Audio/_Stalker/Effects/FarGunshots/sniper1.ogg
+  # ADT-обвесы (duty nizhe): прицел и глушитель уже заняты сталкерскими слотами; свободно
+  # только подствольное — и то только сошки-грип, лазер на снайперку вешать нелогично.
+  - type: AttachableHolder
+    slots:
+      rmc-aslot-underbarrel:
+        whitelist:
+          tags:
+          - ADTAttachmentVerticalGrip
+  - type: AttachableHolderVisuals
+    offsets:
+      rmc-aslot-underbarrel: 0, 0
 
 # ── База револьверов ─────────────────────────────────────────────────────────
 - type: entity
