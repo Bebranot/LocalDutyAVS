@@ -1,6 +1,8 @@
 using System.Numerics;
+using Content.Shared.Damage.Prototypes;
 using Robust.Shared.Audio;
 using Robust.Shared.GameStates;
+using Robust.Shared.Prototypes;
 
 namespace Content.Shared._Duty.FireAgony;
 
@@ -29,11 +31,22 @@ public sealed partial class FireAgonyComponent : Component
     [DataField]
     public float EnterThreshold = 3f;
 
-    /// <summary>Если суммарная защита от огня надетой брони (0..1, см. <c>GetFireProtectionEvent</c>)
-    /// не меньше этого порога — сцена агонии не начинается вовсе, сколько бы ни горел персонаж.
-    /// Скафандр атмос-техника даёт 0.8, скафандр CE/старшего инженера — 1.0.</summary>
+    /// <summary>Слот, в котором ищется скафандр (герметичный костюм с защитой от давления).
+    /// Любой надетый скафандр отменяет сцену целиком, даже если он не огнестойкий —
+    /// хардсьюты, EVA, softsuits, пожарный и атмос-пожарный костюмы. <c>null</c> — проверка выключена.</summary>
     [DataField]
-    public float FireProtectionBlockThreshold = 0.75f;
+    public string? SuitSlot = "outerClothing";
+
+    /// <summary>Порог резиста к высокотемпературному урону (0..1), с которого сцена не начинается:
+    /// 0.65 = «65% и выше», ниже — сцена будет. Считается по обеим ступеням, через которые проходит
+    /// урон от горения: <c>GetFireProtectionEvent</c> и коэффициент брони по
+    /// <see cref="HeatDamageType"/>. Значение &gt; 1 отключает проверку.</summary>
+    [DataField]
+    public float HeatResistImmunity = 0.65f;
+
+    /// <summary>Тип урона, по которому берётся коэффициент брони для <see cref="HeatResistImmunity"/>.</summary>
+    [DataField]
+    public ProtoId<DamageTypePrototype> HeatDamageType = "Heat";
 
     /// <summary>Минимальная длительность сцены — чтобы кратковременный всплеск firestacks не давал
     /// «мигнул и потух»: раньше этого времени выход по потуханию не срабатывает.</summary>

@@ -1,8 +1,10 @@
 using System.Linq;
 using Content.Server.Atmos.EntitySystems;
 using Content.Server.Chat.Systems;
+using Content.Server.Atmos.Components;
 using Content.Shared._Duty.FireAgony;
 using Content.Shared.ADT.Flammability;
+using Content.Shared.Armor;
 using Content.Shared.Atmos;
 using Content.Shared.Atmos.Components;
 using Content.Shared.Chat;
@@ -116,8 +118,8 @@ public sealed class FireAgonySystem : EntitySystem
         if (_mobState.IsIncapacitated(uid) || curTime < agony.NextAllowedStart)
             return;
 
-        // Огнестойкий скафандр (атмос-техник, CE и т.п.) — сцена агонии не начинается вовсе.
-        if (GetFireProtection(uid) >= agony.FireProtectionBlockThreshold)
+        // Скафандр или высокий резист к высокотемпературному урону — сцены нет вовсе.
+        if (IsFireProtected(uid, agony))
             return;
 
         agony.Active = true;
@@ -229,16 +231,51 @@ public sealed class FireAgonySystem : EntitySystem
             _stun.TryUpdateParalyzeDuration(uid, ParalyzeRelease);
     }
 
-    /// <summary>Суммарная защита от огня надетой брони (0..1, 1 — полная защита). Тот же механизм,
-    /// которым <see cref="FlammableSystem"/> считает итоговый урон от огня — см. GetFireProtectionEvent.</summary>
-    private float GetFireProtection(EntityUid uid)
+    /// <summary>
+    /// Отменяет ли надетая защита сцену целиком. Два независимых условия:
+    /// надетый скафандр (герметичный костюм с <c>PressureProtection</c> в
+    /// <see cref="FireAgonyComponent.SuitSlot"/>) — любой, хоть EVA, хоть медицинский; либо
+    /// резист к высокотемпературному урону не ниже <see cref="FireAgonyComponent.HeatResistImmunity"/>.
+    /// Огонь при этом горит и тушится как обычно — отменяется только потеря контроля.
+    /// </summary>
+    private bool IsFireProtected(EntityUid uid, FireAgonyComponent agony)
     {
-        var ev = new GetFireProtectionEvent();
-        RaiseLocalEvent(uid, ref ev);
-        if (_inventoryQuery.TryComp(uid, out var inv))
-            _inventory.RelayEvent((uid, inv), ref ev);
+        if (agony.SuitSlot != null
+            && _inventory.TryGetSlotEntity(uid, agony.SuitSlot, out var suit)
+            && HasComp<PressureProtectionComponent>(suit.Value))
+        {
+            return true;
+        }
 
-        return Math.Clamp(1f - ev.Multiplier, 0f, 1f);
+        return agony.HeatResistImmunity <= 1f && GetHeatResistance(uid, agony) >= agony.HeatResistImmunity;
+    }
+
+    /// <summary>
+    /// Фактический резист к высокотемпературному урону (0..1, 1 — полная защита). Урон от горения
+    /// проходит две ступени: <c>GetFireProtectionEvent.Multiplier</c> в <see cref="FlammableSystem"/>
+    /// и коэффициент брони по <see cref="FireAgonyComponent.HeatDamageType"/> в
+    /// <c>DamageableSystem</c> — считаем обе, иначе скафандр без FireProtection выглядит незащищённым.
+    /// </summary>
+    private float GetHeatResistance(EntityUid uid, FireAgonyComponent agony)
+    {
+        var fire = new GetFireProtectionEvent();
+        RaiseLocalEvent(uid, ref fire);
+
+        var multiplier = fire.Multiplier;
+        if (_inventoryQuery.TryComp(uid, out var inv))
+        {
+            _inventory.RelayEvent((uid, inv), ref fire);
+            multiplier = fire.Multiplier;
+
+            // Карманы исключены: там вещь лежит, а не надета (как в ADT ArmorPenetrationSystem).
+            var armor = new CoefficientQueryEvent(~SlotFlags.POCKET);
+            _inventory.RelayEvent((uid, inv), armor);
+
+            if (armor.DamageModifiers.Coefficients.TryGetValue(agony.HeatDamageType, out var coefficient))
+                multiplier *= coefficient;
+        }
+
+        return Math.Clamp(1f - multiplier, 0f, 1f);
     }
 
     /// <summary>Роняет предметы из ОБЕИХ рук и кидает каждый в случайную сторону на 1.0–1.5 тайла.</summary>
