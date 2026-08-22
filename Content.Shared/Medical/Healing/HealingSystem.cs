@@ -1,4 +1,5 @@
 using Content.Shared.Administration.Logs;
+using Content.Shared._Duty.Trauma.Events;
 using Content.Shared.Body.Components;
 using Content.Shared.Body.Systems;
 using Content.Shared.Chemistry.EntitySystems;
@@ -177,7 +178,12 @@ public sealed class HealingSystem : EntitySystem
             args.Handled = true;
     }
 
-    private bool TryHeal(Entity<HealingComponent> healing, Entity<DamageableComponent?> target, EntityUid user)
+    /// <param name="allowIntercept">
+    /// _Duty: можно ли увести лечение в свою ветку через <see cref="DutyHealInterceptEvent"/>.
+    /// Ставится в false, когда ванильное лечение запускает как раз перехватившая система, —
+    /// иначе перехват сработал бы повторно.
+    /// </param>
+    public bool TryHeal(Entity<HealingComponent> healing, Entity<DamageableComponent?> target, EntityUid user, bool allowIntercept = true)
     {
         if (!Resolve(target, ref target.Comp, false))
             return false;
@@ -197,6 +203,17 @@ public sealed class HealingSystem : EntitySystem
 
         if (TryComp<StackComponent>(healing, out var stack) && stack.Count < 1)
             return false;
+
+        // _Duty: дать своим системам увести предмет в собственную ветку лечения (жгут при
+        // артериальном кровотечении). Handled — ваниль дальше не идёт.
+        if (allowIntercept)
+        {
+            var intercept = new DutyHealInterceptEvent(healing.Owner, user);
+            RaiseLocalEvent(target.Owner, ref intercept);
+
+            if (intercept.Handled)
+                return true;
+        }
 
         if (!HasDamage(healing, target!))
         {
