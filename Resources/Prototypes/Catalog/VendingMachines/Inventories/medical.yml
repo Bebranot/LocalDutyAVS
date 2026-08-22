@@ -3,6 +3,8 @@
   startingInventory:
     HandheldHealthAnalyzer: 1
     Gauze: 3
+    Tourniquet: 3 # _Duty
+    DutySplint: 3 # _Duty
     Brutepack: 3
     Ointment: 3
 #    Bloodpack: 3 # ADT Tweak
@@ -19,6 +21,7 @@
   startingInventory:
     HandheldHealthAnalyzer: 1
     Tourniquet: 3
+    DutySplint: 3 # _Duty
     Brutepack: 3
     AloeCream: 3 # Currently just a reskin of Ointment but it's something
 #    Bloodpack: 3 # ADT Tweak
@@ -43,6 +46,10 @@
     ADTAntibioticOintment: 4
     ADTBloodPackTransfusionFull: 5
     # ADT tweak end
+    # _Duty tweak start
+    Tourniquet: 4
+    DutySplint: 4
+    # _Duty tweak end
     JetInjector: 3
     # Paramed Essential Gear
     ClothingBeltMedicalEMTFilled: 1
@@ -75,6 +82,7 @@
   startingInventory:
     HandheldHealthAnalyzer: 3
     Tourniquet: 5
+    DutySplint: 5 # _Duty
     Brutepack: 5
     AloeCream: 5
 #    Bloodpack: 5 # ADT Tweak
