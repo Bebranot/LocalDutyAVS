@@ -8,6 +8,8 @@
   name: improvised tourniquet
   description: A strip of cloth twisted around a stick. Crude, but it will clamp an artery shut.
   components:
+    # Самоделкой быструю остановку артерии делать нельзя — только пошаговым окном лечения.
+    - type: MakeshiftTourniquet
     - type: Sprite
       sprite: _Duty/Objects/Items/Makeshift_Health/improvised_tourniquet.rsi
       state: icon

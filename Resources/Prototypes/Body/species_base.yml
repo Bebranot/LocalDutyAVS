@@ -151,6 +151,8 @@
         type: LivingHeartMenuBoundUserInterface
       enum.ArterialTreatmentUiKey.Key: # _Duty: пошаговое лечение артерии
         type: ArterialTreatmentBoundUserInterface
+      enum.TourniquetChoiceUiKey.Key: # _Duty: выбор, что перетягивать жгутом
+        type: TourniquetChoiceBoundUserInterface
   - type: TraumaTarget # _Duty: существо может получать тяжёлые травмы
   - type: Puller
   - type: GrabIntent
