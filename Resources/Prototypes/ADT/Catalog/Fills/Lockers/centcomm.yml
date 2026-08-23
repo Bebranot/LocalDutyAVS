@@ -13,6 +13,7 @@
         - id: MedkitBruteFilled
         - id: WeaponDisabler
         - id: DutyHypoBlueShield
+        - id: FuryStimulatorInjector
           #- id: ADTUnderwearBoxBlueshield
         - id: ADTClothingHeadsetAltBlueshield
         - id: ADTClothingHeadHatBeretBlueshield
@@ -45,6 +46,7 @@
         - id: MedkitCombatFilled
         - id: MedkitBruteFilled
         - id: WeaponDisabler
+        - id: FuryStimulatorInjector
           # - id: ADTUnderwearBoxBlueshield
         - id: ADTClothingHeadsetAltBlueshield
         - id: ADTClothingHeadHatBeretBlueshield

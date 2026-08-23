@@ -15,7 +15,7 @@ public abstract class SharedFuryStimulatorSystem : EntitySystem
 {
     // ── Сила баффов/дебаффов (на пике; для расчёта множителей) ──
 
-    public const float MoveSpeedBonus = 1.80f;   // +180% на пике (×1.5 к прежнему +120%)
+    public const float MoveSpeedBonus = 2.08f;   // +208% на пике (итоговая скорость ×3.08 = ×1.10 к прежней ×2.80)
     public const float DamageResist = 0.50f;     // -50% урона на пике
     public const float MeleeRateBonus = 0.35f;   // +35% скорости атаки на пике
 

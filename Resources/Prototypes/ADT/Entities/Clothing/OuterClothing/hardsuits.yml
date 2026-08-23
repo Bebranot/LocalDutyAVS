@@ -181,9 +181,11 @@
     sprite: ADT/Clothing/OuterClothing/Hardsuits/blueshield_hardsuit.rsi
   - type: Clothing
     sprite: ADT/Clothing/OuterClothing/Hardsuits/blueshield_hardsuit.rsi
+  # _Duty-tweak-start: +15% скорость носителя вместо штрафа -10%
   - type: ClothingSpeedModifier
-    walkModifier: 0.9
-    sprintModifier: 0.9
+    walkModifier: 1.15
+    sprintModifier: 1.15
+  # _Duty-tweak-end
   - type: HeldSpeedModifier
   - type: PressureProtection
     highPressureMultiplier: 0.05
