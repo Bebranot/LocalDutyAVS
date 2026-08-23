@@ -122,6 +122,16 @@
       - state: CAP-equipped-OUTERCLOTHING
   - type: ToggleableClothing
     clothingPrototype: ClothingHeadHatHoodWinterCaptain
+  # _Duty-tweak-start: +15% protection over base winter coat, Piercing set to 70%, added stamina damage resist
+  - type: Armor
+    modifiers:
+      coefficients:
+        Slash: 0.8075
+        Piercing: 0.7
+        Heat: 0.765
+  - type: StaminaResistance
+    damageCoefficient: 0.7
+  # _Duty-tweak-end
 
 - type: entity
   parent: ClothingOuterWinterCoatToggleable

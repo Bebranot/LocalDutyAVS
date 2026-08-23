@@ -188,15 +188,17 @@
   - type: PressureProtection
     highPressureMultiplier: 0.05
     lowPressureMultiplier: 10000
+  # _Duty-tweak-start: +15% protection across the board, Piercing set to 70% (stamina resist already present)
   - type: Armor
     modifiers:
       coefficients:
-        Blunt: 0.5
-        Slash: 0.5
-        Heat: 0.6
-        Piercing: 0.6
-        Caustic: 0.7
-        Radiation: 0.7
+        Blunt: 0.425
+        Slash: 0.425
+        Heat: 0.51
+        Piercing: 0.7
+        Caustic: 0.595
+        Radiation: 0.595
+  # _Duty-tweak-end
   - type: StaminaResistance
     damageCoefficient: 0.75
   - type: ExplosionResistance

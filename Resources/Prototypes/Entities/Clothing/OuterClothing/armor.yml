@@ -145,6 +145,18 @@
   - type: Tag
     tags:
     - WhitelistChameleon
+  # _Duty-tweak-start: +15% protection across the board, Piercing set to 70%, added stamina damage resist
+  - type: Armor
+    modifiers:
+      coefficients:
+        Blunt: 0.425
+        Slash: 0.425
+        Piercing: 0.7
+        Heat: 0.425
+        Caustic: 0.765
+  - type: StaminaResistance
+    damageCoefficient: 0.7
+  # _Duty-tweak-end
 
 - type: entity
   parent: [ClothingOuterArmorBaseCarapace, BaseCentcommContraband]

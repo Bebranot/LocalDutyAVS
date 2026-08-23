@@ -7,12 +7,16 @@
     sprite: ADT/Clothing/OuterClothing/WinterCoats/blueshield_winter.rsi
   - type: Clothing
     sprite: ADT/Clothing/OuterClothing/WinterCoats/blueshield_winter.rsi
+  # _Duty-tweak-start: +15% protection across the board, Piercing set to 70%, added stamina damage resist
   - type: Armor
     modifiers:
       coefficients:
-        Slash: 0.9
-        Heat: 0.9
-        Piercing: 0.9
+        Slash: 0.765
+        Heat: 0.765
+        Piercing: 0.7
+  - type: StaminaResistance
+    damageCoefficient: 0.7
+  # _Duty-tweak-end
 
 - type: entity
   parent: ClothingOuterWinterCoat
