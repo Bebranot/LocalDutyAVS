@@ -53,6 +53,10 @@ namespace Content.Server.Atmos.EntitySystems
         [Dependency] private readonly IRobustRandom _random = default!;
         [Dependency] private readonly IGameTiming _timing = default!;
 
+        /// <summary>_Duty: сколько огнеиммунная (новакид) сущность должна непрерывно гореть, прежде
+        /// чем стакам огня разрешат угасать — см. использование ниже в Update.</summary>
+        private static readonly TimeSpan DutyFireImmuneExtinguishDelay = TimeSpan.FromSeconds(5);
+
         private EntityQuery<InventoryComponent> _inventoryQuery;
         private EntityQuery<PhysicsComponent> _physicsQuery;
 
@@ -448,14 +452,29 @@ namespace Content.Server.Atmos.EntitySystems
                 if (!flammable.OnFire)
                 {
                     _alertsSystem.ClearAlert(uid, flammable.FireAlert);
+
+                    // _Duty: сбрасываем таймер непрерывного горения огнеиммунных — потухли, значит
+                    // при следующем поджиге отсчёт 5с должен начаться заново.
+                    if (TryComp<FireImmunityComponent>(uid, out var extinguishedImmunity))
+                        extinguishedImmunity.OnFireSince = null;
+
                     continue;
                 }
 
                 _alertsSystem.ShowAlert(uid, flammable.FireAlert);
 
                 // ADT-Tweak start
-                if (HasComp<FireImmunityComponent>(uid))
+                if (TryComp<FireImmunityComponent>(uid, out var fireImmunity))
+                {
+                    // _Duty: огнеиммунные (новакиды) не получают урон от огня, но раньше стаки огня
+                    // у них не спадали вовсе — иногда они не могли потухнуть. Даём стакам угасать
+                    // (без урона/поджига), если горят непрерывно дольше DutyFireImmuneExtinguishDelay.
+                    fireImmunity.OnFireSince ??= curTime;
+                    if (curTime - fireImmunity.OnFireSince.Value >= DutyFireImmuneExtinguishDelay)
+                        AdjustFireStacks(uid, flammable.FirestackFade * (flammable.Resisting ? 15f : 1f), flammable, flammable.OnFire);
+
                     continue;
+                }
                 // ADT-Tweak end
 
                 if (flammable.FireStacks > 0)
