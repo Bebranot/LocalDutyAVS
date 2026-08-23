@@ -1,0 +1,50 @@
+# _Duty: жгут и шина в отделе "Химикаты" аплинка синдиката/ядерного оперативника.
+# Первые 2 покупки каждого предмета бесплатны (ListingLimitedStockCondition), дальше — 1 ТК.
+# Бесплатный и платный вариант — отдельные listing'и: после исчерпания лимита бесплатный
+# пропадает из списка (условие не выполняется), остаётся только платный.
+
+- type: listing
+  id: DutyUplinkTourniquetFree
+  name: uplink-duty-tourniquet-free-name
+  description: uplink-duty-tourniquet-free-desc
+  productEntity: Tourniquet
+  cost:
+    Telecrystal: 0
+  categories:
+  - UplinkChemicals
+  conditions:
+  - !type:ListingLimitedStockCondition
+    stock: 2
+
+- type: listing
+  id: DutyUplinkTourniquet
+  name: uplink-duty-tourniquet-name
+  description: uplink-duty-tourniquet-desc
+  productEntity: Tourniquet
+  cost:
+    Telecrystal: 1
+  categories:
+  - UplinkChemicals
+
+- type: listing
+  id: DutyUplinkSplintFree
+  name: uplink-duty-splint-free-name
+  description: uplink-duty-splint-free-desc
+  productEntity: DutySplint
+  cost:
+    Telecrystal: 0
+  categories:
+  - UplinkChemicals
+  conditions:
+  - !type:ListingLimitedStockCondition
+    stock: 2
+
+- type: listing
+  id: DutyUplinkSplint
+  name: uplink-duty-splint-name
+  description: uplink-duty-splint-desc
+  productEntity: DutySplint
+  cost:
+    Telecrystal: 1
+  categories:
+  - UplinkChemicals
