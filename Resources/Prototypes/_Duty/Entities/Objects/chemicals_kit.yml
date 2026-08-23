@@ -1,0 +1,113 @@
+# _Duty: набор химикатов для аплинка ядерных оперативников (категория UplinkChemicals).
+# Кувшины смешанных растворов под конкретные ситуации + гипоручка для инъекций.
+# См. Resources/Prototypes/_Duty/Catalog/uplink_catalog.yml (сам лот) и
+# Resources/Locale/ru-RU/_Duty/chemicals_kit.ftl (тексты).
+
+- type: entity
+  parent: Jug
+  id: DutyJugDexalinSaline
+  suffix: Duty, физраствор+дексалин
+  name: duty-jug-dexalin-saline-name
+  description: duty-jug-dexalin-saline-desc
+  categories: [ HideSpawnMenu ]
+  components:
+  - type: Label
+    currentLabel: duty-jug-dexalin-saline-name
+  - type: SolutionContainerManager
+    solutions:
+      drink:
+        reagents:
+        - ReagentId: Saline
+          Quantity: 100
+        - ReagentId: Dexalin
+          Quantity: 100
+
+- type: entity
+  parent: Jug
+  id: DutyJugBurnRelief
+  suffix: Duty, дермалин+сульфадиазин
+  name: duty-jug-burn-relief-name
+  description: duty-jug-burn-relief-desc
+  categories: [ HideSpawnMenu ]
+  components:
+  - type: Label
+    currentLabel: duty-jug-burn-relief-name
+  - type: SolutionContainerManager
+    solutions:
+      drink:
+        reagents:
+        - ReagentId: Dermaline
+          Quantity: 100
+        - ReagentId: ADTSilverSulfadiazine
+          Quantity: 100
+
+- type: entity
+  parent: Jug
+  id: DutyJugAntiHemorrhage
+  suffix: Duty, бикаридин+кровоостан. пудра
+  name: duty-jug-anti-hemorrhage-name
+  description: duty-jug-anti-hemorrhage-desc
+  categories: [ HideSpawnMenu ]
+  components:
+  - type: Label
+    currentLabel: duty-jug-anti-hemorrhage-name
+  - type: SolutionContainerManager
+    solutions:
+      drink:
+        reagents:
+        - ReagentId: Bicaridine
+          Quantity: 100
+        - ReagentId: ADTStypticPowder
+          Quantity: 100
+
+- type: entity
+  parent: Jug
+  id: DutyJugAntitoxin
+  suffix: Duty, диловен 200
+  name: duty-jug-antitoxin-name
+  description: duty-jug-antitoxin-desc
+  categories: [ HideSpawnMenu ]
+  components:
+  - type: Label
+    currentLabel: duty-jug-antitoxin-name
+  - type: SolutionContainerManager
+    solutions:
+      drink:
+        reagents:
+        - ReagentId: Dylovene
+          Quantity: 200
+
+- type: entity
+  parent: Jug
+  id: DutyJugCriticalCare
+  suffix: Duty, трикордразин 200
+  name: duty-jug-critical-care-name
+  description: duty-jug-critical-care-desc
+  categories: [ HideSpawnMenu ]
+  components:
+  - type: Label
+    currentLabel: duty-jug-critical-care-name
+  - type: SolutionContainerManager
+    solutions:
+      drink:
+        reagents:
+        - ReagentId: Tricordrazine
+          Quantity: 200
+
+- type: entity
+  parent: ClothingBackpackDuffelSyndicateBundle
+  id: DutyClothingBackpackDuffelChemicalsKit
+  suffix: Duty
+  name: duty-chemicals-kit-name
+  description: duty-chemicals-kit-desc
+  components:
+  - type: EntityTableContainerFill
+    containers:
+      storagebase: !type:AllSelector
+        children:
+        - id: DutyJugDexalinSaline
+        - id: DutyJugBurnRelief
+        - id: DutyJugAntiHemorrhage
+        - id: DutyJugAntitoxin
+        - id: DutyJugCriticalCare
+        - id: Hypopen

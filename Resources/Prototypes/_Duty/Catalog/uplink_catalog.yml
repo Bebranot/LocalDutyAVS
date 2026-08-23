@@ -1,0 +1,25 @@
+# _Duty: набор химикатов для аплинка ядерных оперативников.
+# Сущности набора: Resources/Prototypes/_Duty/Entities/Objects/chemicals_kit.yml
+# Тексты: Resources/Locale/ru-RU/_Duty/chemicals_kit.ftl
+
+- type: listing
+  id: DutyUplinkChemicalsKit
+  name: duty-uplink-chemicals-kit-name
+  description: duty-uplink-chemicals-kit-desc
+  icon: { sprite: Clothing/Back/Duffels/syndicate.rsi, state: icon }
+  productEntity: DutyClothingBackpackDuffelChemicalsKit
+  cost:
+    Telecrystal: 25
+  categories:
+  - UplinkChemicals
+  conditions:
+  - !type:StoreWhitelistCondition
+    whitelist:
+      tags:
+      - NukeOpsUplink
+  - !type:BuyerWhitelistCondition
+    blacklist:
+      components:
+      - SurplusBundle
+  - !type:ListingLimitedStockCondition
+    stock: 1
