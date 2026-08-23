@@ -9,12 +9,14 @@ fire-agony-scream-2 = истошно вопит!
 fire-agony-scream-3 = кричит, пытаясь сбить пламя!
 fire-agony-scream-4 = захлёбывается криком!
 
-# Крики боли, выкрикиваемые раз в секунду во время сцены (настоящая say-реплика в ИС-чат:
+# Крики боли, выкрикиваемые раз в несколько секунд во время сцены (настоящая say-реплика в ИС-чат:
 # красный, шрифт Underdog, речевой пузырь дрожит — см. ChatSystem.SendDutyHealthScream).
 fire-agony-pain-scream-1 = Я ГОРЮ!!!
 fire-agony-pain-scream-2 = ПОМОГИТЕ, ГОРЮ!!!
 fire-agony-pain-scream-3 = А-А-А-А, ЖЖЁТСЯ!!!
 fire-agony-pain-scream-4 = СНИМИТЕ С МЕНЯ ОГОНЬ!!!
+fire-agony-pain-scream-5 = А-А-А-А-А-А-А!!!
+fire-agony-pain-scream-6 = А-А-А-А-А!!!
 
 # Попапы над персонажем во время сцены.
 fire-agony-popup-1 = Я ГОРЮ!!

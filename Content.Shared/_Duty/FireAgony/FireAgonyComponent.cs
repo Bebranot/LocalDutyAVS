@@ -69,9 +69,17 @@ public sealed partial class FireAgonyComponent : Component
 
     /// <summary>Кол-во строк крика боли в локали (fire-agony-pain-scream-1 .. -N). Один из них
     /// выкрикивается (say, ИС-чат, красный/Underdog/тряска — см. ChatSystem.SendDutyHealthScream)
-    /// на каждом такте сцены, т.е. примерно раз в секунду.</summary>
+    /// не чаще, чем раз в <see cref="PainScreamIntervalMin"/>..<see cref="PainScreamIntervalMax"/>.</summary>
     [DataField]
-    public int PainScreamLineCount = 4;
+    public int PainScreamLineCount = 6;
+
+    /// <summary>Минимальный интервал между криками боли — реже, чем раз в тик машины состояний
+    /// (UpdateInterval=1с), чтобы чат не заваливало криком каждую секунду.</summary>
+    [DataField]
+    public TimeSpan PainScreamIntervalMin = TimeSpan.FromSeconds(3);
+
+    [DataField]
+    public TimeSpan PainScreamIntervalMax = TimeSpan.FromSeconds(5.5);
 
     /// <summary>Кол-во строк-попапов в локали (fire-agony-popup-1 .. -N).</summary>
     [DataField]
@@ -124,6 +132,10 @@ public sealed partial class FireAgonyComponent : Component
     /// <summary>Когда в следующий раз показать попап.</summary>
     [ViewVariables]
     public TimeSpan NextPopupTime;
+
+    /// <summary>Когда в следующий раз можно выкрикнуть крик боли (см. <see cref="PainScreamIntervalMin"/>).</summary>
+    [ViewVariables]
+    public TimeSpan NextPainScreamTime;
 
     /// <summary>Раньше этого момента новый клик "сбить пламя" не уменьшает FireStacks повторно
     /// (антиспам-кулдаун, серверно-авторитетный).</summary>

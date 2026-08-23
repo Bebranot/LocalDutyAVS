@@ -148,6 +148,7 @@ public sealed class FireAgonySystem : EntitySystem
         SendAgonyEmote(uid, agony);
         ShowAgonyPopup(uid, agony);
         SchedulePopup(agony, curTime);
+        SchedulePainScream(agony, curTime);
     }
 
     private void HandleActive(EntityUid uid, FireAgonyComponent agony, FlammableComponent flammable, float dt, TimeSpan curTime)
@@ -174,9 +175,14 @@ public sealed class FireAgonySystem : EntitySystem
             return;
         }
 
-        // Крик боли — на каждом такте машины состояний (тик уже дискретизирован UpdateInterval,
-        // т.е. это ~раз в секунду). Стартовый эмоут (SendAgonyEmote) прозвучал один раз в TryStart.
-        SendPainScream(uid, agony);
+        // Крик боли — не на каждом такте машины состояний, а по своему интервалу (реже, чем
+        // UpdateInterval=1с), иначе чат заваливает криком каждую секунду. Стартовый эмоут
+        // (SendAgonyEmote) прозвучал один раз в TryStart.
+        if (curTime >= agony.NextPainScreamTime)
+        {
+            SendPainScream(uid, agony);
+            SchedulePainScream(agony, curTime);
+        }
 
         if (curTime >= agony.NextPopupTime)
         {
@@ -302,6 +308,11 @@ public sealed class FireAgonySystem : EntitySystem
     private void SchedulePopup(FireAgonyComponent agony, TimeSpan curTime)
     {
         agony.NextPopupTime = curTime + RandomInterval(agony.PopupIntervalMin, agony.PopupIntervalMax);
+    }
+
+    private void SchedulePainScream(FireAgonyComponent agony, TimeSpan curTime)
+    {
+        agony.NextPainScreamTime = curTime + RandomInterval(agony.PainScreamIntervalMin, agony.PainScreamIntervalMax);
     }
 
     private TimeSpan RandomInterval(TimeSpan min, TimeSpan max)
