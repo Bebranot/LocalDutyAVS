@@ -67,10 +67,14 @@ public sealed class TraumaRollSystem : EntitySystem
     private const float FractureChanceScale = 400f;
 
     /// <summary>
-    /// Делитель формулы артерии: <c>урон * random(1..5) / scale</c>. Артерия должна быть
-    /// редкой даже на сильном режущем ударе. Тюнится в Phase 6.
+    /// Делитель формулы артерии: <c>урон² / scale</c>. Квадратичная зависимость (без
+    /// random-множителя, в отличие от старой формулы) выбрана осознанно: она делает броню
+    /// непропорционально ценной — резист урона на X% режет шанс артерии примерно на X²%,
+    /// а не линейно, как раньше. Слабые/чиркающие удары почти не роллят артерию, тяжёлые —
+    /// заметно чаще. Заодно убирает "лотерейный" разброс x1..x5 на одинаковый урон.
+    /// Тюнится в Phase 6.
     /// </summary>
-    private const float ArterialChanceScale = 350f;
+    private const float ArterialChanceScale = 3500f;
 
     /// <summary>Множитель шанса перелома при нулевом HP цели (при полном HP множитель = 1).</summary>
     private const float HpFractureFactorMax = 2f;
@@ -142,8 +146,9 @@ public sealed class TraumaRollSystem : EntitySystem
 
     private void TryRollArterialBleed(Entity<TraumaTargetComponent> ent, float sharp)
     {
-        // Шанс = урон * random(1..5), редкий и не гарантированный даже на большом уроне.
-        var chance = Math.Clamp(sharp * _random.Next(1, 6) / ArterialChanceScale, 0f, MaxTraumaChance);
+        // Шанс = урон² / scale — см. ArterialChanceScale: квадрат вместо random(1..5)*линейности,
+        // чтобы броня резала шанс непропорционально сильнее урона, а сам ролл не был лотереей.
+        var chance = Math.Clamp(sharp * sharp / ArterialChanceScale, 0f, MaxTraumaChance);
         if (_random.Prob(chance))
             RaiseTrauma(ent, TraumaType.ArterialBleed, null);
     }
