@@ -1,0 +1,34 @@
+
+- type: entity
+  parent: WeaponKineticSpear
+  id: DutyWeaponKineticSpearMagmite
+  name: Магмитовое протокинетическое копьё
+  description: Длинное оружие ближнего боя, что обменивает урон на длину в 2 метра.
+  components:
+  - type: ADTMagmiteUpgradable
+    result: ADTWeaponCrusherMagmite
+  - type: Sprite
+    sprite: _Duty/Objects/Weapons/Melee/spear_magmite/crusher_spear.rsi
+    state: icon
+  - type: Item
+    sprite: _Duty/Objects/Weapons/Melee/spear_magmite/crusher_spear-inhands.rsi
+  - type: BasicEntityAmmoProvider
+    proto: ADTBulletChargeMagmite
+  - type: MeleeWeapon
+    attackRate: 1.5
+    wideAnimationRotation: -135
+    damage:
+      types:
+        Blunt: 5
+        Slash: 15
+    soundHit:
+          collection: MetalThud
+    angle: 0
+    animation: WeaponArcThrust
+    range: 2.6
+  - type: IncreaseDamageOnWield
+    damage:
+      types:
+        Blunt: 2.5
+        Slash: 5
+        Structural: 40
