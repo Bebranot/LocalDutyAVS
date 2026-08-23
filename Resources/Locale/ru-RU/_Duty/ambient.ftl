@@ -1,6 +1,6 @@
-# Вкладка настроек
+﻿# Вкладка настроек
 ui-options-tab-duty-ambient = Динамическая музыка
-ui-options-duty-ambient-disable-all = Включить динамическую музыку
+ui-options-duty-ambient-enable-all = Включить динамическую музыку
 ui-options-duty-ambient-disable-peaceful = Выключить мирную музыку
 ui-options-duty-ambient-disable-combat = Выключить боевую музыку
 
@@ -15,7 +15,8 @@ duty-ambient-level-mob-critical = Крит. состояние (без созн�
 duty-ambient-level-combat = Боевой режим
 duty-ambient-level-combat-low = Боевой при низком HP
 duty-ambient-level-death = Смерть
-duty-ambient-level-unknown = Неизвестный уровень        
+duty-ambient-level-crit-enter = Уход в крит (стингер)
+duty-ambient-level-unknown = Неизвестный уровень
 
 # Крит: приглушённые фразы в чате
 duty-crit-distant-speech = [font={ $fontType } size={ $fontSize }][italic]Вы слышите чью-то речь...[/italic][/font]

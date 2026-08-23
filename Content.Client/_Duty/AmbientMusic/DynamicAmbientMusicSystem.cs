@@ -1,4 +1,4 @@
-﻿using Content.Client.Audio;
+using Content.Client.Audio;
 using Content.Client.Gameplay;
 using Content.Shared._Duty.AmbientMusic;
 using Content.Shared._Duty.FireAgony;
@@ -31,7 +31,7 @@ namespace Content.Client._Duty.AmbientMusic;
 /// <summary>
 /// Динамическая фоновая музыка Duty: HP, бой, MobCritical, смерть.
 /// </summary>
-public sealed class DynamicAmbientMusicSystem : EntitySystem
+public sealed partial class DynamicAmbientMusicSystem : EntitySystem
 {
     [Dependency] private readonly IConfigurationManager _config = default!;
     [Dependency] private readonly IPlayerManager _playerManager = default!;
@@ -113,33 +113,73 @@ public sealed class DynamicAmbientMusicSystem : EntitySystem
 
     private const string PrototypeId = "DutyAmbientMusic";
 
+    /// <summary>Сколько раз пробуем вытянуть трек, отличный от играющего, прежде чем сдаться.</summary>
+    private const int PickRetries = 4;
+
+    private static readonly DutyAmbientMusicLevel[] AllLevels = Enum.GetValues<DutyAmbientMusicLevel>();
+
+    // Громкости читаются в HasAnyAudibleVolume на каждом тике — это было 22 GetCVar и свежий
+    // массив от Enum.GetValues в кадр. На все эти cvar'ы мы и так подписаны, так что держим
+    // последние значения у себя.
+    private readonly float[] _levelVolume = new float[AllLevels.Length];
+    private float _globalVolumeMultiplier = 1f;
+    private float _critExtraBoostDb;
+    private float _masterVolume;
+    private float _critDuckGain;
+    private float _critDuckFadeSeconds;
+
+    private DynamicAmbientMusicPrototype? _proto;
+    private bool _protoMissingLogged;
+
     private Action<float> _onMasterVolumeChanged = default!;
-    private Action<float> _onAnyVolumeChanged = default!;
+    private Action<float> _onGlobalVolumeChanged = default!;
+    private Action<float> _onCritBoostChanged = default!;
     private readonly Dictionary<DutyAmbientMusicLevel, Action<float>> _onLevelVolumeChanged = new();
 
     public override void Initialize()
     {
         base.Initialize();
 
-        _onMasterVolumeChanged = _ => UpdateMasterGain();
-        _onAnyVolumeChanged = _ => OnAnyVolumeChanged();
+        _onMasterVolumeChanged = value =>
+        {
+            _masterVolume = value;
+            UpdateMasterGain();
+        };
+        _onGlobalVolumeChanged = value =>
+        {
+            _globalVolumeMultiplier = value;
+            OnAnyVolumeChanged();
+        };
+        _onCritBoostChanged = value =>
+        {
+            _critExtraBoostDb = value;
+            OnAnyVolumeChanged();
+        };
 
         _config.OnValueChanged(DutyCCVars.DynamicAmbientMusicEnabled, OnEnabledChanged, true);
         _config.OnValueChanged(DutyCCVars.DynamicAmbientMusicPeacefulDisabled, OnPeacefulDisabledChanged, true);
         _config.OnValueChanged(DutyCCVars.DynamicAmbientMusicCombatDisabled, OnCombatDisabledChanged, true);
         _config.OnValueChanged(CCVars.AudioMasterVolume, _onMasterVolumeChanged, true);
 
-        foreach (DutyAmbientMusicLevel level in Enum.GetValues<DutyAmbientMusicLevel>())
+        foreach (var level in AllLevels)
         {
-            Action<float> handler = _ => OnAnyVolumeChanged();
+            var index = (int) level;
+            Action<float> handler = value =>
+            {
+                _levelVolume[index] = value;
+                OnAnyVolumeChanged();
+            };
             _onLevelVolumeChanged[level] = handler;
             _config.OnValueChanged(DutyAmbientMusicCVar.GetVolumeCVar(level), handler, true);
         }
 
-        _config.OnValueChanged(DutyCCVars.DynamicAmbientMusicVolume, _onAnyVolumeChanged, true);
-        _config.OnValueChanged(DutyCCVars.DynamicAmbientMusicCritExtraBoostDb, _onAnyVolumeChanged, true);
+        _config.OnValueChanged(DutyCCVars.DynamicAmbientMusicVolume, _onGlobalVolumeChanged, true);
+        _config.OnValueChanged(DutyCCVars.DynamicAmbientMusicCritExtraBoostDb, _onCritBoostChanged, true);
+        _config.OnValueChanged(DutyCCVars.CritAudioDuckGain, OnCritDuckGainChanged, true);
+        _config.OnValueChanged(DutyCCVars.CritAudioDuckFadeSeconds, OnCritDuckFadeChanged, true);
 
         SubscribeNetworkEvent<RoundRestartCleanupEvent>(OnRoundRestart);
+        SubscribeLocalEvent<PrototypesReloadedEventArgs>(OnPrototypesReloaded);
 
         _musicCache = new DutyMusicCache(_resourceCache, _audioManager, Log);
     }
@@ -152,6 +192,7 @@ public sealed class DynamicAmbientMusicSystem : EntitySystem
         StopCritStreams();
         DeleteCritReverbChain();
         _critDuck = 0f;
+        _agonyDuck = 0f;
         UpdateMasterGain(force: true);
         _musicCache.Clear(IsStreamAlive);
     }
@@ -160,13 +201,13 @@ public sealed class DynamicAmbientMusicSystem : EntitySystem
     {
         if (_critAuxUid != null)
         {
-            EntityManager.DeleteEntity(_critAuxUid.Value);
+            Del(_critAuxUid.Value);
             _critAuxUid = null;
         }
 
         if (_critEffectUid != null)
         {
-            EntityManager.DeleteEntity(_critEffectUid.Value);
+            Del(_critEffectUid.Value);
             _critEffectUid = null;
         }
     }
@@ -177,8 +218,10 @@ public sealed class DynamicAmbientMusicSystem : EntitySystem
         _config.UnsubValueChanged(DutyCCVars.DynamicAmbientMusicPeacefulDisabled, OnPeacefulDisabledChanged);
         _config.UnsubValueChanged(DutyCCVars.DynamicAmbientMusicCombatDisabled, OnCombatDisabledChanged);
         _config.UnsubValueChanged(CCVars.AudioMasterVolume, _onMasterVolumeChanged);
-        _config.UnsubValueChanged(DutyCCVars.DynamicAmbientMusicVolume, _onAnyVolumeChanged);
-        _config.UnsubValueChanged(DutyCCVars.DynamicAmbientMusicCritExtraBoostDb, _onAnyVolumeChanged);
+        _config.UnsubValueChanged(DutyCCVars.DynamicAmbientMusicVolume, _onGlobalVolumeChanged);
+        _config.UnsubValueChanged(DutyCCVars.DynamicAmbientMusicCritExtraBoostDb, _onCritBoostChanged);
+        _config.UnsubValueChanged(DutyCCVars.CritAudioDuckGain, OnCritDuckGainChanged);
+        _config.UnsubValueChanged(DutyCCVars.CritAudioDuckFadeSeconds, OnCritDuckFadeChanged);
 
         foreach (var (level, handler) in _onLevelVolumeChanged)
             _config.UnsubValueChanged(DutyAmbientMusicCVar.GetVolumeCVar(level), handler);
@@ -195,7 +238,26 @@ public sealed class DynamicAmbientMusicSystem : EntitySystem
 
     private void OnPeacefulDisabledChanged(bool value) => _peacefulDisabled = value;
     private void OnCombatDisabledChanged(bool value) => _combatDisabled = value;
+    private void OnCritDuckGainChanged(float value) => _critDuckGain = value;
+    private void OnCritDuckFadeChanged(float value) => _critDuckFadeSeconds = value;
     private void OnAnyVolumeChanged() => RefreshActiveStreamVolume();
+
+    /// <summary>
+    /// Прототип кэшируется (его дёргают по несколько раз за тик), так что после хот-релоада
+    /// кэш и уже выбранные кандидаты на прогрев надо выбросить — они могут ссылаться на треки,
+    /// которых в прототипе больше нет.
+    /// </summary>
+    private void OnPrototypesReloaded(PrototypesReloadedEventArgs args)
+    {
+        if (!args.WasModified<DynamicAmbientMusicPrototype>())
+            return;
+
+        _proto = null;
+        _pendingCalmTrack = null;
+        _pendingCombatTrack = null;
+        _pendingCombatLowTrack = null;
+        _pendingCritTrack = null;
+    }
 
     private void OnRoundRestart(RoundRestartCleanupEvent ev)
     {
@@ -225,6 +287,14 @@ public sealed class DynamicAmbientMusicSystem : EntitySystem
         _critEnterReadyTime = TimeSpan.Zero;
         _furySuppressed = false;
         _furyResumeTime = TimeSpan.Zero;
+        _critCurrentEndTime = TimeSpan.Zero;
+        _critNextEndTime = TimeSpan.Zero;
+        _currentTrackPath = null;
+        _critNextTrackPath = null;
+        _pendingCalmTrack = null;
+        _pendingCombatTrack = null;
+        _pendingCombatLowTrack = null;
+        _pendingCritTrack = null;
         DeleteCritReverbChain();
         UpdateMasterGain(force: true);
     }
@@ -244,10 +314,12 @@ public sealed class DynamicAmbientMusicSystem : EntitySystem
 
         var inGameplay = _enabled && _stateManager.CurrentState is GameplayState;
 
+        // Все три выхода раньше глушили только _currentStream. Второй крит-поток (кроссфейд) и
+        // стингер входа в крит оставались играть, а _critPlaying/_critCurrentEndTime — протухшими:
+        // при возврате в игру крит-музыка сразу лезла в кроссфейд по времени из прошлой жизни.
         if (!inGameplay)
         {
-            if (_currentStream != null)
-                StopCurrent(immediate: true);
+            StopEverything();
             UpdateCritAudioDuck(frameTime, inCrit: false);
             return;
         }
@@ -255,14 +327,14 @@ public sealed class DynamicAmbientMusicSystem : EntitySystem
         var player = _playerManager.LocalSession?.AttachedEntity;
         if (player == null)
         {
-            StopCurrent(immediate: true);
+            StopEverything();
             UpdateCritAudioDuck(frameTime, inCrit: false);
             return;
         }
 
         if (!HasAnyAudibleVolume())
         {
-            StopCurrent(immediate: true);
+            StopEverything();
             UpdateCritAudioDuck(frameTime, inCrit: false);
             return;
         }
@@ -291,6 +363,10 @@ public sealed class DynamicAmbientMusicSystem : EntitySystem
             _lastMobState = mobState;
             _wasInCombat = false;
             _wasInCombatLow = false;
+            // В призрака можно попасть и минуя MobState.Dead (гиб, смена тела) — тогда
+            // зациклённый боевой трек остался бы играть, а призрачная музыка легла бы поверх.
+            if (_currentType == DutyMusicType.Combat)
+                StopCurrent(immediate: false);
             if (!_peacefulDisabled)
                 UpdateGhostMusic();
             else if (_currentStream != null)
@@ -336,6 +412,16 @@ public sealed class DynamicAmbientMusicSystem : EntitySystem
         var threshold = proto?.CombatLowHpThreshold ?? 10f;
         var inCombatLow = inCombat && hpPercent < threshold;
 
+        // Боевая музыка зациклена, и ветка «вышел из боя» ниже срабатывает только при !inCombat.
+        // Если игрок выключил боевую музыку, не выходя из боевого режима, трек продолжал крутиться
+        // вечно: мирная логика ниже просто перезаписывала _currentStream поверх него.
+        if (inCombat && _combatDisabled && _currentType == DutyMusicType.Combat)
+        {
+            StopCurrent(immediate: false);
+            _wasInCombat = false;
+            _wasInCombatLow = false;
+        }
+
         if (inCombat && !_combatDisabled)
         {
             if (!_wasInCombat)
@@ -367,13 +453,7 @@ public sealed class DynamicAmbientMusicSystem : EntitySystem
 
         if (!inCombat && _wasInCombat)
         {
-            if (_currentStream != null)
-            {
-                SafeFadeOut(_currentStream, proto?.CombatFadeOutDuration ?? 1.5f);
-                _currentStream = null;
-                _currentType = DutyMusicType.None;
-                _currentLevel = null;
-            }
+            FadeOutCurrent(proto?.CombatFadeOutDuration ?? 1.5f);
             if (!_peacefulDisabled)
                 ScheduleNextTrack();
             _trackPlaying = false;
@@ -427,7 +507,7 @@ public sealed class DynamicAmbientMusicSystem : EntitySystem
     private void UpdateCritAudioDuck(float frameTime, bool inCrit)
     {
         var target = inCrit ? 1f : 0f;
-        var fadeSec = _config.GetCVar(DutyCCVars.CritAudioDuckFadeSeconds);
+        var fadeSec = _critDuckFadeSeconds;
 
         if (fadeSec <= 0f)
             _critDuck = target;
@@ -463,11 +543,14 @@ public sealed class DynamicAmbientMusicSystem : EntitySystem
         // и AudioTab.OnMasterVolumeSliderChanged. Повторное умножение на MasterVolumeMultiplier тут было
         // багом: раздувало мастер-гейн в 3 раза каждый раз, когда крит/агони-дак пересчитывался и пробивал
         // эпсилон-кэш ниже — снаружи это выглядело как "звук стал громче настроенного после сцены агонии".
-        var baseGain = _config.GetCVar(CCVars.AudioMasterVolume);
-        var duckGain = _config.GetCVar(DutyCCVars.CritAudioDuckGain);
-        var gain = baseGain * float.Lerp(1f, duckGain, _critDuck) * float.Lerp(1f, AgonyDuckGain, _agonyDuck);
+        var gain = _masterVolume * float.Lerp(1f, _critDuckGain, _critDuck) * float.Lerp(1f, AgonyDuckGain, _agonyDuck);
 
-        if (!force && MathF.Abs(gain - _lastAppliedMasterGain) < 0.001f)
+        // Мастер-гейн глобальный, и пишем в него не только мы (ADTBossMusicSystem, ползунок в
+        // настройках). Пока наш дак активен, переписываем каждый кадр: иначе чужая запись съедала
+        // бы приглушение до конца сцены — кэш ниже решил бы, что нужное значение уже выставлено.
+        var ducking = _critDuck > 0f || _agonyDuck > 0f;
+
+        if (!force && !ducking && MathF.Abs(gain - _lastAppliedMasterGain) < 0.001f)
             return;
 
         _audioManager.SetMasterGain(gain);
@@ -476,7 +559,7 @@ public sealed class DynamicAmbientMusicSystem : EntitySystem
 
     private void EnsureCritReverbChain()
     {
-        if (_critEffectUid != null && EntityManager.EntityExists(_critEffectUid.Value))
+        if (_critEffectUid != null && Exists(_critEffectUid.Value))
             return;
 
         var (effectEnt, effectComp) = _audio.CreateEffect();
@@ -509,7 +592,7 @@ public sealed class DynamicAmbientMusicSystem : EntitySystem
     {
         if (_currentType == DutyMusicType.Calm && _currentStream != null)
         {
-            if (!EntityManager.EntityExists(_currentStream.Value))
+            if (!Exists(_currentStream.Value))
             {
                 _currentStream = null;
                 _currentType = DutyMusicType.None;
@@ -550,7 +633,9 @@ public sealed class DynamicAmbientMusicSystem : EntitySystem
 
         if (!_critPlaying)
         {
-            var entry = _pendingCritTrack ?? _random.Pick(proto.TracksMobCritical);
+            StopCurrent(immediate: false);
+
+            var entry = _pendingCritTrack ?? PickCritTrack(proto.TracksMobCritical);
             _pendingCritTrack = null;
             _currentStream = PlayMusic(entry.Sound, AudioParams.Default.WithVolume(volume));
 
@@ -576,10 +661,12 @@ public sealed class DynamicAmbientMusicSystem : EntitySystem
         {
             _critCrossfadeStarted = true;
 
-            if (_currentStream != null)
-                SafeFadeOut(_currentStream, (float)Math.Max(timeLeft, 0.5));
+            var fadeOut = (float) Math.Max(timeLeft, 0.5);
 
-            var next = _pendingCritTrack ?? _random.Pick(proto.TracksMobCritical);
+            if (_currentStream != null)
+                SafeFadeOut(_currentStream, fadeOut);
+
+            var next = _pendingCritTrack ?? PickCritTrack(proto.TracksMobCritical);
             _pendingCritTrack = null;
             _critStreamNext = PlayMusic(next.Sound, AudioParams.Default.WithVolume(volume));
 
@@ -678,11 +765,7 @@ public sealed class DynamicAmbientMusicSystem : EntitySystem
             if (_currentStream != null)
             {
                 var proto = GetProto();
-                SafeFadeOut(_currentStream, proto?.CalmFadeOutDuration ?? 3.5f);
-                _currentStream = null;
-                _currentType = DutyMusicType.None;
-                _currentLevel = null;
-                _trackPlaying = false;
+                FadeOutCurrent(proto?.CalmFadeOutDuration ?? 3.5f);
 
                 _stateTransitionEndTime = _timing.CurTime + TimeSpan.FromSeconds(proto?.StateTransitionPause ?? 1.5f);
                 _waitingForStateTransition = true;
@@ -701,7 +784,7 @@ public sealed class DynamicAmbientMusicSystem : EntitySystem
 
         if (_currentType == DutyMusicType.Calm && _currentStream != null)
         {
-            if (!EntityManager.EntityExists(_currentStream.Value))
+            if (!Exists(_currentStream.Value))
             {
                 _currentStream = null;
                 _currentType = DutyMusicType.None;
@@ -763,6 +846,10 @@ public sealed class DynamicAmbientMusicSystem : EntitySystem
 
     private void PlayCalmTrack(SoundSpecifier track, DutyAmbientMusicLevel level, DynamicAmbientMusicPrototype proto)
     {
+        // Все Play* присваивают _currentStream напрямую, так что предыдущий поток обязан быть
+        // уже погашен. Страховка от новых веток, которые про это забудут.
+        StopCurrent(immediate: false);
+
         _currentStream = PlayMusic(track, AudioParams.Default.WithVolume(GetVolumeDb(level)));
 
         if (_currentStream == null)
@@ -788,6 +875,8 @@ public sealed class DynamicAmbientMusicSystem : EntitySystem
         if (proto == null || proto.CombatTracks.Count == 0 || GetVolumeLinear(DutyAmbientMusicLevel.Combat) <= 0f)
             return;
 
+        StopCurrent(immediate: false);
+
         var track = TakePending(ref _pendingCombatTrack, proto.CombatTracks);
         _currentStream = PlayMusic(track,
             AudioParams.Default.WithVolume(GetVolumeDb(DutyAmbientMusicLevel.Combat)).WithLoop(true));
@@ -797,6 +886,10 @@ public sealed class DynamicAmbientMusicSystem : EntitySystem
             _currentTrackPath = GetTrackPath(track);
             _currentType = DutyMusicType.Combat;
             _currentLevel = DutyAmbientMusicLevel.Combat;
+            // combatFadeInDuration был объявлен в прототипе и выставлен в yml, но нигде не
+            // применялся — бой начинался рывком на полной громкости.
+            if (proto.CombatFadeInDuration > 0f)
+                _contentAudio.FadeIn(_currentStream, duration: proto.CombatFadeInDuration);
         }
     }
 
@@ -815,6 +908,8 @@ public sealed class DynamicAmbientMusicSystem : EntitySystem
             return;
         }
 
+        StopCurrent(immediate: false);
+
         var track = TakePending(ref _pendingCombatLowTrack, proto.CombatLowTracks);
         _currentStream = PlayMusic(track,
             AudioParams.Default.WithVolume(GetVolumeDb(DutyAmbientMusicLevel.CombatLow)).WithLoop(true));
@@ -824,6 +919,8 @@ public sealed class DynamicAmbientMusicSystem : EntitySystem
             _currentTrackPath = GetTrackPath(track);
             _currentType = DutyMusicType.Combat;
             _currentLevel = DutyAmbientMusicLevel.CombatLow;
+            if (proto.CombatFadeInDuration > 0f)
+                _contentAudio.FadeIn(_currentStream, duration: proto.CombatFadeInDuration);
         }
     }
 
@@ -845,32 +942,75 @@ public sealed class DynamicAmbientMusicSystem : EntitySystem
         if (_currentStream == null)
             return;
 
-        ClearCritReverb(_currentStream);
-
-        if (immediate)
-        {
-            _audio.Stop(_currentStream);
-        }
-        else
+        if (!immediate)
         {
             var proto = GetProto();
-            var duration = _currentType == DutyMusicType.Combat
+            FadeOutCurrent(_currentType == DutyMusicType.Combat
                 ? proto?.CombatFadeOutDuration ?? 1.5f
-                : proto?.CalmFadeOutDuration ?? 3.5f;
-            SafeFadeOut(_currentStream, duration);
+                : proto?.CalmFadeOutDuration ?? 3.5f);
+            return;
         }
 
-        _currentTrackPath = null;
+        ClearCritReverb(_currentStream);
+        _audio.Stop(_currentStream);
+        ForgetCurrent();
+    }
+
+    /// <summary>
+    /// Гасит текущий поток фейдом. Буфер трека при этом не выгрузится из-под ещё доигрывающего
+    /// источника: <see cref="DutyMusicCache"/> сам помнит, какой аудио-сущности его отдал
+    /// (<see cref="DutyMusicCache.NoteUser"/>), и <see cref="DutyMusicCache.Trim"/> ждёт, пока
+    /// она умрёт — таймеры вроде отдельного «остывающего» слота тут не нужны.
+    /// </summary>
+    private void FadeOutCurrent(float duration)
+    {
+        if (_currentStream == null)
+            return;
+
+        ClearCritReverb(_currentStream);
+        SafeFadeOut(_currentStream, duration);
+        ForgetCurrent();
+    }
+
+    private void ForgetCurrent()
+    {
         _currentStream = null;
+        _currentTrackPath = null;
         _currentType = DutyMusicType.None;
         _currentLevel = null;
         _trackPlaying = false;
     }
 
+    /// <summary>
+    /// Полная тишина: и обычный поток, и оба крит-потока, и тайминги крита. Нужна на выходах,
+    /// после которых мы вообще не знаем, сколько времени пройдёт до возврата — лобби, отвал
+    /// от тела, выкрученные в ноль ползунки.
+    /// </summary>
+    private void StopEverything()
+    {
+        StopCurrent(immediate: true);
+        StopCritStreams();
+        _critCurrentEndTime = TimeSpan.Zero;
+        _critNextEndTime = TimeSpan.Zero;
+        _lastMobState = MobState.Alive;
+    }
+
     private void RefreshActiveStreamVolume()
     {
+        // Второй крит-поток живёт только во время кроссфейда, но ползунок могут двинуть и тогда.
+        if (_critStreamNext != null && TryComp<AudioComponent>(_critStreamNext, out var nextComp))
+            _audio.SetVolume(_critStreamNext.Value, GetVolumeDb(DutyAmbientMusicLevel.MobCritical), nextComp);
+
         if (_currentStream == null || _currentLevel == null)
             return;
+
+        // Ползунок уровня увели в ноль — трек надо гасить, а не выставлять ему «тихую» громкость:
+        // VolumeFromLinear(0) это -32 dB, и после буста уровня (+2…+10 dB) он прекрасно слышен.
+        if (GetVolumeLinear(_currentLevel.Value) <= 0f)
+        {
+            StopCurrent(immediate: false);
+            return;
+        }
 
         if (!TryComp<AudioComponent>(_currentStream, out var comp))
             return;
@@ -880,11 +1020,11 @@ public sealed class DynamicAmbientMusicSystem : EntitySystem
 
     private float GetVolumeLinear(DutyAmbientMusicLevel level)
     {
-        var linear = _config.GetCVar(DutyAmbientMusicCVar.GetVolumeCVar(level));
-        var global = _config.GetCVar(DutyCCVars.DynamicAmbientMusicVolume);
-        if (global > 0f)
-            linear *= Math.Clamp(global, 0f, 1f);
-        return linear;
+        var linear = _levelVolume[(int) level];
+        // Ноль здесь означает «множитель не задан», а не «тишина» — cvar устаревший.
+        if (_globalVolumeMultiplier > 0f)
+            linear *= Math.Clamp(_globalVolumeMultiplier, 0f, 1f);
+        return MathF.Max(linear, 0f);
     }
 
     private float GetVolumeDb(DutyAmbientMusicLevel level)
@@ -899,7 +1039,7 @@ public sealed class DynamicAmbientMusicSystem : EntitySystem
         {
             case DutyAmbientMusicLevel.MobCritical:
                 db += proto?.MobCritVolumeBoost ?? 0f;
-                db += _config.GetCVar(DutyCCVars.DynamicAmbientMusicCritExtraBoostDb);
+                db += _critExtraBoostDb;
                 return db;
             case DutyAmbientMusicLevel.Death:
                 db += proto?.DeathVolumeBoost ?? 0f;
@@ -916,7 +1056,7 @@ public sealed class DynamicAmbientMusicSystem : EntitySystem
 
     private bool HasAnyAudibleVolume()
     {
-        foreach (DutyAmbientMusicLevel level in Enum.GetValues<DutyAmbientMusicLevel>())
+        foreach (var level in AllLevels)
         {
             if (GetVolumeLinear(level) > 0f)
                 return true;
@@ -959,6 +1099,11 @@ public sealed class DynamicAmbientMusicSystem : EntitySystem
         if (!IsStreamAlive(_critStreamNext))
             _critNextTrackPath = null;
 
+        // Стингер входа в крит — одноразовый звук: движок удаляет его сам, а ссылка висела бы
+        // до конца раунда и уехала бы в SafeFadeOut на несуществующей сущности.
+        if (_critEnterStream != null && !Exists(_critEnterStream.Value))
+            _critEnterStream = null;
+
         _keepWarm.Clear();
         AddWarmPath(_currentTrackPath);
         AddWarmPath(_critNextTrackPath);
@@ -999,15 +1144,15 @@ public sealed class DynamicAmbientMusicSystem : EntitySystem
         if (_pendingCalmTrack == null || _pendingCalmState != _currentHealthState)
         {
             var tracks = GetTracksForState(_currentHealthState, proto);
-            _pendingCalmTrack = tracks.Count > 0 ? _random.Pick(tracks) : null;
+            _pendingCalmTrack = tracks.Count > 0 ? PickTrack(tracks) : null;
             _pendingCalmState = _currentHealthState;
         }
 
         if (_pendingCombatTrack == null && proto.CombatTracks.Count > 0)
-            _pendingCombatTrack = _random.Pick(proto.CombatTracks);
+            _pendingCombatTrack = PickTrack(proto.CombatTracks);
 
         if (_pendingCombatLowTrack == null && proto.CombatLowTracks.Count > 0)
-            _pendingCombatLowTrack = _random.Pick(proto.CombatLowTracks);
+            _pendingCombatLowTrack = PickTrack(proto.CombatLowTracks);
 
         var critLikely = _lastMobState == MobState.Critical
                          || _currentHealthState is HealthMusicState.Awful or HealthMusicState.Critical;
@@ -1015,7 +1160,7 @@ public sealed class DynamicAmbientMusicSystem : EntitySystem
         if (critLikely)
         {
             if (_pendingCritTrack == null && proto.TracksMobCritical.Count > 0)
-                _pendingCritTrack = _random.Pick(proto.TracksMobCritical);
+                _pendingCritTrack = PickCritTrack(proto.TracksMobCritical);
         }
         else if (_lastMobState != MobState.Critical)
         {
@@ -1026,9 +1171,45 @@ public sealed class DynamicAmbientMusicSystem : EntitySystem
     /// <summary>Берёт предвыбранный трек и сбрасывает слот, чтобы прогрелся следующий.</summary>
     private SoundSpecifier TakePending(ref SoundSpecifier? pending, List<SoundSpecifier> fallback)
     {
-        var track = pending ?? _random.Pick(fallback);
+        var track = pending ?? PickTrack(fallback);
         pending = null;
         return track;
+    }
+
+    /// <summary>
+    /// Случайный трек, по возможности не тот, что звучит прямо сейчас. Плейлисты пересекаются
+    /// (один и тот же файл лежит в нескольких списках, а в tracksMobCritical есть прямой дубль),
+    /// и без этого кроссфейд трека сам в себя звучит как заедание.
+    /// </summary>
+    private SoundSpecifier PickTrack(List<SoundSpecifier> tracks)
+    {
+        if (tracks.Count <= 1 || _currentTrackPath == null)
+            return _random.Pick(tracks);
+
+        for (var i = 0; i < PickRetries; i++)
+        {
+            var track = _random.Pick(tracks);
+            if (GetTrackPath(track) != _currentTrackPath)
+                return track;
+        }
+
+        return _random.Pick(tracks);
+    }
+
+    /// <inheritdoc cref="PickTrack"/>
+    private DutyCritTrack PickCritTrack(List<DutyCritTrack> tracks)
+    {
+        if (tracks.Count <= 1 || _currentTrackPath == null)
+            return _random.Pick(tracks);
+
+        for (var i = 0; i < PickRetries; i++)
+        {
+            var track = _random.Pick(tracks);
+            if (GetTrackPath(track.Sound) != _currentTrackPath)
+                return track;
+        }
+
+        return _random.Pick(tracks);
     }
 
     private static ResPath? GetTrackPath(SoundSpecifier? track)
@@ -1094,11 +1275,28 @@ public sealed class DynamicAmbientMusicSystem : EntitySystem
     private bool IsInCombatMode(EntityUid entity)
         => TryComp<CombatModeComponent>(entity, out var combat) && combat.IsInCombatMode;
 
+    /// <summary>
+    /// Прототип спрашивают по несколько раз за тик (GetVolumeDb, StopCurrent, ScheduleNextTrack),
+    /// поэтому держим его у себя. Кэш сбрасывает <see cref="OnPrototypesReloaded"/>.
+    /// </summary>
     private DynamicAmbientMusicPrototype? GetProto()
     {
+        if (_proto != null)
+            return _proto;
+
         if (_protoManager.TryIndex<DynamicAmbientMusicPrototype>(PrototypeId, out var proto))
-            return proto;
-        Logger.Warning($"[DynamicAmbientMusic] Прототип '{PrototypeId}' не найден!");
+        {
+            _proto = proto;
+            return _proto;
+        }
+
+        // Раньше это был Logger.Warning из Update — 60 одинаковых строк в секунду.
+        if (!_protoMissingLogged)
+        {
+            _protoMissingLogged = true;
+            Log.Warning($"[DynamicAmbientMusic] Прототип '{PrototypeId}' не найден!");
+        }
+
         return null;
     }
 

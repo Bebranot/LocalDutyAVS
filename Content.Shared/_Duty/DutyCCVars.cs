@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2025 LocalDuty <https://github.com/Bebranot/LocalDuty_Reserve>
+﻿// SPDX-FileCopyrightText: 2025 LocalDuty <https://github.com/Bebranot/LocalDuty_Reserve>
 //
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
@@ -57,9 +57,13 @@ public sealed class DutyCCVars
     public static readonly CVarDef<float> DynamicAmbientMusicVolumeDeath =
         CVarDef.Create("duty.ambient_music_volume_death", 1f, CVar.ARCHIVE | CVar.CLIENTONLY);
 
-    /// <summary>Громкость звука входа в крит (CritEnterSound). Громче остальных по умолчанию.</summary>
+    /// <summary>
+    /// Громкость звука входа в крит (CritEnterSound). Как и остальные уровни — 0..1, чтобы
+    /// процентный ползунок в настройках не срезал значение; «громче остальных» задаётся
+    /// через <c>critEnterVolumeBoost</c> в прототипе.
+    /// </summary>
     public static readonly CVarDef<float> DynamicAmbientMusicVolumeCritEnter =
-        CVarDef.Create("duty.ambient_music_volume_crit_enter", 1.4f, CVar.ARCHIVE | CVar.CLIENTONLY);
+        CVarDef.Create("duty.ambient_music_volume_crit_enter", 1f, CVar.ARCHIVE | CVar.CLIENTONLY);
 
     /// <summary>Доп. усиление critmode-музыки (dB), поверх boost из yml.</summary>
     public static readonly CVarDef<float> DynamicAmbientMusicCritExtraBoostDb =

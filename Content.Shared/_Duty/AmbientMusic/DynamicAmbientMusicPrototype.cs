@@ -1,4 +1,4 @@
-    // SPDX-FileCopyrightText: 2025 LocalDuty <https://github.com/Bebranot/LocalDuty_Reserve>
+﻿// SPDX-FileCopyrightText: 2025 LocalDuty <https://github.com/Bebranot/LocalDuty_Reserve>
 //
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
@@ -89,7 +89,7 @@ public sealed partial class DynamicAmbientMusicPrototype : IPrototype
 
     /// <summary>Усиление громкости звука входа в крит (в dB). Не зависит от <see cref="VolumeBoostDb"/> — крит-стингер намеренно не участвует в общем бусте музыки.</summary>
     [DataField]
-    public float CritEnterVolumeBoost = 2f;
+    public float CritEnterVolumeBoost = 4.9f;
 
     [DataField] public float CalmMinInterval = 5f;
     [DataField] public float CalmMaxInterval = 50f;

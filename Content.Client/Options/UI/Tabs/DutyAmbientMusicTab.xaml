@@ -2,12 +2,16 @@
          xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
          xmlns:ui="clr-namespace:Content.Client.Options.UI">
     <BoxContainer Orientation="Vertical">
-        <BoxContainer Name="SlidersContainer" Orientation="Vertical" Margin="8 8 8 4" VerticalExpand="True" />
-        <BoxContainer Orientation="Vertical" Margin="8 4 8 8">
-            <CheckBox Name="DisableAllCheckBox" Text="{Loc 'ui-options-duty-ambient-disable-all'}" />
-            <CheckBox Name="DisablePeacefulCheckBox" Text="{Loc 'ui-options-duty-ambient-disable-peaceful'}" />
-            <CheckBox Name="DisableCombatCheckBox" Text="{Loc 'ui-options-duty-ambient-disable-combat'}" />
-        </BoxContainer>
+        <ScrollContainer VerticalExpand="True" HScrollEnabled="False">
+            <BoxContainer Orientation="Vertical">
+                <BoxContainer Name="SlidersContainer" Orientation="Vertical" Margin="8 8 8 4" />
+                <BoxContainer Orientation="Vertical" Margin="8 4 8 8">
+                    <CheckBox Name="EnableAllCheckBox" Text="{Loc 'ui-options-duty-ambient-enable-all'}" />
+                    <CheckBox Name="DisablePeacefulCheckBox" Text="{Loc 'ui-options-duty-ambient-disable-peaceful'}" />
+                    <CheckBox Name="DisableCombatCheckBox" Text="{Loc 'ui-options-duty-ambient-disable-combat'}" />
+                </BoxContainer>
+            </BoxContainer>
+        </ScrollContainer>
         <ui:OptionsTabControlRow Name="Control" Access="Public" />
     </BoxContainer>
 </Control>
