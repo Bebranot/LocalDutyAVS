@@ -1,0 +1,10 @@
+<codeAlpha:DutyCodeAlphaTimerWidget xmlns="https://spacestation14.io"
+                                    xmlns:codeAlpha="clr-namespace:Content.Client._Duty.CodeAlpha"
+                                    Visible="False">
+    <PanelContainer Name="Panel" Access="Public">
+        <BoxContainer Orientation="Vertical" Margin="14 6 14 6">
+            <Label Name="TitleLabel" Access="Public" HorizontalAlignment="Center" />
+            <Label Name="TimerLabel" Access="Public" HorizontalAlignment="Center" />
+        </BoxContainer>
+    </PanelContainer>
+</codeAlpha:DutyCodeAlphaTimerWidget>
