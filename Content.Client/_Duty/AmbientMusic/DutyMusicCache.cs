@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2026 LocalDuty <https://github.com/Bebranot/LocalDuty_Reserve>
+﻿// SPDX-FileCopyrightText: 2026 LocalDuty <https://github.com/Bebranot/LocalDuty_Reserve>
 //
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
@@ -40,6 +40,12 @@ public sealed class DutyMusicCache
 
     private readonly Dictionary<ResPath, Entry> _loaded = new();
 
+    /// <summary>
+    /// Пути, которые не грузятся (нет файла, битый ogg). Помним, чтобы не долбиться в них каждую
+    /// секунду и не блокировать этим выгрузку остального.
+    /// </summary>
+    private readonly HashSet<ResPath> _failed = new();
+
     public DutyMusicCache(IResourceCache resourceCache, IAudioManager audioManager, ISawmill sawmill)
     {
         _resourceCache = resourceCache;
@@ -60,8 +66,11 @@ public sealed class DutyMusicCache
         if (_loaded.TryGetValue(path, out var entry))
             return entry.Stream;
 
-        return Load(path);
+        return _failed.Contains(path) ? null : Load(path);
     }
+
+    /// <summary>Лежит ли трек в памяти прямо сейчас, то есть можно ли начать его без задержки.</summary>
+    public bool IsWarm(ResPath path) => _loaded.ContainsKey(path);
 
     /// <summary>
     /// Запоминает, какой аудио-сущности отдали буфер: пока она жива, трек выгружать нельзя.
@@ -73,14 +82,15 @@ public sealed class DutyMusicCache
     }
 
     /// <summary>
-    /// Догружает максимум один ещё не загруженный трек из списка и возвращает true, если что-то
+    /// Догружает максимум один ещё не прогретый трек из списка и возвращает true, если что-то
     /// сделал. По одному за вызов — чтобы не сложить в один кадр несколько декодирований.
+    /// Порядок списка = приоритет: первым греется то, чей холодный старт больнее всего.
     /// </summary>
     public bool WarmNext(IEnumerable<ResPath> paths)
     {
         foreach (var path in paths)
         {
-            if (_loaded.ContainsKey(path))
+            if (_loaded.ContainsKey(path) || _failed.Contains(path))
                 continue;
 
             Load(path);
@@ -131,6 +141,7 @@ public sealed class DutyMusicCache
         if (!_resourceCache.ContentFileExists(path))
         {
             _sawmill.Warning($"Трек не найден: {path}");
+            _failed.Add(path);
             return null;
         }
 
@@ -151,6 +162,7 @@ public sealed class DutyMusicCache
         catch (Exception e)
         {
             _sawmill.Warning($"Не удалось загрузить трек '{path}': {e.Message}");
+            _failed.Add(path);
             return null;
         }
     }

@@ -1,4 +1,4 @@
-using Content.Client.Audio;
+﻿using Content.Client.Audio;
 using Content.Client.Gameplay;
 using Content.Shared._Duty.AmbientMusic;
 using Content.Shared._Duty.FireAgony;
@@ -81,9 +81,19 @@ public sealed partial class DynamicAmbientMusicSystem : EntitySystem
     // как игрок вообще куда-то зашёл. Теперь держим прогретыми только те треки, которые реально
     // могут заиграть следующими; подробности в <see cref="DutyMusicCache"/>.
     private DutyMusicCache _musicCache = default!;
+
+    /// <summary>Что нельзя выгружать. Порядок не важен, важен только состав.</summary>
     private readonly HashSet<ResPath> _keepWarm = new();
+
+    /// <summary>То же самое, но по убыванию приоритета прогрева — см. <see cref="UpdateWarmup"/>.</summary>
+    private readonly List<ResPath> _warmOrder = new();
+
     private TimeSpan _nextWarmupCheck = TimeSpan.Zero;
-    private static readonly TimeSpan WarmupCheckInterval = TimeSpan.FromSeconds(1);
+
+    // Вне раунда (главное меню, лобби) греемся чаще: там просадка кадра никому не мешает, зато к
+    // началу раунда всё нужное уже в памяти. В бою наоборот — редко и по одному треку.
+    private static readonly TimeSpan WarmupIntervalInGame = TimeSpan.FromSeconds(1);
+    private static readonly TimeSpan WarmupIntervalIdle = TimeSpan.FromSeconds(0.2);
 
     private SoundSpecifier? _pendingCalmTrack;
     private HealthMusicState _pendingCalmState;
@@ -308,7 +318,8 @@ public sealed partial class DynamicAmbientMusicSystem : EntitySystem
 
         if (_timing.CurTime >= _nextWarmupCheck)
         {
-            _nextWarmupCheck = _timing.CurTime + WarmupCheckInterval;
+            var idle = _stateManager.CurrentState is not GameplayState;
+            _nextWarmupCheck = _timing.CurTime + (idle ? WarmupIntervalIdle : WarmupIntervalInGame);
             UpdateWarmup();
         }
 
@@ -877,7 +888,7 @@ public sealed partial class DynamicAmbientMusicSystem : EntitySystem
 
         StopCurrent(immediate: false);
 
-        var track = TakePending(ref _pendingCombatTrack, proto.CombatTracks);
+        var track = TakeWarmPending(ref _pendingCombatTrack, proto.CombatTracks);
         _currentStream = PlayMusic(track,
             AudioParams.Default.WithVolume(GetVolumeDb(DutyAmbientMusicLevel.Combat)).WithLoop(true));
 
@@ -910,7 +921,7 @@ public sealed partial class DynamicAmbientMusicSystem : EntitySystem
 
         StopCurrent(immediate: false);
 
-        var track = TakePending(ref _pendingCombatLowTrack, proto.CombatLowTracks);
+        var track = TakeWarmPending(ref _pendingCombatLowTrack, proto.CombatLowTracks);
         _currentStream = PlayMusic(track,
             AudioParams.Default.WithVolume(GetVolumeDb(DutyAmbientMusicLevel.CombatLow)).WithLoop(true));
 
@@ -1066,8 +1077,8 @@ public sealed partial class DynamicAmbientMusicSystem : EntitySystem
 
     /// <summary>
     /// Держит прогретыми только те треки, которые могут заиграть следующими, и выгружает
-    /// остальные. Вызывается раз в <see cref="WarmupCheckInterval"/>, а не каждый кадр:
-    /// выбор трека — это Pick по списку, а Trim перебирает наш словарь.
+    /// остальные. Вызывается по таймеру, а не каждый кадр: выбор трека — это Pick по списку,
+    /// а Trim перебирает наш словарь.
     /// </summary>
     private void UpdateWarmup()
     {
@@ -1104,18 +1115,26 @@ public sealed partial class DynamicAmbientMusicSystem : EntitySystem
         if (_critEnterStream != null && !Exists(_critEnterStream.Value))
             _critEnterStream = null;
 
+        // Порядок = приоритет прогрева, и он не случаен. Вход в бой — единственный переход,
+        // который случается внезапно и посреди стрельбы, поэтому боевые треки греются первыми.
+        // Спокойный трек может позволить себе подождать: он включается по таймеру, из тишины.
         _keepWarm.Clear();
-        AddWarmPath(_currentTrackPath);
-        AddWarmPath(_critNextTrackPath);
-        AddWarmPath(GetTrackPath(_pendingCalmTrack));
+        _warmOrder.Clear();
         AddWarmPath(GetTrackPath(_pendingCombatTrack));
         AddWarmPath(GetTrackPath(_pendingCombatLowTrack));
         AddWarmPath(GetTrackPath(_pendingCritTrack?.Sound));
+        AddWarmPath(_currentTrackPath);
+        AddWarmPath(_critNextTrackPath);
+        AddWarmPath(GetTrackPath(_pendingCalmTrack));
 
-        // Строго по одному треку за проход: декодирование ogg стоит ~0.6 с, и складывать
-        // несколько штук в один кадр — гарантированная просадка.
-        _musicCache.WarmNext(_keepWarm);
-        _musicCache.Trim(_keepWarm, IsStreamAlive);
+        // Строго по одному треку за проход: декодирование ogg стоит от 0.3 до 1.9 с (десятиминутный
+        // SAW_2), и складывать несколько штук в один кадр — гарантированная просадка.
+        //
+        // Пока хоть что-то ещё не прогрето, ничего не выгружаем: иначе, поменяв боевого кандидата,
+        // мы бы выбросили старый трек до того, как загрузился новый, и внезапный бой в эту секунду
+        // упёрся бы в холодную загрузку.
+        if (!_musicCache.WarmNext(_warmOrder))
+            _musicCache.Trim(_keepWarm, IsStreamAlive);
     }
 
     /// <summary>
@@ -1131,8 +1150,8 @@ public sealed partial class DynamicAmbientMusicSystem : EntitySystem
 
     private void AddWarmPath(ResPath? path)
     {
-        if (path != null)
-            _keepWarm.Add(path.Value);
+        if (path != null && _keepWarm.Add(path.Value))
+            _warmOrder.Add(path.Value);
     }
 
     /// <summary>
@@ -1166,6 +1185,27 @@ public sealed partial class DynamicAmbientMusicSystem : EntitySystem
         {
             _pendingCritTrack = null;
         }
+    }
+
+    /// <summary>
+    /// То же, что <see cref="TakePending"/>, но для боя: если предвыбранный кандидат ещё не
+    /// прогрет, играем любой уже лежащий в памяти трек из того же списка, а кандидата оставляем
+    /// догреваться. Вход в бой — единственный внезапный переход, и холодная загрузка обходится
+    /// там в 0.3–1.9 с замершего кадра; повтор трека не стоит ничего.
+    /// </summary>
+    private SoundSpecifier TakeWarmPending(ref SoundSpecifier? pending, List<SoundSpecifier> pool)
+    {
+        if (GetTrackPath(pending) is { } pendingPath && _musicCache.IsWarm(pendingPath))
+            return TakePending(ref pending, pool);
+
+        foreach (var candidate in pool)
+        {
+            if (GetTrackPath(candidate) is { } path && _musicCache.IsWarm(path))
+                return candidate;
+        }
+
+        // Ничего тёплого нет вообще — деваться некуда, грузим на месте.
+        return TakePending(ref pending, pool);
     }
 
     /// <summary>Берёт предвыбранный трек и сбрасывает слот, чтобы прогрелся следующий.</summary>
