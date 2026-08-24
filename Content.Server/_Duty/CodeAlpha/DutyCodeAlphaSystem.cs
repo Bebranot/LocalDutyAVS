@@ -58,6 +58,15 @@ public sealed class DutyCodeAlphaSystem : EntitySystem
     private PendingAlpha? _pending;
 
     private EntityUid? _activeStation;
+
+    /// <summary>
+    /// Протокол уже отрабатывал в этом раунде (включался или получил вето). Без защёлки
+    /// оперативники могли бы жать пульт повторно: WarDeclaratorSystem поднимает событие на
+    /// каждое нажатие, а NukeopsRuleSystem после первого раза статус уже не меняет — значит
+    /// приходил бы всё тот же WarReady, и хосту сыпались бы новые окна, а снятый зелёным
+    /// код можно было бы включить заново.
+    /// </summary>
+    private bool _firedThisRound;
     private MapId _activeMap = MapId.Nullspace;
     private bool _rpEndSent;
 
@@ -89,10 +98,10 @@ public sealed class DutyCodeAlphaSystem : EntitySystem
         if (ev.Status != WarConditionStatus.WarReady)
             return;
 
-        if (_pending != null || _activeStation != null)
+        if (_pending != null || _activeStation != null || _firedThisRound)
             return;
 
-        if (!TryGetWarDeadline(ev.DeclaratorEntity, out var station, out var deadline, out var declaredAt))
+        if (!TryGetWarDeadline(out var station, out var deadline, out var declaredAt))
             return;
 
         var now = _timing.CurTime;
@@ -135,6 +144,7 @@ public sealed class DutyCodeAlphaSystem : EntitySystem
         if (!ev.Confirmed)
         {
             _pending = null;
+            _firedThisRound = true;
             _chat.SendAdminAnnouncement(Loc.GetString("duty-code-alpha-admin-vetoed"));
             return;
         }
@@ -160,6 +170,7 @@ public sealed class DutyCodeAlphaSystem : EntitySystem
         _activeStation = null;
         _activeMap = MapId.Nullspace;
         _rpEndSent = false;
+        _firedThisRound = false;
         _nextTick = TimeSpan.Zero;
         _nextGrant = TimeSpan.Zero;
     }
@@ -168,6 +179,8 @@ public sealed class DutyCodeAlphaSystem : EntitySystem
 
     public override void Update(float frameTime)
     {
+        base.Update(frameTime);
+
         var now = _timing.CurTime;
         if (now < _nextTick)
             return;
@@ -235,6 +248,7 @@ public sealed class DutyCodeAlphaSystem : EntitySystem
 
         _activeStation = station;
         _activeMap = GetStationMap(station);
+        _firedThisRound = true;
         _rpEndSent = false;
         _nextGrant = TimeSpan.Zero;
 
@@ -292,15 +306,22 @@ public sealed class DutyCodeAlphaSystem : EntitySystem
     /// </summary>
     private void GrantPass()
     {
+        // Гриды станции могут появиться позже её сущности, поэтому карту доразрешаем здесь,
+        // иначе одна неудачная попытка в момент включения навсегда оставила бы всех без доступа.
+        if (_activeMap == MapId.Nullspace && _activeStation is { } stationUid)
+            _activeMap = GetStationMap(stationUid);
+
         if (_activeMap == MapId.Nullspace)
             return;
 
         var query = EntityQueryEnumerator<MindContainerComponent, TransformComponent>();
         var granted = new List<EntityUid>();
 
-        while (query.MoveNext(out var uid, out _, out var xform))
+        while (query.MoveNext(out var uid, out var mind, out var xform))
         {
-            if (xform.MapID != _activeMap)
+            // HasMind, а не просто наличие компонента: MindContainerComponent висит и на пустых
+            // телах, и на животных, которыми можно управлять. Доступ нужен людям, а не обезьянам.
+            if (!mind.HasMind || xform.MapID != _activeMap)
                 continue;
 
             if (HasComp<DutyCodeAlphaAccessComponent>(uid)
@@ -327,11 +348,9 @@ public sealed class DutyCodeAlphaSystem : EntitySystem
 
     /// <summary>
     /// Находит активное правило ЯО и вычисляет момент реального прилёта. Станция берётся из
-    /// правила; если его цель не задана — по гриду, с которого объявили войну, а в крайнем случае
-    /// по первой станции с уровнем тревоги.
+    /// правила, а если его цель не задана — первая настоящая станция с уровнем тревоги.
     /// </summary>
     private bool TryGetWarDeadline(
-        EntityUid declarator,
         out EntityUid station,
         out TimeSpan deadline,
         out TimeSpan declaredAt)
@@ -339,6 +358,8 @@ public sealed class DutyCodeAlphaSystem : EntitySystem
         station = default;
         deadline = default;
         declaredAt = default;
+
+        var found = false;
 
         var query = EntityQueryEnumerator<ActiveGameRuleComponent, NukeopsRuleComponent>();
         while (query.MoveNext(out _, out _, out var nukeops))
@@ -348,6 +369,7 @@ public sealed class DutyCodeAlphaSystem : EntitySystem
 
             declaredAt = declared;
             deadline = declared + nukeops.WarNukieArriveDelay;
+            found = true;
 
             if (nukeops.TargetStation is { } target && Exists(target))
             {
@@ -358,18 +380,15 @@ public sealed class DutyCodeAlphaSystem : EntitySystem
             break;
         }
 
-        if (deadline == default)
+        if (!found)
             return false;
 
-        if (_station.GetOwningStation(declarator) is { } owning)
-        {
-            station = owning;
-            return true;
-        }
-
+        // Фолбэка «станция под пультом» здесь быть не может: пульт — стартовый предмет
+        // оперативника, а NukeopsRuleSystem принимает объявление только с карты аванпоста.
+        // То есть под пультом либо ничего, либо чужой грид. Берём первую настоящую станцию.
         foreach (var candidate in _station.GetStations())
         {
-            if (!HasComp<AlertLevelComponent>(candidate))
+            if (!HasComp<AlertLevelComponent>(candidate) || !HasComp<StationDataComponent>(candidate))
                 continue;
 
             station = candidate;
