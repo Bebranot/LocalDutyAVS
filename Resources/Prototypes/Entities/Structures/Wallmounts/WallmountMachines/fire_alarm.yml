@@ -59,6 +59,7 @@
       violet: fire_1
       yellow: fire_1
       delta: fire_3
+      alpha: fire_3 # _Duty: без этой строки табло показывало бы зелёный при коде Альфа
   - type: UserInterface
     interfaces:
       enum.WiresUiKey.Key:
