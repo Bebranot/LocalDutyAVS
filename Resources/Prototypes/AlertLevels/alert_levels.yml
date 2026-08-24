@@ -107,6 +107,20 @@
       forceEnableEmergencyLights: true
       shuttleTime: 1200
     #ADT end
+    # _Duty: протокол «Альфа» — автоматический ответ на объявление войны ядерными оперативниками.
+    # Выставляется только кодом (DutyCodeAlphaSystem), поэтому selectable: false + disableSelection.
+    # disableSelection не «залипает» навсегда: IsSelectable считается от ТЕКУЩЕГО уровня, так что
+    # после возврата на green консоль связи снова работает.
+    alpha:
+      announcement: alert-level-alpha-announcement
+      selectable: false
+      disableSelection: true
+      sound:
+        path: /Audio/ADT/Announcements/announce_syndi.ogg
+      color: "#8A0303"
+      emergencyLightColor: "#8A0303"
+      forceEnableEmergencyLights: true
+      shuttleTime: 1200
     #ADT start
     # kappa:
     #   announcement: alert-level-kappa-announcement
