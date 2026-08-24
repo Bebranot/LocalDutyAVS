@@ -8,6 +8,7 @@ using Content.Shared.GameTicking;
 using Content.Shared.NukeOps;
 using Robust.Client.Player;
 using Robust.Shared.Audio;
+using Robust.Shared.Audio.Components;
 using Robust.Shared.Audio.Systems;
 using Robust.Shared.Configuration;
 using Robust.Shared.Player;
@@ -65,8 +66,13 @@ public sealed class DutyCodeAlphaMusicSystem : EntitySystem
     {
         _volumeSlider = SharedAudioSystem.GainToVolume(value);
 
-        if (_stream != null)
-            _audio.SetVolume(_stream, _volumeSlider);
+        // TryComp обязателен: трек доигрывает до конца сам, движок удаляет его сущность, а _stream
+        // ещё держит её uid. SharedAudioSystem.SetVolume зовёт Resolve БЕЗ подавления лога, поэтому
+        // без этой проверки любое движение ползунка после конца трека сыпало бы ошибки в консоль.
+        if (!TryComp<AudioComponent>(_stream, out var comp))
+            return;
+
+        _audio.SetVolume(_stream, _volumeSlider, comp);
     }
 
     private void OnAlphaShutdown(Entity<DutyCodeAlphaComponent> ent, ref ComponentShutdown args)
