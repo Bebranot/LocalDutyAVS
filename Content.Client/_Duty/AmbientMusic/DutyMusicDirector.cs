@@ -52,7 +52,8 @@ public sealed class DutyMusicDirector : EntitySystem
     {
         base.Initialize();
 
-        SubscribeLocalEvent<RoundRestartCleanupEvent>(OnRoundRestart);
+        // Сервер шлёт это событие клиентам по сети: SubscribeLocalEvent тут не сработал бы никогда.
+        SubscribeNetworkEvent<RoundRestartCleanupEvent>(OnRoundRestart);
     }
 
     private void OnRoundRestart(RoundRestartCleanupEvent args)

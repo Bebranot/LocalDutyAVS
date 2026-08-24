@@ -48,7 +48,8 @@ public sealed class DutyCodeAlphaMusicSystem : EntitySystem
 
         _cfg.OnValueChanged(CCVars.AmbientMusicVolume, OnVolumeChanged, true);
 
-        SubscribeLocalEvent<RoundRestartCleanupEvent>(OnRoundRestart);
+        // Сервер шлёт это событие клиентам по сети: SubscribeLocalEvent тут не сработал бы никогда.
+        SubscribeNetworkEvent<RoundRestartCleanupEvent>(OnRoundRestart);
         SubscribeLocalEvent<DutyCodeAlphaComponent, ComponentShutdown>(OnAlphaShutdown);
     }
 
