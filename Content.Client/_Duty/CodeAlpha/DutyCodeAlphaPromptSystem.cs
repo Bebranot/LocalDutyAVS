@@ -53,6 +53,8 @@ public sealed class DutyCodeAlphaPromptSystem : EntitySystem
 
     public override void Update(float frameTime)
     {
+        base.Update(frameTime);
+
         if (_window == null)
             return;
 

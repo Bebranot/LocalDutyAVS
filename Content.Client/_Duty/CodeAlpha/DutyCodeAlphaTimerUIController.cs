@@ -45,7 +45,13 @@ public sealed class DutyCodeAlphaTimerUIController : UIController
         if (!TryGetAlpha(out var alpha))
         {
             if (_widget != null)
+            {
                 _widget.Visible = false;
+
+                // Виджет переживает раунд вместе с экраном, поэтому скрытие надо снимать здесь:
+                // иначе спрятавший панель игрок в следующем раунде не увидел бы её до 10:00.
+                _widget.Dismissed = false;
+            }
 
             _passedThresholds.Clear();
             return;

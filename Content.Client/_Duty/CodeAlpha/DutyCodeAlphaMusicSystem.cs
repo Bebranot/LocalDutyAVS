@@ -79,6 +79,11 @@ public sealed class DutyCodeAlphaMusicSystem : EntitySystem
         Reset();
     }
 
+    /// <remarks>
+    /// Именно FrameUpdate, а не Update: клиентский Update переигрывается на каждом прогоне
+    /// предсказания, и одноразовый запуск трека мог бы сработать несколько раз за тик.
+    /// FrameUpdate вызывается ровно раз на кадр и предсказанием не переигрывается.
+    /// </remarks>
     public override void FrameUpdate(float frameTime)
     {
         base.FrameUpdate(frameTime);

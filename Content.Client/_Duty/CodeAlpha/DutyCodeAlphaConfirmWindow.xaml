@@ -1,8 +1,8 @@
 <controls:FancyWindow xmlns="https://spacestation14.io"
                       xmlns:controls="clr-namespace:Content.Client.UserInterface.Controls"
                       Title="{Loc 'duty-code-alpha-prompt-title'}"
-                      MinSize="420 220"
-                      SetSize="420 220">
+                      MinSize="460 300"
+                      SetSize="460 300">
     <BoxContainer Orientation="Vertical" Margin="8" SeparationOverride="8">
         <RichTextLabel Name="BodyLabel" Access="Public" VerticalExpand="True" />
         <Label Name="CountdownLabel" Access="Public" HorizontalAlignment="Center" />
