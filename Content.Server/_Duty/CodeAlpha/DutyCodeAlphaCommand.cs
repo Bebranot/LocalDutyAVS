@@ -87,16 +87,18 @@ public sealed class DutyCodeAlphaCommand : LocalizedEntityCommands
             return;
         }
 
+        // Станцию берём у самого протокола, а не под админом: Deactivate её обнулит, а команду
+        // могут звать из агоста в космосе, где GetOwningStation вернёт null.
+        var station = _alpha.ActiveStation;
+
         // Сначала снимаем доступы, потом двигаем уровень: SetLevel поднимет
         // AlertLevelChangedEvent, но к этому моменту снимать уже нечего.
-        var station = TryResolveStation(shell, out var resolved) ? resolved : EntityUid.Invalid;
-
         _alpha.Deactivate();
 
-        if (station.IsValid())
+        if (station is { } target)
         {
             _alertLevel.SetLevel(
-                station,
+                target,
                 DutyCodeAlphaVisuals.GreenLevel,
                 playSound: true,
                 announce: true,

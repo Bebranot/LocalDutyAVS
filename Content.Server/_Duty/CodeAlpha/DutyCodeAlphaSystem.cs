@@ -66,6 +66,9 @@ public sealed class DutyCodeAlphaSystem : EntitySystem
 
     public bool IsActive => _activeStation != null;
 
+    /// <summary>Станция, на которой сейчас действует протокол, если он действует.</summary>
+    public EntityUid? ActiveStation => _activeStation;
+
     public override void Initialize()
     {
         base.Initialize();
