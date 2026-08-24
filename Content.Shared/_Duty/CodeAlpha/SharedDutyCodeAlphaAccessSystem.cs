@@ -28,7 +28,12 @@ public sealed class SharedDutyCodeAlphaAccessSystem : EntitySystem
 
     /// <summary>
     /// Уровни доступа, которые код «Альфа» НЕ выдаёт: антагонисты, ЦентКом, космическая полиция,
-    /// торговцы и тюрьма. Экипаж получает станцию, но не чужие фракции и не выход из пермы.
+    /// торговцы, тюрьма и силиконовая «личность».
+    ///
+    /// Про силикон отдельно: <c>Borg</c> и <c>BasicSilicon</c> людям не открывают ничего, зато
+    /// <c>TurretTargetSettingsSystem.EntityIsTargetForTurret</c> проверяет их ПЕРВЫМИ и обрывает
+    /// проверку — человек с этими тегами перестал бы быть целью вообще для всех турелей в игре,
+    /// потому что каждая из них их исключает. Не выдаём, чтобы Альфа не трогала логику турелей.
     /// </summary>
     public static readonly ProtoId<AccessLevelPrototype>[] Excluded =
     [
@@ -48,12 +53,17 @@ public sealed class SharedDutyCodeAlphaAccessSystem : EntitySystem
         "SpaceSecMaintenance",
         "SpaceSecOfficial",
         "SpaceSecSecurity",
+        "Borg",
+        "BasicSilicon",
+        "Ipc",
     ];
 
     private HashSet<ProtoId<AccessLevelPrototype>>? _cached;
 
     public override void Initialize()
     {
+        base.Initialize();
+
         SubscribeLocalEvent<DutyCodeAlphaAccessComponent, GetAccessTagsEvent>(OnGetAccessTags);
 
         _proto.PrototypesReloaded += OnPrototypesReloaded;
@@ -81,7 +91,7 @@ public sealed class SharedDutyCodeAlphaAccessSystem : EntitySystem
     /// Все уровни доступа за вычетом <see cref="Excluded"/>. Считается лениво один раз и
     /// сбрасывается при горячей перезагрузке прототипов.
     /// </summary>
-    public HashSet<ProtoId<AccessLevelPrototype>> GetAlphaAccess()
+    private HashSet<ProtoId<AccessLevelPrototype>> GetAlphaAccess()
     {
         if (_cached != null)
             return _cached;
