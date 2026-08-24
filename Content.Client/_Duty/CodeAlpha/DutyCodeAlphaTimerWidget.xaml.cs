@@ -31,7 +31,12 @@ public sealed partial class DutyCodeAlphaTimerWidget : UIWidget
     /// <summary>Игрок спрятал панель вручную. Сбрасывается контроллером на порогах.</summary>
     public bool Dismissed;
 
-    private TimeSpan _lastRightClick = TimeSpan.MinValue;
+    /// <summary>
+    /// Время предыдущего ПКМ. Именно nullable, а не TimeSpan.MinValue: разность
+    /// <c>RealTime - TimeSpan.MinValue</c> не влезает в long, и TimeSpan бросил бы
+    /// OverflowException на первом же клике.
+    /// </summary>
+    private TimeSpan? _lastRightClick;
 
     public DutyCodeAlphaTimerWidget()
     {
@@ -76,11 +81,11 @@ public sealed partial class DutyCodeAlphaTimerWidget : UIWidget
         args.Handle();
 
         var now = _timing.RealTime;
-        if (now - _lastRightClick <= DutyCodeAlphaVisuals.DoubleClickWindow)
+        if (_lastRightClick is { } last && now - last <= DutyCodeAlphaVisuals.DoubleClickWindow)
         {
             Dismissed = true;
             Visible = false;
-            _lastRightClick = TimeSpan.MinValue;
+            _lastRightClick = null;
             return;
         }
 
