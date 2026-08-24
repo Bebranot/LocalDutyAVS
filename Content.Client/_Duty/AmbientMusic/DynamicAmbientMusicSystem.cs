@@ -45,6 +45,7 @@ public sealed partial class DynamicAmbientMusicSystem : EntitySystem
     [Dependency] private readonly IResourceCache _resourceCache = default!;
     [Dependency] private readonly IAudioManager _audioManager = default!;
     [Dependency] private readonly ContentAudioSystem _contentAudio = default!;
+    [Dependency] private readonly DutyMusicDirector _director = default!;
 
     private bool _wasInCombat;
     private bool _wasInCombatLow;
@@ -73,6 +74,10 @@ public sealed partial class DynamicAmbientMusicSystem : EntitySystem
     // Fury-16: пока идёт эффект стимулятора, динамическая музыка выключена (у Fury своя музыка фаз),
     // и возвращается только через FuryResumeDelay после окончания эффекта.
     private bool _furySuppressed;
+
+    // _Duty: то же самое, но от арбитра музыки — объявления кодов и ванильный/лавалендский
+    // эмбиент глушат динамическую музыку, пока звучат.
+    private bool _directorSuppressed;
     private TimeSpan _furyResumeTime = TimeSpan.Zero;
     private static readonly TimeSpan FuryResumeDelay = TimeSpan.FromSeconds(20);
 
@@ -297,6 +302,7 @@ public sealed partial class DynamicAmbientMusicSystem : EntitySystem
         _critEnterReadyTime = TimeSpan.Zero;
         _furySuppressed = false;
         _furyResumeTime = TimeSpan.Zero;
+        _directorSuppressed = false;
         _critCurrentEndTime = TimeSpan.Zero;
         _critNextEndTime = TimeSpan.Zero;
         _currentTrackPath = null;
@@ -351,6 +357,9 @@ public sealed partial class DynamicAmbientMusicSystem : EntitySystem
         }
 
         if (UpdateFurySuppression(player.Value, frameTime))
+            return;
+
+        if (UpdateDirectorSuppression(player.Value, frameTime))
             return;
 
         var mobState = GetMobState(player.Value);
@@ -506,6 +515,37 @@ public sealed partial class DynamicAmbientMusicSystem : EntitySystem
             _nextTrackTime = _timing.CurTime;
             return false;
         }
+
+        if (_currentStream != null)
+            StopCurrent(immediate: false);
+        StopCritStreams();
+        UpdateCritAudioDuck(frameTime, inCrit: false);
+        _lastMobState = GetMobState(player);
+        return true;
+    }
+
+    /// <summary>
+    /// Глушит динамическую музыку, пока играет что-то приоритетнее: объявление кода, ванильный
+    /// или лавалендский эмбиент. Раньше все три слоя звучали одновременно.
+    /// Возвращает <c>true</c>, если музыка сейчас подавлена и остальную логику
+    /// <see cref="Update"/> надо пропустить.
+    /// </summary>
+    private bool UpdateDirectorSuppression(EntityUid player, float frameTime)
+    {
+        if (_director.CanPlay(DutyMusicDirector.DynamicMusicPriority))
+        {
+            if (!_directorSuppressed)
+                return false;
+
+            // Приоритетный звук закончился — возвращаем музыку сразу, без ожидания трека.
+            _directorSuppressed = false;
+            _trackPlaying = false;
+            _waitingForStateTransition = false;
+            _nextTrackTime = _timing.CurTime;
+            return false;
+        }
+
+        _directorSuppressed = true;
 
         if (_currentStream != null)
             StopCurrent(immediate: false);

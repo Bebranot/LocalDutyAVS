@@ -1,0 +1,27 @@
+# _Duty: приоритеты звука для DutyMusicDirector.
+# Пока играет ГЛОБАЛЬНЫЙ звук из этих папок, динамическая музыка (приоритет 0) молчит.
+# Позиционный эмбиент комнат сюда не попадает — арбитр смотрит только на глобальные потоки.
+
+- type: dutyMusicPriority
+  id: DutyMusicCodeAlpha
+  priority: 100
+  holdAfter: 3
+  pathPrefixes:
+    - /Audio/_Duty/CodeAlpha/
+
+- type: dutyMusicPriority
+  id: DutyMusicAnnouncements
+  priority: 50
+  holdAfter: 2
+  pathPrefixes:
+    - /Audio/_Duty/Announcement/
+    - /Audio/ADT/Announcements/
+    - /Audio/Announcements/
+
+# Ванильная фоновая музыка, включая лавалендскую (AmbienceMining) и станционную.
+- type: dutyMusicPriority
+  id: DutyMusicVanillaAmbience
+  priority: 20
+  holdAfter: 2
+  pathPrefixes:
+    - /Audio/Ambience/
