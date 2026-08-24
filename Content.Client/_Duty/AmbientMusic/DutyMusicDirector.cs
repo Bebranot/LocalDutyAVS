@@ -117,11 +117,13 @@ public sealed class DutyMusicDirector : EntitySystem
 
     private bool TryMatch(string file, out DutyMusicPriorityPrototype match)
     {
+        var normalized = Normalize(file);
+
         foreach (var rule in _proto.EnumeratePrototypes<DutyMusicPriorityPrototype>())
         {
             foreach (var prefix in rule.PathPrefixes)
             {
-                if (!file.StartsWith(prefix, StringComparison.Ordinal))
+                if (!normalized.StartsWith(Normalize(prefix), StringComparison.Ordinal))
                     continue;
 
                 match = rule;
@@ -131,5 +133,14 @@ public sealed class DutyMusicDirector : EntitySystem
 
         match = default!;
         return false;
+    }
+
+    /// <summary>
+    /// Приводит путь к сравнимому виду. Ведущий слэш срезается с обеих сторон: движок хранит путь
+    /// так же, как он записан в YAML, а вся фича молча перестала бы работать из-за одного символа.
+    /// </summary>
+    private static string Normalize(string path)
+    {
+        return path.StartsWith('/') ? path[1..] : path;
     }
 }

@@ -1,6 +1,7 @@
 # _Duty: приоритеты звука для DutyMusicDirector.
-# Пока играет ГЛОБАЛЬНЫЙ звук из этих папок, динамическая музыка (приоритет 0) молчит.
+# Пока играет ГЛОБАЛЬНЫЙ звук из этого списка, динамическая музыка (приоритет 0) молчит.
 # Позиционный эмбиент комнат сюда не попадает — арбитр смотрит только на глобальные потоки.
+# pathPrefixes сравнивается по началу строки, поэтому годится и папка, и полный путь к файлу.
 
 - type: dutyMusicPriority
   id: DutyMusicCodeAlpha
@@ -18,10 +19,30 @@
     - /Audio/ADT/Announcements/
     - /Audio/Announcements/
 
-# Ванильная фоновая музыка, включая лавалендскую (AmbienceMining) и станционную.
+# Лавалендский и пещерный эмбиент — коллекция AmbienceMining.
+# Перечислен пофайлово, а не папкой, намеренно: в /Audio/Ambience/ вперемешку лежит и станционный
+# гул ambigen* (15 треков по ~19 с). Папкой целиком он глушил бы боевую и крит-музыку примерно в
+# 30% случаев, а просили заглушать только лаваленд.
+# ambimaint1.ogg сюда НЕ входит — он играет и в станционных техах (коллекция AmbienceMaintenance).
+# При изменении AmbienceMining в Resources/Prototypes/audio.yml обновить и этот список.
 - type: dutyMusicPriority
-  id: DutyMusicVanillaAmbience
+  id: DutyMusicLavalandAmbience
   priority: 20
   holdAfter: 2
   pathPrefixes:
-    - /Audio/Ambience/
+    - /Audio/Ambience/ambicave.ogg
+    - /Audio/Ambience/ambidanger.ogg
+    - /Audio/Ambience/ambidanger2.ogg
+    - /Audio/Ambience/ambilava1.ogg
+    - /Audio/Ambience/ambilava2.ogg
+    - /Audio/Ambience/ambilava3.ogg
+    - /Audio/Ambience/ambimine.ogg
+    - /Audio/Ambience/ambiruin.ogg
+    - /Audio/Ambience/ambiruin2.ogg
+    - /Audio/Ambience/ambiruin3.ogg
+    - /Audio/Ambience/ambiruin4.ogg
+    - /Audio/Ambience/ambiruin5.ogg
+    - /Audio/Ambience/ambiruin6.ogg
+    - /Audio/Ambience/ambiruin7.ogg
+    - /Audio/Ambience/unanchored.ogg
+    - /Audio/Ambience/voyage_neverending.ogg
