@@ -2,6 +2,7 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
+using Content.Shared.Random.Rules;
 using Robust.Shared.Prototypes;
 
 namespace Content.Shared._Duty.AmbientMusic;
@@ -12,6 +13,10 @@ namespace Content.Shared._Duty.AmbientMusic;
 /// Пока играет глобальный звук, чей путь начинается с одного из <see cref="PathPrefixes"/>,
 /// динамическая музыка молчит. Список задаётся в YAML, чтобы добавить новый «глушащий» звук
 /// можно было без правок C#.
+///
+/// Необязательное поле <see cref="Rules"/> сужает правило до условия на игрока. Без него путь к
+/// файлу — плохой ключ для эмбиента: один и тот же <c>ambiruin6.ogg</c> лежит и в лавалендской
+/// коллекции, и в морговой, так что «глушить по папке» цепляло бы станцию.
 /// </summary>
 [Prototype("dutyMusicPriority")]
 public sealed partial class DutyMusicPriorityPrototype : IPrototype
@@ -39,4 +44,12 @@ public sealed partial class DutyMusicPriorityPrototype : IPrototype
     /// </summary>
     [DataField]
     public TimeSpan HoldAfter = TimeSpan.FromSeconds(2);
+
+    /// <summary>
+    /// Условие на локального игрока, при котором правило вообще применяется. Ссылается на
+    /// обычный <see cref="RulesPrototype"/> — тот же самый, которым ваниль решает, какой эмбиент
+    /// включить. Пусто — правило действует всегда.
+    /// </summary>
+    [DataField]
+    public ProtoId<RulesPrototype>? Rules;
 }

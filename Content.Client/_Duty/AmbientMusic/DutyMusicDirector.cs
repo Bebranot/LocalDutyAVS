@@ -4,6 +4,8 @@
 
 using Content.Shared._Duty.AmbientMusic;
 using Content.Shared.GameTicking;
+using Content.Shared.Random.Rules;
+using Robust.Client.Player;
 using Robust.Shared.Audio.Components;
 using Robust.Shared.Prototypes;
 using Robust.Shared.Timing;
@@ -30,7 +32,9 @@ namespace Content.Client._Duty.AmbientMusic;
 public sealed class DutyMusicDirector : EntitySystem
 {
     [Dependency] private readonly IGameTiming _timing = default!;
+    [Dependency] private readonly IPlayerManager _player = default!;
     [Dependency] private readonly IPrototypeManager _proto = default!;
+    [Dependency] private readonly RulesSystem _rules = default!;
 
     /// <summary>Приоритет динамической музыки. Всё, что выше, её глушит.</summary>
     public const int DynamicMusicPriority = 0;
@@ -73,7 +77,11 @@ public sealed class DutyMusicDirector : EntitySystem
     /// <summary>Наибольший приоритет среди звучащих прямо сейчас глобальных звуков.</summary>
     public int GetCurrentPriority()
     {
-        var now = _timing.CurTime;
+        // RealTime, а не CurTime. Решение чисто презентационное, детерминизм ему не нужен, а вот
+        // зависеть от клиентского CurTime опасно: он переигрывается предсказанием, и кэш мог бы
+        // «уехать в будущее». Сейчас единственный вызывающий сам отсекает повторные прогоны через
+        // IsFirstTimePredicted, но арбитр не должен на это закладываться.
+        var now = _timing.RealTime;
         if (now < _nextRecheck)
             return _cachedPriority;
 
@@ -121,18 +129,40 @@ public sealed class DutyMusicDirector : EntitySystem
 
         foreach (var rule in _proto.EnumeratePrototypes<DutyMusicPriorityPrototype>())
         {
+            var hit = false;
             foreach (var prefix in rule.PathPrefixes)
             {
                 if (!normalized.StartsWith(Normalize(prefix), StringComparison.Ordinal))
                     continue;
 
-                match = rule;
-                return true;
+                hit = true;
+                break;
             }
+
+            if (!hit || !RulesAllow(rule))
+                continue;
+
+            match = rule;
+            return true;
         }
 
         match = default!;
         return false;
+    }
+
+    /// <summary>
+    /// Проверяет условие правила на локальном игроке. Без привязки к игроку правило действует
+    /// всегда — так работают объявления и музыка Альфы, их слышно откуда угодно.
+    /// </summary>
+    private bool RulesAllow(DutyMusicPriorityPrototype rule)
+    {
+        if (rule.Rules is not { } rulesId)
+            return true;
+
+        if (_player.LocalEntity is not { } player)
+            return false;
+
+        return _proto.TryIndex(rulesId, out var rules) && _rules.IsTrue(player, rules);
     }
 
     /// <summary>
