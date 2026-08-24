@@ -14,7 +14,7 @@
     anchored: true
   - type: Clickable
   - type: Sprite
-    sprite: Corvax/Objects/Decoration/garlands.yml
+    sprite: Corvax/Objects/Decoration/garlands.rsi
     drawdepth: Overdoors
     state: base
   - type: SpriteFade
