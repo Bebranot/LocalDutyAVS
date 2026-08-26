@@ -115,7 +115,8 @@ public sealed class DutyCodeAlphaSystem : EntitySystem
 
         if (_pending != null || _activeStation != null || _firedThisRound)
         {
-            Log.Info("Code Alpha: протокол уже отрабатывал в этом раунде, повторный запуск пропущен.");
+            Log.Info($"Code Alpha: повторный запуск пропущен (ожидает ответа: {_pending != null}, "
+                     + $"уже активен: {_activeStation != null}, отрабатывал в раунде: {_firedThisRound}).");
             return;
         }
 
@@ -239,6 +240,10 @@ public sealed class DutyCodeAlphaSystem : EntitySystem
 
         _pending = null;
 
+        // Защёлка ставится именно здесь, на пути объявления войны: повторное нажатие пульта
+        // приходит с тем же WarReady, и без неё снятый зелёным код включался бы заново.
+        _firedThisRound = true;
+
         if (!Activate(pending.Station, pending.Deadline))
             Log.Error($"Code Alpha: подтверждение получено, но включить протокол на {ToPrettyString(pending.Station)} не удалось.");
     }
@@ -275,6 +280,11 @@ public sealed class DutyCodeAlphaSystem : EntitySystem
     /// <summary>
     /// Включает протокол на указанной станции. Публичный — этим же пользуется команда
     /// <c>dutycodealpha</c>.
+    ///
+    /// Защёлку «отработал в этом раунде» здесь НЕ ставит: она защищает от повторного объявления
+    /// войны и принадлежит именно тому пути. Если ставить её тут, то ручной прогон командой
+    /// навсегда выключал бы автоматический триггер до конца раунда — а это ровно то, что делает
+    /// админ, когда проверяет фичу перед раундом.
     /// </summary>
     public bool Activate(EntityUid station, TimeSpan? deadline = null)
     {
@@ -285,7 +295,6 @@ public sealed class DutyCodeAlphaSystem : EntitySystem
 
         _activeStation = station;
         _activeMap = GetStationMap(station);
-        _firedThisRound = true;
         _rpEndSent = false;
         _nextGrant = TimeSpan.Zero;
 
