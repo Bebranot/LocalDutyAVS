@@ -2,82 +2,70 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
+using Content.Server.Access.Systems;
 using Content.Server.Administration.Logs;
-using Content.Server.Administration.Managers;
 using Content.Server.AlertLevel;
 using Content.Server.Chat.Managers;
-using Content.Server.GameTicking.Rules;
 using Content.Server.GameTicking.Rules.Components;
-using Content.Server.NukeOps;
 using Content.Shared._Duty.CodeAlpha;
-using Content.Shared.Administration;
 using Content.Shared.Chat;
 using Content.Shared.Database;
 using Content.Shared.GameTicking;
 using Content.Shared.GameTicking.Components;
 using Content.Shared.Ghost;
+using Content.Shared.Hands.EntitySystems;
+using Content.Shared.Inventory;
 using Content.Shared.Mind.Components;
 using Content.Shared.NukeOps;
-using Content.Shared.Station;
 using Content.Shared.Station.Components;
 using Robust.Server.Player;
 using Robust.Shared.Map;
-using Robust.Shared.Player;
 using Robust.Shared.Random;
 using Robust.Shared.Timing;
 
 namespace Content.Server._Duty.CodeAlpha;
 
 /// <summary>
-/// _Duty: протокол «Альфа» — ответ станции на объявление войны ядерными оперативниками.
+/// _Duty: протокол «Альфа» — режим, в котором станция признана зоной боевых действий.
 ///
-/// Порядок работы: объявлена война, админам уходит окно подтверждения, через минуту (или сразу
-/// после ответа, но не раньше чем через <see cref="DutyCodeAlphaVisuals.AnnounceDelay"/> после
-/// сирены самого объявления войны) станция получает кроваво-красный уровень тревоги, все на её
-/// карте, кроме оперативников, получают полный доступ, а на экраны приходит отсчёт до реального
-/// разблокирования шаттла ЯО.
+/// Включается вручную командой <c>dutycodealpha on</c>: станция получает кроваво-красный уровень
+/// тревоги, ID-карты всех, кто на её карте (кроме оперативников), переводятся в аварийный режим и
+/// открывают любую дверь, а на экраны приходит отсчёт. Снимается возвратом на зелёный код.
 ///
-/// Кнопка админа — право ВЕТО, а не условие запуска: если админов нет в игре или они молчат,
-/// протокол включается сам. Иначе фича была бы мёртвой в половине раундов, а станция молча теряла
-/// бы минуты подготовки, потому что ванильный локаут шаттла уже идёт.
+/// Автозапуска по объявлению войны нет намеренно: решение «сейчас начинается тот самый раунд» —
+/// админское, а не механическое. Отсчёт при этом всё равно привязывается к настоящему прилёту
+/// оперативников, если война уже объявлена (см. <see cref="TryGetWarDeadline"/>).
 /// </summary>
 public sealed class DutyCodeAlphaSystem : EntitySystem
 {
     [Dependency] private readonly IAdminLogManager _adminLogger = default!;
-    [Dependency] private readonly IAdminManager _admin = default!;
     [Dependency] private readonly IChatManager _chat = default!;
     [Dependency] private readonly IGameTiming _timing = default!;
     [Dependency] private readonly IPlayerManager _player = default!;
     [Dependency] private readonly IRobustRandom _random = default!;
     [Dependency] private readonly AlertLevelSystem _alertLevel = default!;
-    [Dependency] private readonly SharedStationSystem _station = default!;
+    [Dependency] private readonly IdCardSystem _idCard = default!;
+    [Dependency] private readonly InventorySystem _inventory = default!;
+    [Dependency] private readonly SharedHandsSystem _hands = default!;
 
     private static readonly Color NoticeColor = Color.Gray;
 
-    /// <summary>
-    /// Право, дающее окно вето. Раньше «хостом» считался один аккаунт из
-    /// <c>console.login_host_user</c> — то есть на сервере, где этот CVar не выставлен или дежурный
-    /// зашёл под другим именем, окно не видел никто и протокол молча ждал минуту таймаута.
-    /// Право нельзя «забыть настроить», поэтому спрашиваем именно его. Флаг тот же, что и у
-    /// команды <c>dutycodealpha</c>: кто может включить руками, тот может и отменить.
-    /// </summary>
-    private const AdminFlags HostFlag = AdminFlags.Fun;
-
-    /// <summary>Запрос, ожидающий ответа хоста. Одновременно может быть только один.</summary>
-    private PendingAlpha? _pending;
+    /// <summary>Отсчёт, когда войны нет и привязываться не к чему.</summary>
+    private static readonly TimeSpan DefaultCountdown = TimeSpan.FromMinutes(15);
 
     private EntityUid? _activeStation;
-
-    /// <summary>
-    /// Протокол уже отрабатывал в этом раунде (включался или получил вето). Без защёлки
-    /// оперативники могли бы жать пульт повторно: WarDeclaratorSystem поднимает событие на
-    /// каждое нажатие, а NukeopsRuleSystem после первого раза статус уже не меняет — значит
-    /// приходил бы всё тот же WarReady, и хосту сыпались бы новые окна, а снятый зелёным
-    /// код можно было бы включить заново.
-    /// </summary>
-    private bool _firedThisRound;
     private MapId _activeMap = MapId.Nullspace;
     private bool _rpEndSent;
+
+    /// <summary>
+    /// Кому уже сказали, что доступ выдан. Нужен отдельно от списка помеченных карт: доступ
+    /// живёт на карте, а сообщения читают люди. По нему же уходят реплики последней минуты и
+    /// строка об отзыве.
+    /// </summary>
+    private readonly HashSet<EntityUid> _granted = new();
+
+    /// <summary>Кому уже сказали, что карты при себе нет. Чтобы не повторять это каждые две секунды.</summary>
+    private readonly HashSet<EntityUid> _warnedNoCard = new();
 
     private TimeSpan _nextTick;
     private TimeSpan _nextGrant;
@@ -91,115 +79,11 @@ public sealed class DutyCodeAlphaSystem : EntitySystem
     {
         base.Initialize();
 
-        // Подписка нужна только для диагностики отказа: сам протокол запускается опросом
-        // WarDeclaredTime в Update. after: NukeopsRuleSystem — чтобы в лог попал статус уже
-        // после того, как ваниль решила, принимать объявление или нет.
-        SubscribeLocalEvent<WarDeclaredEvent>(OnWarDeclared, after: [typeof(NukeopsRuleSystem)]);
         SubscribeLocalEvent<AlertLevelChangedEvent>(OnAlertLevelChanged);
         SubscribeLocalEvent<RoundRestartCleanupEvent>(OnRoundRestart);
-
-        SubscribeNetworkEvent<DutyCodeAlphaReplyEvent>(OnHostReply);
     }
 
     #region Event handlers
-
-    private void OnWarDeclared(ref WarDeclaredEvent ev)
-    {
-        // Само событие протокол больше не запускает — этим занимается TryStartPending по
-        // WarDeclaredTime. Здесь остался только разбор случая, когда ваниль объявление НЕ
-        // приняла: тогда не будет ни объявления войны, ни блокировки шаттла, ни Альфы, и без
-        // этой строки причина тишины выглядит как поломка Альфы.
-        if (ev.Status == WarConditionStatus.WarReady)
-            return;
-
-        Log.Info($"Code Alpha: пульт нажат, но объявление войны не принято (статус: "
-                 + $"{ev.Status?.ToString() ?? "не выставлен"}). Это решает NukeopsRuleSystem: "
-                 + "пустой статус означает, что он не нашёл подходящего активного правила ЯО "
-                 + "(чаще всего пульт на другой карте, чем грид правила). Протокол ждёт "
-                 + "WarDeclaredTime у правила и сам включится, как только оно появится.");
-    }
-
-    /// <summary>
-    /// Запускает ожидание подтверждения, если война объявлена, а протокол ещё не отрабатывал.
-    ///
-    /// Опрос, а не подписка на <see cref="WarDeclaredEvent"/>: у события есть статус, который
-    /// проставляет <c>NukeopsRuleSystem</c>, и завязка на него делала протокол заложником и
-    /// порядка обработчиков, и того, каким путём война объявлена. Настоящий признак войны один —
-    /// <c>WarDeclaredTime</c> у активного правила ЯО, по нему же ваниль режет FTL шаттла.
-    /// Задержка до секунды роли не играет: объявление всё равно ждёт
-    /// <see cref="DutyCodeAlphaVisuals.AnnounceDelay"/> после сирены.
-    /// </summary>
-    private void TryStartPending(TimeSpan now)
-    {
-        if (_pending != null || _activeStation != null || _firedThisRound)
-            return;
-
-        if (!TryGetWarDeadline(out var station, out var deadline, out var declaredAt))
-            return;
-
-        _pending = new PendingAlpha
-        {
-            Station = station,
-            Deadline = deadline,
-            EarliestAnnounce = declaredAt + DutyCodeAlphaVisuals.AnnounceDelay,
-            ExpiresAt = now + DutyCodeAlphaVisuals.ConfirmTimeout,
-        };
-
-        Log.Info($"Code Alpha: война объявлена, дедлайн прилёта {deadline}, станция {ToPrettyString(station)}.");
-
-        var hosts = GetHosts();
-        if (hosts.Count == 0)
-        {
-            _chat.SendAdminAnnouncement(Loc.GetString("duty-code-alpha-admin-no-host"));
-            return;
-        }
-
-        RaiseNetworkEvent(
-            new DutyCodeAlphaPromptEvent(
-                Loc.GetString("duty-code-alpha-prompt-body"),
-                _pending.Value.ExpiresAt),
-            Filter.Empty().AddPlayers(hosts));
-
-        _chat.SendAdminAnnouncement(Loc.GetString("duty-code-alpha-admin-prompt-sent", ("count", hosts.Count)));
-    }
-
-    /// <summary>
-    /// Админы с правом вето, которые сейчас в игре. Окно уходит всем сразу: первый ответивший
-    /// решает, остальные окна закроются сами по таймеру.
-    /// </summary>
-    private List<ICommonSession> GetHosts()
-    {
-        var hosts = new List<ICommonSession>();
-        foreach (var admin in _admin.ActiveAdmins)
-        {
-            if (_admin.GetAdminData(admin)?.HasFlag(HostFlag) == true)
-                hosts.Add(admin);
-        }
-
-        return hosts;
-    }
-
-    private void OnHostReply(DutyCodeAlphaReplyEvent ev, EntitySessionEventArgs args)
-    {
-        if (_pending is not { } pending)
-            return;
-
-        // Ответ принимается только от того, у кого есть само право вето: клиент шлёт это событие
-        // сам, и без проверки любой игрок мог бы отменить протокол подделанным пакетом.
-        if (_admin.GetAdminData(args.SenderSession)?.HasFlag(HostFlag) != true)
-            return;
-
-        if (!ev.Confirmed)
-        {
-            _pending = null;
-            _firedThisRound = true;
-            _chat.SendAdminAnnouncement(Loc.GetString("duty-code-alpha-admin-vetoed"));
-            return;
-        }
-
-        pending.Confirmed = true;
-        _pending = pending;
-    }
 
     private void OnAlertLevelChanged(AlertLevelChangedEvent args)
     {
@@ -214,11 +98,11 @@ public sealed class DutyCodeAlphaSystem : EntitySystem
 
     private void OnRoundRestart(RoundRestartCleanupEvent args)
     {
-        _pending = null;
         _activeStation = null;
         _activeMap = MapId.Nullspace;
         _rpEndSent = false;
-        _firedThisRound = false;
+        _granted.Clear();
+        _warnedNoCard.Clear();
         _nextTick = TimeSpan.Zero;
         _nextGrant = TimeSpan.Zero;
     }
@@ -229,36 +113,16 @@ public sealed class DutyCodeAlphaSystem : EntitySystem
     {
         base.Update(frameTime);
 
+        if (_activeStation == null)
+            return;
+
         var now = _timing.CurTime;
         if (now < _nextTick)
             return;
 
         _nextTick = now + TimeSpan.FromSeconds(1);
 
-        TryStartPending(now);
-        UpdatePending(now);
         UpdateActive(now);
-    }
-
-    private void UpdatePending(TimeSpan now)
-    {
-        if (_pending is not { } pending)
-            return;
-
-        // Ждём либо явного «да», либо истечения минуты — но в обоих случаях не перебиваем
-        // сирену объявления войны.
-        var decided = pending.Confirmed || now >= pending.ExpiresAt;
-        if (!decided || now < pending.EarliestAnnounce)
-            return;
-
-        _pending = null;
-
-        // Защёлка ставится именно здесь, на пути объявления войны: повторное нажатие пульта
-        // приходит с тем же WarReady, и без неё снятый зелёным код включался бы заново.
-        _firedThisRound = true;
-
-        if (!Activate(pending.Station, pending.Deadline))
-            Log.Error($"Code Alpha: подтверждение получено, но включить протокол на {ToPrettyString(pending.Station)} не удалось.");
     }
 
     private void UpdateActive(TimeSpan now)
@@ -291,15 +155,10 @@ public sealed class DutyCodeAlphaSystem : EntitySystem
     #region Activation
 
     /// <summary>
-    /// Включает протокол на указанной станции. Публичный — этим же пользуется команда
+    /// Включает протокол на указанной станции. Публичный — этим пользуется команда
     /// <c>dutycodealpha</c>.
-    ///
-    /// Защёлку «отработал в этом раунде» здесь НЕ ставит: она защищает от повторного объявления
-    /// войны и принадлежит именно тому пути. Если ставить её тут, то ручной прогон командой
-    /// навсегда выключал бы автоматический триггер до конца раунда — а это ровно то, что делает
-    /// админ, когда проверяет фичу перед раундом.
     /// </summary>
-    public bool Activate(EntityUid station, TimeSpan? deadline = null)
+    public bool Activate(EntityUid station)
     {
         if (_activeStation != null || !Exists(station))
             return false;
@@ -309,10 +168,18 @@ public sealed class DutyCodeAlphaSystem : EntitySystem
         _activeStation = station;
         _activeMap = GetStationMap(station);
         _rpEndSent = false;
+        _nextTick = TimeSpan.Zero;
         _nextGrant = TimeSpan.Zero;
+        _granted.Clear();
+        _warnedNoCard.Clear();
 
         var alpha = EnsureComp<DutyCodeAlphaComponent>(station);
-        alpha.Deadline = deadline ?? now + TimeSpan.FromMinutes(15);
+
+        // Если война уже объявлена, отсчёт должен совпадать с настоящим разблокированием шаттла
+        // ЯО, а не идти сам по себе. Нет войны — просто пятнадцать минут от включения.
+        alpha.Deadline = TryGetWarDeadline(out var warDeadline)
+            ? warDeadline
+            : now + DefaultCountdown;
         alpha.ActivatedAt = now;
         Dirty(station, alpha);
 
@@ -327,15 +194,15 @@ public sealed class DutyCodeAlphaSystem : EntitySystem
         GrantPass();
 
         _adminLogger.Add(LogType.Action, LogImpact.High,
-            $"Code Alpha activated on {ToPrettyString(station)}, nukie arrival at {alpha.Deadline}");
+            $"Code Alpha activated on {ToPrettyString(station)}, countdown ends at {alpha.Deadline}");
 
         return true;
     }
 
     /// <summary>
-    /// Снимает протокол: отбирает доступы и убирает панель. Уровень тревоги здесь НЕ трогается —
-    /// его меняет тот, кто снял код (админ через <c>setalertlevel green</c>), иначе получилась бы
-    /// рекурсия через <see cref="AlertLevelChangedEvent"/>.
+    /// Снимает протокол: гасит аварийный режим у всех помеченных карт и убирает панель. Уровень
+    /// тревоги здесь НЕ трогается — его меняет тот, кто снял код, иначе получилась бы рекурсия
+    /// через <see cref="AlertLevelChangedEvent"/>.
     /// </summary>
     public void Deactivate()
     {
@@ -349,19 +216,30 @@ public sealed class DutyCodeAlphaSystem : EntitySystem
         if (!Deleted(station))
             RemComp<DutyCodeAlphaComponent>(station);
 
-        foreach (var uid in CollectAccessHolders())
+        foreach (var card in CollectMarkedCards())
         {
-            RemComp<DutyCodeAlphaAccessComponent>(uid);
-            Notice(uid, "duty-code-alpha-access-revoked");
+            RemComp<DutyCodeAlphaAccessComponent>(card);
         }
+
+        foreach (var mob in _granted)
+        {
+            Notice(mob, "duty-code-alpha-access-revoked");
+        }
+
+        _granted.Clear();
+        _warnedNoCard.Clear();
 
         _adminLogger.Add(LogType.Action, LogImpact.High, $"Code Alpha deactivated");
     }
 
     /// <summary>
-    /// Догоняет доступами всех, кто сейчас на карте станции: лейтджойнов, ОБР, воскрешённых.
-    /// Оперативники и призраки исключены — первым это дало бы бесплатный проход в оружейку,
-    /// вторым просто не нужно.
+    /// Переводит в аварийный режим ID-карты всех, кто сейчас на карте станции: лейтджойнов, ОБР,
+    /// воскрешённых, а также тех, кто добыл карту уже во время кода. Оперативники и призраки
+    /// исключены — первым это дало бы бесплатный проход в оружейку, вторым просто не нужно.
+    ///
+    /// Помечается именно карта, а не человек: тогда доступ можно потерять вместе с картой, отдать
+    /// её другому и снять с трупа — то есть он ведёт себя как обычный доступ, а не как невидимое
+    /// свойство тела.
     /// </summary>
     private void GrantPass()
     {
@@ -374,7 +252,7 @@ public sealed class DutyCodeAlphaSystem : EntitySystem
             return;
 
         var query = EntityQueryEnumerator<MindContainerComponent, TransformComponent>();
-        var granted = new List<EntityUid>();
+        var candidates = new List<EntityUid>();
 
         while (query.MoveNext(out var uid, out var mind, out var xform))
         {
@@ -383,19 +261,31 @@ public sealed class DutyCodeAlphaSystem : EntitySystem
             if (!mind.HasMind || xform.MapID != _activeMap)
                 continue;
 
-            if (HasComp<DutyCodeAlphaAccessComponent>(uid)
-                || HasComp<NukeOperativeComponent>(uid)
-                || HasComp<GhostComponent>(uid))
+            if (HasComp<NukeOperativeComponent>(uid) || HasComp<GhostComponent>(uid))
+                continue;
+
+            candidates.Add(uid);
+        }
+
+        foreach (var uid in candidates)
+        {
+            if (!TryFindCard(uid, out var card))
             {
+                if (_warnedNoCard.Add(uid))
+                    Notice(uid, "duty-code-alpha-access-no-card");
+
                 continue;
             }
 
-            granted.Add(uid);
-        }
+            if (!HasComp<DutyCodeAlphaAccessComponent>(card))
+                AddComp<DutyCodeAlphaAccessComponent>(card);
 
-        foreach (var uid in granted)
-        {
-            AddComp<DutyCodeAlphaAccessComponent>(uid);
+            // Второй раз человека не дёргаем: карту могли потерять и напечатать новую, а
+            // сообщение об этом ничего не добавляет.
+            if (!_granted.Add(uid))
+                continue;
+
+            _warnedNoCard.Remove(uid);
             Notice(uid, "duty-code-alpha-access-granted");
             Notice(uid, RandomRpKey("duty-code-alpha-rp-start"));
         }
@@ -406,19 +296,43 @@ public sealed class DutyCodeAlphaSystem : EntitySystem
     #region Helpers
 
     /// <summary>
-    /// Находит активное правило ЯО и вычисляет момент реального прилёта. Станция берётся из
-    /// правила, а если его цель не задана — первая настоящая станция с уровнем тревоги.
+    /// ID-карта человека: сначала слот «id» (сама карта или КПК с ней), потом руки.
+    ///
+    /// Не <c>IdCardSystem.TryFindIdCard</c>: тот начинает с активной руки, и Альфа пометила бы
+    /// чужую карту, которую человек в этот момент просто держит, — например снятую с трупа или
+    /// только что напечатанную для кого-то другого.
     /// </summary>
-    private bool TryGetWarDeadline(
-        out EntityUid station,
-        out TimeSpan deadline,
-        out TimeSpan declaredAt)
+    private bool TryFindCard(EntityUid uid, out EntityUid card)
     {
-        station = default;
-        deadline = default;
-        declaredAt = default;
+        card = default;
 
-        var found = false;
+        if (_inventory.TryGetSlotEntity(uid, "id", out var slot)
+            && _idCard.TryGetIdCard(slot.Value, out var inSlot))
+        {
+            card = inSlot;
+            return true;
+        }
+
+        // Тем, у кого нет слота под ID, остаются руки.
+        foreach (var held in _hands.EnumerateHeld(uid))
+        {
+            if (!_idCard.TryGetIdCard(held, out var inHands))
+                continue;
+
+            card = inHands;
+            return true;
+        }
+
+        return false;
+    }
+
+    /// <summary>
+    /// Момент реального прилёта ЯО, если война объявлена. Берётся у активного правила: тот же
+    /// <c>WarDeclaredTime</c>, по которому ваниль держит шаттл оперативников на приколе.
+    /// </summary>
+    private bool TryGetWarDeadline(out TimeSpan deadline)
+    {
+        deadline = default;
 
         var query = EntityQueryEnumerator<ActiveGameRuleComponent, NukeopsRuleComponent>();
         while (query.MoveNext(out _, out _, out var nukeops))
@@ -426,31 +340,7 @@ public sealed class DutyCodeAlphaSystem : EntitySystem
             if (nukeops.WarDeclaredTime is not { } declared)
                 continue;
 
-            declaredAt = declared;
             deadline = declared + nukeops.WarNukieArriveDelay;
-            found = true;
-
-            if (nukeops.TargetStation is { } target && Exists(target))
-            {
-                station = target;
-                return true;
-            }
-
-            break;
-        }
-
-        if (!found)
-            return false;
-
-        // Фолбэка «станция под пультом» здесь быть не может: пульт — стартовый предмет
-        // оперативника, а NukeopsRuleSystem принимает объявление только с карты аванпоста.
-        // То есть под пультом либо ничего, либо чужой грид. Берём первую настоящую станцию.
-        foreach (var candidate in _station.GetStations())
-        {
-            if (!HasComp<AlertLevelComponent>(candidate) || !HasComp<StationDataComponent>(candidate))
-                continue;
-
-            station = candidate;
             return true;
         }
 
@@ -474,21 +364,21 @@ public sealed class DutyCodeAlphaSystem : EntitySystem
         return MapId.Nullspace;
     }
 
-    private List<EntityUid> CollectAccessHolders()
+    private List<EntityUid> CollectMarkedCards()
     {
         var query = EntityQueryEnumerator<DutyCodeAlphaAccessComponent>();
-        var holders = new List<EntityUid>();
+        var cards = new List<EntityUid>();
         while (query.MoveNext(out var uid, out _))
         {
-            holders.Add(uid);
+            cards.Add(uid);
         }
 
-        return holders;
+        return cards;
     }
 
     private void BroadcastRpPhrase(string prefix)
     {
-        foreach (var uid in CollectAccessHolders())
+        foreach (var uid in _granted)
         {
             Notice(uid, RandomRpKey(prefix));
         }
@@ -512,13 +402,4 @@ public sealed class DutyCodeAlphaSystem : EntitySystem
     }
 
     #endregion
-
-    private struct PendingAlpha
-    {
-        public EntityUid Station;
-        public TimeSpan Deadline;
-        public TimeSpan EarliestAnnounce;
-        public TimeSpan ExpiresAt;
-        public bool Confirmed;
-    }
 }

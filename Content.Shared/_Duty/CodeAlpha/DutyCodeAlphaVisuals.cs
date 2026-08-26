@@ -16,17 +16,7 @@ public static class DutyCodeAlphaVisuals
     /// <summary>Уровень, возврат на который снимает протокол.</summary>
     public const string GreenLevel = "green";
 
-    /// <summary>Сколько хост может думать, прежде чем код включится сам.</summary>
-    public static readonly TimeSpan ConfirmTimeout = TimeSpan.FromSeconds(60);
-
-    /// <summary>
-    /// Минимальная пауза между объявлением войны и объявлением кода. Объявление войны само играет
-    /// <c>announce_syndi.ogg</c> длиной 8.77 с; без этой паузы при мгновенном подтверждении хоста
-    /// две сирены наложились бы друг на друга.
-    /// </summary>
-    public static readonly TimeSpan AnnounceDelay = TimeSpan.FromSeconds(9);
-
-    /// <summary>Как часто система догоняет новоприбывших доступами.</summary>
+    /// <summary>Как часто система догоняет доступами новоприбывших и тех, кто нашёл карту.</summary>
     public static readonly TimeSpan GrantInterval = TimeSpan.FromSeconds(2);
 
     /// <summary>Остаток, на котором рассылается вторая пачка РП-реплик.</summary>
