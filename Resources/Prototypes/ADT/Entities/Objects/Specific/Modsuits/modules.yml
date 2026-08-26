@@ -87,7 +87,12 @@
         weightlessFriction: 0.3
         weightlessModifier: 1.2
       - type: CanMoveInAir
-      - type: InputMover
+      # _Duty: здесь был `- type: InputMover`. Он вешался на сам костюм — предмет одежды с
+      # динамическим телом. SharedMoverController требует от всего, что двигается вводом,
+      # KinematicController и роняет DebugAssertException на каждом тике, а падение уносит
+      # весь проход MoverController: двигаться переставали ВСЕ на сервере.
+      # Джетпаку он и не нужен: SharedJetpackSystem вешает JetpackUserComponent на носителя,
+      # а у ванильных джетпаков в прототипе только GasTank и Jetpack.
       - type: GasTank
         outputPressure: 21.3
         air:
