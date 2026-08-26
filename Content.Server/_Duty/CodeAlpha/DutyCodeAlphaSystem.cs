@@ -6,12 +6,10 @@ using Content.Server.Access.Systems;
 using Content.Server.Administration.Logs;
 using Content.Server.AlertLevel;
 using Content.Server.Chat.Managers;
-using Content.Server.GameTicking.Rules.Components;
 using Content.Shared._Duty.CodeAlpha;
 using Content.Shared.Chat;
 using Content.Shared.Database;
 using Content.Shared.GameTicking;
-using Content.Shared.GameTicking.Components;
 using Content.Shared.Ghost;
 using Content.Shared.Hands.EntitySystems;
 using Content.Shared.Inventory;
@@ -33,8 +31,8 @@ namespace Content.Server._Duty.CodeAlpha;
 /// открывают любую дверь, а на экраны приходит отсчёт. Снимается возвратом на зелёный код.
 ///
 /// Автозапуска по объявлению войны нет намеренно: решение «сейчас начинается тот самый раунд» —
-/// админское, а не механическое. Отсчёт при этом всё равно привязывается к настоящему прилёту
-/// оперативников, если война уже объявлена (см. <see cref="TryGetWarDeadline"/>).
+/// админское, а не механическое. Отсчёт идёт от самого объявления кода: пятнадцать минут с этого
+/// момента и есть срок, по истечении которого оперативники вылетают.
 /// </summary>
 public sealed class DutyCodeAlphaSystem : EntitySystem
 {
@@ -50,8 +48,8 @@ public sealed class DutyCodeAlphaSystem : EntitySystem
 
     private static readonly Color NoticeColor = Color.Gray;
 
-    /// <summary>Отсчёт, когда войны нет и привязываться не к чему.</summary>
-    private static readonly TimeSpan DefaultCountdown = TimeSpan.FromMinutes(15);
+    /// <summary>Длина отсчёта. Отмеряется от объявления кода — это и есть срок до вылета ЯО.</summary>
+    private static readonly TimeSpan Countdown = TimeSpan.FromMinutes(15);
 
     private EntityUid? _activeStation;
     private MapId _activeMap = MapId.Nullspace;
@@ -175,11 +173,9 @@ public sealed class DutyCodeAlphaSystem : EntitySystem
 
         var alpha = EnsureComp<DutyCodeAlphaComponent>(station);
 
-        // Если война уже объявлена, отсчёт должен совпадать с настоящим разблокированием шаттла
-        // ЯО, а не идти сам по себе. Нет войны — просто пятнадцать минут от включения.
-        alpha.Deadline = TryGetWarDeadline(out var warDeadline)
-            ? warDeadline
-            : now + DefaultCountdown;
+        // Отсчёт всегда идёт от объявления кода. Ванильный WarDeclaredTime сюда не подмешивается
+        // намеренно: код — это и есть тот момент, от которого считается вылет оперативников.
+        alpha.Deadline = now + Countdown;
         alpha.ActivatedAt = now;
         Dirty(station, alpha);
 
@@ -320,27 +316,6 @@ public sealed class DutyCodeAlphaSystem : EntitySystem
                 continue;
 
             card = inHands;
-            return true;
-        }
-
-        return false;
-    }
-
-    /// <summary>
-    /// Момент реального прилёта ЯО, если война объявлена. Берётся у активного правила: тот же
-    /// <c>WarDeclaredTime</c>, по которому ваниль держит шаттл оперативников на приколе.
-    /// </summary>
-    private bool TryGetWarDeadline(out TimeSpan deadline)
-    {
-        deadline = default;
-
-        var query = EntityQueryEnumerator<ActiveGameRuleComponent, NukeopsRuleComponent>();
-        while (query.MoveNext(out _, out _, out var nukeops))
-        {
-            if (nukeops.WarDeclaredTime is not { } declared)
-                continue;
-
-            deadline = declared + nukeops.WarNukieArriveDelay;
             return true;
         }
 
