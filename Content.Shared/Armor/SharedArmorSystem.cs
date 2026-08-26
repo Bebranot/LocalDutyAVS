@@ -65,7 +65,18 @@ public abstract class SharedArmorSystem : EntitySystem
         if (!args.CanInteract || !args.CanAccess || !component.ShowArmorOnExamine)
             return;
 
-        var examineMarkup = GetArmorExamine(component.Modifiers, component.StaminaModifier);    // ADT Stunmeta fix
+        // _Duty: modifiers объявлен required, но это гарантия только для прототипов. Компонент
+        // может приехать и в рантайме реестром — так его навешивают модули МОД-костюмов, — и
+        // тогда поле остаётся null. Осмотр такого предмета ронял клиент NullReferenceException
+        // прямо в обработчике ввода. Логируем виновника вместо падения: без имени сущности
+        // причину было не найти.
+        if (component.Modifiers is not { } modifiers)
+        {
+            Log.Error($"{ToPrettyString(uid)} has an ArmorComponent without modifiers, skipping armor examine.");
+            return;
+        }
+
+        var examineMarkup = GetArmorExamine(modifiers, component.StaminaModifier);    // ADT Stunmeta fix
 
         var ev = new ArmorExamineEvent(examineMarkup);
         RaiseLocalEvent(uid, ref ev);
