@@ -64,7 +64,8 @@ public sealed class DutyCodeAlphaMusicSystem : EntitySystem
 
     private void OnVolumeChanged(float value)
     {
-        _volumeSlider = SharedAudioSystem.GainToVolume(value);
+        // Децибелы складываются, поэтому поправка — просто слагаемое к значению ползунка.
+        _volumeSlider = SharedAudioSystem.GainToVolume(value) + DutyCodeAlphaVisuals.TrackVolumeDb;
 
         // TryComp обязателен: трек доигрывает до конца сам, движок удаляет его сущность, а _stream
         // ещё держит её uid. SharedAudioSystem.SetVolume зовёт Resolve БЕЗ подавления лога, поэтому

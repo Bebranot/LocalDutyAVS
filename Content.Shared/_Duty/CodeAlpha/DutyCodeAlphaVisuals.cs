@@ -80,4 +80,11 @@ public static class DutyCodeAlphaVisuals
     /// не должен услышать его с начала — это спокойная тема, а не фанфара.
     /// </summary>
     public static readonly TimeSpan TrackCalmGrace = TimeSpan.FromSeconds(5);
+
+    /// <summary>
+    /// Поправка громкости обоих треков относительно ползунка «Эмбиентная музыка», в децибелах.
+    /// Треки уже сведены на −5 dB при кодировании, но поверх динамической музыки и объявлений
+    /// всё равно звучали громче остального. Крутить здесь, а не перекодировать файлы.
+    /// </summary>
+    public const float TrackVolumeDb = -5f;
 }
