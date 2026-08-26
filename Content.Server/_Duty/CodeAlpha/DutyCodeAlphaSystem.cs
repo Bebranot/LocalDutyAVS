@@ -3,13 +3,14 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
 using Content.Server.Administration.Logs;
+using Content.Server.Administration.Managers;
 using Content.Server.AlertLevel;
 using Content.Server.Chat.Managers;
 using Content.Server.GameTicking.Rules;
 using Content.Server.GameTicking.Rules.Components;
 using Content.Server.NukeOps;
 using Content.Shared._Duty.CodeAlpha;
-using Content.Shared.CCVar;
+using Content.Shared.Administration;
 using Content.Shared.Chat;
 using Content.Shared.Database;
 using Content.Shared.GameTicking;
@@ -20,7 +21,6 @@ using Content.Shared.NukeOps;
 using Content.Shared.Station;
 using Content.Shared.Station.Components;
 using Robust.Server.Player;
-using Robust.Shared.Configuration;
 using Robust.Shared.Map;
 using Robust.Shared.Player;
 using Robust.Shared.Random;
@@ -31,21 +31,21 @@ namespace Content.Server._Duty.CodeAlpha;
 /// <summary>
 /// _Duty: протокол «Альфа» — ответ станции на объявление войны ядерными оперативниками.
 ///
-/// Порядок работы: объявлена война, хосту уходит окно подтверждения, через минуту (или сразу
+/// Порядок работы: объявлена война, админам уходит окно подтверждения, через минуту (или сразу
 /// после ответа, но не раньше чем через <see cref="DutyCodeAlphaVisuals.AnnounceDelay"/> после
 /// сирены самого объявления войны) станция получает кроваво-красный уровень тревоги, все на её
 /// карте, кроме оперативников, получают полный доступ, а на экраны приходит отсчёт до реального
 /// разблокирования шаттла ЯО.
 ///
-/// Кнопка хоста — право ВЕТО, а не условие запуска: если хост не в игре или молчит, протокол
-/// включается сам. Иначе фича была бы мёртвой в половине раундов, а станция молча теряла бы
-/// минуты подготовки, потому что ванильный локаут шаттла уже идёт.
+/// Кнопка админа — право ВЕТО, а не условие запуска: если админов нет в игре или они молчат,
+/// протокол включается сам. Иначе фича была бы мёртвой в половине раундов, а станция молча теряла
+/// бы минуты подготовки, потому что ванильный локаут шаттла уже идёт.
 /// </summary>
 public sealed class DutyCodeAlphaSystem : EntitySystem
 {
     [Dependency] private readonly IAdminLogManager _adminLogger = default!;
+    [Dependency] private readonly IAdminManager _admin = default!;
     [Dependency] private readonly IChatManager _chat = default!;
-    [Dependency] private readonly IConfigurationManager _cfg = default!;
     [Dependency] private readonly IGameTiming _timing = default!;
     [Dependency] private readonly IPlayerManager _player = default!;
     [Dependency] private readonly IRobustRandom _random = default!;
@@ -53,6 +53,15 @@ public sealed class DutyCodeAlphaSystem : EntitySystem
     [Dependency] private readonly SharedStationSystem _station = default!;
 
     private static readonly Color NoticeColor = Color.Gray;
+
+    /// <summary>
+    /// Право, дающее окно вето. Раньше «хостом» считался один аккаунт из
+    /// <c>console.login_host_user</c> — то есть на сервере, где этот CVar не выставлен или дежурный
+    /// зашёл под другим именем, окно не видел никто и протокол молча ждал минуту таймаута.
+    /// Право нельзя «забыть настроить», поэтому спрашиваем именно его. Флаг тот же, что и у
+    /// команды <c>dutycodealpha</c>: кто может включить руками, тот может и отменить.
+    /// </summary>
+    private const AdminFlags HostFlag = AdminFlags.Fun;
 
     /// <summary>Запрос, ожидающий ответа хоста. Одновременно может быть только один.</summary>
     private PendingAlpha? _pending;
@@ -95,14 +104,26 @@ public sealed class DutyCodeAlphaSystem : EntitySystem
 
     private void OnWarDeclared(ref WarDeclaredEvent ev)
     {
+        // Каждая из трёх причин отказа означает, что протокол не включится вообще, а игрок
+        // не увидит ни строчки. Один раз за объявление войны — не та частота, ради которой
+        // стоит экономить на логе.
         if (ev.Status != WarConditionStatus.WarReady)
+        {
+            Log.Info($"Code Alpha: объявление войны со статусом {ev.Status}, протокол не запускается.");
             return;
+        }
 
         if (_pending != null || _activeStation != null || _firedThisRound)
+        {
+            Log.Info("Code Alpha: протокол уже отрабатывал в этом раунде, повторный запуск пропущен.");
             return;
+        }
 
         if (!TryGetWarDeadline(out var station, out var deadline, out var declaredAt))
+        {
+            Log.Error("Code Alpha: война объявлена, но не найдено активное правило ЯО с временем объявления либо станция. Протокол не запустится.");
             return;
+        }
 
         var now = _timing.CurTime;
         _pending = new PendingAlpha
@@ -113,22 +134,36 @@ public sealed class DutyCodeAlphaSystem : EntitySystem
             ExpiresAt = now + DutyCodeAlphaVisuals.ConfirmTimeout,
         };
 
-        var hostName = _cfg.GetCVar(CCVars.ConsoleLoginHostUser);
-        if (!string.IsNullOrWhiteSpace(hostName)
-            && _player.TryGetSessionByUsername(hostName, out var host))
-        {
-            RaiseNetworkEvent(
-                new DutyCodeAlphaPromptEvent(
-                    Loc.GetString("duty-code-alpha-prompt-body"),
-                    _pending.Value.ExpiresAt),
-                host);
-
-            _chat.SendAdminAnnouncement(Loc.GetString("duty-code-alpha-admin-prompt-sent", ("host", hostName)));
-        }
-        else
+        var hosts = GetHosts();
+        if (hosts.Count == 0)
         {
             _chat.SendAdminAnnouncement(Loc.GetString("duty-code-alpha-admin-no-host"));
+            return;
         }
+
+        RaiseNetworkEvent(
+            new DutyCodeAlphaPromptEvent(
+                Loc.GetString("duty-code-alpha-prompt-body"),
+                _pending.Value.ExpiresAt),
+            Filter.Empty().AddPlayers(hosts));
+
+        _chat.SendAdminAnnouncement(Loc.GetString("duty-code-alpha-admin-prompt-sent", ("count", hosts.Count)));
+    }
+
+    /// <summary>
+    /// Админы с правом вето, которые сейчас в игре. Окно уходит всем сразу: первый ответивший
+    /// решает, остальные окна закроются сами по таймеру.
+    /// </summary>
+    private List<ICommonSession> GetHosts()
+    {
+        var hosts = new List<ICommonSession>();
+        foreach (var admin in _admin.ActiveAdmins)
+        {
+            if (_admin.GetAdminData(admin)?.HasFlag(HostFlag) == true)
+                hosts.Add(admin);
+        }
+
+        return hosts;
     }
 
     private void OnHostReply(DutyCodeAlphaReplyEvent ev, EntitySessionEventArgs args)
@@ -136,9 +171,9 @@ public sealed class DutyCodeAlphaSystem : EntitySystem
         if (_pending is not { } pending)
             return;
 
-        // Ответ принимается только от того, кому окно и уходило.
-        var hostName = _cfg.GetCVar(CCVars.ConsoleLoginHostUser);
-        if (string.IsNullOrWhiteSpace(hostName) || args.SenderSession.Name != hostName)
+        // Ответ принимается только от того, у кого есть само право вето: клиент шлёт это событие
+        // сам, и без проверки любой игрок мог бы отменить протокол подделанным пакетом.
+        if (_admin.GetAdminData(args.SenderSession)?.HasFlag(HostFlag) != true)
             return;
 
         if (!ev.Confirmed)
@@ -203,7 +238,9 @@ public sealed class DutyCodeAlphaSystem : EntitySystem
             return;
 
         _pending = null;
-        Activate(pending.Station, pending.Deadline);
+
+        if (!Activate(pending.Station, pending.Deadline))
+            Log.Error($"Code Alpha: подтверждение получено, но включить протокол на {ToPrettyString(pending.Station)} не удалось.");
     }
 
     private void UpdateActive(TimeSpan now)

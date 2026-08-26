@@ -48,9 +48,9 @@ duty-code-alpha-prompt-timer = Автоматически через { $seconds 
 
 ## Админ-чат
 
-duty-code-alpha-admin-prompt-sent = Код «Альфа»: запрос отправлен хосту ({ $host }). Без ответа код включится через минуту.
-duty-code-alpha-admin-no-host = Код «Альфа»: хост не в игре, код включится автоматически через минуту.
-duty-code-alpha-admin-vetoed = Код «Альфа»: хост отклонил включение.
+duty-code-alpha-admin-prompt-sent = Код «Альфа»: запрос отправлен админам ({ $count }). Без ответа код включится через минуту.
+duty-code-alpha-admin-no-host = Код «Альфа»: админов с правом вето в игре нет, код включится автоматически через минуту.
+duty-code-alpha-admin-vetoed = Код «Альфа»: включение отклонено админом.
 
 ## Команда
 
