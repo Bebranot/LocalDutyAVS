@@ -745,7 +745,7 @@
     canShuttle: false
     global: true #announce to everyone they're about to fuck shit up
     announceSentBy: false # The title already says who they are.
-    sound: /Audio/ADT/Announcements/announce_syndi.ogg #ADT-tweak
+    sound: /Audio/_Duty/Announcement/war_declaration.ogg
   - type: Computer
     board: SyndicateCommsComputerCircuitboard
   - type: PointLight
