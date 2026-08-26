@@ -91,8 +91,9 @@ public sealed class DutyCodeAlphaSystem : EntitySystem
     {
         base.Initialize();
 
-        // after: NukeopsRuleSystem — именно он проставляет WarDeclaredTime, без которого
-        // не посчитать дедлайн прилёта.
+        // Подписка нужна только для диагностики отказа: сам протокол запускается опросом
+        // WarDeclaredTime в Update. after: NukeopsRuleSystem — чтобы в лог попал статус уже
+        // после того, как ваниль решила, принимать объявление или нет.
         SubscribeLocalEvent<WarDeclaredEvent>(OnWarDeclared, after: [typeof(NukeopsRuleSystem)]);
         SubscribeLocalEvent<AlertLevelChangedEvent>(OnAlertLevelChanged);
         SubscribeLocalEvent<RoundRestartCleanupEvent>(OnRoundRestart);
@@ -104,29 +105,38 @@ public sealed class DutyCodeAlphaSystem : EntitySystem
 
     private void OnWarDeclared(ref WarDeclaredEvent ev)
     {
-        // Каждая из трёх причин отказа означает, что протокол не включится вообще, а игрок
-        // не увидит ни строчки. Один раз за объявление войны — не та частота, ради которой
-        // стоит экономить на логе.
-        if (ev.Status != WarConditionStatus.WarReady)
-        {
-            Log.Info($"Code Alpha: объявление войны со статусом {ev.Status}, протокол не запускается.");
+        // Само событие протокол больше не запускает — этим занимается TryStartPending по
+        // WarDeclaredTime. Здесь остался только разбор случая, когда ваниль объявление НЕ
+        // приняла: тогда не будет ни объявления войны, ни блокировки шаттла, ни Альфы, и без
+        // этой строки причина тишины выглядит как поломка Альфы.
+        if (ev.Status == WarConditionStatus.WarReady)
             return;
-        }
 
+        Log.Info($"Code Alpha: пульт нажат, но объявление войны не принято (статус: "
+                 + $"{ev.Status?.ToString() ?? "не выставлен"}). Это решает NukeopsRuleSystem: "
+                 + "пустой статус означает, что он не нашёл подходящего активного правила ЯО "
+                 + "(чаще всего пульт на другой карте, чем грид правила). Протокол ждёт "
+                 + "WarDeclaredTime у правила и сам включится, как только оно появится.");
+    }
+
+    /// <summary>
+    /// Запускает ожидание подтверждения, если война объявлена, а протокол ещё не отрабатывал.
+    ///
+    /// Опрос, а не подписка на <see cref="WarDeclaredEvent"/>: у события есть статус, который
+    /// проставляет <c>NukeopsRuleSystem</c>, и завязка на него делала протокол заложником и
+    /// порядка обработчиков, и того, каким путём война объявлена. Настоящий признак войны один —
+    /// <c>WarDeclaredTime</c> у активного правила ЯО, по нему же ваниль режет FTL шаттла.
+    /// Задержка до секунды роли не играет: объявление всё равно ждёт
+    /// <see cref="DutyCodeAlphaVisuals.AnnounceDelay"/> после сирены.
+    /// </summary>
+    private void TryStartPending(TimeSpan now)
+    {
         if (_pending != null || _activeStation != null || _firedThisRound)
-        {
-            Log.Info($"Code Alpha: повторный запуск пропущен (ожидает ответа: {_pending != null}, "
-                     + $"уже активен: {_activeStation != null}, отрабатывал в раунде: {_firedThisRound}).");
             return;
-        }
 
         if (!TryGetWarDeadline(out var station, out var deadline, out var declaredAt))
-        {
-            Log.Error("Code Alpha: война объявлена, но не найдено активное правило ЯО с временем объявления либо станция. Протокол не запустится.");
             return;
-        }
 
-        var now = _timing.CurTime;
         _pending = new PendingAlpha
         {
             Station = station,
@@ -134,6 +144,8 @@ public sealed class DutyCodeAlphaSystem : EntitySystem
             EarliestAnnounce = declaredAt + DutyCodeAlphaVisuals.AnnounceDelay,
             ExpiresAt = now + DutyCodeAlphaVisuals.ConfirmTimeout,
         };
+
+        Log.Info($"Code Alpha: война объявлена, дедлайн прилёта {deadline}, станция {ToPrettyString(station)}.");
 
         var hosts = GetHosts();
         if (hosts.Count == 0)
@@ -223,6 +235,7 @@ public sealed class DutyCodeAlphaSystem : EntitySystem
 
         _nextTick = now + TimeSpan.FromSeconds(1);
 
+        TryStartPending(now);
         UpdatePending(now);
         UpdateActive(now);
     }
