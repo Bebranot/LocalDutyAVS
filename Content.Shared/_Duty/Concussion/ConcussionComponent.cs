@@ -68,7 +68,7 @@ public sealed partial class ConcussionComponent : Component
 
     /// <summary>Звон в ушах (зацикленный). Меняй на свой ассет в Audio/_Duty/Concussion.</summary>
     [DataField]
-    public SoundSpecifier? RingSound = new SoundPathSpecifier("/Audio/_Duty/Effects/Tinnitus/tinnitus.ogg");
+    public SoundSpecifier? RingSound = new SoundPathSpecifier("/Audio/_Duty/Concussion/tinnitus.ogg");
 
     /// <summary>С какого уровня шкалы начинает звенеть в ушах.</summary>
     [DataField]

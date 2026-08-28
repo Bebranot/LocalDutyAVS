@@ -106,7 +106,7 @@ public sealed partial class FireAgonyComponent : Component
     [DataField]
     public float ScreamVolumeDb = 3f;
 
-    /// <summary>Звук криков агонии (коллекция из <c>Resources/Audio/_Duty/Effects/Agony</c>).</summary>
+    /// <summary>Звук криков агонии (коллекция из <c>Resources/Audio/_Duty/FireAgony</c>).</summary>
     [DataField]
     public SoundSpecifier ScreamSound = new SoundCollectionSpecifier("DutyFireAgonyScreams");
 

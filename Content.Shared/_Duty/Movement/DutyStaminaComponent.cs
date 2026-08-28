@@ -130,7 +130,7 @@ public sealed partial class DutyStaminaComponent : Component
 
     /// <summary>Звук отдышки для женских голосов.</summary>
     [DataField]
-    public SoundSpecifier FemaleBreathSound = new SoundPathSpecifier("/Audio/_Duty/Effects/RunBreath/breath2woman.ogg");
+    public SoundSpecifier FemaleBreathSound = new SoundPathSpecifier("/Audio/_Duty/Movement/breath2woman.ogg");
 
     /// <summary>Накопленное время непрерывного спринта (локально, не сетевое).</summary>
     [ViewVariables]
@@ -154,7 +154,7 @@ public sealed partial class DutyStaminaComponent : Component
 
     /// <summary>Звук рывка в момент начала спринта.</summary>
     [DataField]
-    public SoundSpecifier SprintStartSound = new SoundPathSpecifier("/Audio/_Duty/Effects/Sprint/sprint_puff.ogg");
+    public SoundSpecifier SprintStartSound = new SoundPathSpecifier("/Audio/_Duty/Movement/sprint_puff.ogg");
 
     /// <summary>Большое облако пыли — спавнится один раз на старте рывка.</summary>
     [DataField]

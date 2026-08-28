@@ -2,5 +2,5 @@
 - type: soundCollection
   id: DutyRunBreathMale
   files:
-  - /Audio/_Duty/Effects/RunBreath/breath1.ogg
-  - /Audio/_Duty/Effects/RunBreath/breath3.ogg
+  - /Audio/_Duty/Movement/breath1.ogg
+  - /Audio/_Duty/Movement/breath3.ogg

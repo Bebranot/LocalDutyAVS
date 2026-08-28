@@ -112,22 +112,22 @@ public sealed partial class FuryStimulatorComponent : Component
     /// <summary>Фаза 1 «Ввод».</summary>
     [DataField]
     public SoundSpecifier MusicIntro =
-        new SoundPathSpecifier("/Audio/_Duty/Effects/Fury-16/phase1.ogg");
+        new SoundPathSpecifier("/Audio/_Duty/FuryStimulator/phase1.ogg");
 
     /// <summary>Фаза 2 «Разгон».</summary>
     [DataField]
     public SoundSpecifier MusicRamp =
-        new SoundPathSpecifier("/Audio/_Duty/Effects/Fury-16/phase2.ogg");
+        new SoundPathSpecifier("/Audio/_Duty/FuryStimulator/phase2.ogg");
 
     /// <summary>Фаза 3 «Пик».</summary>
     [DataField]
     public SoundSpecifier MusicPeak =
-        new SoundPathSpecifier("/Audio/_Duty/Effects/Fury-16/phase3.ogg");
+        new SoundPathSpecifier("/Audio/_Duty/FuryStimulator/phase3.ogg");
 
     /// <summary>Фаза 4 «Спад».</summary>
     [DataField]
     public SoundSpecifier MusicDecline =
-        new SoundPathSpecifier("/Audio/_Duty/Effects/Fury-16/phase4.ogg");
+        new SoundPathSpecifier("/Audio/_Duty/FuryStimulator/phase4.ogg");
 
     /// <summary>Звук передозировки (гиб).</summary>
     [DataField]

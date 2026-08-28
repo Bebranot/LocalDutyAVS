@@ -1,7 +1,7 @@
 - type: speechBark
   id: DutyNoelle
   name: bark-duty-noelle-name
-  sound: /Audio/_Duty/Effects/Bark/noelle/snd_txtnoe.ogg
+  sound: /Audio/_Duty/Barks/noelle/snd_txtnoe.ogg
   category: deltarune
 
 - type: speechBark
