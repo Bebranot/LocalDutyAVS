@@ -23,10 +23,13 @@ namespace Content.Shared._Duty.CodeAlpha;
 public sealed partial class DutyCodeAlphaComponent : Component
 {
     /// <summary>
-    /// Момент, когда шаттл ЯО реально разблокируется. Это НЕ «активация + 15 минут», а
-    /// <c>NukeopsRuleComponent.WarDeclaredTime + WarNukieArriveDelay</c> — тот же дедлайн, по
-    /// которому ваниль режет FTL. Из-за паузы на подтверждение хоста (до минуты) собственный
-    /// отсчёт от активации врал бы, и таймер дошёл бы до нуля уже после прилёта оперативников.
+    /// Конец отсчёта: момент активации плюс пятнадцать минут.
+    ///
+    /// Раньше здесь лежал ванильный <c>WarDeclaredTime + WarNukieArriveDelay</c>. Это имело смысл,
+    /// пока код включался автоматически по объявлению войны и хост подтверждал его отдельным окном:
+    /// пауза на подтверждение (до минуты) увела бы собственный отсчёт от активации в расхождение с
+    /// прилётом оперативников. Ни автотриггера, ни окна больше нет — код объявляет админ, и сам
+    /// момент объявления и есть точка отсчёта.
     /// </summary>
     [DataField(customTypeSerializer: typeof(TimeOffsetSerializer)), AutoNetworkedField, AutoPausedField]
     public TimeSpan Deadline;

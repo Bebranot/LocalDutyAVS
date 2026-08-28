@@ -380,13 +380,28 @@ public sealed partial class DynamicAmbientMusicSystem : EntitySystem
         if (IsGhost(player.Value))
         {
             UpdateCritAudioDuck(frameTime, inCrit: false);
-            _lastMobState = mobState;
             _wasInCombat = false;
             _wasInCombatLow = false;
+
             // В призрака можно попасть и минуя MobState.Dead (гиб, смена тела) — тогда
             // зациклённый боевой трек остался бы играть, а призрачная музыка легла бы поверх.
-            if (_currentType == DutyMusicType.Combat)
+            //
+            // А если это случилось прямо из крита, штатная уборка выхода из крита ниже недостижима:
+            // крит-трек и второй поток кроссфейда доигрывали бы у призрака, а их буферы висели бы
+            // в _keepWarm до конца раунда — выгрузить их было бы некому.
+            var fromCrit = _lastMobState == MobState.Critical;
+            _lastMobState = mobState;
+
+            if (fromCrit || _currentType == DutyMusicType.Combat)
                 StopCurrent(immediate: false);
+
+            if (fromCrit)
+            {
+                StopCritStreams();
+                _trackPlaying = false;
+                _nextTrackTime = TimeSpan.Zero;
+            }
+
             if (!_peacefulDisabled)
                 UpdateGhostMusic();
             else if (_currentStream != null)
@@ -402,9 +417,7 @@ public sealed partial class DynamicAmbientMusicSystem : EntitySystem
                 _waitingForStateTransition = false;
                 _trackPlaying = false;
                 _nextTrackTime = TimeSpan.Zero;
-                _critPlaying = false;
-                _critCrossfadeStarted = false;
-                _critStreamNext = null;
+                StopCritStreams();
                 PlayCritEnterSound();
             }
             _lastMobState = mobState;
@@ -745,6 +758,18 @@ public sealed partial class DynamicAmbientMusicSystem : EntitySystem
                 _critStreamNext = null;
                 _critCurrentEndTime = _critNextEndTime;
                 _critCrossfadeStarted = false;
+            }
+            else
+            {
+                // Следующий трек так и не завёлся (файла нет, ogg не декодировался — это
+                // штатный null из DutyMusicCache.Get). Без этого выхода _critCrossfadeStarted оставался
+                // бы взведённым навсегда: текущий поток уже дотух, новый никто не запустил, и
+                // крит-музыка молчала бы до самого выхода из крита. Сбрасываем флаги — следующий
+                // тик зайдёт в ветку «крит только начался» и поднимет свежий трек.
+                StopCurrent(immediate: true);
+                _critPlaying = false;
+                _critCrossfadeStarted = false;
+                _critCurrentEndTime = TimeSpan.Zero;
             }
         }
     }

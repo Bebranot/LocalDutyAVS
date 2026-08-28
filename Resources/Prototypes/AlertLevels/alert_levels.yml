@@ -107,7 +107,8 @@
       forceEnableEmergencyLights: true
       shuttleTime: 1200
     #ADT end
-    # _Duty: протокол «Альфа» — автоматический ответ на объявление войны ядерными оперативниками.
+    # _Duty: протокол «Альфа». Включается только вручную, командой dutycodealpha — автотриггера
+    # по объявлению войны нет намеренно.
     # Выставляется только кодом (DutyCodeAlphaSystem), поэтому selectable: false + disableSelection.
     # disableSelection не «залипает» навсегда: IsSelectable считается от ТЕКУЩЕГО уровня, так что
     # после возврата на green консоль связи снова работает.

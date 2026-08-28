@@ -37,7 +37,7 @@ public sealed class SharedDutyCodeAlphaAccessSystem : EntitySystem
     /// проверку — человек с этими тегами перестал бы быть целью вообще для всех турелей в игре,
     /// потому что каждая из них их исключает. Не выдаём, чтобы Альфа не трогала логику турелей.
     /// </summary>
-    public static readonly ProtoId<AccessLevelPrototype>[] Excluded =
+    private static readonly ProtoId<AccessLevelPrototype>[] Excluded =
     [
         "NuclearOperative",
         "SyndicateAgent",
@@ -68,14 +68,10 @@ public sealed class SharedDutyCodeAlphaAccessSystem : EntitySystem
 
         SubscribeLocalEvent<DutyCodeAlphaAccessComponent, GetAccessTagsEvent>(OnGetAccessTags);
 
-        _proto.PrototypesReloaded += OnPrototypesReloaded;
-    }
-
-    public override void Shutdown()
-    {
-        base.Shutdown();
-
-        _proto.PrototypesReloaded -= OnPrototypesReloaded;
+        // Через шину, а не через _proto.PrototypesReloaded: временем жизни подписки тогда
+        // распоряжается шина, и парный Shutdown с ручной отпиской становится не нужен. Так же это
+        // сделано в AlertLevelSystem, DamageableSystem и ещё десятке систем репозитория.
+        SubscribeLocalEvent<PrototypesReloadedEventArgs>(OnPrototypesReloaded);
     }
 
     private void OnPrototypesReloaded(PrototypesReloadedEventArgs args)

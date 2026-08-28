@@ -75,7 +75,7 @@ public sealed class DutyMusicDirector : EntitySystem
     }
 
     /// <summary>Наибольший приоритет среди звучащих прямо сейчас глобальных звуков.</summary>
-    public int GetCurrentPriority()
+    private int GetCurrentPriority()
     {
         // RealTime, а не CurTime. Решение чисто презентационное, детерминизм ему не нужен, а вот
         // зависеть от клиентского CurTime опасно: он переигрывается предсказанием, и кэш мог бы
