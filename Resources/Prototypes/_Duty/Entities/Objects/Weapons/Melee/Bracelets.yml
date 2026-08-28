@@ -6,7 +6,7 @@
   id: BaseBracelets
   components:
   - type: Sprite
-    sprite: _Duty/Weapons/Melee/Bracelets/Salvage.rsi
+    sprite: _Duty/Objects/Weapons/Melee/Bracelets/Salvage.rsi
     state: icon
   - type: Item
     size: Small
@@ -42,7 +42,7 @@
     - type: TimedDespawn
       lifetime: 0.4
     - type: Sprite
-      sprite: _Duty/Weapons/Effects/BraceletArc.rsi
+      sprite: _Duty/Objects/Weapons/Effects/BraceletArc.rsi
       state: swing
       drawdepth: Effects
     - type: EffectVisuals
@@ -62,7 +62,7 @@
     - type: TimedDespawn
       lifetime: 0.5
     - type: Sprite
-      sprite: _Duty/Weapons/Effects/BraceletCombo.rsi
+      sprite: _Duty/Objects/Weapons/Effects/BraceletCombo.rsi
       drawdepth: Effects
       layers:
         - state: RND
@@ -78,7 +78,7 @@
     - type: TimedDespawn
       lifetime: 2.4
     - type: Sprite
-      sprite: _Duty/Weapons/Effects/BraceletCombo.rsi
+      sprite: _Duty/Objects/Weapons/Effects/BraceletCombo.rsi
       layers:
         - state: salvage
           shader: unshaded
@@ -92,7 +92,7 @@
   id: SalvageBracelets
   components:
     - type: Sprite
-      sprite: _Duty/Weapons/Melee/Bracelets/Salvage.rsi
+      sprite: _Duty/Objects/Weapons/Melee/Bracelets/Salvage.rsi
       state: icon
     - type: MeleeWeapon
       autoAttack: true
@@ -124,7 +124,7 @@
   id: RNDBracelets
   components:
     - type: Sprite
-      sprite: _Duty/Weapons/Melee/Bracelets/RND.rsi
+      sprite: _Duty/Objects/Weapons/Melee/Bracelets/RND.rsi
       state: icon
     - type: MeleeWeapon
       autoAttack: true
@@ -157,7 +157,7 @@
   id: SecurityBracelets
   components:
     - type: Sprite
-      sprite: _Duty/Weapons/Melee/Bracelets/Security.rsi
+      sprite: _Duty/Objects/Weapons/Melee/Bracelets/Security.rsi
       state: icon
     - type: MeleeWeapon
       autoAttack: true
@@ -185,7 +185,7 @@
   id: Bracelets
   name: research-technology-duty-bracelets
   icon:
-    sprite: _Duty/Weapons/Melee/Bracelets/Salvage.rsi
+    sprite: _Duty/Objects/Weapons/Melee/Bracelets/Salvage.rsi
     state: icon
   discipline: Experimental
   tier: 1

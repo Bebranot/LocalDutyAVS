@@ -89,7 +89,7 @@
   suffix: Duty, Оружие ближнего боя, Самодел
   components:
   - type: Sprite
-    sprite: _Duty/Weapons/Melee/bebrabat.rsi
+    sprite: _Duty/Objects/Weapons/Melee/bebrabat.rsi
     state: icon
   - type: Item
     size: Normal

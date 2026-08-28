@@ -19,7 +19,7 @@ namespace Content.Client._Duty.Trauma.UI;
 public sealed class TourniquetChoiceBoundUserInterface(EntityUid owner, Enum uiKey) : BoundUserInterface(owner, uiKey)
 {
     private static readonly SpriteSpecifier ArteryIcon =
-        new SpriteSpecifier.Rsi(new ResPath("/Textures/_Duty/Interface/StatusAlerts/artery.rsi"), "artery");
+        new SpriteSpecifier.Rsi(new ResPath("/Textures/_Duty/Trauma/artery.rsi"), "artery");
 
     private static readonly SpriteSpecifier BleedIcon =
         new SpriteSpecifier.Rsi(new ResPath("/Textures/Interface/Alerts/bleed.rsi"), "bleed2");

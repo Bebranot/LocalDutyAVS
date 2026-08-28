@@ -60,7 +60,7 @@
         Blunt: 10
   - type: Item
     size: Large
-    sprite: _Duty/Weapons/Melee/ArtifactSword/ArtifactSwordInHands.rsi
+    sprite: _Duty/Objects/Weapons/Melee/ArtifactSword/ArtifactSwordInHands.rsi
   - type: ToggleableVisuals
     spriteLayer: blade
     inhandVisuals:
@@ -88,7 +88,7 @@
   - type: IgnitionSource
     temperature: 6666
   - type: Sprite
-    sprite: _Duty/Weapons/Melee/ArtifactSword/ArtifactSword.rsi
+    sprite: _Duty/Objects/Weapons/Melee/ArtifactSword/ArtifactSword.rsi
     layers:
     - state: e_sword
     - state: e_sword_blade
@@ -103,7 +103,7 @@
     - type: TimedDespawn
       lifetime: 0.45
     - type: Sprite
-      sprite: _Duty/Weapons/Effects/ArtifactSwordSwing.rsi
+      sprite: _Duty/Objects/Weapons/Effects/ArtifactSwordSwing.rsi
       state: megaswing
       drawdepth: Effects
     - type: EffectVisuals

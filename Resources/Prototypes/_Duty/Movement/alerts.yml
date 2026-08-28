@@ -9,13 +9,13 @@
   minSeverity: 0
   maxSeverity: 3
   icons:
-  - sprite: /Textures/_Duty/Interface/run_stamina.rsi
+  - sprite: /Textures/_Duty/Movement/run_stamina.rsi
     state: stamina4
-  - sprite: /Textures/_Duty/Interface/run_stamina.rsi
+  - sprite: /Textures/_Duty/Movement/run_stamina.rsi
     state: stamina3
-  - sprite: /Textures/_Duty/Interface/run_stamina.rsi
+  - sprite: /Textures/_Duty/Movement/run_stamina.rsi
     state: stamina2
-  - sprite: /Textures/_Duty/Interface/run_stamina.rsi
+  - sprite: /Textures/_Duty/Movement/run_stamina.rsi
     state: stamina1
   name: alerts-duty-endurance-name
   description: alerts-duty-endurance-desc

@@ -5,7 +5,7 @@
 - type: alert
   id: DutyBrokenBone
   icons:
-    - sprite: /Textures/_Duty/Interface/StatusAlerts/brokenbone.rsi
+    - sprite: /Textures/_Duty/Trauma/brokenbone.rsi
       state: brokenbones
   name: trauma-alert-brokenbone-name
   description: trauma-alert-brokenbone-desc
@@ -13,7 +13,7 @@
 - type: alert
   id: DutyArtery
   icons:
-    - sprite: /Textures/_Duty/Interface/StatusAlerts/artery.rsi
+    - sprite: /Textures/_Duty/Trauma/artery.rsi
       state: artery
   name: trauma-alert-artery-name
   description: trauma-alert-artery-desc

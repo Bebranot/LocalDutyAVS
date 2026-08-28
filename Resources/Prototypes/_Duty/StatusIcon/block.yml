@@ -6,5 +6,5 @@
   locationPreference: Right # слева обычно висит иконка должности
   isShaded: true
   icon:
-    sprite: /Textures/_Duty/Interface/block.rsi
+    sprite: /Textures/_Duty/Block/block.rsi
     state: icon

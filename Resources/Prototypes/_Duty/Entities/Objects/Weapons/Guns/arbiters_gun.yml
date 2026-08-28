@@ -6,10 +6,10 @@
   suffix: Duty, Огнестрел
   components:
   - type: Sprite
-    sprite: _Duty/Weapons/Guns/StormMaker.rsi
+    sprite: _Duty/Objects/Weapons/Guns/StormMaker.rsi
     state: icon
   - type: Clothing
-    sprite: _Duty/Weapons/Guns/StormMaker.rsi
+    sprite: _Duty/Objects/Weapons/Guns/StormMaker.rsi
     quickEquip: false
     slots:
     - Belt
@@ -22,12 +22,12 @@
     availableModes:
     - SemiAuto
     soundGunshot:
-      path: /Audio/_Duty/StormMakerShoot.ogg
+      path: /Audio/_Duty/Objects/Weapons/Guns/StormMaker/StormMakerShoot.ogg
   - type: AmmoCounter
   - type: RechargeBasicEntityAmmo
     rechargeCooldown: 60
     rechargeSound:
-      path: /Audio/_Duty/StormMakerReload.ogg
+      path: /Audio/_Duty/Objects/Weapons/Guns/StormMaker/StormMakerReload.ogg
   - type: BasicEntityAmmoProvider
     proto: DMbullet
     capacity: 1

@@ -13,7 +13,7 @@
   suffix: Duty, Предмет
   components:
   - type: Sprite
-    sprite: _Duty/PocketPlayer.rsi
+    sprite: _Duty/PocketPlayer/PocketPlayer.rsi
     layers:
     - state: "off"
   - type: PocketPlayer

@@ -19,13 +19,13 @@
         Slash: 13
         Piercing: 2
   - type: Sprite
-    sprite: _Duty/Weapons/Melee/Scytles/Clockwork.rsi
+    sprite: _Duty/Objects/Weapons/Melee/Scytles/Clockwork.rsi
     state: icon
   - type: StaminaDamageOnHit
     damage: 15
   - type: Item
     size: Normal
-    sprite: _Duty/Weapons/Melee/Scytles/Clockwork.rsi
+    sprite: _Duty/Objects/Weapons/Melee/Scytles/Clockwork.rsi
   - type: Appearance
   - type: Fixtures
     fixtures:

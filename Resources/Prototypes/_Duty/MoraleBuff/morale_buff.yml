@@ -4,7 +4,7 @@
 - type: alert
   id: DutyMoraleBuff
   icons:
-  - sprite: /Textures/_Duty/Interface/morale_buff.rsi
+  - sprite: /Textures/_Duty/MoraleBuff/morale_buff.rsi
     state: icon
   name: alerts-morale-buff-name
   description: alerts-morale-buff-desc
@@ -21,7 +21,7 @@
   - type: Transform
     noRot: true
   - type: Sprite
-    sprite: /Textures/_Duty/Interface/morale_buff.rsi
+    sprite: /Textures/_Duty/MoraleBuff/morale_buff.rsi
     state: icon
     drawdepth: Effects
     noRot: true

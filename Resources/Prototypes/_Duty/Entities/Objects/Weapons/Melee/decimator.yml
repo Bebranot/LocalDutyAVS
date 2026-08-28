@@ -6,7 +6,7 @@
   suffix: Duty, Оружие ближнего боя
   components:
   - type: Sprite
-    sprite: _Duty/Weapons/Melee/Decimator.rsi
+    sprite: _Duty/Objects/Weapons/Melee/Decimator.rsi
     state: icon
   - type: MeleeWeapon
     wideAnimationRotation: -135
@@ -47,7 +47,7 @@
     count: 1
   - type: GunRequiresWield
   - type: Clothing
-    sprite: _Duty/Weapons/Melee/Decimator.rsi
+    sprite: _Duty/Objects/Weapons/Melee/Decimator.rsi
     quickEquip: false
     slots:
     - Back

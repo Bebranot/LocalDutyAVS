@@ -8,7 +8,7 @@
   suffix: Duty, Оружие ближнего боя
   components:
   - type: Sprite
-    sprite: _Duty/Weapons/Melee/breaching_hammer.rsi
+    sprite: _Duty/Objects/Weapons/Melee/breaching_hammer.rsi
     state: icon
   - type: Item
     size: Ginormous
@@ -22,16 +22,16 @@
         Piercing: 10
         Structural: 250
     soundHit:
-      path: /Audio/_Duty/Effects/Doorknocker_hit.ogg
+      path: /Audio/_Duty/Weapons/Melee/breaching_hammer/Doorknocker_hit.ogg
     soundSwing:
-      path: /Audio/_Duty/Effects/Doorknocker_miss.ogg
+      path: /Audio/_Duty/Weapons/Melee/breaching_hammer/Doorknocker_miss.ogg
     soundNoDamage:
-      path: /Audio/_Duty/Effects/Doorknocker_miss.ogg
+      path: /Audio/_Duty/Weapons/Melee/breaching_hammer/Doorknocker_miss.ogg
     wideAnimationRotation: -135
     bluntStaminaDamageFactor: 1.3 # 30 stamina damage (wielded blunt = 30)
   - type: Wieldable
     wieldSound:
-      path: /Audio/_Duty/Effects/Doorknocker_fall.ogg
+      path: /Audio/_Duty/Weapons/Melee/breaching_hammer/Doorknocker_fall.ogg
   - type: IncreaseDamageOnWield
     damage:
       types:
@@ -47,7 +47,7 @@
     pryPowered: true
     useSound: /Audio/Items/jaws_pry.ogg
   - type: Clothing
-    sprite: _Duty/Weapons/Melee/breaching_hammer.rsi
+    sprite: _Duty/Objects/Weapons/Melee/breaching_hammer.rsi
     quickEquip: false
     slots:
     - back
