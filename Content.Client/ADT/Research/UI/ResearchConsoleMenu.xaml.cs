@@ -156,6 +156,33 @@ public sealed partial class ResearchConsoleMenu : FancyWindow
     /// </summary>
     private Vector2 _position = new Vector2(45, 250);
 
+    // _Duty-start
+    /// <summary>
+    /// Масштаб дерева, крутится колесом мыши
+    /// </summary>
+    private float _zoom = 1f;
+
+    private const float MinZoom = 0.5f;
+    private const float MaxZoom = 2f;
+    private const float ZoomSpeed = 0.125f;
+
+    /// <summary>
+    /// Показывать ли все дисциплины разом на одном полотне
+    /// </summary>
+    private bool _showAllTree;
+
+    /// <summary>
+    /// Смещение по X в клетках для каждой дисциплины в режиме "всё дерево".
+    /// Считается в коде, чтобы не трогать position: в YAML — иначе разъедется обычный режим.
+    /// </summary>
+    private readonly Dictionary<string, int> _disciplineOffsets = new();
+
+    /// <summary>
+    /// Зазор в клетках между соседними деревьями дисциплин
+    /// </summary>
+    private const int DisciplineGap = 2;
+    // _Duty-end
+
     public ResearchConsoleMenu()
     {
         RobustXamlLoader.Load(this);
@@ -169,6 +196,7 @@ public sealed partial class ResearchConsoleMenu : FancyWindow
         DragContainer.OnKeyBindDown += args => OnKeybindDown(args);
         DragContainer.OnKeyBindUp += args => OnKeybindUp(args);
         RecenterButton.OnPressed += _ => Recenter();
+        ShowAllButton.OnPressed += OnShowAllPressed; // _Duty
     }
 
     public void SetEntity(EntityUid entity)
@@ -201,12 +229,20 @@ public sealed partial class ResearchConsoleMenu : FancyWindow
             };
 
             discipline.SetClickPressed(proto.ID == CurrentDiscipline);
+            discipline.Disabled = _showAllTree; // _Duty: в режиме "всё дерево" переключать нечего
             DisciplinesContainer.AddChild(discipline);
 
             discipline.OnPressed += SelectDiscipline;
         }
 
-        foreach (var tech in _prototype.EnumeratePrototypes<TechnologyPrototype>().Where(x => x.Discipline == CurrentDiscipline))
+        // _Duty-start
+        RebuildDisciplineOffsets(disciplines);
+
+        var shown = _prototype.EnumeratePrototypes<TechnologyPrototype>()
+            .Where(x => _showAllTree || x.Discipline == CurrentDiscipline);
+        // _Duty-end
+
+        foreach (var tech in shown)
         {
             if (!List.ContainsKey(tech.ID))
                 continue;
@@ -215,7 +251,8 @@ public sealed partial class ResearchConsoleMenu : FancyWindow
             DragContainer.AddChild(control);
 
             // Двигаем технологии по своим местам
-            LayoutContainer.SetPosition(control, _position + tech.Position * 150);
+            LayoutContainer.SetPosition(control, GetTechPosition(tech)); // _Duty
+            control.SetScale(_zoom); // _Duty
             control.SelectAction += SelectTech;
 
             // Выбираем для "обновления" превью
@@ -304,7 +341,90 @@ public sealed partial class ResearchConsoleMenu : FancyWindow
     {
         return _draggin ? DragMode.None : base.GetDragModeFor(relativeMousePos);
     }
+
+    // _Duty-start: зум колесом мыши
+    protected override void MouseWheel(GUIMouseWheelEventArgs args)
+    {
+        base.MouseWheel(args);
+
+        var oldZoom = _zoom;
+        _zoom = Math.Clamp(_zoom + (args.Delta.Y > 0 ? ZoomSpeed : -ZoomSpeed), MinZoom, MaxZoom);
+
+        if (MathHelper.CloseTo(oldZoom, _zoom))
+            return;
+
+        foreach (var child in DragContainer.Children)
+        {
+            if (child is not ResearchConsoleItem research)
+                continue;
+
+            LayoutContainer.SetPosition(child, GetTechPosition(research.Prototype));
+            research.SetScale(_zoom);
+        }
+
+        args.Handle();
+    }
+    // _Duty-end
     #endregion
+
+    // _Duty-start
+    /// <summary>
+    /// Экранная позиция карточки с учётом зума и смещения дисциплины.
+    /// </summary>
+    private Vector2 GetTechPosition(TechnologyPrototype proto)
+    {
+        var cell = (Vector2) proto.Position;
+
+        if (_showAllTree && _disciplineOffsets.TryGetValue(proto.Discipline.Id, out var offset))
+            cell.X += offset;
+
+        return _position + cell * 150f * _zoom;
+    }
+
+    /// <summary>
+    /// Раскладывает дисциплины по колонкам для режима "всё дерево".
+    /// Каждая дисциплина сдвигается так, чтобы её левый край встал вправо от предыдущей.
+    /// </summary>
+    private void RebuildDisciplineOffsets(IEnumerable<TechDisciplinePrototype> disciplines)
+    {
+        _disciplineOffsets.Clear();
+
+        var cursor = 0;
+        foreach (var discipline in disciplines)
+        {
+            var min = int.MaxValue;
+            var max = int.MinValue;
+
+            foreach (var tech in _prototype.EnumeratePrototypes<TechnologyPrototype>())
+            {
+                if (tech.Discipline.Id != discipline.ID || !List.ContainsKey(tech.ID))
+                    continue;
+
+                min = Math.Min(min, tech.Position.X);
+                max = Math.Max(max, tech.Position.X);
+            }
+
+            // у дисциплины нет ни одной видимой технологии
+            if (min > max)
+                continue;
+
+            _disciplineOffsets[discipline.ID] = cursor - min;
+            cursor += max - min + 1 + DisciplineGap;
+        }
+    }
+
+    /// <summary>
+    /// Переключает режим "всё дерево"
+    /// </summary>
+    private void OnShowAllPressed(BaseButton.ButtonEventArgs args)
+    {
+        _showAllTree = !_showAllTree;
+        ShowAllButton.Pressed = _showAllTree;
+
+        UpdatePanels(_localState);
+        Recenter();
+    }
+    // _Duty-end
 
     /// <summary>
     /// Выбирает определённую технологию
@@ -349,7 +469,8 @@ public sealed partial class ResearchConsoleMenu : FancyWindow
         {
             if (item is not ResearchConsoleItem research)
                 continue;
-            LayoutContainer.SetPosition(item, _position + research.Prototype.Position * 150);
+            LayoutContainer.SetPosition(item, GetTechPosition(research.Prototype)); // _Duty
+            research.SetScale(_zoom); // _Duty
         }
     }
 

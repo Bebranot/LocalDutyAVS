@@ -27,6 +27,11 @@
                 <BoxContainer Name="TierDisplayContainer" Orientation="Horizontal" HorizontalExpand="True" VerticalAlignment="Bottom"/>
                 <!-- This is where we put all of the little graphics that display discipline tiers!-->
             </BoxContainer>
+            <!-- _Duty-start -->
+            <BoxContainer Orientation="Vertical" VerticalExpand="True" HorizontalAlignment="Right">
+                <Button Name="ShowAllButton" Text="{Loc 'research-console-menu-show-all-button'}" StyleClasses="OpenBoth" MinHeight="40" ToggleMode="True"/>
+            </BoxContainer>
+            <!-- _Duty-end -->
             <BoxContainer Orientation="Vertical" VerticalExpand="True" HorizontalAlignment="Right">
                 <Button Name="RecenterButton" Text="{Loc 'research-console-menu-recenter-button'}" StyleClasses="OpenBoth" MinHeight="40"/>
             </BoxContainer>

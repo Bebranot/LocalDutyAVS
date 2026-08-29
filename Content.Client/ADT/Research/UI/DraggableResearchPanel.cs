@@ -25,19 +25,11 @@ public sealed partial class DraggablePanel : LayoutContainer
 
             foreach (var second in list)
             {
-                var leftOffset = second.PixelPosition.Y;
-                var rightOffset = item.PixelPosition.Y;
-
-                var y1 = second.PixelPosition.Y + second.PixelHeight / 2 + leftOffset;
-                var y2 = item.PixelPosition.Y + item.PixelHeight / 2 + rightOffset;
-
-                if (second == item)
-                {
-                    handle.DrawLine(new Vector2(0, y1), new Vector2(PixelWidth, y2), Color.Cyan);
-                    continue;
-                }
-                var startCoords = new Vector2(item.PixelPosition.X + 40, item.PixelPosition.Y + 40);
-                var endCoords = new Vector2(second.PixelPosition.X + 40, second.PixelPosition.Y + 40);
+                // _Duty-start: центр карточки считаем от её реального размера, а не от хардкода 40:
+                // при зуме размер меняется, и линии иначе отъезжают от карточек.
+                var startCoords = new Vector2(item.PixelPosition.X + item.PixelWidth / 2f, item.PixelPosition.Y + item.PixelHeight / 2f);
+                var endCoords = new Vector2(second.PixelPosition.X + second.PixelWidth / 2f, second.PixelPosition.Y + second.PixelHeight / 2f);
+                // _Duty-end
 
                 if (second.PixelPosition.Y != item.PixelPosition.Y)
                 {
