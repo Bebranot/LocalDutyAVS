@@ -1,0 +1,19 @@
+# SPDX-FileCopyrightText: 2026 LocalDuty
+# SPDX-License-Identifier: MIT
+
+- type: technology
+  id: DutyMechMeleeWeaponTech
+  name: research-technology-duty-mech-melee
+  icon:
+    sprite: Objects/Weapons/Melee/e_sword.rsi
+    state: e_sword
+  discipline: Mech
+  tier: 3
+  cost: 10000
+  recipeUnlocks:
+  - DutyMechWeaponMeleeRecipe
+  position: 4,2
+  technologyPrerequisites:
+  - ADTGygaxTechnology
+  requiredTech:
+  - ADTGygaxTechnology

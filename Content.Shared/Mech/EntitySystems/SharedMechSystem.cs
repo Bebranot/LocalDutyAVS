@@ -25,6 +25,7 @@ using Robust.Shared.Random;
 using Content.Shared.Overlays;
 using Content.Shared.Whitelist;
 using Content.Shared.ADT.Mech.Components;    // ADT Mech
+using Content.Shared._Duty.Mech;
 
 namespace Content.Shared.Mech.EntitySystems;
 
@@ -476,7 +477,21 @@ public abstract partial class SharedMechSystem : EntitySystem   // ADT - partial
         if (!TryComp<MechComponent>(component.Mech, out var mech))
             return;
 
-        var weapon = mech.CurrentSelectedEquipment ?? component.Mech;
+        // _Duty: если в мехе установлен модуль ближнего боя (см. MechMeleeWeaponComponent),
+        // он ВСЕГДА доступен для атаки, независимо от того, какое оборудование сейчас выбрано
+        // в UI меха — обычная стрельба выбранным оружием идёт по отдельному каналу
+        // (SharedGunSystem.TryGetGun, смотрит на CurrentSelectedEquipment напрямую) и это не ломает.
+        EntityUid? weapon = null;
+        foreach (var equipment in mech.EquipmentContainer.ContainedEntities)
+        {
+            if (!HasComp<MechMeleeWeaponComponent>(equipment))
+                continue;
+
+            weapon = equipment;
+            break;
+        }
+
+        weapon ??= mech.CurrentSelectedEquipment ?? component.Mech;
         args.Weapon = weapon;
         args.Handled = true;
     }

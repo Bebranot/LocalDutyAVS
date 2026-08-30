@@ -1,0 +1,7 @@
+# SPDX-FileCopyrightText: 2026 LocalDuty
+# SPDX-License-Identifier: MIT
+
+- type: latheRecipePack
+  id: DutyMechMeleePack
+  recipes:
+  - DutyMechWeaponMeleeRecipe

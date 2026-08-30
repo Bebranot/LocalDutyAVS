@@ -1,0 +1,43 @@
+# SPDX-FileCopyrightText: 2026 LocalDuty
+# SPDX-License-Identifier: MIT
+
+# Модуль ближнего боя меха — аналог энергомеча, переиспользующий его спрайт. Ставится в
+# боевые мехи (Gygax/Durand/Phazon, тег ADTMechEquipmentSec) и, в отличие от обычного
+# оружейного модуля, доступен для атаки по ПКМ ВСЕГДА, независимо от того, какое оборудование
+# выбрано в UI меха — см. Content.Shared.Mech.EntitySystems.SharedMechSystem.OnGetMeleeWeapon.
+# Урон — как у активного энергомеча (Slash 15 / Heat 15 / Structural 20), но −10%.
+
+- type: entity
+  id: DutyMechEnergyBlade
+  parent: BaseItem
+  name: энергетический клинок меха
+  description: Модуль ближнего боя для боевых мехов — тот же клинок, что и ручной энергомеч, вмонтированный в манипулятор. Доступен для удара по ПКМ независимо от выбранного оружия.
+  components:
+  - type: Sprite
+    netsync: false
+    sprite: Objects/Weapons/Melee/e_sword.rsi
+    state: e_sword
+  - type: Item
+    size: Large
+  - type: MechEquipment
+    canBeUsed: false # всегда доступен через ПКМ-релей, в цикле выбора оборудования не нужен
+  - type: MechMeleeWeapon
+  - type: Gun
+    useKey: true # "пустой" Gun нужен только чтобы клиентская MeleeWeaponSystem не дублировала LMB-атаку (см. Content.Client/Weapons/Melee/MeleeWeaponSystem.cs: Gun+UseKey ⇒ LMB не делает light-attack)
+  - type: AltFireMelee
+    attackType: Heavy
+  - type: MeleeWeapon
+    wideAnimationRotation: -135
+    attackRate: 1
+    damage:
+      types:
+        Slash: 13.5
+        Heat: 13.5
+        Structural: 18
+    soundHit:
+      path: /Audio/Weapons/eblade1.ogg
+      params:
+        variation: 0.250
+  - type: Tag
+    tags:
+    - ADTMechEquipmentSec

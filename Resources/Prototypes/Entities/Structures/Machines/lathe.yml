@@ -402,6 +402,9 @@
     - ADTMechEquipmentPack
     - ADTBorgModules
     # ADT-tweak-end
+    # _Duty-start
+    - DutyMechMeleePack
+    # _Duty-end
   - type: MaterialStorage
     whitelist: *StandardMaterialWhitelist
   - type: OreSiloClient

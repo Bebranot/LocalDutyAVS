@@ -1,0 +1,13 @@
+# SPDX-FileCopyrightText: 2026 LocalDuty
+# SPDX-License-Identifier: MIT
+
+- type: latheRecipe
+  id: DutyMechWeaponMeleeRecipe
+  result: DutyMechEnergyBlade
+  completetime: 4
+  materials:
+    Steel: 1000
+    Plastic: 150
+    Glass: 300
+    Silver: 200
+    Plasma: 800
