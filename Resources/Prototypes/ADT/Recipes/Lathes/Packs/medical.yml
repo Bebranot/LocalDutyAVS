@@ -12,6 +12,9 @@
 - type: latheRecipePack
   id: ADTAdvancedMedicalMiscPack
   recipes:
+  # _Duty-start: ручной монитор экипажа — сущность была, рецепта не было
+  - HandheldCrewMonitor
+  # _Duty-end
   - ADTHighVoltageDefibrillator
   - ADTReagentAnalyzer
   - ClothingEyesGlassesChemical

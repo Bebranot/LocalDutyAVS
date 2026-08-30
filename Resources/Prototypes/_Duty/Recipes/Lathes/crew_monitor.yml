@@ -1,0 +1,15 @@
+# SPDX-FileCopyrightText: 2026 LocalDuty
+# SPDX-License-Identifier: MIT
+
+# Ручной монитор экипажа у нас был как сущность, но напечатать его было нельзя —
+# рецепта не существовало. Стоимости губовские.
+
+- type: latheRecipe
+  id: HandheldCrewMonitor
+  result: HandheldCrewMonitorEmpty
+  completetime: 5
+  materials:
+    Steel: 500
+    Glass: 200
+    Plastic: 200
+    Gold: 100

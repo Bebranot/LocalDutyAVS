@@ -24,3 +24,21 @@
   requiredTech:
   - AdvancedToolsTechnology
   - AdvancedPowercells
+
+- type: technology
+  id: BluespaceConstructionStorage
+  name: research-technology-bluespace-construction-storage
+  icon:
+    sprite: _Duty/Objects/Specific/Engineering/construction_bag.rsi
+    state: icon-bluespace-overlay
+  discipline: Industrial
+  tier: 3
+  cost: 5000
+  recipeUnlocks:
+  - ConstructionBag
+  - ConstructionBagOfHolding
+  position: 2,-2
+  technologyPrerequisites:
+  - AdvancedToolsTechnology
+  requiredTech:
+  - AdvancedToolsTechnology

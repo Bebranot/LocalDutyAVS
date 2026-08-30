@@ -1,0 +1,25 @@
+# SPDX-FileCopyrightText: 2026 LocalDuty
+# SPDX-License-Identifier: MIT
+
+# У губов RescueTechnology лежал в CivilianServices, но крю-монитор — медицинский
+# прибор, а медицина у нас вынесена ADT в отдельную дисциплину МЕД. Ставим туда.
+#
+# Губовский пререквизит BiochemicalStasis не переносился (это Shitmed),
+# заменён на ADTIndustrialMedicine — ближайший по смыслу и стоит рядом.
+
+- type: technology
+  id: RescueTechnology
+  name: research-technology-rescue
+  icon:
+    sprite: Objects/Specific/Medical/handheldcrewmonitor.rsi
+    state: icon
+  discipline: Biochemical
+  tier: 1
+  cost: 7500
+  recipeUnlocks:
+  - HandheldCrewMonitor
+  position: 3,1
+  technologyPrerequisites:
+  - ADTIndustrialMedicine
+  requiredTech:
+  - ADTIndustrialMedicine

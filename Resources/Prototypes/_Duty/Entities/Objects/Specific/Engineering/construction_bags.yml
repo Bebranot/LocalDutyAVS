@@ -1,0 +1,120 @@
+# SPDX-FileCopyrightText: 2026 LocalDuty
+# SPDX-License-Identifier: MIT
+
+# Сумка строителя и её блюспейс-версия — порт из Goob-Station, куда они пришли из
+# Frontier (_NF/Entities/Specific/Engineering/construction_bags.yml).
+#
+# Обычная сумка нужна как родитель блюспейсной и полезна сама по себе: магнитит
+# материалы на поясе. Материал BSCrystal заменён нашим ADTBScrystal.
+
+- type: entity
+  parent: BaseStorageItem
+  id: ConstructionBag
+  name: сумка строителя
+  description: Прочная сумка под большой запас стройматериалов. На поясе притягивает всё, что валяется рядом.
+  components:
+  - type: MagnetPickup
+  - type: Sprite
+    sprite: _Duty/Objects/Specific/Engineering/construction_bag.rsi
+    layers:
+    - state: icon
+    - state: icon-on
+      shader: unshaded
+      visible: false
+      map: [ "enum.ToggleableVisuals.Layer" ]
+  - type: Appearance
+  - type: GenericVisualizer
+    visuals:
+      enum.ToggleableVisuals.Enabled:
+        enum.ToggleableVisuals.Layer:
+          True: { visible: true }
+          False: { visible: false }
+  - type: Clothing
+    sprite: _Duty/Objects/Specific/Engineering/construction_bag.rsi
+    quickEquip: false
+    slots:
+    - belt
+  - type: Item
+    size: Ginormous
+    inhandVisuals:
+      left:
+      - state: inhand-left
+        shader: unshaded
+      right:
+      - state: inhand-right
+        shader: unshaded
+  - type: Storage
+    maxItemSize: Normal
+    grid:
+    - 0,0,9,3
+    quickInsert: true
+    areaInsert: true
+    whitelist:
+      tags:
+      - Sheet
+      - CableCoil
+      - RawMaterial
+      - ConstructionMaterial # _Duty: у губов был PartBase, у нас детали помечены этим тегом
+  - type: Dumpable
+  - type: ItemToggle
+    soundActivate:
+      collection: sparks
+      params:
+        variation: 0.250
+    soundDeactivate:
+      collection: sparks
+      params:
+        variation: 0.250
+
+- type: entity
+  parent: ConstructionBag
+  id: ConstructionBagOfHolding
+  name: блюспейс-сумка строителя
+  description: Сумка строителя с блюспейс-подкладкой. Вмещает несуразно много и магнитит материалы с большего расстояния.
+  components:
+  - type: MagnetPickup
+    range: 2
+  - type: Sprite
+    sprite: _Duty/Objects/Specific/Engineering/construction_bag.rsi
+    layers:
+    - state: icon
+    - state: icon-bluespace-overlay
+    - state: icon-bluespace-overlay-unshaded
+      shader: unshaded
+    - state: icon-on-bluespace
+      visible: false
+      map: [ "enum.ToggleableVisuals.Layer" ]
+  - type: Item
+    size: Huge
+    inhandVisuals:
+      left:
+      - state: inhand-left
+      - state: inhand-left-bluespace-overlay
+      - state: inhand-left-bluespace-overlay-unshaded
+        shader: unshaded
+      right:
+      - state: inhand-right
+      - state: inhand-right-bluespace-overlay
+      - state: inhand-right-bluespace-overlay-unshaded
+        shader: unshaded
+  - type: Clothing
+    sprite: _Duty/Objects/Specific/Engineering/construction_bag.rsi
+    quickEquip: false
+    slots:
+    - belt
+    clothingVisuals:
+      belt:
+      - state: equipped-BELT
+      - state: equipped-BELT-bluespace-overlay
+      - state: equipped-BELT-bluespace-overlay-unshaded
+        shader: unshaded
+  - type: Storage
+    grid:
+    - 0,0,19,9
+  - type: PhysicalComposition
+    materialComposition:
+      Steel: 250
+      Plastic: 100
+      Plasma: 100
+      Uranium: 100
+      ADTBScrystal: 20

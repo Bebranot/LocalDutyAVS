@@ -59,6 +59,10 @@
 - type: latheRecipePack
   id: AdvancedTools
   recipes:
+  # _Duty-start: сумки строителя из Goob-Station
+  - ConstructionBag
+  - ConstructionBagOfHolding
+  # _Duty-end
   - PowerDrill
   - WelderExperimental
   - JawsOfLife
