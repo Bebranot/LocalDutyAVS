@@ -1,0 +1,98 @@
+# SPDX-FileCopyrightText: 2026 LocalDuty
+# SPDX-License-Identifier: MIT
+
+# Техи дисциплины НАУЧ, порт из Goob-Station.
+# Позиции проставлены под нашу сетку, рядом со своими пререквизитами.
+
+- type: technology
+  id: Pinpointers
+  name: research-technology-pinpointers
+  icon:
+    sprite: Objects/Devices/pinpointer.rsi
+    state: pinpointer-science
+  discipline: Experimental
+  tier: 2
+  cost: 7500
+  recipeUnlocks:
+  - DutyPinpointerStationRecipe
+  - PinpointerArtifact
+  - PinpointerAnomaly
+  - PinpointerBorg
+  position: 1,1
+  technologyPrerequisites:
+  - DeterrenceTechnologies
+  requiredTech:
+  - DeterrenceTechnologies
+
+- type: technology
+  id: NightVisionTech
+  name: research-technology-night-vision
+  icon:
+    sprite: _Duty/Clothing/Eyes/Goggles/nightvision.rsi
+    state: icon
+  discipline: Experimental
+  tier: 2
+  cost: 10000
+  recipeUnlocks:
+  - ClothingEyesNightVisionGoggles
+  position: -1,-1
+  technologyPrerequisites:
+  - ADTModsuitBase
+  requiredTech:
+  - ADTModsuitBase
+
+- type: technology
+  id: ThermalVisionTech
+  name: research-technology-thermal-vision
+  icon:
+    sprite: _Duty/Clothing/Eyes/Goggles/thermal.rsi
+    state: icon
+  discipline: Experimental
+  tier: 2
+  cost: 10000
+  recipeUnlocks:
+  - ClothingEyesThermalVisionGoggles
+  position: -2,-1
+  technologyPrerequisites:
+  - NightVisionTech
+  requiredTech:
+  - NightVisionTech
+
+# Открывает ADTMaterialBScrystalArt — наш блюспейс-кристалл. У губов был свой
+# MaterialBSCrystal, но это дубликат: наш кристалл лежит в паке ADTBluespaceCrystalTech,
+# уже подключённом к протолейту, и его просто никто не открывал.
+- type: technology
+  id: BluespaceTheory
+  name: research-technology-bluespace-theory
+  icon:
+    sprite: ADT/Objects/Materials/crystal.rsi
+    state: crystal
+  discipline: Experimental
+  tier: 1
+  cost: 5000
+  recipeUnlocks:
+  - ADTMaterialBScrystalArt
+  position: -1,1
+  technologyPrerequisites:
+  - DeterrenceTechnologies
+  requiredTech:
+  - DeterrenceTechnologies
+
+# Рецепт DeviceQuantumSpinInverter в репозитории был, но не лежал ни в одном паке —
+# напечатать его было негде. Рецепт добавлен в ScienceEquipment, тех его открывает.
+- type: technology
+  id: QuantumLeaping
+  name: research-technology-quantum-leaping
+  icon:
+    sprite: Objects/Devices/swapper.rsi
+    state: icon
+  discipline: Experimental
+  tier: 3
+  cost: 15000
+  recipeUnlocks:
+  - DeviceQuantumSpinInverter
+  position: 5,1
+  technologyPrerequisites:
+  - GravityManipulation
+  requiredTech:
+  - GravityManipulation

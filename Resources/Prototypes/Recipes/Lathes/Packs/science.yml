@@ -15,6 +15,15 @@
 - type: latheRecipePack
   id: ScienceEquipment
   recipes:
+  # _Duty-start: пеленгаторы из Goob-Station
+  - DutyPinpointerStationRecipe
+  - PinpointerArtifact
+  - PinpointerAnomaly
+  - PinpointerBorg
+  - ClothingEyesNightVisionGoggles
+  - ClothingEyesThermalVisionGoggles
+  - DeviceQuantumSpinInverter
+  # _Duty-end
   - AnomalyScanner
   - NodeScanner
   - AnomalyLocator
@@ -42,6 +51,10 @@
 - type: latheRecipePack
   id: PowerCells
   recipes:
+  # _Duty-start: рецепты есть в репозитории, но не лежали ни в одном паке — напечатать их было негде
+  - PowerCellMicroreactor
+  - PowerCellHyper
+  # _Duty-end
   # - PowerCellMicroreactor #ADT-tweak
   - PowerCellHigh
   # - PowerCellHyper #ADT-tweak

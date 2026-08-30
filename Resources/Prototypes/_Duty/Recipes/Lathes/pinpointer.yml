@@ -1,0 +1,31 @@
+# SPDX-FileCopyrightText: 2026 LocalDuty
+# SPDX-License-Identifier: MIT
+
+# Рецепты пинпойнтеров. Стоимости губовские.
+# Станционный пинпойнтер у нас был как сущность, но его нельзя было напечатать —
+# рецепт добавлен, чтобы тех открывал полный набор.
+
+- type: latheRecipe
+  id: DutyPinpointerStationRecipe
+  result: PinpointerStation
+  completetime: 3
+  materials:
+    Steel: 600
+    Glass: 500
+    Plasma: 200
+    Gold: 200
+
+- type: latheRecipe
+  parent: DutyPinpointerStationRecipe
+  id: PinpointerArtifact
+  result: PinpointerArtifact
+
+- type: latheRecipe
+  parent: DutyPinpointerStationRecipe
+  id: PinpointerAnomaly
+  result: PinpointerAnomaly
+
+- type: latheRecipe
+  parent: DutyPinpointerStationRecipe
+  id: PinpointerBorg
+  result: PinpointerBorg

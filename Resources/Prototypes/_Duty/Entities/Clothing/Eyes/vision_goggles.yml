@@ -1,0 +1,51 @@
+# SPDX-FileCopyrightText: 2026 LocalDuty
+# SPDX-License-Identifier: MIT
+
+# Очки ночного видения и тепловизор, открываемые исследованиями.
+# По мотивам Goob-Station (_White/Entities/Clothing/Eyes/goggles.yml): оттуда взяты
+# спрайты и сама идея печатаемых очков, но прототипы написаны заново.
+#
+# Копировать их было нельзя: губовские очки собраны на компонентах NightVision и
+# ThermalVision с полями flashDurationMultiplier / isEquipment / pulseTime / toggleAction,
+# а у нас носимое ночное и тепловое зрение сделано через NightVisionItem и
+# ThermalVisionItem (Content.Shared/ADT/{NightVision,ThermalVision}) — другая система
+# со своими действиями, шейдерами и эффектами.
+#
+# Контрабандные ClothingEyesNightVision и тепловизорные очки остаются как были:
+# это отдельная, непечатаемая ветка снаряжения.
+
+- type: entity
+  parent: ClothingEyesBase
+  id: ClothingEyesNightVisionGoggles
+  name: очки ночного видения
+  description: Теперь и в темноте видно. Усиливают остаточный свет, из-за чего вспышка бьёт по глазам сильнее обычного.
+  components:
+  - type: Sprite
+    sprite: _Duty/Clothing/Eyes/Goggles/nightvision.rsi
+  - type: Clothing
+    sprite: _Duty/Clothing/Eyes/Goggles/nightvision.rsi
+  - type: NightVisionItem
+  - type: IdentityBlocker
+    coverage: EYES
+  - type: Appearance
+  - type: GenericVisualizer
+    visuals:
+      enum.NightVisionItemVisuals.Active:
+        icon:
+          True: { state: icon }
+          False: { state: icon }
+
+- type: entity
+  parent: ClothingEyesBase
+  id: ClothingEyesThermalVisionGoggles
+  name: тепловизорные очки
+  description: Показывают тепловые следы живых существ сквозь переборки. Смотреть в них на что-то яркое — плохая идея.
+  components:
+  - type: Sprite
+    sprite: _Duty/Clothing/Eyes/Goggles/thermal.rsi
+  - type: Clothing
+    sprite: _Duty/Clothing/Eyes/Goggles/thermal.rsi
+  - type: ThermalVisionItem
+  - type: IdentityBlocker
+    coverage: EYES
+  - type: Appearance

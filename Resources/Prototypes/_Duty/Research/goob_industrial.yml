@@ -1,0 +1,26 @@
+# SPDX-FileCopyrightText: 2026 LocalDuty
+# SPDX-License-Identifier: MIT
+
+# Рецепты PowerCellMicroreactor и PowerCellHyper в репозитории были, но не лежали
+# ни в одном паке лейта — напечатать их было негде. Рецепты добавлены в пак PowerCells,
+# этот тех их открывает.
+
+- type: technology
+  id: OptimizedMicrogalvanism
+  name: research-technology-optimized-microgalvanism
+  icon:
+    sprite: Objects/Power/power_cells.rsi
+    state: microreactor
+  discipline: Industrial
+  tier: 3
+  cost: 15000
+  recipeUnlocks:
+  - PowerCellMicroreactor
+  - PowerCellHyper
+  position: 4,-3
+  technologyPrerequisites:
+  - AdvancedToolsTechnology
+  - AdvancedPowercells
+  requiredTech:
+  - AdvancedToolsTechnology
+  - AdvancedPowercells

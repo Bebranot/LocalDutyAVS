@@ -1,0 +1,76 @@
+# SPDX-FileCopyrightText: 2026 LocalDuty
+# SPDX-License-Identifier: MIT
+
+# Пинпойнтеры под артефакты, аномалии и силиконов — порт из Goob-Station
+# (Resources/Prototypes/_Goobstation/Entities/Objects/Devices/pinpointer.yml).
+#
+# Новых спрайтов не нужно: все состояния берутся из ванильного PinpointerBase.
+#
+# Губовский PinpointerStationGoob не переносим — станционный пинпойнтер у нас уже есть
+# как PinpointerStation, ему не хватало только рецепта, он добавлен рядом.
+#
+# У губов наведение задаётся вайтлистом компонентов, у нас в PinpointerComponent
+# одно поле component. После отбрасывания губовского LavalandStation в каждом вайтлисте
+# остаётся ровно один компонент, так что перевод однозначный.
+
+- type: entity
+  name: пинпойнтер артефактов
+  description: Ручной пеленгатор, наводящийся на ближайшие артефакты. Держите ровно, иначе показания врут.
+  id: PinpointerArtifact
+  parent: PinpointerBase
+  components:
+  - type: Sprite
+    layers:
+    - state: pinpointer-science
+      map: ["enum.PinpointerLayers.Base"]
+    - state: pinonnull
+      map: ["enum.PinpointerLayers.Screen"]
+      shader: unshaded
+      visible: false
+  - type: Icon
+    state: pinpointer-science
+  - type: Pinpointer
+    targetName: артефакты
+    component: XenoArtifact
+
+- type: entity
+  name: пинпойнтер аномалий
+  description: Ручной пеленгатор, в выключенном состоянии захватывающий любую аномалию. Держите ровно, иначе показания врут.
+  id: PinpointerAnomaly
+  parent: PinpointerBase
+  components:
+  - type: Sprite
+    layers:
+    - state: pinpointer-science
+      map: ["enum.PinpointerLayers.Base"]
+    - state: pinonnull
+      map: ["enum.PinpointerLayers.Screen"]
+      shader: unshaded
+      visible: false
+  - type: Icon
+    state: pinpointer-science
+  - type: Pinpointer
+    updateTargetName: true
+    canRetarget: true
+    component: Anomaly
+
+- type: entity
+  name: пинпойнтер силиконов
+  description: Ручной пеленгатор, в выключенном состоянии захватывающий любого силикона. Держите ровно, иначе показания врут.
+  id: PinpointerBorg
+  parent: PinpointerBase
+  components:
+  - type: Sprite
+    layers:
+    - state: pinpointer-way
+      map: ["enum.PinpointerLayers.Base"]
+    - state: pinonnull
+      map: ["enum.PinpointerLayers.Screen"]
+      shader: unshaded
+      visible: false
+  - type: Icon
+    state: pinpointer-way
+  - type: Pinpointer
+    updateTargetName: true
+    canRetarget: true
+    component: BorgChassis
