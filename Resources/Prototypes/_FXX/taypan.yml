@@ -139,7 +139,7 @@
 - type: latheRecipePack
   id: Syndicateauto
   recipes:
-  - WeaponSniperMosinRecipe
+  # _Duty: убран дубль WeaponSniperMosinRecipe, он есть ниже среди винтовок
   - EmagRecipe
   - SyndicateJawsOfLifeRecipe
   - MedkitCombatFilledRecipe
