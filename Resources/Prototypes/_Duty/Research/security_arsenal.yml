@@ -1,0 +1,135 @@
+# SPDX-FileCopyrightText: 2026 LocalDuty
+# SPDX-License-Identifier: MIT
+
+# Две линейные ветки СБ-исследований в дисциплине Arsenal: 3 filler-узла (15k, ничего не
+# отпирают — чистая трата очков ради усложнения прогрессии) + финальный узел (50k, отпирает
+# крафт auto-surgeon'а). Гейт первого узла каждой ветки — ThermalWeaponry (Resources/Prototypes/
+# Research/arsenal.yml, позиция 5,0) — обе ветки растут от неё горизонтально вправо.
+
+# ── Сандевистан "Стервятник" ──
+
+- type: technology
+  id: DutySecSandevistanResearchI
+  name: research-technology-duty-sec-sandevistan-1
+  icon:
+    sprite: ADT/Objects/Tools/upgrade.rsi
+    state: display
+  discipline: Arsenal
+  tier: 3
+  cost: 15000
+  position: 6,4
+  technologyPrerequisites:
+  - ThermalWeaponry
+  requiredTech:
+  - ThermalWeaponry
+
+- type: technology
+  id: DutySecSandevistanResearchII
+  name: research-technology-duty-sec-sandevistan-2
+  icon:
+    sprite: ADT/Objects/Tools/upgrade.rsi
+    state: display
+  discipline: Arsenal
+  tier: 3
+  cost: 15000
+  position: 7,4
+  technologyPrerequisites:
+  - DutySecSandevistanResearchI
+  requiredTech:
+  - DutySecSandevistanResearchI
+
+- type: technology
+  id: DutySecSandevistanResearchIII
+  name: research-technology-duty-sec-sandevistan-3
+  icon:
+    sprite: ADT/Objects/Tools/upgrade.rsi
+    state: display
+  discipline: Arsenal
+  tier: 3
+  cost: 15000
+  position: 8,4
+  technologyPrerequisites:
+  - DutySecSandevistanResearchII
+  requiredTech:
+  - DutySecSandevistanResearchII
+
+- type: technology
+  id: DutySecSandevistanTech
+  name: research-technology-duty-sec-sandevistan
+  icon:
+    sprite: ADT/Interface/Actions/sandevistan.rsi
+    state: icon
+  discipline: Arsenal
+  tier: 3
+  cost: 50000
+  recipeUnlocks:
+  - DutySecSandevistanAutoSurgeonRecipe
+  position: 9,4
+  technologyPrerequisites:
+  - DutySecSandevistanResearchIII
+  requiredTech:
+  - DutySecSandevistanResearchIII
+
+# ── Клинки "Богомол-Лайт" ──
+
+- type: technology
+  id: DutySecMantisResearchI
+  name: research-technology-duty-sec-mantis-1
+  icon:
+    sprite: ADT/Objects/Tools/upgrade.rsi
+    state: display
+  discipline: Arsenal
+  tier: 3
+  cost: 15000
+  position: 6,-4
+  technologyPrerequisites:
+  - ThermalWeaponry
+  requiredTech:
+  - ThermalWeaponry
+
+- type: technology
+  id: DutySecMantisResearchII
+  name: research-technology-duty-sec-mantis-2
+  icon:
+    sprite: ADT/Objects/Tools/upgrade.rsi
+    state: display
+  discipline: Arsenal
+  tier: 3
+  cost: 15000
+  position: 7,-4
+  technologyPrerequisites:
+  - DutySecMantisResearchI
+  requiredTech:
+  - DutySecMantisResearchI
+
+- type: technology
+  id: DutySecMantisResearchIII
+  name: research-technology-duty-sec-mantis-3
+  icon:
+    sprite: ADT/Objects/Tools/upgrade.rsi
+    state: display
+  discipline: Arsenal
+  tier: 3
+  cost: 15000
+  position: 8,-4
+  technologyPrerequisites:
+  - DutySecMantisResearchII
+  requiredTech:
+  - DutySecMantisResearchII
+
+- type: technology
+  id: DutySecMantisTech
+  name: research-technology-duty-sec-mantis
+  icon:
+    sprite: ADT/Implants/mantis_daggers.rsi
+    state: icon
+  discipline: Arsenal
+  tier: 3
+  cost: 50000
+  recipeUnlocks:
+  - DutySecMantisBladesAutoSurgeonRecipe
+  position: 9,-4
+  technologyPrerequisites:
+  - DutySecMantisResearchIII
+  requiredTech:
+  - DutySecMantisResearchIII

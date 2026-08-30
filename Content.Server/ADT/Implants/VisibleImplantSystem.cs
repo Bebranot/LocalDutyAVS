@@ -84,8 +84,8 @@ public sealed class VisibleImplantSystem : SharedVisibleImplantSystem
     {
         comp.EmpLastPulse = _timing.CurTime - comp.EmpCooldown;
         _action.AddAction(uid, ref comp.ActionEntity, "ActionToggleMantisDaggers");
-        comp.Container = _container.EnsureContainer<Container>(uid, "MantisDaggersContainer");
-        comp.InnateWeapon = Spawn("ADTMantisDaggers", Transform(uid).Coordinates);
+        comp.Container = _container.EnsureContainer<Container>(uid, comp.ContainerId);
+        comp.InnateWeapon = Spawn(comp.WeaponProto, Transform(uid).Coordinates);
         _container.Insert(comp.InnateWeapon.Value, comp.Container, force: true);
         Dirty(uid, comp);
     }

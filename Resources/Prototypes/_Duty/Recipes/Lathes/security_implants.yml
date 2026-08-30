@@ -1,0 +1,30 @@
+# SPDX-FileCopyrightText: 2026 LocalDuty
+# SPDX-License-Identifier: MIT
+
+# Дорогой крафт для СБ auto-surgeon'ов — отпирается веткой исследований
+# Resources/Prototypes/_Duty/Research/security_arsenal.yml, собирается на охранном техфабе (SecurityTechFab).
+
+- type: latheRecipe
+  id: DutySecSandevistanAutoSurgeonRecipe
+  result: DutySecSandevistanAutoSurgeon
+  completetime: 10
+  materials:
+    Steel: 2000
+    Glass: 400
+    Plastic: 300
+    Silver: 300
+    Gold: 300
+    Plasma: 500
+    Diamond: 100
+
+- type: latheRecipe
+  id: DutySecMantisBladesAutoSurgeonRecipe
+  result: DutySecMantisBladesAutoSurgeon
+  completetime: 10
+  materials:
+    Steel: 1500
+    Glass: 300
+    Plastic: 300
+    Silver: 400
+    Gold: 200
+    Uranium: 300

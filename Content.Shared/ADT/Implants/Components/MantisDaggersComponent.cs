@@ -19,6 +19,22 @@ public sealed partial class MantisDaggersComponent : Component
     [AutoNetworkedField]
     public EntityUid? InnateWeapon;
 
+    /// <summary>
+    /// _Duty: прототип оружия, которое спавнится в руки при инициализации импланта.
+    /// Параметризовано, чтобы Duty-клоны (см. Content.Shared._Duty.SecurityImplants)
+    /// могли выдавать собственную (более слабую) сущность, не дублируя весь InitDaggers.
+    /// </summary>
+    [DataField]
+    public EntProtoId WeaponProto = "ADTMantisDaggers";
+
+    /// <summary>
+    /// _Duty: имя контейнера для InnateWeapon — вынесено в DataField, чтобы два разных
+    /// импланта на базе MantisDaggersComponent (синдикатский и Duty-клон) не делили
+    /// один и тот же контейнер, если оба почему-то оказались на одном теле одновременно.
+    /// </summary>
+    [DataField]
+    public string ContainerId = "MantisDaggersContainer";
+
     [DataField]
     public SoundSpecifier? Sound = new SoundPathSpecifier("/Audio/ADT/Weapons/Melee/blade.ogg");
 

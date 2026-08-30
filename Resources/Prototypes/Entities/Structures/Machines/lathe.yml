@@ -509,6 +509,9 @@
     - ADT40mmGrenadePack
     - ADTMechEquipmentSecTechfabPack
     # ADT-tweak-end
+    # _Duty-start
+    - DutySecImplantsPack
+    # _Duty-end
   - type: EmagLatheRecipes
     emagStaticPacks:
     - SyndicateAmmoStatic

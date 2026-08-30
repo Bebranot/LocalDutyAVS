@@ -1,0 +1,95 @@
+# SPDX-FileCopyrightText: 2026 LocalDuty
+# SPDX-License-Identifier: MIT
+
+# Ослабленные СБ-клоны синдикатских Сандевистана и Клинков Богомола (см. rules/gotchas duty-feature).
+# Открываются через отдельную ветку исследований Arsenal — Resources/Prototypes/_Duty/Research/security_arsenal.yml.
+
+- type: entity
+  parent: BaseSubdermalImplant
+  id: DutySecSandevistanImplant
+  name: имплант "Стервятник"
+  description: Урезанная СБ-версия синдикатского сандевистана — тот же принцип ускорения нейронных импульсов, но заводская прошивка искусственно занижена, чтобы имплант не сжигал носителя так же быстро.
+  categories: [ HideSpawnMenu ]
+  components:
+  - type: SubdermalImplant
+  - type: DutySecSandevistanImplant
+
+- type: entity
+  parent: BaseSubdermalImplant
+  id: DutySecMantisBladesImplant
+  name: имплант "Богомол-Лайт"
+  description: Урезанная СБ-версия синдикатских Клинков Богомола — то же встроенное клинковое оружие, но с ослабленной моторикой и упрощённым хитиновым сплавом.
+  categories: [ HideSpawnMenu ]
+  components:
+  - type: SubdermalImplant
+  - type: DutySecMantisBladesImplant
+
+- type: entity
+  parent: ClothingHandsBase
+  id: DutySecMantisBlades
+  categories: [ HideSpawnMenu ]
+  name: клинки "Богомол-Лайт"
+  description: Ослабленная СБ-версия клинков богомола.
+  components:
+  - type: Sprite
+    sprite: ADT/Implants/mantis_daggers.rsi
+    state: icon
+  - type: Clothing
+    sprite: ADT/Implants/mantis_daggers.rsi
+  - type: MeleeWeapon
+    attackRate: 1
+    damage:
+      types:
+        Slash: 7.5
+        Poison: 1.5
+    soundHit:
+        path: /Audio/Weapons/Xeno/alien_claw_flesh3.ogg
+    angle: 0
+    animation: ADTWeaponArcMantisHit
+    wideAnimation: ADTWeaponArcMantisSlash
+    customWideAnim: true
+    clickDamageModifier: 1.1
+  - type: FingerprintMask
+  - type: Reflect
+    reflectProb: .22
+    spread: 90
+
+# ── Одноразовые СБ auto-surgeon'ы, отпираемые крафтом на охранном техфабе (SecurityTechFab) ──
+# Не наследуем от ADTBaseSyndicateAutoSurgeonOnlyImplanter — он тащит BaseSyndicateContraband,
+# а это легальное СБ-снаряжение, а не синдикат-контрабанда. Вместо этого — свой abstract-предок
+# на базе ADTAutoSurgeon с той же механикой одноразового имплантера.
+
+- type: entity
+  id: DutySecAutoSurgeonBase
+  parent: [ADTAutoSurgeon, BaseSecurityCargoContraband]
+  name: СБ авто-хирург
+  description: Компактный одноразовый авто-хирург служебного образца, предназначенный только для инъекции подкожных имплантов.
+  abstract: true
+  categories: [ HideSpawnMenu ]
+  components:
+    - type: Implanter
+      currentMode: Inject
+      implantOnly: true
+      implantTime: 20
+    - type: Tag
+      tags: []
+
+- type: entity
+  id: DutySecSandevistanAutoSurgeon
+  parent: DutySecAutoSurgeonBase
+  name: СБ авто-хирург "Стервятник"
+  description: Одноразовый авто-хирург с предзаряженным имплантом "Стервятник" — урезанным сандевистаном для нужд Службы Безопасности.
+  categories: [ HideSpawnMenu ]
+  components:
+    - type: Implanter
+      implant: DutySecSandevistanImplant
+
+- type: entity
+  id: DutySecMantisBladesAutoSurgeon
+  parent: DutySecAutoSurgeonBase
+  name: СБ авто-хирург "Богомол-Лайт"
+  description: Одноразовый авто-хирург с предзаряженным имплантом "Богомол-Лайт" — урезанной версией клинков богомола для нужд Службы Безопасности.
+  categories: [ HideSpawnMenu ]
+  components:
+    - type: Implanter
+      implant: DutySecMantisBladesImplant
