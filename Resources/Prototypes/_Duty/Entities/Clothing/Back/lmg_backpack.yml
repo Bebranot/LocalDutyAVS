@@ -1,0 +1,67 @@
+# SPDX-FileCopyrightText: 2026 LocalDuty
+# SPDX-License-Identifier: MIT
+
+# Ранец-батарея для лазерного пулемёта EL-20 (порт из Goob-Station,
+# Resources/Prototypes/_Goobstation/Entities/Clothing/Back/specific.yml).
+#
+# Печать ранца выдаёт и сам пулемёт: он лежит в слоте item как startingItem.
+
+- type: entity
+  parent: [ Clothing, ClothingSlotBase ]
+  id: ClothingBackpackLMGBattery
+  name: ранец EL-20
+  description: Принимает специализированные аккумуляторы для питания пулемёта EL-20 HAMRR. Внутри уже лежит сам пулемёт.
+  components:
+  - type: Sprite
+    sprite: _Duty/Clothing/Back/Backpacks/lmg_backpack.rsi
+    layers:
+    - state: icon
+      visible: false
+    - state: base
+    - state: mag-1
+      map: ["enum.GunVisualLayers.Mag"]
+  - type: MagazineVisuals
+    magState: mag
+    steps: 2
+    zeroVisible: true
+  - type: Clothing
+    slots: BACK
+    sprite: _Duty/Clothing/Back/Backpacks/lmg_backpack.rsi
+    clothingVisuals:
+      back:
+      - state: equipped-BACKPACK
+      - state: green-equipped-BACKPACK
+        shader: unshaded
+      - state: mag-equipped-BACKPACK
+  - type: MagazineAmmoProvider
+  - type: ItemSlots
+    slots:
+      gun_magazine:
+        name: Magazine
+        whitelist:
+          tags:
+          - MilitaryPowerCellLMG
+      item:
+        name: LMG
+        priority: 2
+        startingItem: WeaponLaserLMG
+        whitelist:
+          tags:
+          - LaserLMG
+  - type: Appearance
+  - type: StaticPrice
+    price: 500
+  - type: ContainerContainer
+    containers:
+      gun_magazine: !type:ContainerSlot
+      item: !type:ContainerSlot
+  - type: Item
+    size: Ginormous
+  - type: Tag
+    tags:
+    - LaserLMGBackpack
+    - WhitelistChameleon
+  - type: ClothingSpeedModifier
+    walkModifier: 0.8
+    sprintModifier: 0.8
+  - type: HeldSpeedModifier

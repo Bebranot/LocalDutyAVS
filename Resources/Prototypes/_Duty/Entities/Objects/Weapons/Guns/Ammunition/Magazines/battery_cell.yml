@@ -1,0 +1,328 @@
+# SPDX-FileCopyrightText: 2026 LocalDuty
+# SPDX-License-Identifier: MIT
+
+# Порт линейки боевых энергоячеек из Goob-Station
+# (Resources/Prototypes/_Goobstation/.../Magazines/battery_cell.yml).
+#
+# Отличия от оригинала:
+#  - ионные варианты не переносим: они бьют типом урона Ion, которого у нас нет,
+#    а добавление 15-го типа урона сделало бы их игнорирующими всю существующую броню;
+#  - у базы убран BatteryAmmoProvider с proto: SmallRedLaser — такого прототипа нет
+#    даже у губов, а каждая конкретная ячейка всё равно задаёт свой снаряд.
+
+- type: entity
+  id: BaseMilitaryPowerCell
+  abstract: true
+  parent: BaseItem
+  components:
+  - type: Item
+  - type: Battery
+    pricePerJoule: 0.15
+  - type: BatteryDrinkerSource
+  - type: PowerCell
+  - type: Explosive
+    explosionType: Default
+    maxIntensity: 200
+    intensitySlope: 1.5
+  - type: Sprite
+    sprite: Objects/Power/power_cells.rsi
+  - type: SolutionContainerManager
+    solutions:
+      battery:
+        maxVol: 5
+  - type: InjectableSolution
+    solution: battery
+  - type: DrawableSolution
+    solution: battery
+  - type: Appearance
+  - type: Riggable
+  - type: PhysicalComposition
+    materialComposition:
+      Steel: 80
+      Gold: 40
+      Glass: 40
+      Plasma: 40
+    chemicalComposition:
+      Zinc: 7.5
+
+# ── Ячейки для ПП ──
+
+- type: entity
+  id: BaseMilitaryPowerCellSMG
+  abstract: true
+  parent: BaseMilitaryPowerCell
+  components:
+  - type: Sprite
+    layers:
+    - map: [ "enum.PowerCellVisualLayers.Base" ]
+      state: icon
+    - map: [ "enum.PowerCellVisualLayers.Unshaded" ]
+      state: o4
+      shader: unshaded
+  - type: Battery
+    maxCharge: 1000
+    startingCharge: 1000
+  - type: BatteryDrinkerSource
+    maxAmount: 200
+  - type: Tag
+    tags:
+    - MilitaryPowerCellSMG
+    - MilitaryPowerCell
+
+- type: entity
+  name: ячейка для ПП
+  description: Боевая энергоячейка под лазерное оружие класса пистолета-пулемёта.
+  id: PowerCellIRSMG
+  suffix: Full
+  parent: BaseMilitaryPowerCellSMG
+  components:
+  - type: Sprite
+    sprite: _Duty/Objects/Weapons/Guns/Ammunition/Magazine/energy_cell_pistol_lethal.rsi
+  - type: BatteryAmmoProvider
+    proto: SMGLaser
+    fireCost: 50
+
+- type: entity
+  name: блюспейс-ячейка для ПП
+  description: Боевая энергоячейка под ПП, разгоняющая калиброванные блюспейс-частицы. Заряд ёмче обычного, а луч бьёт заметно больнее.
+  id: PowerCellBluespaceSMG
+  suffix: Full
+  parent: BaseMilitaryPowerCellSMG
+  components:
+  - type: Battery
+    maxCharge: 1500
+    startingCharge: 1500
+  - type: Sprite
+    sprite: _Duty/Objects/Weapons/Guns/Ammunition/Magazine/energy_cell_pistol_bluespace.rsi
+  - type: BatteryAmmoProvider
+    proto: SMGLaserBluespace
+    fireCost: 50
+
+# ── Ячейки для снайперской винтовки ──
+
+- type: entity
+  id: BaseMilitaryPowerCellSniper
+  abstract: true
+  parent: BaseMilitaryPowerCell
+  components:
+  - type: Sprite
+    layers:
+    - map: [ "enum.PowerCellVisualLayers.Base" ]
+      state: icon
+    - map: [ "enum.PowerCellVisualLayers.Unshaded" ]
+      state: o4
+      shader: unshaded
+  - type: Battery
+    maxCharge: 1200
+    startingCharge: 1200
+  - type: BatteryDrinkerSource
+    maxAmount: 200
+  - type: Tag
+    tags:
+    - MilitaryPowerCellSniper
+    - MilitaryPowerCell
+  - type: PhysicalComposition
+    materialComposition:
+      Steel: 120
+      Gold: 60
+      Glass: 60
+      Plasma: 60
+    chemicalComposition:
+      Zinc: 10
+
+- type: entity
+  name: снайперская ячейка
+  description: Боевая энергоячейка под лазерные снайперские винтовки.
+  id: PowerCellIRSniper
+  suffix: Full
+  parent: BaseMilitaryPowerCellSniper
+  components:
+  - type: Sprite
+    sprite: _Duty/Objects/Weapons/Guns/Ammunition/Magazine/energy_cell_rifle_lethal.rsi
+  - type: BatteryAmmoProvider
+    proto: SniperRedLaser
+    fireCost: 100
+
+- type: entity
+  name: блюспейс-ячейка снайперская
+  description: Боевая энергоячейка под снайперскую винтовку, разгоняющая калиброванные блюспейс-частицы. Заряд ёмче обычного, а луч бьёт заметно больнее.
+  id: PowerCellBluespaceSniper
+  suffix: Full
+  parent: BaseMilitaryPowerCellSniper
+  components:
+  - type: Battery
+    maxCharge: 1800
+    startingCharge: 1800
+  - type: Sprite
+    sprite: _Duty/Objects/Weapons/Guns/Ammunition/Magazine/energy_cell_rifle_bluespace.rsi
+  - type: BatteryAmmoProvider
+    proto: SniperBluespaceLaser
+    fireCost: 100
+
+# ── Ячейки для револьвера ──
+
+- type: entity
+  id: BaseMilitaryPowerCellRevolver
+  abstract: true
+  parent: BaseMilitaryPowerCell
+  components:
+  - type: Item
+    size: Tiny
+  - type: Sprite
+    sprite: _Duty/Objects/Weapons/Guns/Ammunition/Magazine/energy_cell_revolver.rsi
+  - type: Battery
+    maxCharge: 500
+    startingCharge: 500
+  - type: BatteryDrinkerSource
+    maxAmount: 100
+  - type: Tag
+    tags:
+    - MilitaryPowerCellRevolver
+    - MilitaryPowerCell
+  - type: PhysicalComposition
+    materialComposition:
+      Steel: 40
+      Gold: 20
+      Glass: 20
+      Plasma: 20
+    chemicalComposition:
+      Zinc: 5
+
+- type: entity
+  name: револьверная ячейка
+  description: Боевая энергоячейка под лазерные револьверы.
+  id: PowerCellIRRevolver
+  suffix: Full
+  parent: BaseMilitaryPowerCellRevolver
+  components:
+  - type: Sprite
+    layers:
+    - map: [ "base" ]
+      state: lethal_charge
+      shader: unshaded
+  - type: GenericVisualizer
+    visuals:
+      enum.AmmoVisuals.HasAmmo:
+        base:
+          True:
+            state: lethal_charge
+            shader: unshaded
+          False:
+            state: lethal
+            shader: null
+  - type: BatteryAmmoProvider
+    proto: RevolverRedLaser
+    fireCost: 62.5
+
+- type: entity
+  name: блюспейс-ячейка револьверная
+  description: Боевая энергоячейка под револьвер, разгоняющая калиброванные блюспейс-частицы. Заряд ёмче обычного, а луч бьёт заметно больнее.
+  id: PowerCellBluespaceRevolver
+  suffix: Full
+  parent: BaseMilitaryPowerCellRevolver
+  components:
+  - type: Sprite
+    layers:
+    - map: [ "base" ]
+      state: bluespace_charge
+      shader: unshaded
+  - type: Battery
+    maxCharge: 750
+    startingCharge: 750
+  - type: GenericVisualizer
+    visuals:
+      enum.AmmoVisuals.HasAmmo:
+        base:
+          True:
+            state: bluespace_charge
+            shader: unshaded
+          False:
+            state: bluespace
+            shader: null
+  - type: BatteryAmmoProvider
+    proto: RevolverBluespaceLaser
+    fireCost: 62.5
+
+# ── Батареи для пулемёта ──
+
+- type: entity
+  id: MilitaryPowerCellLMG
+  parent: BaseMilitaryPowerCell
+  name: аккумулятор пулемёта
+  description: Аккумулятор под лазерный пулемёт, ставится в питающий ранец.
+  components:
+  - type: Sprite
+    sprite: _Duty/Objects/Weapons/Guns/Ammunition/Magazine/energy_cell_lmg.rsi
+    layers:
+    - map: [ "enum.PowerCellVisualLayers.Base" ]
+      state: icon
+    - map: [ "enum.PowerCellVisualLayers.Unshaded" ]
+      state: o4
+      shader: unshaded
+  - type: Item
+    size: Large
+    shape:
+    - 0,0,2,1
+  - type: Battery
+    maxCharge: 3000
+    startingCharge: 3000
+  - type: BatteryDrinkerSource
+    maxAmount: 500
+  - type: BatteryAmmoProvider
+    proto: LMGLaser
+    fireCost: 15
+  - type: Tag
+    tags:
+    - MilitaryPowerCellLMG
+    - MilitaryPowerCell
+  - type: Clothing
+    slots: BELT
+  - type: PhysicalComposition
+    materialComposition:
+      Steel: 300
+      Gold: 40
+      Glass: 160
+      Plasma: 200
+    chemicalComposition:
+      Zinc: 20
+
+- type: entity
+  id: MilitaryPowerCellBluespaceLMG
+  parent: BaseMilitaryPowerCell
+  name: блюспейс-аккумулятор пулемёта
+  description: Продвинутый блюспейс-аккумулятор. Разогнанные фотонные частицы бьют злее обычных, но заряда в нём меньше — выстрелов выйдет не так много.
+  components:
+  - type: Sprite
+    sprite: _Duty/Objects/Weapons/Guns/Ammunition/Magazine/energy_cell_lmg_bluespace.rsi
+    layers:
+    - map: [ "enum.PowerCellVisualLayers.Base" ]
+      state: icon
+    - map: [ "enum.PowerCellVisualLayers.Unshaded" ]
+      state: o4
+      shader: unshaded
+  - type: Item
+    size: Large
+    shape:
+    - 0,0,2,1
+  - type: Battery
+    maxCharge: 2100
+    startingCharge: 2100
+  - type: BatteryDrinkerSource
+    maxAmount: 500
+  - type: BatteryAmmoProvider
+    proto: LMGLaserBluespace
+    fireCost: 15
+  - type: Tag
+    tags:
+    - MilitaryPowerCellLMG
+    - MilitaryPowerCell
+  - type: Clothing
+    slots: BELT
+  - type: PhysicalComposition
+    materialComposition:
+      Steel: 300
+      Gold: 40
+      Glass: 160
+      Plasma: 200
+    chemicalComposition:
+      Zinc: 20

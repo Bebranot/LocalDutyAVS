@@ -4,3 +4,31 @@
 # невыполнимы — генератор и батарейка из капусты не собирались вообще.
 - type: Tag
   id: ElectroCabbageTag
+
+# Порт линейки лазерного оружия на ячейках из Goob-Station.
+# Теги разделяют ячейки по калибрам — каждый ствол принимает только свой размер.
+- type: Tag
+  id: MilitaryPowerCell
+
+- type: Tag
+  id: MilitaryPowerCellRevolver
+
+- type: Tag
+  id: MilitaryPowerCellSMG
+
+- type: Tag
+  id: MilitaryPowerCellSniper
+
+- type: Tag
+  id: MilitaryPowerCellLMG
+
+# Пулемёт EL-20 питается не ячейкой в себе, а ранцем-батареей на спине.
+- type: Tag
+  id: LaserLMG
+
+- type: Tag
+  id: LaserLMGBackpack
+
+# Магазины энергетической винтовки CR-2 — отдельный типоразмер от ячеек.
+- type: Tag
+  id: EnergyMagAmmo

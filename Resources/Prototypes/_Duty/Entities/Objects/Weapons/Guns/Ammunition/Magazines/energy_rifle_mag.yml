@@ -1,0 +1,136 @@
+# SPDX-FileCopyrightText: 2026 LocalDuty
+# SPDX-License-Identifier: MIT
+
+# Магазины энергетической винтовки CR-2 «Гера» и её болты
+# (порт из Goob-Station: .../Magazines/energybatterymag.yml и .../Projectiles/energy.yml).
+#
+# Отличия от оригинала:
+#  - ионный магазин не переносим (типа урона Ion у нас нет);
+#  - эффекты попадания BulletImpactEffectRedDisabler/BlueDisabler заменены нашими
+#    BulletImpactEffectOrangeDisabler/BulletImpactEffectDisabler — это те же прототипы
+#    с тем же спрайтом, отличаются только цветом, новых ассетов не требуют;
+#  - у болта-дизейблера снят пустой урон типа Ion, оставлен только стамина-урон.
+
+- type: entity
+  id: EnergyRifleMagBase
+  abstract: true
+  parent: BaseItem
+  components:
+  - type: Sprite
+    sprite: _Duty/Objects/Weapons/Guns/Ammunition/Magazine/energyriflemag.rsi
+  - type: Battery
+    maxCharge: 1000
+    startingCharge: 1000
+  - type: AmmoCounter
+  - type: Appearance
+  - type: Tag
+    tags:
+    - EnergyMagAmmo
+
+- type: entity
+  id: EnergyMagRifleLethal
+  parent: [ EnergyRifleMagBase, BaseSecurityContraband ]
+  name: магазин энерговинтовки (боевой)
+  description: Энергоячейка со встроенным преобразователем, формирующая на срезе энерговинтовки боевой болт.
+  components:
+  - type: Sprite
+    layers:
+    - state: erifle_lethal
+      map: [ "enum.GunVisualLayers.Base" ]
+  - type: BatteryAmmoProvider
+    proto: RifleBulletEnergyGunLethal
+    fireCost: 50
+
+- type: entity
+  id: EnergyMagRifleDisabler
+  parent: [ EnergyRifleMagBase, BaseSecurityContraband ]
+  name: магазин энерговинтовки (парализующий)
+  description: Энергоячейка со встроенным преобразователем, формирующая на срезе энерговинтовки парализующий болт.
+  components:
+  - type: Sprite
+    layers:
+    - state: erifle_disabler
+      map: [ "enum.GunVisualLayers.Base" ]
+  - type: BatteryAmmoProvider
+    proto: RifleBulletEnergyGunDisabler
+    fireCost: 50
+
+# ── Болты ──
+
+- type: entity
+  name: энергоболт винтовки
+  id: RifleBulletEnergyGunLethal
+  parent: BaseBullet
+  categories: [ HideSpawnMenu ]
+  components:
+  - type: Reflective
+    reflective:
+    - Energy
+  - type: FlyBySound
+    sound:
+      collection: EnergyMiss
+      params:
+        volume: 5
+  - type: Sprite
+    sprite: Objects/Weapons/Guns/Projectiles/projectiles_tg.rsi
+    layers:
+    - state: heavylaser
+      shader: unshaded
+  - type: Ammo
+  - type: Physics
+  - type: Fixtures
+    fixtures:
+      projectile:
+        shape:
+          !type:PhysShapeAabb
+          bounds: "-0.2,-0.2,0.2,0.2"
+        hard: false
+        mask:
+        - Opaque
+  - type: Projectile
+    impactEffect: BulletImpactEffectOrangeDisabler
+    damage:
+      types:
+        Heat: 17
+    soundHit:
+      collection: MeatLaserImpact
+
+- type: entity
+  name: парализующий болт винтовки
+  id: RifleBulletEnergyGunDisabler
+  parent: BaseBullet
+  categories: [ HideSpawnMenu ]
+  components:
+  - type: Reflective
+    reflective:
+    - Energy
+  - type: FlyBySound
+    sound:
+      collection: EnergyMiss
+      params:
+        volume: 5
+  - type: Sprite
+    sprite: Objects/Weapons/Guns/Projectiles/projectiles_tg.rsi
+    layers:
+    - state: omnilaser
+      shader: unshaded
+  - type: Ammo
+  - type: Physics
+  - type: Fixtures
+    fixtures:
+      projectile:
+        shape:
+          !type:PhysShapeAabb
+          bounds: "-0.2,-0.2,0.2,0.2"
+        hard: false
+        mask:
+        - Opaque
+  - type: StaminaDamageOnCollide
+    damage: 20
+  - type: Projectile
+    impactEffect: BulletImpactEffectDisabler
+    damage:
+      types:
+        Heat: 0
+    soundHit:
+      collection: MeatLaserImpact

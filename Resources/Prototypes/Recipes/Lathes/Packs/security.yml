@@ -134,6 +134,18 @@
   # - SpeedLoaderMagnumUranium # ADT-Tweak - вырезан крафт урановых патронов
   - ADTSpeedLoaderMagnumLesserIncendiary # ADT tweak
   # - ADTSpeedLoaderMagnumLesserUranium # ADT tweak # ADT-Tweak - вырезан крафт урановых патронов
+  # _Duty-start: ячейки и магазины линейки лазерного оружия из Goob-Station
+  - PowerCellIRRevolver
+  - PowerCellIRSMG
+  - PowerCellIRSniper
+  - MilitaryPowerCellLMG
+  - PowerCellBluespaceRevolver
+  - PowerCellBluespaceSMG
+  - PowerCellBluespaceSniper
+  - MilitaryPowerCellBluespaceLMG
+  - EnergyMagRifleLethal
+  - EnergyMagRifleDisabler
+  # _Duty-end
 
 - type: latheRecipePack
   id: SecurityWeapons
@@ -150,6 +162,13 @@
   - WeaponLaserSvalinn
   - ADTWeaponLaserSvalinnRifle
   # ADT-Tweak-End
+  # _Duty-start: стволы линейки лазерного оружия на ячейках из Goob-Station
+  - WeaponLaserCellRevolver
+  - WeaponLaserCellSMG
+  - WeaponLaserCellSniper
+  - WeaponEnergyRifle
+  - ClothingBackpackLMGBattery
+  # _Duty-end
 
 - type: latheRecipePack
   id: SecurityDisablers

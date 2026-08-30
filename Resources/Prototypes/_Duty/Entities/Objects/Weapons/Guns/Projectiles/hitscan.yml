@@ -1,0 +1,171 @@
+# SPDX-FileCopyrightText: 2026 LocalDuty
+# SPDX-License-Identifier: MIT
+
+# Лучи для линейки лазерного оружия на ячейках (порт из Goob-Station,
+# Resources/Prototypes/_Goobstation/.../Projectiles/hitscan.yml).
+#
+# Отличие от оригинала: у губов bluespace-лучи слабее обычных по урону, но пробивают
+# броню через armorPenetration — это их правка ядрового DamageSpecifier, которой у нас нет.
+# Поэтому bluespace перебалансирован: вместо пробития брони даём преимущество по урону
+# (~+15% к IR), заряд ячеек остаётся губовским. Смысл тира сохранён, ядро боёвки не тронуто.
+
+# ── ПП ──
+
+- type: entity
+  parent: BasicHitscan
+  id: SMGLaser
+  components:
+  - type: HitscanBasicDamage
+    damage:
+      types:
+        Heat: 10.5
+  - type: HitscanBasicVisuals
+    muzzleFlash:
+      sprite: _Duty/Objects/Weapons/Guns/Projectiles/small_laser.rsi
+      state: muzzle_beam_light
+    travelFlash:
+      sprite: _Duty/Objects/Weapons/Guns/Projectiles/small_laser.rsi
+      state: beam_light
+    impactFlash:
+      sprite: _Duty/Objects/Weapons/Guns/Projectiles/small_laser.rsi
+      state: impact_beam_light
+
+- type: entity
+  parent: BasicHitscan
+  id: SMGLaserBluespace
+  components:
+  - type: HitscanBasicDamage
+    damage:
+      types:
+        Heat: 12 # _Duty: было 9 + armorPenetration 0.4
+  - type: HitscanBasicVisuals
+    muzzleFlash:
+      sprite: _Duty/Objects/Weapons/Guns/Projectiles/small_laser.rsi
+      state: muzzle_beam_light_pulse
+    travelFlash:
+      sprite: _Duty/Objects/Weapons/Guns/Projectiles/small_laser.rsi
+      state: beam_light_pulse
+    impactFlash:
+      sprite: _Duty/Objects/Weapons/Guns/Projectiles/small_laser.rsi
+      state: impact_beam_light_pulse
+
+# ── Снайперская винтовка ──
+
+- type: entity
+  parent: BasicHitscan
+  id: SniperRedLaser
+  components:
+  - type: HitscanBasicDamage
+    damage:
+      types:
+        Heat: 15
+  - type: HitscanBasicVisuals
+    muzzleFlash:
+      sprite: _Duty/Objects/Weapons/Guns/Projectiles/small_laser.rsi
+      state: muzzle_beam_light
+    travelFlash:
+      sprite: _Duty/Objects/Weapons/Guns/Projectiles/small_laser.rsi
+      state: beam_light
+    impactFlash:
+      sprite: _Duty/Objects/Weapons/Guns/Projectiles/small_laser.rsi
+      state: impact_beam_light
+
+- type: entity
+  parent: BasicHitscan
+  id: SniperBluespaceLaser
+  components:
+  - type: HitscanBasicDamage
+    damage:
+      types:
+        Heat: 17 # _Duty: было 14 + armorPenetration 0.4
+  - type: HitscanBasicVisuals
+    muzzleFlash:
+      sprite: _Duty/Objects/Weapons/Guns/Projectiles/small_laser.rsi
+      state: muzzle_beam_light_pulse
+    travelFlash:
+      sprite: _Duty/Objects/Weapons/Guns/Projectiles/small_laser.rsi
+      state: beam_light_pulse
+    impactFlash:
+      sprite: _Duty/Objects/Weapons/Guns/Projectiles/small_laser.rsi
+      state: impact_beam_light_pulse
+
+# ── Револьвер ──
+
+- type: entity
+  parent: BasicHitscan
+  id: RevolverRedLaser
+  components:
+  - type: HitscanBasicDamage
+    damage:
+      types:
+        Heat: 13
+  - type: HitscanBasicVisuals
+    muzzleFlash:
+      sprite: _Duty/Objects/Weapons/Guns/Projectiles/small_laser.rsi
+      state: muzzle_beam_light
+    travelFlash:
+      sprite: _Duty/Objects/Weapons/Guns/Projectiles/small_laser.rsi
+      state: beam_light
+    impactFlash:
+      sprite: _Duty/Objects/Weapons/Guns/Projectiles/small_laser.rsi
+      state: impact_beam_light
+
+- type: entity
+  parent: BasicHitscan
+  id: RevolverBluespaceLaser
+  components:
+  - type: HitscanBasicDamage
+    damage:
+      types:
+        Heat: 15 # _Duty: было 11.5 + armorPenetration 0.4
+  - type: HitscanBasicVisuals
+    muzzleFlash:
+      sprite: _Duty/Objects/Weapons/Guns/Projectiles/small_laser.rsi
+      state: muzzle_beam_light_pulse
+    travelFlash:
+      sprite: _Duty/Objects/Weapons/Guns/Projectiles/small_laser.rsi
+      state: beam_light_pulse
+    impactFlash:
+      sprite: _Duty/Objects/Weapons/Guns/Projectiles/small_laser.rsi
+      state: impact_beam_light_pulse
+
+# ── Пулемёт ──
+
+- type: entity
+  parent: BasicHitscan
+  id: LMGLaser
+  components:
+  - type: HitscanBasicDamage
+    damage:
+      types:
+        Heat: 10
+  - type: HitscanBasicVisuals
+    muzzleFlash:
+      sprite: _Duty/Objects/Weapons/Guns/Projectiles/small_laser.rsi
+      state: muzzle_beam_light
+    travelFlash:
+      sprite: _Duty/Objects/Weapons/Guns/Projectiles/small_laser.rsi
+      state: beam_light
+    impactFlash:
+      sprite: _Duty/Objects/Weapons/Guns/Projectiles/small_laser.rsi
+      state: impact_beam_light
+
+- type: entity
+  parent: BasicHitscan
+  id: LMGLaserBluespace
+  components:
+  - type: HitscanBasicDamage
+    damage:
+      types:
+        Heat: 11.5 # _Duty: было 9 + armorPenetration 0.4. Заряд у этой батареи ниже
+                   # обычной (2100 против 3000) — меньше выстрелов, но злее.
+  - type: HitscanBasicVisuals
+    muzzleFlash:
+      sprite: _Duty/Objects/Weapons/Guns/Projectiles/small_laser.rsi
+      state: muzzle_beam_light_pulse
+    travelFlash:
+      sprite: _Duty/Objects/Weapons/Guns/Projectiles/small_laser.rsi
+      state: beam_light_pulse
+    impactFlash:
+      sprite: _Duty/Objects/Weapons/Guns/Projectiles/small_laser.rsi
+      state: impact_beam_light_pulse

@@ -1,0 +1,127 @@
+# SPDX-FileCopyrightText: 2026 LocalDuty
+# SPDX-License-Identifier: MIT
+
+# Ветка лазерного оружия на сменных энергоячейках, порт из Goob-Station
+# (Resources/Prototypes/_Goobstation/Research/arsenal.yml).
+#
+# Стоимости и тиры взяты у губов без изменений. Позиции проставлены заново под нашу
+# сетку дисциплины Arsenal: у губов все четыре дисциплины лежат на одном полотне,
+# у нас каждая на своей вкладке со своими координатами.
+#
+# Заполняются оба поля пререквизитов: requiredTech — настоящий гейт и линии связей
+# в консоли, technologyPrerequisites — только текст «требует:» в описании.
+#
+# Тех SmartWeaponry не переносим: он держится на подсистеме SmartGun, которой у нас нет.
+
+- type: technology
+  id: WeaponLaserCellRevolverTech
+  name: research-technology-mag-fed-pistol
+  icon:
+    sprite: _Duty/Objects/Weapons/Guns/Battery/cell_revolver.rsi
+    state: icon
+  discipline: Arsenal
+  tier: 1
+  cost: 5000
+  recipeUnlocks:
+  - WeaponLaserCellRevolver
+  - PowerCellIRRevolver
+  position: 4,-1
+  technologyPrerequisites:
+  - DraconicMunitions
+  requiredTech:
+  - DraconicMunitions
+
+- type: technology
+  id: WeaponLaserCellSMGTech
+  name: research-technology-mag-fed-smg
+  icon:
+    sprite: _Duty/Objects/Weapons/Guns/Battery/cell_smg.rsi
+    state: icon
+  discipline: Arsenal
+  tier: 2
+  cost: 10000
+  recipeUnlocks:
+  - WeaponLaserCellSMG
+  - PowerCellIRSMG
+  position: 4,-2
+  technologyPrerequisites:
+  - WeaponizedLaserManipulation
+  requiredTech:
+  - WeaponizedLaserManipulation
+
+- type: technology
+  id: EnergyBoltBasedWeaponry
+  name: research-technology-energy-bolt-weaponry
+  icon:
+    sprite: _Duty/Objects/Weapons/Guns/Battery/energy_rifle.rsi
+    state: icon
+  discipline: Arsenal
+  tier: 2
+  cost: 7500
+  recipeUnlocks:
+  - WeaponEnergyRifle
+  - EnergyMagRifleLethal
+  - EnergyMagRifleDisabler
+  position: 4,-3
+  technologyPrerequisites:
+  - WaveParticleHarnessing
+  requiredTech:
+  - WaveParticleHarnessing
+
+- type: technology
+  id: WeaponLaserCellSniperTech
+  name: research-technology-mag-fed-sniper
+  icon:
+    sprite: _Duty/Objects/Weapons/Guns/Battery/cell_sniper_icon_48x.rsi
+    state: icon
+  discipline: Arsenal
+  tier: 3
+  cost: 15000
+  recipeUnlocks:
+  - WeaponLaserCellSniper
+  - PowerCellIRSniper
+  position: 3,-2
+  technologyPrerequisites:
+  - WeaponLaserCellSMGTech
+  requiredTech:
+  - WeaponLaserCellSMGTech
+
+- type: technology
+  id: WeaponLaserCellLMGTech
+  name: research-technology-mag-fed-lmg
+  icon:
+    sprite: _Duty/Objects/Weapons/Guns/Battery/energy_lmg_icon_48x.rsi
+    state: icon
+  discipline: Arsenal
+  tier: 3
+  cost: 15000
+  recipeUnlocks:
+  - ClothingBackpackLMGBattery
+  - MilitaryPowerCellLMG
+  position: 2,-2
+  technologyPrerequisites:
+  - WeaponLaserCellSMGTech
+  requiredTech:
+  - WeaponLaserCellSMGTech
+
+- type: technology
+  id: BlueSpaceMunitions
+  name: research-technology-bluespace-munitions
+  icon:
+    sprite: _Duty/Objects/Weapons/Guns/Ammunition/Magazine/energy_cell_revolver.rsi
+    state: bluespace_research
+  discipline: Arsenal
+  tier: 3
+  cost: 25000
+  recipeUnlocks:
+  - PowerCellBluespaceRevolver
+  - PowerCellBluespaceSMG
+  - PowerCellBluespaceSniper
+  - MilitaryPowerCellBluespaceLMG
+  position: 1,-2
+  technologyPrerequisites:
+  - WeaponLaserCellLMGTech
+  - WeaponLaserCellSniperTech
+  requiredTech:
+  - WeaponLaserCellLMGTech
+  - WeaponLaserCellSniperTech
