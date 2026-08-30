@@ -69,6 +69,11 @@
 - type: latheRecipePack
   id: SecurityEquipment
   recipes:
+  # _Duty-start
+  - ClothingMaskMuzzleSecure
+  - ClothingMaskMuzzleShock
+  - ClothingBackpackHarmpack
+  # _Duty-end
   - ClothingBackpackElectropack
   - ADTGrenadeStinger # ADT tweak
   - HoloprojectorSecurity

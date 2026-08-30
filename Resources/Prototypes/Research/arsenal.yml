@@ -256,23 +256,29 @@
   - ExplosiveTechnology
   # ADT Research Console Rework end
 
-# ADT-Tweak
-#- type: technology
-#  id: DualWieldingTechnology
-#  name: research-technology-dual-wielding-technology
-#  icon:
-#    sprite: Clothing/Back/Specific/harmpack.rsi
-#    state: icon
-#  discipline: Arsenal
-#  tier: 2
-#  cost: 10000
-#  recipeUnlocks:
-#  - ClothingBackpackHarmpack
-#  # ADT Research Console Rework start
-#  position: 4,-3
-#  requiredTech:
-#  - BasicShuttleArmament
-#  # ADT Research Console Rework end
+# _Duty-start: тех был выключен ADT (закомментирован), возвращён вместе с портом
+# РнД-контента Goob-Station. Пререквизит поменян: губовский SmartWeaponry мы не
+# переносили (он держится на подсистеме SmartGun, которой у нас нет), а ADT-шный
+# BasicShuttleArmament к рюкзаку на две лишние руки отношения не имеет —
+# AdvancedRiotControl тематически ближе и стоит рядом на полотне.
+# Позиция сменена с 4,-3: там теперь EnergyBoltBasedWeaponry.
+- type: technology
+  id: DualWieldingTechnology
+  name: research-technology-dual-wielding-technology
+  icon:
+    sprite: Clothing/Back/Specific/harmpack.rsi
+    state: icon
+  discipline: Arsenal
+  tier: 2
+  cost: 10000
+  recipeUnlocks:
+  - ClothingBackpackHarmpack
+  position: 3,1
+  technologyPrerequisites:
+  - AdvancedRiotControl
+  requiredTech:
+  - AdvancedRiotControl
+# _Duty-end
 
 # Tier 3
 

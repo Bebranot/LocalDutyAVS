@@ -125,3 +125,21 @@
   requiredTech:
   - WeaponLaserCellLMGTech
   - WeaponLaserCellSniperTech
+
+- type: technology
+  id: RestraintTechnology
+  name: research-technology-restraint
+  icon:
+    sprite: _Duty/Clothing/Mask/securemuzzle.rsi
+    state: icon
+  discipline: Arsenal
+  tier: 1
+  cost: 3000
+  recipeUnlocks:
+  - ClothingMaskMuzzleSecure
+  - ClothingMaskMuzzleShock
+  position: 0,1
+  technologyPrerequisites:
+  - SalvageWeapons
+  requiredTech:
+  - SalvageWeapons

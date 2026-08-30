@@ -1,0 +1,45 @@
+# SPDX-FileCopyrightText: 2026 LocalDuty
+# SPDX-License-Identifier: MIT
+
+# Намордники СБ — порт из Goob-Station
+# (Resources/Prototypes/_Goobstation/Entities/Clothing/Masks/masks.yml).
+#
+# Сняты губовские AltClothingLayer и DiseaseProtection: первое — их система слоёв
+# одежды, второе — их система болезней, ни того ни другого у нас нет.
+#
+# Шоковый вариант работает на нашем TriggerOnSpeak (Content.Shared/_Duty/Trigger):
+# триггер на любую речь носителя. Ванильный TriggerOnVoice не подошёл бы — он ждёт
+# ключевую фразу, а намордник должен бить за сам факт разговора.
+
+- type: entity
+  parent: ClothingMaskBase
+  id: ClothingMaskMuzzleSecure
+  name: усиленный намордник
+  description: Не даёт кусаться и мешает говорить. Снимается долго и неохотно.
+  components:
+  - type: Item
+    size: Tiny
+  - type: Sprite
+    sprite: _Duty/Clothing/Mask/securemuzzle.rsi
+  - type: Clothing
+    sprite: _Duty/Clothing/Mask/securemuzzle.rsi
+    equipDelay: 3
+    unequipDelay: 10
+  - type: IngestionBlocker
+  - type: AddAccentClothing
+    accent: MumbleAccent
+  - type: IdentityBlocker
+    coverage: MOUTH
+
+- type: entity
+  parent: ClothingMaskMuzzleSecure
+  id: ClothingMaskMuzzleShock
+  name: шоковый намордник
+  description: Намордник с системой коррекции поведения. Каждая попытка заговорить оканчивается разрядом.
+  components:
+  - type: TriggerOnSpeak
+    listenRange: 4
+  - type: ShockOnTrigger
+    targetContainer: true
+    damage: 5
+    duration: 2

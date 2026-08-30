@@ -4,3 +4,4 @@ research-technology-mag-fed-sniper = Лазерные снайперские в�
 research-technology-mag-fed-lmg = Лазерные пулемёты
 research-technology-energy-bolt-weaponry = Оружие на энергоболтах
 research-technology-bluespace-munitions = Блюспейс-боеприпасы
+research-technology-restraint = Средства усмирения

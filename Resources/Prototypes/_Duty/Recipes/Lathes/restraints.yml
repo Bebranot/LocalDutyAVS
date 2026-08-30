@@ -1,0 +1,35 @@
+# SPDX-FileCopyrightText: 2026 LocalDuty
+# SPDX-License-Identifier: MIT
+
+# Рецепты намордников и харм-пака. Стоимости губовские.
+# Харм-пак у нас был как сущность, но его нельзя было напечатать — рецепта не существовало.
+
+- type: latheRecipe
+  id: ClothingMaskMuzzleSecure
+  result: ClothingMaskMuzzleSecure
+  completetime: 4
+  materials:
+    Steel: 200
+    Plastic: 150
+    Cloth: 100
+
+- type: latheRecipe
+  id: ClothingMaskMuzzleShock
+  result: ClothingMaskMuzzleShock
+  completetime: 4
+  materials:
+    Steel: 500
+    Plastic: 250
+    Cloth: 200
+
+- type: latheRecipe
+  id: ClothingBackpackHarmpack
+  result: ClothingBackpackHarmpack
+  categories:
+  - Clothing
+  completetime: 15
+  materials:
+    Steel: 2000
+    Plastic: 1000
+    Plasma: 500
+    Gold: 500
