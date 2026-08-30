@@ -58,7 +58,7 @@
   - SikTajTranslatorImplanter
   - NianTranslatorImplanter
   - FireTranslatorImplanter
-  - DraskTranslatorImplanter
+  # _Duty: убран второй DraskTranslatorImplanter, он уже есть выше
   - UrsTranslatorImplanter # Закомменчено до раундстарт урсов   # И никто не раскомментил, молодцы
   - ArkaneTranslatorImplanter
   - CintaTajTranslatorImplanter
