@@ -39,6 +39,8 @@
   - type: Sprite
     sprite: ADT/Objects/Weapons/Melee/Crushers/crusher_spear.rsi
     state: icon
+  - type: ADTMagmiteUpgradable
+    result: DutyWeaponKineticSpearMagmite
   - type: AmmoCounter
   - type: ADTKineticCooldown
   - type: LeechOnMarker
