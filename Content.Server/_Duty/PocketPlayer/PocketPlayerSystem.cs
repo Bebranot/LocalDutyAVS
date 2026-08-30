@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: MIT
 
 using Content.Shared._Duty.PocketPlayer;
+using Content.Shared.Instruments;
 using Robust.Server.GameObjects;
 using Robust.Shared.Audio;
 using Robust.Shared.Audio.Components;
@@ -40,6 +41,7 @@ public sealed class PocketPlayerSystem : SharedPocketPlayerSystem
         {
             comp.AudioStream = null;
             Dirty(uid, comp);
+            RemComp<ActiveInstrumentComponent>(uid);
             return true;
         }
 
@@ -84,6 +86,11 @@ public sealed class PocketPlayerSystem : SharedPocketPlayerSystem
             comp.AudioStream = Audio.PlayPvs(trackProto.Path, uid, audioParams)?.Entity;
             Dirty(uid, comp);
         }
+
+        // Пока трек играет, плеер считается "музыкальным инструментом" для ксеноарх-триггера
+        // TriggerMusic (XATCompNearby ищет ActiveInstrument рядом) — реального MIDI не требуется,
+        // компонент используется только как флаг присутствия.
+        EnsureComp<ActiveInstrumentComponent>(uid);
     }
 
     private void OnPause(EntityUid uid, PocketPlayerComponent comp, PocketPlayerPauseMessage args)
@@ -92,6 +99,7 @@ public sealed class PocketPlayerSystem : SharedPocketPlayerSystem
             return;
 
         Audio.SetState(comp.AudioStream, AudioState.Paused);
+        RemComp<ActiveInstrumentComponent>(uid);
     }
 
     private void OnStop(EntityUid uid, PocketPlayerComponent comp, PocketPlayerStopMessage args)
@@ -100,6 +108,7 @@ public sealed class PocketPlayerSystem : SharedPocketPlayerSystem
         // удаляем явно через Audio.Stop(), иначе аудио-сущность утекает навсегда.
         comp.AudioStream = Audio.Stop(comp.AudioStream);
         Dirty(uid, comp);
+        RemComp<ActiveInstrumentComponent>(uid);
     }
 
     private void OnSetTime(EntityUid uid, PocketPlayerComponent comp, PocketPlayerSetTimeMessage args)
@@ -135,6 +144,7 @@ public sealed class PocketPlayerSystem : SharedPocketPlayerSystem
     private void OnShutdown(EntityUid uid, PocketPlayerComponent comp, ComponentShutdown args)
     {
         comp.AudioStream = Audio.Stop(comp.AudioStream);
+        RemComp<ActiveInstrumentComponent>(uid);
     }
 
     /// <summary>
