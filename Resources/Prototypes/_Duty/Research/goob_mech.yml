@@ -1,0 +1,28 @@
+# SPDX-FileCopyrightText: 2026 LocalDuty
+# SPDX-License-Identifier: MIT
+
+# Тех вооружения хонк-меха по мотивам Goob-Station.
+# У губов он лежал в CivilianServices, у нас логичнее в МЕХ — там же, где HONKMech,
+# который ADT уже перенёс в эту дисциплину.
+#
+# Второй губовский мех-тех, ExplosiveMechAmmunition, не переносим: он открывает
+# ракетницу, которая у нас уже есть как ADTMechGunSRM8 и намеренно вырезана ADT
+# из паков с пометкой «Вырезано ради баланса».
+
+- type: technology
+  id: HONKWeapons
+  name: research-technology-honk-weapons
+  icon:
+    sprite: Objects/Specific/Mech/mecha_equipment.rsi
+    state: mecha_bananamrtr
+  discipline: Mech
+  tier: 2
+  cost: 6000
+  recipeUnlocks:
+  - DutyMechBananaMortarRecipe
+  - DutyMechMousetrapMortarRecipe
+  position: 1,1
+  technologyPrerequisites:
+  - HONKMech
+  requiredTech:
+  - HONKMech

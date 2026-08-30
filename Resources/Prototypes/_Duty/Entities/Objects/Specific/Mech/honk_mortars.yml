@@ -1,0 +1,82 @@
+# SPDX-FileCopyrightText: 2026 LocalDuty
+# SPDX-License-Identifier: MIT
+
+# Две мортиры для хонк-меха по мотивам Goob-Station
+# (Resources/Prototypes/_Goobstation/.../Mech/Weapons/Gun/special.yml).
+#
+# Написаны под НАШУ архитектуру мех-оружия, а не скопированы: у губов пушки меха
+# питаются напрямую от его батареи через BatteryAmmoProvider, а у нас всё мех-вооружение
+# сделано на ADTBaseMechGun с BallisticMechAmmoProvider и своим UI перезарядки
+# (см. ADT/Entities/Objects/Specific/Mech/mech_gun.yml). Скопированная губовская форма
+# вела бы себя не как остальные пушки в форке.
+#
+# ADT свой бананомёт начинал и забросил — закомментированный WeaponMechClowneBanana
+# лежит в ADT/Entities/Objects/Specific/mechequipment.yml.
+#
+# Спрайты и снаряды уже есть в ваниле: состояния mecha_bananamrtr / mecha_mousetrapmrtr
+# в Objects/Specific/Mech/mecha_equipment.rsi, снаряды TrashBananaPeel и MousetrapArmed.
+#
+# Ящика, в отличие от боевых пушек, нет: это клоунское снаряжение, а не охранное,
+# запирать его в ADTCrateMechWeaponSecure незачем.
+
+- type: entity
+  name: банановая мортира
+  parent: ADTBaseMechGun
+  id: WeaponMechSpecialBananaMortar
+  description: Навесная пусковая установка банановой кожуры. Незаменима, когда враг наступает, а совесть молчит.
+  components:
+  - type: Sprite
+    sprite: Objects/Specific/Mech/mecha_equipment.rsi
+    state: mecha_bananamrtr
+  - type: Gun
+    fireRate: 0.5
+    selectedMode: SemiAuto
+    availableModes:
+    - SemiAuto
+    soundGunshot:
+      path: /Audio/Weapons/Guns/Gunshots/grenade_launcher.ogg
+    soundEmpty:
+      path: /Audio/Weapons/Guns/Empty/lmg_empty.ogg
+  - type: BallisticMechAmmoProvider
+    proto: TrashBananaPeel
+    shots: 12
+    capacity: 12
+    reloadTime: 6
+  - type: UIFragment
+    ui: !type:MechGunUi
+  - type: StaticPrice
+    price: 500
+  - type: Tag
+    tags:
+    - ADTMechEquipmentClown
+
+- type: entity
+  name: мышеловочная мортира
+  parent: ADTBaseMechGun
+  id: WeaponMechSpecialMousetrapMortar
+  description: Навесная пусковая установка взведённых мышеловок. Стреляет недалеко, но крайне обидно.
+  components:
+  - type: Sprite
+    sprite: Objects/Specific/Mech/mecha_equipment.rsi
+    state: mecha_mousetrapmrtr
+  - type: Gun
+    fireRate: 0.5
+    selectedMode: SemiAuto
+    availableModes:
+    - SemiAuto
+    soundGunshot:
+      path: /Audio/Weapons/Guns/Gunshots/grenade_launcher.ogg
+    soundEmpty:
+      path: /Audio/Weapons/Guns/Empty/lmg_empty.ogg
+  - type: BallisticMechAmmoProvider
+    proto: MousetrapArmed
+    shots: 12
+    capacity: 12
+    reloadTime: 6
+  - type: UIFragment
+    ui: !type:MechGunUi
+  - type: StaticPrice
+    price: 500
+  - type: Tag
+    tags:
+    - ADTMechEquipmentClown

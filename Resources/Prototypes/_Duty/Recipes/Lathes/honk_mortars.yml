@@ -1,0 +1,25 @@
+# SPDX-FileCopyrightText: 2026 LocalDuty
+# SPDX-License-Identifier: MIT
+
+# Рецепты хонк-мортир. Стоимости губовские, печатается сама пушка, а не ящик:
+# в отличие от боевых мех-пушек это не охранное снаряжение.
+
+- type: latheRecipe
+  id: DutyMechBananaMortarRecipe
+  result: WeaponMechSpecialBananaMortar
+  categories:
+  - Mech
+  completetime: 10
+  materials:
+    Steel: 1150
+    Bananium: 800
+
+- type: latheRecipe
+  id: DutyMechMousetrapMortarRecipe
+  result: WeaponMechSpecialMousetrapMortar
+  categories:
+  - Mech
+  completetime: 10
+  materials:
+    Steel: 1200
+    Bananium: 300

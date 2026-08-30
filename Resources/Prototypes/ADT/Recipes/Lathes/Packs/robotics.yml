@@ -143,6 +143,10 @@
   # - MechEquipmentArmorMelee Вырезано из-за неработоспособности
   # - MechEquipmentArmorRange Вырезано из-за неработоспособности
   - ADTMechWeaponCutter
+  # _Duty-start: мортиры хонк-меха
+  - DutyMechBananaMortarRecipe
+  - DutyMechMousetrapMortarRecipe
+  # _Duty-end
   - MechEquipmentHumanSleeper
   - MechEquipmentHumanGrabber
   - ADTMechGunImmolatorLaser
