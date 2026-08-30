@@ -625,7 +625,7 @@
   - type: DamageMarkerOnCollide
     whitelist:
       components:
-        - Fauna # ADT tweak MobState -> Fauna
+        - MobState # _Duty revert: ADT narrowed MobState -> Fauna, restoring marks on people
     damage:
       types:
         Blunt: 70 # ADT tweak 20 -> 70
