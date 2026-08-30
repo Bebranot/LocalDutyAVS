@@ -1,9 +1,13 @@
 # SPDX-FileCopyrightText: 2026 LocalDuty
 # SPDX-License-Identifier: MIT
 
-# Рецепты PowerCellMicroreactor и PowerCellHyper в репозитории были, но не лежали
-# ни в одном паке лейта — напечатать их было негде. Рецепты добавлены в пак PowerCells,
-# этот тех их открывает.
+# OptimizedMicrogalvanism — ванильный тех, который ADT удалил (Research/industrial.yml,
+# закомментирован как PortableFission, причина не указана) вместе с рецептами обеих ячеек
+# в паке PowerCells. У губов тех на месте, цена там же поднята до 15000 — берём как у них.
+# Рецепты возвращены в пак PowerCells.
+#
+# Тех QuantumLeaping из этой же серии не возвращаем: ADT снял его с пометкой
+# «временно удалено до решения всех багов предмета» — это причина, а не молчаливый вырез.
 
 - type: technology
   id: OptimizedMicrogalvanism

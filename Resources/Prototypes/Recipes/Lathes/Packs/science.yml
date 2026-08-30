@@ -22,7 +22,6 @@
   - PinpointerBorg
   - ClothingEyesNightVisionGoggles
   - ClothingEyesThermalVisionGoggles
-  - DeviceQuantumSpinInverter
   # _Duty-end
   - AnomalyScanner
   - NodeScanner
@@ -51,7 +50,9 @@
 - type: latheRecipePack
   id: PowerCells
   recipes:
-  # _Duty-start: рецепты есть в репозитории, но не лежали ни в одном паке — напечатать их было негде
+  # _Duty-start: обе ячейки ADT закомментировал ниже вместе с ванильным техом
+  # OptimizedMicrogalvanism (Research/industrial.yml, бывший PortableFission).
+  # Причина не указана, у губов тех и ячейки на месте — возвращаем вместе с техом.
   - PowerCellMicroreactor
   - PowerCellHyper
   # _Duty-end
