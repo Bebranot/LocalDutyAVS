@@ -1,6 +1,8 @@
 using Content.Shared._Duty.SecurityImplants;
 using Content.Shared.ADT.Implants;
+using Content.Shared.ADT.MantisDaggers;
 using Content.Shared.Implants;
+using Content.Shared.Implants.Components;
 using Content.Shared.Weapons.Reflect;
 
 namespace Content.Server._Duty.SecurityImplants;
@@ -44,6 +46,11 @@ public sealed class DutySecMantisBladesImplantSystem : EntitySystem
     {
         var owner = args.Implanted;
 
+        // Симметрично MantisDaggersImplantSystem.OnRemoved (ADT): не гасим общий
+        // MantisDaggersComponent, если на теле остался синдикатский имплант.
+        if (HasSiblingMantisImplant(owner))
+            return;
+
         if (HasComp<MantisDaggersComponent>(owner))
         {
             RemComp<MantisDaggersComponent>(owner);
@@ -51,5 +58,19 @@ public sealed class DutySecMantisBladesImplantSystem : EntitySystem
             if (HasComp<ReflectComponent>(owner))
                 RemComp<ReflectComponent>(owner);
         }
+    }
+
+    private bool HasSiblingMantisImplant(EntityUid owner)
+    {
+        if (!TryComp<ImplantedComponent>(owner, out var implanted))
+            return false;
+
+        foreach (var implant in implanted.ImplantContainer.ContainedEntities)
+        {
+            if (HasComp<MantisDaggersImplantComponent>(implant))
+                return true;
+        }
+
+        return false;
     }
 }
