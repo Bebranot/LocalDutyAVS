@@ -224,7 +224,10 @@ public sealed partial class ResearchConsoleMenu : FancyWindow
                 HorizontalExpand = true,
                 VerticalExpand = true,
                 MuteSounds = true,  // звуки глушатся по причине не очень понятного мне бага, из-за которого при закрытии меню ими срёт
-                Text = Loc.GetString(proto.UiName),
+                // _Duty: uiName — готовая короткая надпись прямо в прототипе ("ИНЖ", "ОРУЖ"),
+                // а не ключ Fluent. Loc.GetString не находит по ней messageId и на каждой
+                // перерисовке сыпет [WARN] loc: Unknown messageId в лог клиента.
+                Text = Loc.TryGetString(proto.UiName, out var uiName) ? uiName : proto.UiName,
                 Margin = new(5)
             };
 
@@ -352,6 +355,13 @@ public sealed partial class ResearchConsoleMenu : FancyWindow
 
         if (MathHelper.CloseTo(oldZoom, _zoom))
             return;
+
+        // Точка, вокруг которой растягивается дерево, — центр окна.
+        // Позиция карточки считается как _position + клетка * шаг * зум, то есть без этой
+        // поправки неподвижной остаётся клетка 0,0. После перетаскивания она обычно уже за
+        // краем окна, и зум уводит вид в сторону тем сильнее, чем дальше её утащили.
+        var anchor = DragContainer.Size / 2f;
+        _position = anchor - (anchor - _position) * (_zoom / oldZoom);
 
         foreach (var child in DragContainer.Children)
         {
