@@ -56,18 +56,30 @@ public sealed class DislocationSystem : EntitySystem
             if (comp.Residual.Count == 0)
                 continue;
 
-            var changed = false;
+            // Сначала дешёвая проверка «есть ли вообще что снимать»: перебор Values не выделяет
+            // память (struct-энумератор), а Keys.ToArray() — выделяет массив каждый тик на каждого
+            // раненого. Истечение остаточной слабости — событие раз в десятки секунд, так что
+            // копию ключей берём только в тот единственный тик, когда она реально нужна.
+            var due = false;
+            foreach (var expiry in comp.Residual.Values)
+            {
+                if (now < expiry)
+                    continue;
+
+                due = true;
+                break;
+            }
+
+            if (!due)
+                continue;
+
             foreach (var zone in comp.Residual.Keys.ToArray())
             {
                 if (now < comp.Residual[zone])
                     continue;
 
                 comp.Residual.Remove(zone);
-                changed = true;
             }
-
-            if (!changed)
-                continue;
 
             // Удаление компонента откладываем — нельзя менять структуру во время перебора запроса.
             if (comp.Dislocated.Count == 0 && comp.Residual.Count == 0)

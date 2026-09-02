@@ -92,7 +92,22 @@ public sealed class FractureSystem : EntitySystem
         var query = EntityQueryEnumerator<FractureComponent>();
         while (query.MoveNext(out var uid, out var comp))
         {
-            var changed = false;
+            // Сначала дешёвая проверка «созрело ли хоть что-то»: перебор Values не выделяет память
+            // (struct-энумератор), а Keys.ToArray() — выделяет массив каждый тик на каждого
+            // сломанного. Шаг заживления происходит раз в десятки секунд, так что копию ключей
+            // берём только в тот единственный тик, когда она реально нужна.
+            var due = false;
+            foreach (var state in comp.Zones.Values)
+            {
+                if (now < state.NextHeal)
+                    continue;
+
+                due = true;
+                break;
+            }
+
+            if (!due)
+                continue;
 
             foreach (var zone in comp.Zones.Keys.ToArray())
             {
@@ -111,12 +126,7 @@ public sealed class FractureSystem : EntitySystem
                     state.NextHeal = now + HealStep(state);
                     comp.Zones[zone] = state;
                 }
-
-                changed = true;
             }
-
-            if (!changed)
-                continue;
 
             // Удаление компонента откладываем — нельзя менять структуру во время перебора запроса.
             if (comp.Zones.Count == 0)
