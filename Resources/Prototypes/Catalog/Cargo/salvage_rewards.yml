@@ -90,3 +90,16 @@
   cost: 25000
   category: cargoproduct-category-name-cargo
   group: SalvageJobRewardMAX
+
+- type: cargoProduct
+  id: CargoProtoKineticRailgun
+  icon:
+    sprite: ADT/Objects/Weapons/Guns/PKAs/kinetic_railgun.rsi
+    state: icon
+  product: ADTWeaponProtoKineticRailgun
+  container:
+    entity: WrappedParcel
+    containerId: contents
+  cost: 30000
+  category: cargoproduct-category-name-cargo
+  group: SalvageJobRewardMAX

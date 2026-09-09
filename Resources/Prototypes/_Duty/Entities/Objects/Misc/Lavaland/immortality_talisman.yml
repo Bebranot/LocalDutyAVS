@@ -19,13 +19,16 @@
   configuration:
     entity: ImmortalityPocket
     transferName: false
+    transferDamage: false # ImmortalityPocket не носит Damageable — прописано явно, а не полагается на молчаливый no-op
     inventory: None
     forced: false
     revertOnDeath: true
+    revertOnCrit: false # у ImmortalityPocket нет MobState, так что сейчас это тоже no-op, но явно — надёжнее умолчания
     allowRepeatedMorphs: false
     polymorphSound: /Audio/Magic/ethereal_enter.ogg
     exitPolymorphSound: /Audio/Magic/ethereal_exit.ogg
     duration: 15
+    effectProto: EffectDesynchronizer # визуальная вспышка на входе/выходе — без неё превращение выглядит как зависание клиента
 
 - type: entity
   id: LavalandImmortalityTalisman

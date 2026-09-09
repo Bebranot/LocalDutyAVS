@@ -18,3 +18,11 @@
   files:
   - /Audio/_Duty/Barks/unknown/snd_hurtsmall.ogg
   - /Audio/_Duty/Barks/unknown/snd_pombark.ogg
+
+- type: soundCollection
+  id: DutyFloweryBark
+  files:
+  - /Audio/_Duty/Barks/flowery/snd_flowery_voicenoise_1.ogg
+  - /Audio/_Duty/Barks/flowery/snd_flowery_voicenoise_2.ogg
+  - /Audio/_Duty/Barks/flowery/snd_flowery_voicenoise_3.ogg
+  - /Audio/_Duty/Barks/flowery/snd_flowery_voicenoise_loop.ogg

@@ -24,3 +24,10 @@
   sound:
     collection: DutyUnknownBark
   category: standard
+
+- type: speechBark
+  id: DutyFlowery
+  name: bark-duty-flowery-name
+  sound:
+    collection: DutyFloweryBark
+  category: deltarune

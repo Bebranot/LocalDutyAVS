@@ -6,6 +6,8 @@
 #    price: 660
   - id: WeaponCrusher
     price: 1260
+  - id: WeaponCrusherGlaive
+    price: 2000
   - id: WeaponKineticSpear
     price: 1260
   - id: WeaponKineticHammer
@@ -23,6 +25,19 @@
     price: 900
   - id: ADTWeaponProtoKineticShotgun
     price: 3400
+
+- type: miningShopSection
+  id: KARare
+  name: ПКА (редкие прототипы)
+  entries:
+  - id: ADTWeaponProtoKineticPistol
+    price: 2400
+  - id: ADTWeaponProtoKineticRepeater
+    price: 3800
+  - id: ADTWeaponProtoKineticRailgun
+    price: 5400
+  - id: ADTWeaponExperimentalProtoKineticAcellerator
+    price: 4800
 
 - type: miningShopSection
   id: Motion
@@ -115,6 +130,8 @@
     price: 150
   - id: MiningDrill
     price: 600
+  - id: MiningDrillDiamond
+    price: 1080
   # - id: SeismicCharge временно в ауте
   #   price: 240
   - id: FireExtinguisherMini

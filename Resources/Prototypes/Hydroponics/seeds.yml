@@ -1774,6 +1774,7 @@
     - FoodPeaPod
   mutationPrototypes:
     - laughinPea
+    - dutyPeaShooter # _Duty: шанс на ChangeSpecies-мутацию в горохострел, см. Prototypes/_Duty/Entities/Objects/Specific/Hydroponics/pea_shooter.yml
   lifespan: 25
   growthStages: 3
   maturation: 8

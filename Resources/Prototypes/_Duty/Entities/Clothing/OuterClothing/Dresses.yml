@@ -1,0 +1,59 @@
+# Прототипы под осиротевшие кастомные спрайты из Resources/Textures/_Duty/Clothing/dresses/ —
+# ассеты лежали в репозитории без единой ссылки ни в одном прототипе. Не удалены, а вынесены
+# сюда как есть: суффикс "Unknown/New" и пустое описание — до дизайн-решения, что это вообще
+# такое и нужно ли оно в игре.
+
+- type: entity
+  parent: ClothingOuterBase
+  id: ClothingOuterDutyDressUnknown
+  name: dress
+  suffix: "Unknown/New"
+  components:
+  - type: Sprite
+    sprite: _Duty/Clothing/dresses/dress.rsi
+  - type: Clothing
+    sprite: _Duty/Clothing/dresses/dress.rsi
+
+- type: entity
+  parent: ClothingOuterBase
+  id: ClothingOuterDutyRedDressUnknown
+  name: reddress
+  suffix: "Unknown/New"
+  components:
+  - type: Sprite
+    sprite: _Duty/Clothing/dresses/reddress.rsi
+  - type: Clothing
+    sprite: _Duty/Clothing/dresses/reddress.rsi
+
+- type: entity
+  parent: ClothingOuterBase
+  id: ClothingOuterDutyRedVampDressUnknown
+  name: redvampdress
+  suffix: "Unknown/New"
+  components:
+  - type: Sprite
+    sprite: _Duty/Clothing/dresses/redvampdress.rsi
+  - type: Clothing
+    sprite: _Duty/Clothing/dresses/redvampdress.rsi
+
+- type: entity
+  parent: ClothingOuterBase
+  id: ClothingOuterDutyTangoUnknown
+  name: tango
+  suffix: "Unknown/New"
+  components:
+  - type: Sprite
+    sprite: _Duty/Clothing/dresses/tango.rsi
+  - type: Clothing
+    sprite: _Duty/Clothing/dresses/tango.rsi
+
+- type: entity
+  parent: ClothingOuterBase
+  id: ClothingOuterDutyWeddingUnknown
+  name: wedding
+  suffix: "Unknown/New"
+  components:
+  - type: Sprite
+    sprite: _Duty/Clothing/dresses/wedding.rsi
+  - type: Clothing
+    sprite: _Duty/Clothing/dresses/wedding.rsi

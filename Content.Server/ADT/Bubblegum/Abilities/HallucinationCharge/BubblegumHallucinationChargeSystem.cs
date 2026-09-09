@@ -47,7 +47,7 @@ public sealed class BubblegumHallucinationChargeSystem : EntitySystem
                 ent.Comp.ChargeSpeed, ent.Comp.HallucinationPrototype, ent.Comp.TelegraphPrototype);
 
             _charge.BeginCharge(ent.Owner, target, ent.Comp.NormalDelay, ent.Comp.ChargeSpeed,
-                ent.Comp.TelegraphPrototype, trampleDamage: 30f, targetEntity: targetEntity);
+                ent.Comp.TelegraphPrototype, trampleDamage: 23f, targetEntity: targetEntity);
             return;
         }
 
@@ -104,7 +104,7 @@ public sealed class BubblegumHallucinationChargeSystem : EntitySystem
                 if (wave.BossCharges)
                 {
                     _charge.BeginCharge(uid, wave.Target, wave.Delay, wave.Speed,
-                        wave.TelegraphProto, trampleDamage: 30f);
+                        wave.TelegraphProto, trampleDamage: 23f);
                 }
 
                 if (wave.TripleChargeAfter && TryComp<BubblegumTripleChargeComponent>(uid, out var tc))
@@ -136,7 +136,7 @@ public sealed class BubblegumHallucinationChargeSystem : EntitySystem
             var clone = Spawn(halluProto, spawnCoords);
             EnsureComp<BubblegumMinionComponent>(clone).Summoner = summoner;
             _charge.BeginCharge(clone, target, delay, speed, telegraphProto,
-                trampleDamage: 15f, expireOnHit: true);
+                trampleDamage: 11f, expireOnHit: true);
         }
     }
 }

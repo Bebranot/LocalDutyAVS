@@ -33,7 +33,7 @@ public sealed partial class PendingCharge
     public float Speed = 8f;
 
     [DataField]
-    public float TrampleDamage = 30f;
+    public float TrampleDamage = 23f;
 
     [DataField]
     public bool ExpireOnHit;

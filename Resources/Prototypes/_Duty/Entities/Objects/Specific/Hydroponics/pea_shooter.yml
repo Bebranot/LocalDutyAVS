@@ -1,0 +1,126 @@
+# _Duty: горохострел — предложение из тикета "для ботаников" (мутация гороха в оружие).
+#
+# Как это работает:
+#   1. У ванильного гороха ("pea" в Prototypes/Hydroponics/seeds.yml) есть шанс на ChangeSpecies-
+#      мутацию (см. Prototypes/Hydroponics/randomMutations.yml) — теперь она может выбрать вот
+#      этот "dutyPeaShooter" вместо обычного "laughinPea".
+#   2. Пока горохострел растёт в грядке — с него харвестится DutyPeaPellet (горошина) вместо
+#      стручка. Это стандартный харвест-цикл ботаники, отдельного кода не требует.
+#   3. Если грядку выкопать лопатой, из неё выпадает сам пистолет-горохострел — см.
+#      Content.Server/_Duty/Hydroponics/DutyPeaShooterSystem.cs.
+#   4. Горошины заряжаются в пистолет вручную (по тегу DutyPeaPellet), 10 штук. При попадании
+#      горошина не наносит урона, а оставляет скользкую лужу, которая тут же исчезает, стоит
+#      кому-то на ней поскользнуться — см. DutyPeaPuddle.
+#   5. Горохострел нарисован смотрящим только влево/вправо — соответственно стреляет он тоже
+#      только по горизонтали, см. DutyHorizontalOnlyGunComponent.
+
+- type: seed
+  id: dutyPeaShooter
+  name: семена горохострела
+  noun: seeds-noun-seeds
+  displayName: Горохострел
+  plantRsi: Objects/Specific/Hydroponics/pea.rsi # растёт визуально как обычный горох
+  packetPrototype: DutyPeaShooterSeedsPacket
+  productPrototypes:
+    - DutyPeaPellet
+  seedless: true # стручков не даёт, только горошины — семена этим путём не получить
+
+- type: entity
+  parent: SeedBase
+  id: DutyPeaShooterSeedsPacket
+  name: пакет с семенами горохострела
+  description: Мутировавшие семена гороха. С виду обычные, но с сюрпризом.
+  suffix: Duty, Растение
+  categories: [ HideSpawnMenu ] # получить можно только мутацией, а не из спавн-меню
+  components:
+    - type: Seed
+      seedId: dutyPeaShooter
+    - type: Sprite
+      sprite: Objects/Specific/Hydroponics/pea.rsi
+      state: seed
+
+- type: entity
+  parent: BaseBulletTrigger
+  id: DutyPeaPellet
+  name: горошина
+  description: Маленькая твёрдая горошина. Ей заряжают горохострел.
+  suffix: Duty, Растение
+  components:
+  - type: Sprite
+    sprite: _Duty/Specific/Hydroponics/PeaPellet.rsi
+    layers:
+    - state: pellet
+  - type: Item
+    size: Tiny
+  - type: Produce
+    seedId: dutyPeaShooter
+  - type: Projectile
+    damage: {} # горошина не наносит урона
+  - type: SpawnOnTrigger
+    proto: DutyPeaPuddle
+  - type: DeleteOnTrigger
+  - type: Tag
+    tags:
+    - DutyPeaPellet
+
+- type: entity
+  id: DutyPeaPuddle
+  name: раздавленный горох
+  description: Скользкая мешанина из раздавленных горошин.
+  categories: [ HideSpawnMenu ]
+  components:
+  - type: Sprite
+    sprite: _Duty/Specific/Hydroponics/PeaPellet.rsi
+    state: pellet
+  - type: Slippery
+  - type: StepTrigger
+    intersectRatio: 0.2
+  - type: TriggerOnSlip
+  - type: DeleteOnTrigger
+  - type: TimedDespawn
+    lifetime: 8
+  - type: CollisionWake
+    enabled: false
+  - type: Physics
+    bodyType: Dynamic
+  - type: Fixtures
+    fixtures:
+      slips:
+        shape:
+          !type:PhysShapeAabb
+          bounds: "-0.2,-0.2,0.2,0.2"
+        hard: false
+        layer:
+        - SlipLayer
+
+- type: entity
+  parent: BaseItem
+  id: DutyPeaShooter
+  name: горохострел
+  description: Мутировавший стручок гороха, ставший оружием. Стреляет горошинами, которые сам произвёл во время роста. Целится только влево и вправо.
+  suffix: Duty, Огнестрел
+  components:
+  - type: Sprite
+    sprite: _Duty/Objects/Weapons/Guns/PeaShooter.rsi
+    state: icon
+  - type: Item
+    size: Small
+    sprite: _Duty/Objects/Weapons/Guns/PeaShooter.rsi
+  - type: Gun
+    fireRate: 1.5
+    availableModes:
+    - SemiAuto
+    soundGunshot:
+      path: /Audio/Effects/pop.ogg
+  - type: DutyHorizontalOnlyGun
+  - type: BallisticAmmoProvider
+    whitelist:
+      tags:
+      - DutyPeaPellet
+    capacity: 10
+    soundInsert:
+      path: /Audio/Weapons/Guns/MagIn/bullet_insert.ogg
+  - type: ContainerContainer
+    containers:
+      ballistic-ammo: !type:Container
+        ents: []

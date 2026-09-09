@@ -17,7 +17,7 @@ public sealed partial class BubblegumActiveChargeComponent : Component
     public Vector2 Direction;
 
     [DataField]
-    public float TrampleDamage = 30f;
+    public float TrampleDamage = 23f;
 
     [DataField]
     public bool ExpireOnHit;

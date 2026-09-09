@@ -1,0 +1,31 @@
+<!--
+SPDX-FileCopyrightText: 2026 LocalDuty
+SPDX-License-Identifier: MIT
+-->
+
+<ui:FancyWindow xmlns="https://spacestation14.io"
+                xmlns:ui="clr-namespace:Content.Client.UserInterface.Controls"
+                SetSize="360 460"
+                MinSize="300 300"
+                Title="{Loc 'duty-spawn-menu-title'}">
+
+    <BoxContainer Orientation="Vertical" Margin="6" SeparationOverride="4">
+
+        <Label Name="HintLabel"
+               Text="{Loc 'duty-spawn-menu-hint'}"
+               FontColorOverride="#AAAAAA" />
+
+        <ScrollContainer VerticalExpand="True">
+            <BoxContainer Name="ItemList"
+                          Orientation="Vertical"
+                          SeparationOverride="2"
+                          HorizontalExpand="True" />
+        </ScrollContainer>
+
+        <Label Name="StatusLabel"
+               Text=""
+               HorizontalAlignment="Center"
+               FontColorOverride="#888888" />
+
+    </BoxContainer>
+</ui:FancyWindow>

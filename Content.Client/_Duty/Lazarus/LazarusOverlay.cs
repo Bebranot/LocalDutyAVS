@@ -10,11 +10,22 @@ namespace Content.Client._Duty.Lazarus;
 /// Полноэкранная кинематика эффекта Лазаруса: затемнение в чёрный → дрожащая
 /// рукописная фраза (шрифт Caveat) → плавный возврат. Анимируется самостоятельно
 /// по <see cref="IGameTiming.RealTime"/>, клиентская <c>LazarusSystem</c> лишь
-/// создаёт/удаляет оверлей.
+/// создаёт/удаляет оверлей и ведёт <see cref="Fade"/>.
+///
+/// Виньетку рисует отдельный <see cref="LazarusVignetteOverlay"/>: она живёт в
+/// мировом пространстве и через шейдер, а чернота с текстом — экранная.
 /// </summary>
 public sealed class LazarusOverlay : Overlay
 {
     public override OverlaySpace Space => OverlaySpace.ScreenSpace;
+
+    /// <summary>
+    /// Экранные оверлеи с одинаковым ZIndex движок рисует в произвольном порядке
+    /// (<c>OverlayManager.Sort</c> — нестабильная сортировка по словарю типов). Без явного
+    /// значения чернота то перекрывала попапы, то оказывалась под ними — от запуска к запуску.
+    /// Сцена Лазаруса перекрывает всё.
+    /// </summary>
+    private const int SceneZIndex = 1000;
 
     private const string FontPath = "/Fonts/Duty/Caveat/Caveat-Regular.ttf";
     private const int BaseFontSize = 58;
@@ -31,6 +42,12 @@ public sealed class LazarusOverlay : Overlay
     private readonly float _hold;
     private readonly float _fadeOut;
 
+    /// <summary>
+    /// Общий множитель непрозрачности сцены, 0..1. Держит клиентская <c>LazarusSystem</c>:
+    /// при обрыве кинематики (персонаж умер или его вытащили) она гасит его до нуля.
+    /// </summary>
+    public float Fade = 1f;
+
     public LazarusOverlay(
         IClyde clyde,
         IGameTiming timing,
@@ -43,6 +60,8 @@ public sealed class LazarusOverlay : Overlay
         _clyde = clyde;
         _timing = timing;
         _font = new VectorFont(cache.GetResource<FontResource>(FontPath), BaseFontSize);
+
+        ZIndex = SceneZIndex;
 
         _start = timing.RealTime;
         _phrase = phrase;
@@ -58,6 +77,11 @@ public sealed class LazarusOverlay : Overlay
 
     private float TotalDuration => _fadeIn + _hold + _fadeOut;
 
+    protected override bool BeforeDraw(in OverlayDrawArgs args)
+    {
+        return Fade > 0.001f;
+    }
+
     protected override void Draw(in OverlayDrawArgs args)
     {
         var handle = args.ScreenHandle;
@@ -69,11 +93,11 @@ public sealed class LazarusOverlay : Overlay
         var tHoldEnd = tFadeIn + _hold;
         var tFadeOutEnd = tHoldEnd + _fadeOut;
 
-        var blackAlpha = GetBlackAlpha(t, tFadeIn, tHoldEnd, tFadeOutEnd);
+        var blackAlpha = GetBlackAlpha(t, tFadeIn, tHoldEnd, tFadeOutEnd) * Fade;
         if (blackAlpha > 0.001f)
             handle.DrawRect(bounds, new Color(0f, 0f, 0f, blackAlpha));
 
-        var textAlpha = GetTextAlpha(t, tFadeIn, tHoldEnd, tFadeOutEnd);
+        var textAlpha = GetTextAlpha(t, tFadeIn, tHoldEnd, tFadeOutEnd) * Fade;
         if (textAlpha > 0.001f)
             DrawPhrase(handle, size, textAlpha, t);
     }

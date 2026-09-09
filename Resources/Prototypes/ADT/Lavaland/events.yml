@@ -4,8 +4,8 @@
   effects:
   - !type:ADTScatterSpawnEffect
     prototype: ADTRandomTendrilSpawner
-    minCount: 2
-    maxCount: 5
+    minCount: 4
+    maxCount: 8
     minSpacing: 24
     minDistanceFromCenter: 65
     maxRadius: 220

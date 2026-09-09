@@ -1,0 +1,68 @@
+# Меню выдачи предметов (_Duty).
+#
+# Открывается клиентской консольной командой:  dutyspawn
+# Доступ — либо всем (everyone: true), либо по сикею (игровому логину), регистр не важен.
+#
+# Каждый прототип ниже — это одна группа доступа: кому (ckeys) и что (items).
+# Групп может быть сколько угодно, они складываются. Поэтому «специальные вещи для
+# специальных людей» — это просто группа, в ckeys которой один-единственный сикей.
+#
+# Поля предмета:
+#   proto  — id прототипа сущности (как в спавн-меню админки), обязателен
+#   count  — сколько штук можно выдать за раунд; -1 = без ограничения; по умолчанию 1
+#   name   — подпись в меню; если не задать, берётся имя прототипа
+#
+# Поле группы everyone: true — группа доступна всем игрокам, список ckeys не нужен.
+#
+# Дистанция выдачи — CVar duty.spawn_menu_range (по умолчанию 3 клетки).
+# Рядом не должно быть живых игроков — CVar duty.spawn_menu_privacy_range (по умолчанию 8 клеток).
+
+# ── Общая группа: доступна всем игрокам ──────────────────────────────────────
+- type: dutySpawnAccess
+  id: DutySpawnCommon
+  everyone: true       # доступна всем игрокам; ckeys тогда не нужен
+  items:
+  - proto: SheetSteel          # стак 30
+    count: 1
+  - proto: SheetPlastic        # стак 30
+    count: 1
+  - proto: SheetGlass          # стак 30
+    count: 1
+  - proto: SheetPlasteel       # стак 30
+    count: 1
+  - proto: MaterialWoodPlank   # стак 30
+    count: 1
+  - proto: MaterialCloth       # стак 30
+    count: 1
+  - proto: BoxMRE
+    count: 1
+    name: Сухой паёк
+
+# ── Личные группы: «специальные вещи для специальных людей» ──────────────────
+- type: dutySpawnAccess
+  id: DutySpawnShershen
+  ckeys:
+  - shershen
+  items:
+  - proto: FlaconShesrhenDuty
+
+- type: dutySpawnAccess
+  id: DutySpawnDerbin
+  ckeys:
+  - Derbin
+  items:
+  - proto: ArtifactScytle
+
+- type: dutySpawnAccess
+  id: DutySpawnAbsolutelyNonOxygenIncluded
+  ckeys:
+  - AbsolutelyNonOxygenIncluded
+  items:
+  - proto: SturmSledgehammerDuty
+
+- type: dutySpawnAccess
+  id: DutySpawnKarp335
+  ckeys:
+  - karp335
+  items:
+  - proto: SturmAxeKarp335

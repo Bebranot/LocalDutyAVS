@@ -1,0 +1,14 @@
+# Прототип под осиротевший кастомный спрайт Resources/Textures/_Duty/Structures/Walls/AliveFleshWall.rsi —
+# без единой ссылки ни в одном прототипе. Не удалён, а вынесен сюда как есть (только "full",
+# состояния window0-7 не используются — под них нет разрушаемой логики): суффикс "Unknown/New"
+# и пустое описание — до дизайн-решения, что это вообще такое.
+
+- type: entity
+  parent: BaseStructure
+  id: StructureDutyAliveFleshWallUnknown
+  name: alivefleshwall
+  suffix: "Unknown/New"
+  components:
+  - type: Sprite
+    sprite: _Duty/Structures/Walls/AliveFleshWall.rsi
+    state: full

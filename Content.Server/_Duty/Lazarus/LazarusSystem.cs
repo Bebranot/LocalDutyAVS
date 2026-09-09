@@ -3,6 +3,7 @@ using Content.Server.Administration;
 using Content.Server.Body.Systems;
 using Content.Shared.Administration;
 using Content.Shared._Duty.Lazarus;
+using Content.Shared.CCVar;
 using Content.Shared.Chemistry.Components;
 using Content.Shared.Damage;
 using Content.Shared.Damage.Components;
@@ -10,6 +11,7 @@ using Content.Shared.Damage.Systems;
 using Content.Shared.FixedPoint;
 using Content.Shared.GameTicking;
 using Content.Shared.Humanoid;
+using Content.Shared.Mind.Components;
 using Content.Shared.Mobs;
 using Content.Shared.Mobs.Components;
 using Content.Shared.Mobs.Systems;
@@ -17,6 +19,7 @@ using Content.Shared.Movement.Systems;
 using Content.Shared.Popups;
 using Robust.Server.GameObjects;
 using Robust.Server.Player;
+using Robust.Shared.Configuration;
 using Robust.Shared.Console;
 using Robust.Shared.Player;
 using Robust.Shared.Random;
@@ -26,9 +29,14 @@ namespace Content.Server._Duty.Lazarus;
 
 /// <summary>
 /// Серверная логика эффекта Лазаруса ("Last Standing"). Следит за персонажами в
-/// крите: когда урон вплотную подбирается к смерти, один раз крутит шанс 5–12%.
+/// крите: когда урон подбирается к смерти и рядом нет живого игрока, который мог бы
+/// помочь, один раз за эпизод крита крутит шанс.
 /// При успехе — вытаскивает из крита, вкалывает стимуляторы, замедляет и шлёт
 /// клиенту кинематику. См. <see cref="LazarusComponent"/>.
+///
+/// Порог зоны, границы шанса и кулдаун берутся из duty.lazarus_* CVar (см. DutyCCVars) —
+/// их можно крутить вживую. Каждый бросок пишется в лог: срабатывания редки, и без этого
+/// нельзя отличить "не выпал шанс" от "зона недостижима" и от "система вообще не работает".
 /// </summary>
 public sealed class LazarusSystem : EntitySystem
 {
@@ -36,24 +44,66 @@ public sealed class LazarusSystem : EntitySystem
     [Dependency] private readonly IGameTiming _timing = default!;
     [Dependency] private readonly DamageableSystem _damageable = default!;
     [Dependency] private readonly BloodstreamSystem _bloodstream = default!;
+    [Dependency] private readonly MobStateSystem _mobState = default!;
     [Dependency] private readonly MobThresholdSystem _mobThreshold = default!;
     [Dependency] private readonly MovementModStatusSystem _movementMod = default!;
     [Dependency] private readonly SharedPopupSystem _popup = default!;
     [Dependency] private readonly IConsoleHost _console = default!;
     [Dependency] private readonly IPlayerManager _playerManager = default!;
+    [Dependency] private readonly IConfigurationManager _cfg = default!;
+    [Dependency] private readonly EntityLookupSystem _lookup = default!;
 
     /// <summary>Как часто опрашиваем критов (сек). Раз в тик не нужно.</summary>
     private const float ScanInterval = 0.25f;
     private float _accumulator;
 
-    /// <summary>Запланированные "вставания": (сущность, время лечения).</summary>
-    private readonly List<(EntityUid Uid, TimeSpan Time)> _pendingRevives = new();
+    // Глобальные ручки шанса — из duty.lazarus_* CVar, см. DutyCCVars. Держим в полях,
+    // чтобы не дёргать конфиг четыре раза в секунду на каждого крита.
+    private bool _enabled;
+    private float _nearDeathThreshold;
+    private float _minChance;
+    private float _maxChance;
+    private TimeSpan _cooldown;
+    private float _nearbyPlayerRange;
+
+    /// <summary>Переиспользуемый буфер поиска соседей — чтобы не выделять сет на каждую проверку.</summary>
+    private readonly HashSet<Entity<ActorComponent>> _nearbyPlayers = new();
+
+    /// <summary>
+    /// Запланированное "вставание". <see cref="PendingRevive.PreviousCooldown"/> — значение
+    /// <see cref="LazarusComponent.NextAvailableTime"/> до срабатывания: если кинематику
+    /// прервали, кулдаун возвращается и шанс считается непотраченным.
+    /// <see cref="PendingRevive.Forced"/> — запуск из админ-команды в обход крита, для него
+    /// проверка "всё ещё в криту" не применяется.
+    /// </summary>
+    private readonly record struct PendingRevive(
+        EntityUid Uid,
+        TimeSpan Time,
+        TimeSpan PreviousCooldown,
+        bool Forced);
+
+    /// <summary>Запланированные "вставания".</summary>
+    private readonly List<PendingRevive> _pendingRevives = new();
 
     public override void Initialize()
     {
         base.Initialize();
 
+        Subs.CVar(_cfg, DutyCCVars.LazarusEnabled, v => _enabled = v, true);
+        Subs.CVar(_cfg, DutyCCVars.LazarusNearDeathThreshold, v => _nearDeathThreshold = v, true);
+        Subs.CVar(_cfg, DutyCCVars.LazarusChanceMin, v => _minChance = v, true);
+        Subs.CVar(_cfg, DutyCCVars.LazarusChanceMax, v => _maxChance = v, true);
+        Subs.CVar(_cfg, DutyCCVars.LazarusCooldownMinutes,
+            v => _cooldown = TimeSpan.FromMinutes(Math.Max(v, 0f)), true);
+        Subs.CVar(_cfg, DutyCCVars.LazarusNearbyPlayerRange, v => _nearbyPlayerRange = v, true);
+
         SubscribeLocalEvent<PlayerSpawnCompleteEvent>(OnPlayerSpawn);
+
+        // Штатный спавн — не единственный путь в тело. Гост-роли, ERT, клоны, перенос разума
+        // и админ-спавн проходят мимо PlayerSpawnCompleteEvent, но все поднимают
+        // MindAddedMessage. EnsureComp идемпотентен, так что двойное навешивание безвредно.
+        SubscribeLocalEvent<MobStateComponent, MindAddedMessage>(OnMindAdded);
+
         SubscribeLocalEvent<RoundRestartCleanupEvent>(OnRoundRestart);
         SubscribeLocalEvent<LazarusScarComponent, MobStateChangedEvent>(OnScarredMobStateChanged);
 
@@ -66,11 +116,21 @@ public sealed class LazarusSystem : EntitySystem
 
     private void OnPlayerSpawn(PlayerSpawnCompleteEvent ev)
     {
-        // Только гуманоиды — как и в системе реплик боли.
-        if (!HasComp<HumanoidProfileComponent>(ev.Mob))
+        TryAttach(ev.Mob);
+    }
+
+    private void OnMindAdded(EntityUid uid, MobStateComponent component, MindAddedMessage args)
+    {
+        TryAttach(uid);
+    }
+
+    /// <summary>Только гуманоиды — как и в системе реплик боли.</summary>
+    private void TryAttach(EntityUid mob)
+    {
+        if (!HasComp<HumanoidProfileComponent>(mob))
             return;
 
-        EnsureComp<LazarusComponent>(ev.Mob);
+        EnsureComp<LazarusComponent>(mob);
     }
 
     /// <summary>Раунд перезапустился — отложенные "вставания" из прошлого раунда больше не актуальны.</summary>
@@ -87,70 +147,113 @@ public sealed class LazarusSystem : EntitySystem
 
         // Отложенные "вставания" обрабатываем каждый тик — для точного попадания в музыку.
         if (_pendingRevives.Count > 0)
-        {
-            for (var i = _pendingRevives.Count - 1; i >= 0; i--)
-            {
-                if (now < _pendingRevives[i].Time)
-                    continue;
-
-                var target = _pendingRevives[i].Uid;
-                _pendingRevives.RemoveAt(i);
-
-                if (Exists(target))
-                    Revive(target);
-            }
-        }
+            UpdatePendingRevives(now);
 
         _accumulator += frameTime;
         if (_accumulator < ScanInterval)
             return;
         _accumulator = 0f;
 
+        // Выключение останавливает только сканирование: уже запущенные кинематики
+        // доигрываются через _pendingRevives выше, а не обрываются на полуслове.
+        if (!_enabled)
+            return;
+
         var query = EntityQueryEnumerator<LazarusComponent, MobStateComponent, DamageableComponent, MobThresholdsComponent>();
         while (query.MoveNext(out var uid, out var lazarus, out var mobState, out var damageable, out var thresholds))
         {
-            // Зона смерти существует только в крите. Вне крита сбрасываем флаг входа.
+            // Зона смерти существует только в крите. Любой выход из крита (вылечили, умер,
+            // подняли дефибом) закрывает эпизод и разрешает следующий бросок.
             if (mobState.CurrentState != MobState.Critical)
             {
-                lazarus.InDeathZone = false;
+                lazarus.RolledThisCrit = false;
                 continue;
             }
+
+            // Один бросок на эпизод крита. Флаг снимается только строчкой выше, а не при
+            // выходе из зоны: иначе колебания урона у её границы (медик лечит крита медленнее,
+            // чем тот задыхается) прокручивали бы рулетку по кругу.
+            if (lazarus.RolledThisCrit)
+                continue;
 
             if (!TryGetCritRange(thresholds, out var critThreshold, out var deadThreshold))
                 continue;
 
             var total = _damageable.GetTotalDamage((uid, damageable));
 
-            // Доля диапazона "крит → смерть", оставшаяся до гибели.
+            // Доля диапазона "крит → смерть", оставшаяся до гибели.
             // 1.0 — только что в крите; 0.0 — на пороге смерти.
             var range = (deadThreshold - critThreshold).Float();
             if (range <= 0f)
                 continue;
 
-            var remaining = (float)((deadThreshold - total).Float() / range);
-            var inZone = remaining > 0f && remaining <= lazarus.NearDeathThreshold;
+            // Отрицательный остаток (урон уже за порогом смерти, а состояние всё ещё Critical)
+            // тоже считаем зоной — глубже некуда.
+            var remaining = (deadThreshold - total).Float() / range;
+            if (remaining > _nearDeathThreshold)
+                continue;
 
-            if (!inZone)
+            if (now < lazarus.NextAvailableTime)
             {
-                lazarus.InDeathZone = false;
+                Log.Debug(
+                    $"{ToPrettyString(uid)} вошёл в зону смерти ({total}/{deadThreshold}), но эффект на кулдауне ещё {(lazarus.NextAvailableTime - now).TotalMinutes:F1} мин.");
                 continue;
             }
 
-            // Уже внутри зоны — бросок крутится только в момент входа.
-            if (lazarus.InDeathZone)
+            // Рядом живой игрок — помощь возможна, "второй жизни" не даём.
+            // Бросок при этом НЕ тратим: флаг не ставим, так что когда союзник уйдёт
+            // (или умрёт сам), шанс у этого эпизода крита останется.
+            if (HasNearbyPlayer(uid))
                 continue;
 
-            lazarus.InDeathZone = true;
+            lazarus.RolledThisCrit = true;
 
-            if (now < lazarus.NextAvailableTime)
-                continue;
+            var chance = _random.NextFloat(_minChance, _maxChance);
+            var success = _random.Prob(chance);
 
-            var chance = _random.NextFloat(lazarus.MinChance, lazarus.MaxChance);
-            if (!_random.Prob(chance))
+            // Единственная строка, по которой видно, доходят ли игроки до полосы вообще.
+            // Срабатываний ждать долго, а вот бросков в логе должно быть заметно больше —
+            // если их нет совсем, проблема не в шансе, а в том, что зона недостижима.
+            Log.Info(
+                $"Бросок у {ToPrettyString(uid)}: урон {total}/{deadThreshold} (осталось {remaining:P0} диапазона), шанс {chance:P1} — {(success ? "СРАБОТАЛ" : "мимо")}.");
+
+            if (!success)
                 continue;
 
             Trigger(uid, lazarus, now);
         }
+    }
+
+    /// <summary>
+    /// Есть ли рядом другой живой игрок (радиус — duty.lazarus_nearby_player_range).
+    ///
+    /// Считаем только живых: призраки вьются над телами постоянно, но у них нет
+    /// <see cref="MobStateComponent"/>, поэтому <c>IsAlive</c> для них false; лежащий рядом
+    /// крит или труп помочь тоже не может. NPC не в счёт — нужен именно игрок
+    /// (<see cref="ActorComponent"/>).
+    /// </summary>
+    private bool HasNearbyPlayer(EntityUid uid)
+    {
+        if (_nearbyPlayerRange <= 0f)
+            return false;
+
+        var coords = Transform(uid).Coordinates;
+        if (!coords.IsValid(EntityManager))
+            return false;
+
+        _nearbyPlayers.Clear();
+        _lookup.GetEntitiesInRange(coords, _nearbyPlayerRange, _nearbyPlayers);
+
+        foreach (var other in _nearbyPlayers)
+        {
+            if (other.Owner == uid)
+                continue;
+
+            if (_mobState.IsAlive(other.Owner))
+                return true;
+        }
+
+        return false;
     }
 
     /// <summary>Достаёт пороги перехода в крит и в смерть из <see cref="MobThresholdsComponent"/>.</summary>
@@ -184,12 +287,14 @@ public sealed class LazarusSystem : EntitySystem
     /// кулдаун и планирует реальное "вставание" через <see cref="LazarusComponent.ReviveDelay"/>.
     /// Само лечение из крита происходит позже, в <see cref="Revive"/> — подстать музыке.
     /// </summary>
-    private void Trigger(EntityUid uid, LazarusComponent lazarus, TimeSpan now)
+    private void Trigger(EntityUid uid, LazarusComponent lazarus, TimeSpan now, bool forced = false)
     {
-        lazarus.NextAvailableTime = now + lazarus.Cooldown;
+        var previousCooldown = lazarus.NextAvailableTime;
+        lazarus.NextAvailableTime = now + _cooldown;
 
-        // Внутренний голос — сразу, на затемнении.
-        _popup.PopupEntity(Loc.GetString("duty-lazarus-popup-self"), uid, uid, PopupType.LargeCaution);
+        var hasActor = HasComp<ActorComponent>(uid);
+        Log.Info(
+            $"Эффект Лазаруса запущен у {ToPrettyString(uid)}{(forced ? " (принудительно)" : "")}; кинематика {(hasActor ? "отправлена игроку" : "не отправлена — сущностью никто не управляет")}, вставание через {lazarus.ReviveDelay.TotalSeconds:F1} с.");
 
         // Кинематика проигрывается только у самого игрока.
         if (TryComp<ActorComponent>(uid, out var actor))
@@ -212,7 +317,60 @@ public sealed class LazarusSystem : EntitySystem
         // _Duty: заглушить наше сердцебиение/монитор на время кинематики «второй жизни».
         RaiseLocalEvent(uid, new LazarusStartedEvent(lazarus.ReviveDelay));
 
-        _pendingRevives.Add((uid, now + lazarus.ReviveDelay));
+        _pendingRevives.Add(new PendingRevive(uid, now + lazarus.ReviveDelay, previousCooldown, forced));
+    }
+
+    /// <summary>
+    /// Ведёт отложенные "вставания" и обрывает те, что потеряли смысл.
+    ///
+    /// Раньше <see cref="Revive"/> вызывался через <see cref="LazarusComponent.ReviveDelay"/>
+    /// безусловно. Если персонажа за это время добивали, лечение отрабатывало на трупе:
+    /// поднять из мёртвых оно не могло (порог смерти залипает на Dead), но урон падал до ~20
+    /// из 200 — и дефиб потом возвращал бойца почти здоровым. А если его, наоборот, успевали
+    /// вытащить свои, он получал шрам -10% макс. HP за спасение, которого не было.
+    /// </summary>
+    private void UpdatePendingRevives(TimeSpan now)
+    {
+        for (var i = _pendingRevives.Count - 1; i >= 0; i--)
+        {
+            var pending = _pendingRevives[i];
+
+            if (TerminatingOrDeleted(pending.Uid))
+            {
+                _pendingRevives.RemoveAt(i);
+                continue;
+            }
+
+            // Больше не в криту — либо умер, либо его вытащили (медик, дефиб, крио).
+            if (!pending.Forced && !_mobState.IsCritical(pending.Uid))
+            {
+                _pendingRevives.RemoveAt(i);
+                CancelRevive(pending);
+                continue;
+            }
+
+            if (now < pending.Time)
+                continue;
+
+            _pendingRevives.RemoveAt(i);
+            Revive(pending.Uid);
+        }
+    }
+
+    /// <summary>
+    /// Обрыв кинематики: возвращаем кулдаун (эффект не отработал — шанс не потрачен)
+    /// и просим клиента погасить оверлеи со звуками, а не доигрывать сцену над трупом.
+    /// </summary>
+    private void CancelRevive(PendingRevive pending)
+    {
+        Log.Info(
+            $"Кинематика Лазаруса у {ToPrettyString(pending.Uid)} оборвана — цель больше не в криту; кулдаун возвращён, шанс не потрачен.");
+
+        if (TryComp<LazarusComponent>(pending.Uid, out var lazarus))
+            lazarus.NextAvailableTime = pending.PreviousCooldown;
+
+        if (TryComp<ActorComponent>(pending.Uid, out var actor))
+            RaiseNetworkEvent(new LazarusCancelledEvent(), actor.PlayerSession);
     }
 
     /// <summary>
@@ -242,6 +400,11 @@ public sealed class LazarusSystem : EntitySystem
             lazarus.SlowdownEffect,
             lazarus.SlowdownDuration,
             lazarus.SlowdownModifier);
+
+        // Внутренний голос — в момент, когда персонаж действительно поднимается. На старте
+        // кинематики показывать его бесполезно: попап живёт ~2.3 c, чёрный экран держится 4.5 c,
+        // а порядок отрисовки оверлеев с одинаковым ZIndex движок не гарантирует.
+        _popup.PopupEntity(Loc.GetString("duty-lazarus-popup-self"), uid, uid, PopupType.LargeCaution);
 
         // Окружающие видят, как боец снова приходит в себя.
         _popup.PopupEntity(Loc.GetString("duty-lazarus-popup-others", ("target", Name(uid))), uid,
@@ -367,7 +530,7 @@ public sealed class LazarusSystem : EntitySystem
 
         var lazarus = EnsureComp<LazarusComponent>(mob);
 
-        Trigger(mob, lazarus, _timing.CurTime);
+        Trigger(mob, lazarus, _timing.CurTime, forced: true);
         shell.WriteLine($"Эффект Лазаруса запущен у '{args[0]}'.");
     }
 

@@ -92,7 +92,7 @@ public sealed class BubblegumTripleChargeSystem : EntitySystem
                 delaySeconds: cumulative + delay,
                 speed: ent.Comp.ChargeSpeed,
                 telegraphProto: ent.Comp.TelegraphPrototype,
-                trampleDamage: 30f,
+                trampleDamage: 23f,
                 telegraphLeadSeconds: cumulative,
                 targetEntity: targetEntity);
 
@@ -112,7 +112,7 @@ public sealed class BubblegumTripleChargeSystem : EntitySystem
                 delaySeconds: cumulative + delay,
                 speed: ent.Comp.ChargeSpeed,
                 telegraphProto: ent.Comp.TelegraphPrototype,
-                trampleDamage: 30f,
+                trampleDamage: 23f,
                 telegraphLeadSeconds: cumulative);
 
             cumulative += delay + TravelBuffer;

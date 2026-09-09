@@ -53,7 +53,7 @@
     attackRate: 0.85
     damage:
       types:
-        Blunt: 45
+        Blunt: 34
         Structural: 150
     range: 1.6
     angle: 0
@@ -98,8 +98,8 @@
   - type: BubblegumSummonNarsi
     count: 3
   - type: BubblegumBloodAttack
-    smackDamage: 15
-    smackDamageEnraged: 26
+    smackDamage: 11
+    smackDamageEnraged: 20
   - type: BubblegumLoot
     deathThemeSound:
       path: /Audio/ADT/Phantom/Sounds/psycho.ogg

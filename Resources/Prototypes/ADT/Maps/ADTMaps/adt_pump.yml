@@ -78,7 +78,7 @@
             Librarian: [ 1, 1 ]
             Mime: [ 1, 1 ]
             Musician: [ 1, 1 ]
-            Reporter: [ 1, 1 ]
+            Reporter: [ 2, 2 ]
             ServiceWorker: [ 2, 2 ]
             ADTBarber: [ 1, 1 ]
             Passenger: [ -1, -1 ]

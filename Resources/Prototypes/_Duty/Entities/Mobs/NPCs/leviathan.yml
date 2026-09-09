@@ -1,0 +1,20 @@
+# Альтернативный скин космического кита (ADTSpaceLeviathan).
+# Выбирается 50/50 при спавне в StationProximitySystem.
+
+- type: entity
+  id: DutySpaceLeviathanEvil
+  parent: ADTSpaceLeviathan
+  suffix: keeps tiles, no despawn, alt skin
+  components:
+  - type: Sprite
+    sprite: _Duty/Mobs/Aliens/leviathan_evil.rsi
+  - type: TailedEntity
+    prototype: DutySpaceWhaleSegmentEvil
+
+- type: entity
+  id: DutySpaceWhaleSegmentEvil
+  parent: ADTSpaceWhaleSegment
+  categories: [ HideSpawnMenu ]
+  components:
+  - type: Sprite
+    sprite: _Duty/Mobs/Aliens/leviathan_evil.rsi

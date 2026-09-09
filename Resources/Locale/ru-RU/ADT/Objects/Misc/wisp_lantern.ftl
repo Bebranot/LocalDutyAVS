@@ -7,5 +7,5 @@ ent-ADTWispLantern = жуткий фонарь
 adt-wisp-lantern-examine-stored = Висп мирно покачивается внутри.
 adt-wisp-lantern-examine-released = Фонарь потускнел, висп снаружи.
 
-adt-wisp-lantern-release = Вы выпускаете виспа. Он кружит вокруг вашей головы, а { $lantern } тускнеет. Зрение обостряется.
-adt-wisp-lantern-return = Висп возвращается в { $lantern }, и зрение снова становится обычным.
+adt-wisp-lantern-release = Вы выпускаете виспа. Он кружит вокруг вашей головы, а { $lantern } тускнеет. Тело наливается силой.
+adt-wisp-lantern-return = Висп возвращается в { $lantern }, и прилив силы угасает.

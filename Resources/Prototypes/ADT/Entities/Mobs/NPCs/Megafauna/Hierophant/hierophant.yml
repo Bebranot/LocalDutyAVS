@@ -48,7 +48,7 @@
     attackRate: 1
     damage:
       types:
-        Blunt: 26
+        Blunt: 19.5 # _Duty: -25% нерф урона иерофанта (было 26)
         Structural: 100
     range: 1.8
     angle: 0
@@ -70,8 +70,8 @@
   - type: ADTBossMusic
     music: ADTBossMusicHierophant
   - type: Hierophant
-    blastDamage: 14
-    blinkBlastDamage: 38
+    blastDamage: 10.5 # _Duty: -25% нерф урона иерофанта (было 14)
+    blinkBlastDamage: 28.5 # _Duty: -25% нерф урона иерофанта (было 38)
     baseBeamRange: 6
     baseBurstRange: 4
   - type: TileMovement

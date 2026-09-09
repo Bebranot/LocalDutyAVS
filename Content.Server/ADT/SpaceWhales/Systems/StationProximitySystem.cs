@@ -8,6 +8,7 @@ using Robust.Server.Audio;
 using Robust.Shared.Audio;
 using Robust.Shared.Configuration;
 using Robust.Shared.Map.Components;
+using Robust.Shared.Random;
 using Robust.Shared.Timing;
 using Content.Shared.ADT.CCVar;
 using Content.Server.ADT.MobCaller;
@@ -25,6 +26,7 @@ public sealed class StationProximitySystem : EntitySystem
     [Dependency] private readonly SharedTransformSystem _transform = default!;
     [Dependency] private readonly AudioSystem _audio = default!;
     [Dependency] private readonly IConfigurationManager _cfg = default!;
+    [Dependency] private readonly IRobustRandom _random = default!;
     [Dependency] private readonly MovementSpeedModifierSystem _moveSpeed = default!;
 
     private const float CheckInterval = 60;
@@ -201,7 +203,7 @@ public sealed class StationProximitySystem : EntitySystem
         _transform.SetParent(_mobCaller.Value, entity);
         var mobCaller = new MobCallerComponent()
         {
-            SpawnProto = "ADTSpaceLeviathan",
+            SpawnProto = _random.Prob(0.5f) ? "ADTSpaceLeviathan" : "DutySpaceLeviathanEvil", // _Duty - 50/50 альтернативный скин
             MaxAlive = 1,
             NeedAnchored = false,
             NeedPower = false,

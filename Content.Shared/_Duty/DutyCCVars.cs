@@ -186,6 +186,63 @@ public sealed class DutyCCVars
     public static readonly CVarDef<bool> ConstructionFavoritesPanelVisible =
         CVarDef.Create("duty.construction_favorites_panel", true, CVar.ARCHIVE | CVar.CLIENTONLY);
 
+    // ── Эффект Лазаруса ("Last Standing") ─────────────────────────────────────
+    // Ручки шанса вынесены сюда, а не на LazarusComponent: компонент вешается кодом и
+    // ни в одном YAML-прототипе не встречается, так что DataField'ы на нём никто не
+    // переопределял. Через CVar их можно крутить вживую, без пересборки и рестарта.
+
+    /// <summary>
+    /// Включён ли эффект Лазаруса. Выключение останавливает сканирование критов —
+    /// уже запущенные кинематики доигрываются.
+    /// </summary>
+    public static readonly CVarDef<bool> LazarusEnabled =
+        CVarDef.Create("duty.lazarus_enabled", true, CVar.SERVERONLY | CVar.ARCHIVE);
+
+    /// <summary>
+    /// Доля диапазона "крит → смерть", оставшаяся до гибели, при пересечении которой
+    /// крутится бросок. 0.5 = "пройдена половина крита"; для человека (пороги 100/200)
+    /// это 150 ед. урона, то есть 50 HP до гибели.
+    /// </summary>
+    public static readonly CVarDef<float> LazarusNearDeathThreshold =
+        CVarDef.Create("duty.lazarus_near_death_threshold", 0.5f, CVar.SERVERONLY | CVar.ARCHIVE);
+
+    /// <summary>Нижняя граница шанса срабатывания.</summary>
+    public static readonly CVarDef<float> LazarusChanceMin =
+        CVarDef.Create("duty.lazarus_chance_min", 0.05f, CVar.SERVERONLY | CVar.ARCHIVE);
+
+    /// <summary>Верхняя граница шанса срабатывания.</summary>
+    public static readonly CVarDef<float> LazarusChanceMax =
+        CVarDef.Create("duty.lazarus_chance_max", 0.12f, CVar.SERVERONLY | CVar.ARCHIVE);
+
+    /// <summary>Кулдаун между срабатываниями в рамках одной жизни, минут.</summary>
+    public static readonly CVarDef<float> LazarusCooldownMinutes =
+        CVarDef.Create("duty.lazarus_cooldown_minutes", 25f, CVar.SERVERONLY | CVar.ARCHIVE);
+
+    /// <summary>
+    /// Радиус в клетках, в котором наличие другого живого игрока отменяет бросок.
+    /// Лазарус — про безнадёжность: если союзник в паре шагов и может дотащить или
+    /// поднять, чуда не происходит. 0 и меньше — проверка выключена.
+    /// </summary>
+    public static readonly CVarDef<float> LazarusNearbyPlayerRange =
+        CVarDef.Create("duty.lazarus_nearby_player_range", 3f, CVar.SERVERONLY | CVar.ARCHIVE);
+
+    // ── Меню выдачи предметов ─────────────────────────────────
+
+    /// <summary>
+    /// Максимальная дистанция выдачи в клетках для меню dutySpawnAccess.
+    /// Клиент получает это число вместе со списком предметов и рисует по нём радиус.
+    /// </summary>
+    public static readonly CVarDef<float> SpawnMenuRange =
+        CVarDef.Create("duty.spawn_menu_range", 3f, CVar.SERVERONLY | CVar.ARCHIVE);
+
+    /// <summary>
+    /// Радиус в клетках, в котором присутствие другого живого игрока запрещает выдачу.
+    /// Смысл — не палиться: предмет должен появляться, когда рядом никого нет.
+    /// 0 и меньше — проверка выключена.
+    /// </summary>
+    public static readonly CVarDef<float> SpawnMenuPrivacyRange =
+        CVarDef.Create("duty.spawn_menu_privacy_range", 8f, CVar.SERVERONLY | CVar.ARCHIVE);
+
     // ── Discord ───────────────────────────────────────────────────────────────
 
     /// <summary>

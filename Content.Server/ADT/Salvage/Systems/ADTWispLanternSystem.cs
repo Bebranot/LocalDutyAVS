@@ -1,4 +1,4 @@
-using Content.Shared.ADT.NightVision;
+using Content.Shared._Duty.Weapons.WispBuff;
 using Content.Shared.ADT.Salvage.Components;
 using Content.Shared.Examine;
 using Content.Shared.Follower;
@@ -15,7 +15,6 @@ public sealed class ADTWispLanternSystem : EntitySystem
     [Dependency] private readonly FollowerSystem _follower = default!;
     [Dependency] private readonly SharedAppearanceSystem _appearance = default!;
     [Dependency] private readonly SharedAudioSystem _audio = default!;
-    [Dependency] private readonly SharedNightVisionSystem _nightVision = default!;
     [Dependency] private readonly SharedPointLightSystem _light = default!;
     [Dependency] private readonly SharedPopupSystem _popup = default!;
 
@@ -75,19 +74,7 @@ public sealed class ADTWispLanternSystem : EntitySystem
         _follower.StartFollowingEntity(wisp, user);
         ent.Comp.Wisp = wisp;
 
-        if (!TryComp<NightVisionComponent>(user, out var nvComp))
-        {
-            EnsureComp<NightVisionComponent>(user);
-            ent.Comp.GrantedVision = true;
-            ent.Comp.WasVisionActive = false;
-        }
-        else
-        {
-            ent.Comp.GrantedVision = false;
-            ent.Comp.WasVisionActive = nvComp.State != NightVisionState.Off;
-        }
-
-        _nightVision.SetActive(user, true);
+        EnsureComp<WispBuffComponent>(user);
 
         _light.SetRadius(ent.Owner, ent.Comp.ReleasedRadius);
         _appearance.SetData(ent.Owner, ADTWispLanternVisuals.Released, true);
@@ -105,21 +92,11 @@ public sealed class ADTWispLanternSystem : EntitySystem
 
         if (ent.Comp.User is { } user && !TerminatingOrDeleted(user))
         {
-            if (ent.Comp.GrantedVision)
-            {
-                _nightVision.SetActive(user, false);
-                RemComp<NightVisionComponent>(user);
-            }
-            else
-            {
-                _nightVision.SetActive(user, ent.Comp.WasVisionActive);
-            }
+            RemComp<WispBuffComponent>(user);
 
             _popup.PopupEntity(Loc.GetString("adt-wisp-lantern-return", ("lantern", ent.Owner)), user, user);
         }
 
-        ent.Comp.GrantedVision = false;
-        ent.Comp.WasVisionActive = false;
         ent.Comp.Released = false;
         ent.Comp.User = null;
 

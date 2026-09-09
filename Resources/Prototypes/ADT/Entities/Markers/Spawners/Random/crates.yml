@@ -28,6 +28,7 @@
       - ADTCrateNecropolisStaffHealingWeak
       - ADTCrateNecropolisAdvancedEquipment
       - ADTCrateNecropolisArmorMinerLight
+      - ADTCrateNecropolisImmortalityTalisman # _Duty: талисман бессмертия, редкий лут
     chance: 1
 
 - type: entity

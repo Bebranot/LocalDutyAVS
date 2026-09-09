@@ -81,6 +81,16 @@ public sealed class HierophantCombatSystem : EntitySystem
                 continue;
             }
 
+            // _Duty: не добивать уже лежащих в крите - иерофант теряет интерес к цели вместо гарантированного киллшота
+            if (_mobState.IsCritical(target.Value))
+            {
+                if (TryComp<HTNComponent>(uid, out var targetHtn))
+                    targetHtn.Blackboard.Remove<EntityUid>("Target");
+
+                comp.LastTarget = null;
+                continue;
+            }
+
             if (!TargetOnSameGrid(uid, target.Value))
             {
                 if (TryComp<HTNComponent>(uid, out var targetHtn))
@@ -256,6 +266,16 @@ public sealed class HierophantCombatSystem : EntitySystem
                 continue;
 
             Devour(ent, target);
+            return;
+        }
+
+        // _Duty: не добивать критующих ударом клюшки - отменяем удар, а не позволяем ему стать киллшотом
+        foreach (var target in args.HitEntities)
+        {
+            if (!_mobState.IsCritical(target))
+                continue;
+
+            args.Handled = true;
             return;
         }
 

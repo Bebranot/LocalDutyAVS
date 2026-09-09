@@ -1,7 +1,6 @@
 using Content.Shared.ADT.Bubblegum;
 using Content.Shared.Damage;
 using Content.Shared.Damage.Systems;
-using Content.Shared.Gibbing;
 using Content.Shared.Mobs.Components;
 using Content.Shared.Mobs.Systems;
 using Content.Shared.Popups;
@@ -17,7 +16,6 @@ public sealed class BubblegumDevourSystem : EntitySystem
     [Dependency] private readonly IGameTiming _timing = default!;
     [Dependency] private readonly MobStateSystem _mobState = default!;
     [Dependency] private readonly MobThresholdSystem _thresholds = default!;
-    [Dependency] private readonly GibbingSystem _gibbing = default!;
     [Dependency] private readonly SharedPopupSystem _popup = default!;
     [Dependency] private readonly HTNSystem _htn = default!;
 
@@ -88,7 +86,8 @@ public sealed class BubblegumDevourSystem : EntitySystem
 
     private void Devour(EntityUid boss, EntityUid target)
     {
-        if (TryGetMaxHealth(target, out var maxHp))
+        var hasMaxHp = TryGetMaxHealth(target, out var maxHp);
+        if (hasMaxHp)
         {
             var heal = new DamageSpecifier();
             heal.DamageDict.Add("Blunt", -maxHp / 2f);
@@ -97,9 +96,15 @@ public sealed class BubblegumDevourSystem : EntitySystem
 
         _popup.PopupEntity(Loc.GetString("bubblegum-devour-popup", ("target", target)), boss, PopupType.LargeCaution);
 
-        var gibs = _gibbing.Gib(target, true, boss);
-        if (gibs.Count == 0)
-            QueueDel(target);
+        // Devour used to gib the target outright, permanently destroying the body and any
+        // chance of revival. Kill them the normal way instead - fatal, but still a corpse
+        // medical can bring back.
+        if (!_mobState.IsDead(target) && hasMaxHp)
+        {
+            var lethal = new DamageSpecifier();
+            lethal.DamageDict.Add("Blunt", maxHp);
+            _damageable.TryChangeDamage(target, lethal, true, origin: boss);
+        }
 
         if (TryComp<HTNComponent>(boss, out var htn)
             && htn.Blackboard.TryGetValue<EntityUid>("Target", out var currentTarget, EntityManager)

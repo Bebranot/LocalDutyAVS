@@ -1,5 +1,6 @@
 ﻿using Content.Client.Audio;
 using Content.Client.Gameplay;
+using Content.Client._Duty.Lazarus;
 using Content.Shared._Duty.AmbientMusic;
 using Content.Shared._Duty.FireAgony;
 using Content.Shared._Duty.FuryStimulator;
@@ -46,6 +47,7 @@ public sealed partial class DynamicAmbientMusicSystem : EntitySystem
     [Dependency] private readonly IAudioManager _audioManager = default!;
     [Dependency] private readonly ContentAudioSystem _contentAudio = default!;
     [Dependency] private readonly DutyMusicDirector _director = default!;
+    [Dependency] private readonly LazarusSystem _lazarus = default!;
 
     private bool _wasInCombat;
     private bool _wasInCombatLow;
@@ -74,6 +76,7 @@ public sealed partial class DynamicAmbientMusicSystem : EntitySystem
     // Fury-16: пока идёт эффект стимулятора, динамическая музыка выключена (у Fury своя музыка фаз),
     // и возвращается только через FuryResumeDelay после окончания эффекта.
     private bool _furySuppressed;
+    private bool _lazarusSuppressed;
 
     // _Duty: то же самое, но от арбитра музыки — объявления кодов и ванильный/лавалендский
     // эмбиент глушат динамическую музыку, пока звучат.
@@ -302,6 +305,7 @@ public sealed partial class DynamicAmbientMusicSystem : EntitySystem
         _critEnterReadyTime = TimeSpan.Zero;
         _furySuppressed = false;
         _furyResumeTime = TimeSpan.Zero;
+        _lazarusSuppressed = false;
         _directorSuppressed = false;
         _critCurrentEndTime = TimeSpan.Zero;
         _critNextEndTime = TimeSpan.Zero;
@@ -360,6 +364,9 @@ public sealed partial class DynamicAmbientMusicSystem : EntitySystem
             return;
 
         if (UpdateDirectorSuppression(player.Value, frameTime))
+            return;
+
+        if (UpdateLazarusSuppression(player.Value, frameTime))
             return;
 
         var mobState = GetMobState(player.Value);
@@ -559,6 +566,40 @@ public sealed partial class DynamicAmbientMusicSystem : EntitySystem
         }
 
         _directorSuppressed = true;
+
+        if (_currentStream != null)
+            StopCurrent(immediate: false);
+        StopCritStreams();
+        UpdateCritAudioDuck(frameTime, inCrit: false);
+        _lastMobState = GetMobState(player);
+        return true;
+    }
+
+    /// <summary>
+    /// Пока идёт сцена «второй жизни» (эффект Лазаруса), глушим динамическую музыку: у сцены
+    /// свои сердцебиение и Last Standing. Пульс из <c>HeartbeatSystem</c> на её время глушится
+    /// специально — а крит-трек раньше продолжал играть третьим слоем. Вдобавок крит-дак
+    /// прижимал мастер-гейн до 0.35, то есть приглушал и саму музыку Лазаруса; выход отсюда
+    /// с <c>inCrit: false</c> возвращает гейн на место.
+    /// Возвращает <c>true</c>, если музыка сейчас подавлена и остальную логику
+    /// <see cref="Update"/> надо пропустить.
+    /// </summary>
+    private bool UpdateLazarusSuppression(EntityUid player, float frameTime)
+    {
+        if (!_lazarus.SceneActive)
+        {
+            if (!_lazarusSuppressed)
+                return false;
+
+            // Сцена доиграла — музыка возвращается сразу, без ожидания следующего трека.
+            _lazarusSuppressed = false;
+            _trackPlaying = false;
+            _waitingForStateTransition = false;
+            _nextTrackTime = _timing.CurTime;
+            return false;
+        }
+
+        _lazarusSuppressed = true;
 
         if (_currentStream != null)
             StopCurrent(immediate: false);

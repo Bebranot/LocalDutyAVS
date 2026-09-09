@@ -35,6 +35,16 @@ public sealed class LazarusTriggeredEvent : EntityEventArgs
 }
 
 /// <summary>
+/// Кинематика прервана, не доиграв: персонаж умер или его вытащили из крита раньше, чем
+/// сработало отложенное «вставание». Клиент гасит оверлеи и звуки сцены. Отправляется
+/// тому же и только тому клиенту, что получил <see cref="LazarusTriggeredEvent"/>.
+/// </summary>
+[Serializable, NetSerializable]
+public sealed class LazarusCancelledEvent : EntityEventArgs
+{
+}
+
+/// <summary>
 /// _Duty: серверное directed-событие в момент срабатывания «второй жизни» на сущности.
 /// Нужно другим системам (сердцебиение), чтобы заглушить свои звуки на время кинематики
 /// Лазаруса — иначе наш пульс/монитор клэшатся с музыкой Last Standing.

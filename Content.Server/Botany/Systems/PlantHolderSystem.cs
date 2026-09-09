@@ -279,7 +279,14 @@ public sealed class PlantHolderSystem : EntitySystem
                     ("name", Comp<MetaDataComponent>(uid).EntityName)), args.User, PopupType.Medium);
                 _popup.PopupEntity(Loc.GetString("plant-holder-component-remove-plant-others-message",
                     ("name", Comp<MetaDataComponent>(args.User).EntityName)), uid, Filter.PvsExcept(args.User), true);
+
+                // _Duty: RemovePlant тут же обнуляет component.Seed, так что для тех кто хочет
+                // среагировать на конкретный выкопанный вид растения (см. PlantHolderShovelledEvent)
+                // нужно сохранить его заранее.
+                var shovelledSeed = component.Seed;
                 RemovePlant(uid, component);
+                var shovelledEv = new PlantHolderShovelledEvent(shovelledSeed, args.User);
+                RaiseLocalEvent(uid, ref shovelledEv);
             }
             else
             {
@@ -1022,3 +1029,12 @@ public sealed class PlantHolderSystem : EntitySystem
         Update(uid, component);
     }
 }
+
+/// <summary>
+/// _Duty: кидается на грядку сразу после того как её выкопали лопатой. RobustToolbox допускает
+/// только одного подписчика на пару (компонент, событие) — PlantHolderComponent/InteractUsingEvent
+/// уже занят самим PlantHolderSystem, поэтому вместо второй подписки на тот же ивент отдельные
+/// _Duty-системы (см. Content.Server/_Duty/Hydroponics/DutyPeaShooterSystem.cs) слушают вот это.
+/// </summary>
+[ByRefEvent]
+public readonly record struct PlantHolderShovelledEvent(SeedData Seed, EntityUid User);

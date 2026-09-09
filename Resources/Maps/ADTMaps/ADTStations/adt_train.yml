@@ -5,7 +5,7 @@ meta:
   forkId: SS14_DEV
   forkVersion: 7e3eb14bab3d77a59fcdb741c3421aeebbf19bbb
   time: 03/11/2026 17:18:53
-  entityCount: 25671
+  entityCount: 25672
 maps:
 - 1
 grids:
@@ -145195,6 +145195,11 @@ entities:
 - proto: SpawnPointReporter
   entities:
   - uid: 20705
+    components:
+    - type: Transform
+      pos: -13.5,-70.5
+      parent: 2
+  - uid: 25672
     components:
     - type: Transform
       pos: -13.5,-70.5

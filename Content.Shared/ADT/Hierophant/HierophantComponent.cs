@@ -29,7 +29,7 @@ public sealed partial class HierophantComponent : Component
     public int BaseBeamRange = 5;
 
     [DataField]
-    public float BlastDamage = 10f;
+    public float BlastDamage = 7.5f; // _Duty: -25% нерф урона иерофанта
 
     [DataField]
     public float ChaserSpeed = 0.3f;
@@ -86,7 +86,7 @@ public sealed partial class HierophantComponent : Component
     public float TileMovementRadius = 26f;
 
     [DataField]
-    public float BlinkBlastDamage = 30f;
+    public float BlinkBlastDamage = 22.5f; // _Duty: -25% нерф урона иерофанта
 
     [DataField]
     public DamageSpecifier SelfRepair = new()

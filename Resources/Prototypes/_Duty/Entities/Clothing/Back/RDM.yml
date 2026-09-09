@@ -1,0 +1,27 @@
+# Прототипы под осиротевшие кастомные спрайты из Resources/Textures/_Duty/Clothing/RDM/ —
+# без единой ссылки ни в одном прототипе. Не удалены, а вынесены сюда как есть: суффикс
+# "Unknown/New" и пустое описание — до дизайн-решения, что это вообще такое.
+
+- type: entity
+  parent: ClothingBackpack
+  id: ClothingBackpackDutyRdmUnknown
+  name: rdm
+  suffix: "Unknown/New"
+  components:
+  - type: Sprite
+    sprite: _Duty/Clothing/RDM/rdm.rsi
+    state: icon
+  - type: Clothing
+    sprite: _Duty/Clothing/RDM/rdm.rsi
+
+- type: entity
+  parent: ClothingBackpack
+  id: ClothingBackpackDutyRmdPickaxeUnknown
+  name: rmd pickaxe
+  suffix: "Unknown/New"
+  components:
+  - type: Sprite
+    sprite: _Duty/Clothing/RDM/rmd_pickaxe.rsi
+    state: base
+  - type: Clothing
+    sprite: _Duty/Clothing/RDM/rmd_pickaxe.rsi

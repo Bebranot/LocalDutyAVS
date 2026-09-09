@@ -3,7 +3,7 @@
   parent: BaseItem
   id: ClockworkScytle
   description: For the sake of RaTwar!
-  suffix: Duty, Оружие ближнего боя, коса
+  suffix: Duty, Оружие ближнего боя, Derbin
   components:
   - type: MeleeWeapon
     wideAnimationRotation: -135

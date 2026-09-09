@@ -20,12 +20,6 @@ public sealed partial class ADTWispLanternComponent : Component
     [DataField]
     public EntProtoId WispProto = "ADTWisp";
 
-    [ViewVariables]
-    public bool GrantedVision;
-
-    [ViewVariables]
-    public bool WasVisionActive;
-
     [DataField]
     public float StoredRadius = 7f;
 

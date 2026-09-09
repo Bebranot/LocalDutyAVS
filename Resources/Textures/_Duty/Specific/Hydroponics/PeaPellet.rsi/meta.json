@@ -1,0 +1,14 @@
+{
+    "version": 1,
+    "license": "CC-BY-SA-3.0",
+    "copyright": "_Duty: спрайт взят из wip-заготовки (Resources/Prototypes/_Duty/wip/goroshina.png).",
+    "size": {
+        "x": 16,
+        "y": 16
+    },
+    "states": [
+        {
+            "name": "pellet"
+        }
+    ]
+}
