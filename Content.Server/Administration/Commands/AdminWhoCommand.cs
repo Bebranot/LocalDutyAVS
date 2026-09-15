@@ -7,7 +7,7 @@ using Robust.Shared.Utility;
 
 namespace Content.Server.Administration.Commands;
 
-[AdminCommand(AdminFlags.Adminchat)] //ADT tweak
+[AnyCommand] //AdminWho for everyone. LocalDuty.
 
 public sealed class AdminWhoCommand : LocalizedCommands
 {
