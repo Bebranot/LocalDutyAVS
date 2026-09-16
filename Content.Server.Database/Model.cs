@@ -411,6 +411,9 @@ namespace Content.Server.Database
         public string HeadshotUrl { get; set; } = null!;
         public string ExploitableInfo { get; set; } = null!;
         //ADT-tweak-end
+        // _Duty-start
+        public string ErpStatus { get; set; } = null!;
+        // _Duty-end
         public int Age { get; set; }
         public string Sex { get; set; } = null!;
         public string Gender { get; set; } = null!;

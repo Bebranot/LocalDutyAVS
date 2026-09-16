@@ -248,6 +248,7 @@ namespace Content.Server.Database
             profile.HeadshotUrl = humanoid.HeadshotUrl;
             profile.OOCNotes = humanoid.OOCNotes;
             profile.ExploitableInfo = humanoid.ExploitableInfo;
+            profile.ErpStatus = humanoid.ErpStatus.ToString(); // _Duty
             profile.Languages.Clear();
             foreach (var langId in humanoid.Languages)
             {

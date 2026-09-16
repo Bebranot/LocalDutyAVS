@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Content.Server.ADT;
 using Content.Server.Corvax.Sponsors;
 using Content.Server.Database;
+using Content.Shared._Duty.ErpStatus;
 using Content.Shared._Duty.HealthPhrases;
 using Content.Shared.Body;
 using Content.Shared.CCVar;
@@ -115,6 +116,12 @@ namespace Content.Server.Preferences.Managers
             if (Enum.TryParse<Gender>(profile.Gender, true, out var genderVal))
                 gender = genderVal;
 
+            // _Duty-start: пустая/некорректная строка (в т.ч. у старых профилей без колонки) -> "Никакого ERP".
+            var erpStatus = DutyErpStatus.None;
+            if (!string.IsNullOrEmpty(profile.ErpStatus))
+                Enum.TryParse(profile.ErpStatus, true, out erpStatus);
+            // _Duty-end
+
 
             var markings =
                 new Dictionary<ProtoId<OrganCategoryPrototype>, Dictionary<HumanoidVisualLayers, List<Marking>>>();
@@ -216,8 +223,9 @@ namespace Content.Server.Preferences.Managers
                 profile.OOCNotes,
                 // ADT-Tweak-Start
                 profile.HeadshotUrl,
-                profile.ExploitableInfo
+                profile.ExploitableInfo,
                 // ADT-Tweak-End
+                erpStatus // _Duty
             );
 
             // Duty HealthPhrases
