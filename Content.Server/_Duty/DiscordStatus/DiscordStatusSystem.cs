@@ -37,6 +37,7 @@ public sealed class DiscordStatusSystem : EntitySystem
     private ulong? _messageId;
     private ulong _messageChannelId;
     private bool _updateInFlight;
+    private bool _loggedFirstUpdate;
 
     public override void Initialize()
     {
@@ -71,6 +72,13 @@ public sealed class DiscordStatusSystem : EntitySystem
 
     private void UpdateCore()
     {
+        if (!_loggedFirstUpdate)
+        {
+            _loggedFirstUpdate = true;
+            Log.Info($"DiscordStatusSystem: first Update() tick reached. CurTime={_timing.CurTime} nextUpdate={_nextUpdate} " +
+                     $"enabled={_cfg.GetCVar(DutyCCVars.DiscordStatusEnabled)} updateInFlight={_updateInFlight}");
+        }
+
         if (_updateInFlight)
             return;
 
