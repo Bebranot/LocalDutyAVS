@@ -270,6 +270,15 @@ public sealed class DutyCCVars
     public static readonly CVarDef<bool> RoundStartVoteEnabled =
         CVarDef.Create("duty.round_start_vote_enabled", true, CVar.SERVERONLY | CVar.ARCHIVE);
 
+    // ── Окно приветствия/чейнджлога ─────────────────────────────────────────────
+
+    /// <summary>
+    /// Включено ли автоматическое окно приветствия/чейнджлога для новых и вернувшихся
+    /// после рестарта игроков. Выключение полностью отключает показ (в т.ч. новичкам).
+    /// </summary>
+    public static readonly CVarDef<bool> WelcomeEnabled =
+        CVarDef.Create("duty.welcome_enabled", false, CVar.SERVERONLY | CVar.ARCHIVE);
+
     // ── Discord ───────────────────────────────────────────────────────────────
 
     /// <summary>

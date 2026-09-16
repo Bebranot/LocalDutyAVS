@@ -3,8 +3,10 @@ using Content.Server.EUI;
 using Content.Server.GameTicking;
 using Content.Server.Players.PlayTimeTracking;
 using Content.Shared._Duty.Welcome;
+using Content.Shared.CCVar;
 using Content.Shared.Players;
 using Content.Shared.Players.PlayTimeTracking;
+using Robust.Shared.Configuration;
 using Robust.Shared.Enums;
 using Robust.Shared.Player;
 
@@ -18,13 +20,15 @@ namespace Content.Server._Duty.Welcome;
 ///   считается новичком и видит окно при каждом входе в лобби, пока не отметит «не показывать снова»;
 /// - опытный игрок видит окно один раз за запуск сервера (флаг живёт в <see cref="ContentPlayerData"/>,
 ///   который сбрасывается только рестартом процесса — см. <see cref="Robust.Shared.Player.SessionData"/>);
-/// - галочка «не показывать снова» подавляет показ до следующего рестарта независимо от критерия выше.
+/// - галочка «не показывать снова» подавляет показ до следующего рестарта независимо от критерия выше;
+/// - вся фича целиком выключается CVar'ом <see cref="DutyCCVars.WelcomeEnabled"/>.
 /// </summary>
 public sealed class DutyWelcomeSystem : EntitySystem
 {
     [Dependency] private readonly EuiManager _euiManager = default!;
     [Dependency] private readonly PlayTimeTrackingManager _playTime = default!;
     [Dependency] private readonly UserDbDataManager _userDb = default!;
+    [Dependency] private readonly IConfigurationManager _cfg = default!;
 
     public override void Initialize()
     {
@@ -57,6 +61,9 @@ public sealed class DutyWelcomeSystem : EntitySystem
 
     private void TryShowWelcome(ICommonSession session)
     {
+        if (!_cfg.GetCVar(DutyCCVars.WelcomeEnabled))
+            return;
+
         var data = session.ContentData();
         if (data == null || data.DutyWelcomeDismissed)
             return;
