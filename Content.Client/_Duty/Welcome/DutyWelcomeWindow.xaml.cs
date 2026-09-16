@@ -36,9 +36,14 @@ public sealed partial class DutyWelcomeWindow : FancyWindow
             : "duty-welcome-header-veteran");
     }
 
+    // _Duty: string.Join с отдельными string-аргументами резолвится в .NET 10 BCL на
+    // params ReadOnlySpan<string?>-перегрузку — компилятор сворачивает вызов в [InlineArray]
+    // буфер, который запрещён сендбоксом клиента (см. /duty-sandbox). Явный string[] массив
+    // форсирует старую, разрешённую перегрузку.
     private static string BuildNewTabText()
     {
-        return string.Join("\n",
+        return string.Join("\n", new[]
+        {
             Loc.GetString("duty-welcome-new-intro"),
             "",
             Loc.GetString("duty-welcome-new-item-code-alpha"),
@@ -46,12 +51,14 @@ public sealed partial class DutyWelcomeWindow : FancyWindow
             Loc.GetString("duty-welcome-new-item-trauma"),
             Loc.GetString("duty-welcome-new-item-shieldbash"),
             "",
-            Loc.GetString("duty-welcome-new-item-outro"));
+            Loc.GetString("duty-welcome-new-item-outro"),
+        });
     }
 
     private static string BuildMechanicsTabText()
     {
-        return string.Join("\n",
+        return string.Join("\n", new[]
+        {
             Loc.GetString("duty-welcome-mechanics-intro"),
             "",
             Loc.GetString("duty-welcome-mechanics-combat-title"),
@@ -75,17 +82,20 @@ public sealed partial class DutyWelcomeWindow : FancyWindow
             Loc.GetString("duty-welcome-special-title"),
             Loc.GetString("duty-welcome-special-secimplants"),
             Loc.GetString("duty-welcome-special-mech"),
-            Loc.GetString("duty-welcome-special-stalker"));
+            Loc.GetString("duty-welcome-special-stalker"),
+        });
     }
 
     private static string BuildRulesTabText()
     {
-        return string.Join("\n",
+        return string.Join("\n", new[]
+        {
             Loc.GetString("duty-welcome-rules-intro"),
             "",
             Loc.GetString("duty-welcome-rules-item-metagame"),
             Loc.GetString("duty-welcome-rules-item-injury-rp"),
             Loc.GetString("duty-welcome-rules-item-newplayer"),
-            Loc.GetString("duty-welcome-rules-item-report"));
+            Loc.GetString("duty-welcome-rules-item-report"),
+        });
     }
 }
