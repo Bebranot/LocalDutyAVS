@@ -251,4 +251,32 @@ public sealed class DutyCCVars
     /// </summary>
     public static readonly CVarDef<string> DiscordRoundStartRole =
         CVarDef.Create("discord.round_start_role", string.Empty, CVar.SERVERONLY);
+
+    // ── Discord: статус сервера (живой эмбед) ──────────────────────────────────
+
+    /// <summary>
+    /// Включает автообновляемый эмбед со статусом сервера в Discord (карта, пресет, число игроков
+    /// онлайн, лобби/раунд). Раз в <see cref="DiscordStatusUpdateInterval"/> секунд редактирует одно
+    /// и то же сообщение, а не спамит новыми. Требует уже настроенного бота (discord.token,
+    /// discord.guild_id) и непустого <see cref="DiscordStatusChannelId"/>.
+    /// Канал должен существовать, а у бота — быть права Send Messages и Manage Messages в нём
+    /// (Manage Messages не обязателен для самого редактирования своих сообщений, но нужен, чтобы
+    /// бот мог найти и доредактировать сообщение после рестарта, если ID сообщения был потерян).
+    /// </summary>
+    public static readonly CVarDef<bool> DiscordStatusEnabled =
+        CVarDef.Create("duty.discord_status_enabled", false, CVar.SERVERONLY);
+
+    /// <summary>
+    /// ID Discord-канала для статус-эмбеда (число, как оно копируется через "Copy Channel ID"
+    /// в Discord с включённым режимом разработчика). Пусто — фича не работает, даже если включена.
+    /// </summary>
+    public static readonly CVarDef<string> DiscordStatusChannelId =
+        CVarDef.Create("duty.discord_status_channel_id", string.Empty, CVar.SERVERONLY);
+
+    /// <summary>
+    /// Интервал обновления статус-эмбеда, секунды. Меньше 5 — обрезается до 5, чтобы случайно не
+    /// зарейтлимитить бота на канале.
+    /// </summary>
+    public static readonly CVarDef<float> DiscordStatusUpdateInterval =
+        CVarDef.Create("duty.discord_status_update_interval", 60f, CVar.SERVERONLY);
 }
