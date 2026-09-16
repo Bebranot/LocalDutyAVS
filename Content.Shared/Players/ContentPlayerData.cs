@@ -37,6 +37,20 @@ public sealed class ContentPlayerData
     /// </summary>
     public bool Stealthed { get; set; }
 
+    /// <summary>
+    /// _Duty: окно приветствия/чейнджлога (см. <c>Content.Server._Duty.Welcome.DutyWelcomeSystem</c>)
+    /// уже было показано этому игроку в текущей сессии сервера. Живёт только в памяти — вместе
+    /// со всем <see cref="SessionData"/> сбрасывается при рестарте сервера, но переживает
+    /// переподключение игрока в рамках одного запуска.
+    /// </summary>
+    public bool DutyWelcomeShown { get; set; }
+
+    /// <summary>
+    /// _Duty: игрок отметил «не показывать снова» — окно приветствия не показывать этому игроку,
+    /// пока не случится рестарт сервера (см. <see cref="DutyWelcomeShown"/>).
+    /// </summary>
+    public bool DutyWelcomeDismissed { get; set; }
+
     public ContentPlayerData(NetUserId userId, string name)
     {
         UserId = userId;
