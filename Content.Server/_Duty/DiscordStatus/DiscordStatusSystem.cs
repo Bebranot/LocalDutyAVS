@@ -56,8 +56,15 @@ public sealed class DiscordStatusSystem : EntitySystem
         _nextUpdate = TimeSpan.Zero;
     }
 
+    private int _diagTickCount;
+
     public override void Update(float frameTime)
     {
+        // ВРЕМЕННО, без условий — проверяем, вызывается ли Update() вообще. Убрать после диагностики.
+        _diagTickCount++;
+        if (_diagTickCount <= 5)
+            Log.Info($"DiscordStatusSystem: Update() called, tick #{_diagTickCount}, frameTime={frameTime}");
+
         try
         {
             UpdateCore();
