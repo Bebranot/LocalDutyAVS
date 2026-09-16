@@ -9,6 +9,16 @@ namespace Content.Shared._Duty.Aiming;
 [RegisterComponent, NetworkedComponent]
 public sealed partial class AimableComponent : Component
 {
+    /// <summary>
+    /// Требует ли прицеливание удержания оружия в обе руки (Wieldable + Wielded == true).
+    /// true (по умолчанию) — старое поведение двуручного огнестрела. false — оружие можно
+    /// прицельно держать одной рукой; в этом случае вместо <see cref="WalkSpeedModifier"/>/
+    /// <see cref="SprintSpeedModifier"/> применяются <see cref="OneHandedWalkSpeedModifier"/>/
+    /// <see cref="OneHandedSprintSpeedModifier"/> с гораздо большим штрафом.
+    /// </summary>
+    [DataField]
+    public bool RequiresWield = true;
+
     /// <summary>Множитель скорости ходьбы во время прицеливания стоя.</summary>
     [DataField]
     public float WalkSpeedModifier = 0.6f;
@@ -16,6 +26,18 @@ public sealed partial class AimableComponent : Component
     /// <summary>Множитель скорости бега во время прицеливания стоя.</summary>
     [DataField]
     public float SprintSpeedModifier = 0.5f;
+
+    /// <summary>
+    /// Множитель скорости ходьбы при прицеливании одной рукой (<see cref="RequiresWield"/> == false).
+    /// Штраф значительно больше, чем у двуручного прицела — стрельба с одной руки прицельно
+    /// сильно сковывает движение.
+    /// </summary>
+    [DataField]
+    public float OneHandedWalkSpeedModifier = 0.25f;
+
+    /// <summary>Множитель скорости бега при прицеливании одной рукой. См. <see cref="OneHandedWalkSpeedModifier"/>.</summary>
+    [DataField]
+    public float OneHandedSprintSpeedModifier = 0.15f;
 
     /// <summary>Множитель zoom (FOV) во время прицеливания стоя.</summary>
     [DataField]

@@ -73,13 +73,16 @@ public sealed class AimingSystem : EntitySystem
         if (!_hands.TryGetActiveItem(user, out var heldNullable) || heldNullable is not { } held)
             return false;
 
-        if (!TryComp<WieldableComponent>(held, out var wieldable) || !wieldable.Wielded)
+        if (!TryComp<AimableComponent>(held, out var aimable))
             return false;
+
+        if (aimable.RequiresWield)
+        {
+            if (!TryComp<WieldableComponent>(held, out var wieldable) || !wieldable.Wielded)
+                return false;
+        }
 
         if (!TryComp<GunComponent>(held, out var gun) || !gun.UseKey)
-            return false;
-
-        if (!HasComp<AimableComponent>(held))
             return false;
 
         gunUid = held;

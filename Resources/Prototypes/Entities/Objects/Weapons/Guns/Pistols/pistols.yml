@@ -79,6 +79,8 @@
   - type: Appearance
   - type: StaticPrice
     price: 500
+  - type: Aimable # _Duty: одноручный прицел (ПКМ) — без wield, с сильным штрафом к скорости
+    requiresWield: false
 
 - type: entity
   name: viper
