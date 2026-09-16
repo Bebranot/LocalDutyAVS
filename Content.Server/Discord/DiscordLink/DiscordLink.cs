@@ -261,5 +261,63 @@ public sealed class DiscordLink : IPostInjectInit
         });
     }
 
+    /// <summary>
+    /// Sends an embed to a Discord channel with the specified ID.
+    /// </summary>
+    /// <returns>The ID of the sent message, or null if it could not be sent (bot not connected, channel not found).</returns>
+    public async Task<ulong?> SendEmbedAsync(ulong channelId, EmbedProperties embed)
+    {
+        if (_client == null)
+        {
+            return null;
+        }
+
+        var channel = await _client.Rest.GetChannelAsync(channelId) as TextChannel;
+        if (channel == null)
+        {
+            _sawmill.Error("Tried to send an embed to Discord but the channel {Channel} was not found.", channelId);
+            return null;
+        }
+
+        var message = await channel.SendMessageAsync(new MessageProperties()
+        {
+            AllowedMentions = AllowedMentionsProperties.None,
+        }.AddEmbeds(embed));
+
+        return message.Id;
+    }
+
+    /// <summary>
+    /// Edits an existing message in a Discord channel to replace its embed, instead of sending a new message.
+    /// </summary>
+    /// <returns>False if the edit failed (bot not connected, channel/message not found) — the caller should
+    /// treat this as "message is gone" and send a fresh one via <see cref="SendEmbedAsync"/> instead.</returns>
+    public async Task<bool> EditEmbedAsync(ulong channelId, ulong messageId, EmbedProperties embed)
+    {
+        if (_client == null)
+        {
+            return false;
+        }
+
+        var channel = await _client.Rest.GetChannelAsync(channelId) as TextChannel;
+        if (channel == null)
+        {
+            _sawmill.Error("Tried to edit an embed in a Discord channel {Channel} but the channel was not found.", channelId);
+            return false;
+        }
+
+        try
+        {
+            await channel.ModifyMessageAsync(messageId, options => options.WithEmbeds([embed]));
+            return true;
+        }
+        catch (Exception e)
+        {
+            // Most commonly the message was deleted out from under us (e.g. channel history purged).
+            _sawmill.Warning("Failed to edit Discord message {Message} in channel {Channel}: {Error}", messageId, channelId, e.Message);
+            return false;
+        }
+    }
+
     #endregion
 }
