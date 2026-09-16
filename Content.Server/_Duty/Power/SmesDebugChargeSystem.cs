@@ -32,8 +32,8 @@ public sealed class SmesDebugChargeSystem : EntitySystem
 
         SubscribeLocalEvent<RoundStartVoteEffectAppliedEvent>(OnEffectApplied);
         SubscribeLocalEvent<RoundRestartCleanupEvent>(OnRoundRestart);
-        SubscribeLocalEvent<SmesComponent, MapInitEvent>(OnSmesMapInit);
-        SubscribeLocalEvent<SmesComponent, ChargeChangedEvent>(OnSmesChargeChanged);
+        SubscribeLocalEvent<SmesComponent, MapInitEvent>(OnSmesMapInit, after: [typeof(SmesSystem)]);
+        SubscribeLocalEvent<SmesComponent, ChargeChangedEvent>(OnSmesChargeChanged, after: [typeof(SmesSystem)]);
     }
 
     private void OnEffectApplied(RoundStartVoteEffectAppliedEvent ev)
