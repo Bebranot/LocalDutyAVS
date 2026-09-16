@@ -95,6 +95,12 @@
                                     <Control HorizontalExpand="True"/>
                                     <OptionButton Name="SpawnPriorityButton" HorizontalAlignment="Right" />
                                 </BoxContainer>
+                                <!-- _Duty: ЕРП-статус -->
+                                <BoxContainer HorizontalExpand="True">
+                                    <Label Text="{Loc 'humanoid-profile-editor-erp-status-label'}" />
+                                    <Control HorizontalExpand="True"/>
+                                    <OptionButton Name="ErpStatusButton" HorizontalAlignment="Right" />
+                                </BoxContainer>
                                 <!-- ADT Barks Start -->
                                 <BoxContainer HorizontalExpand="True" Visible="False" Name="BarksContainer">
                                     <Label Text="{Loc 'humanoid-profile-editor-bark-label'}" />

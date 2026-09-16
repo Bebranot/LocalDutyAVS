@@ -1,6 +1,6 @@
 ptl-examine-enabled = Лазер сейчас [color=red]{ $enabled }[/color].
 ptl-interact-enabled = Лазер сейчас { $enabled }.
-ptl-examine-screwdriver = Вы можете использовать [color=green]отвёртку[/color] чтобы сменить [color=green]скорость передачи[/color].
+ptl-examine-screwdriver = Вы можете использовать [color=green]отвёртку[/color], чтобы сменить [color=green]скорость передачи[/color].
 ptl-interact-screwdriver = Устанавливаете задержку передачи на { $delay } секунд.
 ptl-examine-spesos = Содержит [color=yellow]{ $spesos } кредитов[/color]. Используйте [color=green]мультитул[/color] чтобы собрать.
 ptl-interact-spesos = Печатает сохранённые кредиты.

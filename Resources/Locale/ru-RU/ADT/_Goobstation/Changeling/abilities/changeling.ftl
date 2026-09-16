@@ -31,7 +31,7 @@ changeling-transform-fail-choose = Вы не выбрали форму для п
 changeling-transform-fail-absorbed = Вы не можете превратиться в оболочку!
 changeling-transform-finish = Теперь вы - {$target}.
 
-changeling-sting = Вы незаметно жалите {CAPITALIZE(THE($target))}
+changeling-sting = Вы незаметно жалите {CAPITALIZE(THE($target))}.
 changeling-sting-fail-self = Вы попытались ужалить {CAPITALIZE(THE($target))}, но что-то помешало вам это сделать!
 changeling-sting-fail-ling = Кто-то только что попытался незаметно ужалить вас!
 changeling-sting-fail-fakeweapon = Они не смогут удержать поддельное оружие.

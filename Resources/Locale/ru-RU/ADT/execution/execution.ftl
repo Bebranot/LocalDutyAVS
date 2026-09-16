@@ -7,5 +7,5 @@ execution-popup-gun-clumsy-external = { $attacker } промазывает по 
 execution-popup-gun-empty = { $weapon } щёлкает.
 suicide-popup-gun-initial-internal = Вы кладёте в рот дуло { $weapon }.
 suicide-popup-gun-initial-external = { $attacker } кладёт дуло { $weapon } в рот { $attacker }.
-suicide-popup-gun-complete-internal = Вы стреляет в свою голову!
+suicide-popup-gun-complete-internal = Вы стреляете в свою голову!
 suicide-popup-gun-complete-external = { $attacker } стреляет в голову { $attacker }!

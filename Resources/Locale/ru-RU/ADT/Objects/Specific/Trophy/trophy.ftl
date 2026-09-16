@@ -20,7 +20,7 @@ ent-ADTKineticTrophyPoisonFang = ядовитый клык
 ent-ADTKineticTrophyFrostGland = морозная железа
     .desc = Бережно сохранённая железа ледяного существа. При ударе по помеченной цели та наносит на 10% меньше урона.
 
-ent-ADTKineticTrophyBloodDrunkMiner = глаз кровавого шахтера
+ent-ADTKineticTrophyBloodDrunkMiner = глаз кровавого шахтёра
     .desc = Зрачок сплющен и превратился в кашу. После детонации метки даёт иммунитет к стану и снижает получаемый урон на 90% в течение 1 секунды.
 
 ent-ADTKineticTrophyAshDrakeSpike = хвостовой шип

@@ -46,7 +46,7 @@ marking-ReptilianTattoSkeletArmL-tatto_skelet_arm_l = Татуировка, ле
 marking-ReptilianTattoSkeletArmR = Татуировка, правая рука (Скелет)
 marking-ReptilianTattoSkeletArmR-tatto_skelet_arm_r = Татуировка, правая рука
 marking-ReptilianTattoSkeletLegL = Татуировка, левая нога (Скелет)
-marking-ReptilianTattoSkeletLegL-tatto_skelet_leg_l =Татуировка, левая нога
+marking-ReptilianTattoSkeletLegL-tatto_skelet_leg_l = Татуировка, левая нога
 marking-ReptilianTattoSkeletLegR = Татуировка, правая нога (Скелет)
 marking-ReptilianTattoSkeletLegR-tatto_skelet_leg_r = Татуировка, правая нога
 

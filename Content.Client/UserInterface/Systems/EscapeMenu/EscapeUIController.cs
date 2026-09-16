@@ -1,4 +1,5 @@
-﻿using Content.Client.FeedbackPopup;
+﻿using Content.Client._Duty.ErpStatus;
+using Content.Client.FeedbackPopup;
 using Content.Client.Gameplay;
 using Content.Client.UserInterface.Controls;
 using Content.Client.UserInterface.Systems.Guidebook;
@@ -25,6 +26,7 @@ public sealed class EscapeUIController : UIController, IOnStateEntered<GameplayS
     [Dependency] private readonly ChangelogUIController _changelog = default!;
     [Dependency] private readonly InfoUIController _info = default!;
     [Dependency] private readonly OptionsUIController _options = default!;
+    [Dependency] private readonly ErpStatusUIController _erpStatus = default!;
     [Dependency] private readonly GuidebookUIController _guidebook = default!;
     [Dependency] private readonly FeedbackPopupUIController _feedback = null!;
 
@@ -93,6 +95,12 @@ public sealed class EscapeUIController : UIController, IOnStateEntered<GameplayS
         {
             CloseEscapeWindow();
             _options.OpenWindow();
+        };
+
+        _escapeWindow.ErpStatusButton.OnPressed += _ =>
+        {
+            CloseEscapeWindow();
+            _erpStatus.OpenWindow();
         };
 
         _escapeWindow.QuitButton.OnPressed += _ =>

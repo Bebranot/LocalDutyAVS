@@ -1,2 +1,2 @@
 ent-ADTCrateSecuredVendingMachineRestockMusicianFilled = ящик пополнения Музыкомата
-    .desc = содержит набор пополнения для Музыкомата
+    .desc = Содержит набор пополнения для Музыкомата

@@ -11,7 +11,7 @@ ent-ADTDoorElectronicsSpaceSecMaintence = { ent-DoorElectronics }
     .desc = { ent-DoorElectronics.desc }
 
 ent-ADTDoorElectronicsSpaceSeckArmory = { ent-DoorElectronics }
-    .suffix = Space Sec, Оруженый
+    .suffix = Space Sec, Оружейный
     .desc = { ent-DoorElectronics.desc }
 
 ent-ADTDoorElectronicsSpaceSecCommand = { ent-DoorElectronics }

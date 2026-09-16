@@ -41,7 +41,7 @@ supermatter-console-window-label-temperature-bar = {$temperature} K
 
 supermatter-console-window-label-temperature-limit = Лимит температуры:
 supermatter-console-window-label-temperature-limit-base = Базовое сопротивление теплу:
-supermatter-console-window-label-temperature-limit-gas = Сопротипление теплу от газов:
+supermatter-console-window-label-temperature-limit-gas = Сопротивление теплу от газов:
 
 supermatter-console-window-label-waste = Множитель отходов:
 supermatter-console-window-label-waste-bar = {$waste} x
