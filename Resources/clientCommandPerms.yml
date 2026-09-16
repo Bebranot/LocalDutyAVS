@@ -25,7 +25,7 @@
     - gc
     - gc_mode
     - cvar
-    # - fuckrules # ADT-Tweak
+    - fuckrules # _Duty: доступна всем игрокам, как и adminwho
     - midipanic
     - replay_recording_start
     - replay_recording_stop
@@ -87,7 +87,6 @@
     - toggledecals
     - showwallmounts
     - showaccessreaders
-    - fuckrules # ADT-Tweak
 
 - Flags: QUERY
   Commands:
