@@ -1,6 +1,15 @@
 # Базы портированного из STALKER-14 оружия — привязаны к нашим ванильным базам.
 # Дают слои спрайта/визуал магазина, чтобы семейства стволов копировались почти вербатим.
 # Кастомные компоненты (STWeight/STWeaponDamageFalloff/STWeaponAccuracy) — пустышки (см. StalkerStubComponents.cs).
+#
+# cameraRecoilScalar — предиктивная визуальная отдача камеры (Content.Shared/Weapons/Ranged/Components/GunComponent.cs).
+# Считается на клиенте сразу при выстреле (Content.Client/Weapons/Ranged/Systems/GunSystem.cs: Recoil()), поэтому
+# ощущается мгновенно у стрелка независимо от пинга — в отличие от накопительного разброса пуль (minAngle/maxAngle/
+# angleIncrease/angleDecay), который остаётся server-authoritative и не трогается этой правкой. Раньше это поле
+# нигде в _Duty не переопределялось (везде дефолт 1) — весь огнестрел ощущался одинаково независимо от класса.
+# Задано по архетипу здесь, чтобы каскадом разойтись по всем стволам класса через YAML-наследование; отдельные
+# стволы (особенно "снайперский" подкласс STBaseWeaponRifle — СВД/Vepr/ВСС/ОСВ-96/АШ-12) переопределяют точнее
+# в своих файлах — см. gun_sniper.yml, gun_ah12.yml.
 
 # ── База рифлов ──────────────────────────────────────────────────────────────
 - type: entity
@@ -9,6 +18,8 @@
   id: STBaseWeaponRifle
   name: rifle
   components:
+  - type: Gun
+    cameraRecoilScalar: 1.1
   - type: Sprite
     layers:
     - state: base
@@ -56,6 +67,8 @@
   id: STBaseWeaponSMG
   name: smg
   components:
+  - type: Gun
+    cameraRecoilScalar: 0.75
   - type: Sprite
     layers:
     - state: base
@@ -91,6 +104,8 @@
   id: STBaseWeaponPistol
   name: pistol
   components:
+  - type: Gun
+    cameraRecoilScalar: 0.5
   - type: Sprite
     layers:
     - state: base
@@ -128,6 +143,8 @@
   id: STBaseWeaponSniper
   name: sniper
   components:
+  - type: Gun
+    cameraRecoilScalar: 2.4
   - type: Sprite
     layers:
     - state: base
@@ -180,6 +197,8 @@
   id: STBaseWeaponRevolver
   name: revolver
   components:
+  - type: Gun
+    cameraRecoilScalar: 1.6
   - type: FarGunshot
     range: 170
     sound:

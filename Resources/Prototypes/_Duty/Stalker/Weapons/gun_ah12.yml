@@ -23,6 +23,7 @@
     angleIncrease: 2
     angleDecay: 5
     fireRate: 7.5
+    cameraRecoilScalar: 1.6 # тяжёлый 12.7x55 в полноавтомате — punchier штатного АК, но не как снайперка
     selectedMode: FullAuto
     availableModes:
     - Burst
