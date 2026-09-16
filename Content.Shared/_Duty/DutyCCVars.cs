@@ -261,6 +261,15 @@ public sealed class DutyCCVars
     public static readonly CVarDef<float> EmptyServerAutoRestartDelaySeconds =
         CVarDef.Create("duty.empty_server_auto_restart_delay_seconds", 1500f, CVar.SERVERONLY | CVar.ARCHIVE);
 
+    // ── Голосование при старте раунда ───────────────────────────────────────
+
+    /// <summary>
+    /// Включён ли фреймворк голосований раунд-старта (да/нет с эффектом при победе).
+    /// Выключение полностью отключает функционал: голосование при старте раунда не запускается.
+    /// </summary>
+    public static readonly CVarDef<bool> RoundStartVoteEnabled =
+        CVarDef.Create("duty.round_start_vote_enabled", true, CVar.SERVERONLY | CVar.ARCHIVE);
+
     // ── Discord ───────────────────────────────────────────────────────────────
 
     /// <summary>
