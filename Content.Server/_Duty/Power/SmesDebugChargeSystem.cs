@@ -1,7 +1,6 @@
 using Content.Server._Duty.RoundStartVote;
 using Content.Server.Power.SMES;
 using Content.Shared.GameTicking;
-using Content.Shared.Power;
 using Content.Shared.Power.Components;
 using Content.Shared.Power.EntitySystems;
 
@@ -13,18 +12,23 @@ namespace Content.Server._Duty.Power;
 /// <see cref="RoundStartVoteEffectAppliedEvent"/> по строковому <see cref="EffectId"/>, а не
 /// завязан на конкретный прототип голосования, поэтому фреймворк голосований остаётся не в курсе про СМЭС.
 ///
-/// Держит заряд полным реактивно: топит заряд каждый раз, когда он падает
-/// (<see cref="ChargeChangedEvent"/> прилетает у СМЭС практически каждый тик, пока сеть его
-/// заряжает/разряжает — см. BatterySystem.PostSync), плюс сразу топит СМЭС, появившиеся после
-/// применения эффекта (стройка/админ-спавн).
+/// Держит заряд полным периодическим пересчётом в <see cref="Update"/>, а не подпиской на
+/// <see cref="MapInitEvent"/>/<see cref="ChargeChangedEvent"/> у <see cref="SmesComponent"/> — в этом
+/// движке directed-подписка на пару (компонент, событие) допускает ровно одного подписчика
+/// (Dictionary.TryAdd в EntityEventBus.Directed), а обе эти пары уже заняты ванильным SmesSystem.
+/// Раз в секунду достаточно — топит заряд на всех СМЭС станции разом, включая появившиеся
+/// после применения эффекта (стройка/админ-спавн).
 /// </summary>
 public sealed class SmesDebugChargeSystem : EntitySystem
 {
     public const string EffectId = "SmesInfiniteCharge";
 
+    private const float RefreshInterval = 1f;
+
     [Dependency] private readonly SharedBatterySystem _battery = default!;
 
     private bool _active;
+    private float _accumulator;
 
     public override void Initialize()
     {
@@ -32,8 +36,21 @@ public sealed class SmesDebugChargeSystem : EntitySystem
 
         SubscribeLocalEvent<RoundStartVoteEffectAppliedEvent>(OnEffectApplied);
         SubscribeLocalEvent<RoundRestartCleanupEvent>(OnRoundRestart);
-        SubscribeLocalEvent<SmesComponent, MapInitEvent>(OnSmesMapInit, after: [typeof(SmesSystem)]);
-        SubscribeLocalEvent<SmesComponent, ChargeChangedEvent>(OnSmesChargeChanged, after: [typeof(SmesSystem)]);
+    }
+
+    public override void Update(float frameTime)
+    {
+        base.Update(frameTime);
+
+        if (!_active)
+            return;
+
+        _accumulator += frameTime;
+        if (_accumulator < RefreshInterval)
+            return;
+
+        _accumulator = 0f;
+        TopUpAll();
     }
 
     private void OnEffectApplied(RoundStartVoteEffectAppliedEvent ev)
@@ -42,12 +59,8 @@ public sealed class SmesDebugChargeSystem : EntitySystem
             return;
 
         _active = true;
-
-        var query = EntityQueryEnumerator<SmesComponent, BatteryComponent>();
-        while (query.MoveNext(out var uid, out _, out var battery))
-        {
-            _battery.SetCharge((uid, battery), battery.MaxCharge);
-        }
+        _accumulator = 0f;
+        TopUpAll();
     }
 
     private void OnRoundRestart(RoundRestartCleanupEvent ev)
@@ -55,22 +68,13 @@ public sealed class SmesDebugChargeSystem : EntitySystem
         _active = false;
     }
 
-    private void OnSmesMapInit(Entity<SmesComponent> ent, ref MapInitEvent args)
+    private void TopUpAll()
     {
-        if (!_active || !TryComp<BatteryComponent>(ent.Owner, out var battery))
-            return;
-
-        _battery.SetCharge((ent.Owner, battery), battery.MaxCharge);
-    }
-
-    private void OnSmesChargeChanged(Entity<SmesComponent> ent, ref ChargeChangedEvent args)
-    {
-        if (!_active || args.CurrentCharge >= args.MaxCharge)
-            return;
-
-        if (!TryComp<BatteryComponent>(ent.Owner, out var battery))
-            return;
-
-        _battery.SetCharge((ent.Owner, battery), args.MaxCharge);
+        var query = EntityQueryEnumerator<SmesComponent, BatteryComponent>();
+        while (query.MoveNext(out var uid, out _, out var battery))
+        {
+            if (_battery.GetCharge((uid, battery)) < battery.MaxCharge)
+                _battery.SetCharge((uid, battery), battery.MaxCharge);
+        }
     }
 }
