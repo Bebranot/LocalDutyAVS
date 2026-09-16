@@ -1,4 +1,5 @@
 using System.Numerics;
+using Content.Shared._Duty.ErpStatus;
 using Content.Shared.ADT.Language;
 using Content.Shared.ADT.SpeechBarks;
 using Content.Shared.Humanoid.Markings;
@@ -104,7 +105,7 @@ public sealed partial class HumanoidCharacterProfileV1
     public HumanoidCharacterProfile ToV2()
     {
         // ADT-tweak:
-        return new(Name, FlavorText, Species, Voice, Age, Sex, Gender, Appearance.ToV2(Species), SpawnPriority, JobPriorities, PreferenceUnavailable, AntagPreferences, TraitPreferences, Loadouts, Bark, Languages, OOCNotes, HeadshotUrl, ExploitableInfo);
+        return new(Name, FlavorText, Species, Voice, Age, Sex, Gender, Appearance.ToV2(Species), SpawnPriority, JobPriorities, PreferenceUnavailable, AntagPreferences, TraitPreferences, Loadouts, Bark, Languages, OOCNotes, HeadshotUrl, ExploitableInfo, DutyErpStatus.None); // _Duty: старый формат не хранит ЕРП-статус, дефолт
     }
 }
 

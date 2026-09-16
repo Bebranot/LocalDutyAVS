@@ -1,6 +1,7 @@
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
+using Content.Shared._Duty.ErpStatus;
 using Content.Shared.ADT.Sponsors;
 using Content.Shared.ADT.CCVar;
 using Content.Shared.ADT.CharecterFlavor;
@@ -120,6 +121,15 @@ namespace Content.Shared.Preferences
         public string ExploitableInfo { get; set; } = string.Empty;
         //ADT-tweak-end
 
+        //_Duty-start
+        /// <summary>
+        /// ЕРП-статус персонажа по умолчанию (используется при заспавне; в раунде может быть
+        /// временно изменён через Escape/F10 без перезаписи этого поля профиля).
+        /// </summary>
+        [DataField]
+        public DutyErpStatus ErpStatus { get; private set; } = DutyErpStatus.None;
+        //_Duty-end
+
         /// <summary>
         /// Associated <see cref="SpeciesPrototype"/> for this profile.
         /// </summary>
@@ -212,7 +222,10 @@ namespace Content.Shared.Preferences
             HashSet<ProtoId<LanguagePrototype>> languages,
             string oocNotes,
             string headshotUrl,
-            string exploitableInfo
+            string exploitableInfo,
+            //_Duty-start
+            DutyErpStatus erpStatus
+            //_Duty-end
             )
             //ADT-tweak-end
         {
@@ -237,6 +250,7 @@ namespace Content.Shared.Preferences
             HeadshotUrl = headshotUrl;
             ExploitableInfo = exploitableInfo;
             // ADT end
+            ErpStatus = erpStatus; // _Duty
 
             var hasHighPrority = false;
             foreach (var (key, value) in _jobPriorities)
@@ -274,7 +288,8 @@ namespace Content.Shared.Preferences
                 other._languages,
                 other.OOCNotes,
                 other.HeadshotUrl,
-                other.ExploitableInfo
+                other.ExploitableInfo,
+                other.ErpStatus // _Duty
                 )
                 // ADT end
         {
@@ -401,6 +416,13 @@ namespace Content.Shared.Preferences
             return new(this) { ExploitableInfo = exploitableInfo };
         }
         //ADT-tweak-end
+
+        // _Duty-start
+        public HumanoidCharacterProfile WithErpStatus(DutyErpStatus erpStatus)
+        {
+            return new(this) { ErpStatus = erpStatus };
+        }
+        // _Duty-end
         public HumanoidCharacterProfile WithAge(int age)
         {
             return new(this) { Age = age };
@@ -639,6 +661,7 @@ namespace Content.Shared.Preferences
             if (ExploitableInfo != other.ExploitableInfo) return false;
             if (!Bark.MemberwiseEquals(other.Bark)) return false;
             // ADT-tweak-end
+            if (ErpStatus != other.ErpStatus) return false; // _Duty
             if (!HealthPhrases.MemberwiseEquals(other.HealthPhrases)) return false;
             return Appearance.Equals(other.Appearance);
         }
@@ -770,6 +793,16 @@ namespace Content.Shared.Preferences
                 _ => SpawnPriorityPreference.None // Invalid enum values.
             };
 
+            // _Duty-start
+            var erpStatus = ErpStatus switch
+            {
+                DutyErpStatus.None => DutyErpStatus.None,
+                DutyErpStatus.Moderate => DutyErpStatus.Moderate,
+                DutyErpStatus.Full => DutyErpStatus.Full,
+                _ => DutyErpStatus.None // Invalid enum values.
+            };
+            // _Duty-end
+
             var priorities = new Dictionary<ProtoId<JobPrototype>, JobPriority>(JobPriorities
                 .Where(p => prototypeManager.TryIndex<JobPrototype>(p.Key, out var job) && job.SetPreference && p.Value switch
                 {
@@ -813,6 +846,7 @@ namespace Content.Shared.Preferences
             Gender = gender;
             Appearance = appearance;
             SpawnPriority = spawnPriority;
+            ErpStatus = erpStatus; // _Duty
 
             _jobPriorities.Clear();
 
@@ -994,6 +1028,7 @@ namespace Content.Shared.Preferences
             hashCode.Add(HeadshotUrl);
             hashCode.Add(ExploitableInfo);
             //ADT-tweak-end
+            hashCode.Add((int)ErpStatus); // _Duty
             hashCode.Add(FlavorText);
             hashCode.Add(HealthPhrases.Popup70);
             hashCode.Add(HealthPhrases.Whisper70);
