@@ -243,6 +243,24 @@ public sealed class DutyCCVars
     public static readonly CVarDef<float> SpawnMenuPrivacyRange =
         CVarDef.Create("duty.spawn_menu_privacy_range", 8f, CVar.SERVERONLY | CVar.ARCHIVE);
 
+    // ── Пустой сервер (авто-пауза и рестарт при отсутствии игроков) ────────────
+
+    /// <summary>
+    /// Включена ли авто-пауза раунда и принудительный рестарт в лобби, когда на сервере
+    /// не остаётся ни одного подключённого игрока.
+    /// </summary>
+    public static readonly CVarDef<bool> EmptyServerAutoRestartEnabled =
+        CVarDef.Create("duty.empty_server_auto_restart_enabled", true, CVar.SERVERONLY | CVar.ARCHIVE);
+
+    /// <summary>
+    /// Сколько секунд сервер должен простоять без единого подключённого игрока, прежде
+    /// чем текущий раунд будет принудительно завершён и сервер уйдёт в лобби.
+    /// По умолчанию 1500 секунд = 25 минут. Пока идёт отсчёт, карты активного раунда стоят
+    /// на паузе и не тикают вхолостую; подключение любого игрока сразу снимает паузу.
+    /// </summary>
+    public static readonly CVarDef<float> EmptyServerAutoRestartDelaySeconds =
+        CVarDef.Create("duty.empty_server_auto_restart_delay_seconds", 1500f, CVar.SERVERONLY | CVar.ARCHIVE);
+
     // ── Discord ───────────────────────────────────────────────────────────────
 
     /// <summary>
