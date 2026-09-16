@@ -6,6 +6,8 @@ using Content.Shared.CCVar;
 using NetCord.Rest;
 using Robust.Server.Player;
 using Robust.Shared.Configuration;
+using Robust.Shared.Enums;
+using Robust.Shared.Player;
 using Robust.Shared.Timing;
 using DiscordColor = NetCord.Color;
 using DiscordLinkService = Content.Server.Discord.DiscordLink.DiscordLink;
@@ -14,11 +16,19 @@ using GameRunLevel = Content.Server.GameTicking.GameRunLevel;
 namespace Content.Server._Duty.DiscordStatus;
 
 /// <summary>
-/// _Duty: раз в <see cref="DutyCCVars.DiscordStatusUpdateInterval"/> секунд редактирует одно и то же
-/// сообщение в Discord-канале <see cref="DutyCCVars.DiscordStatusChannelId"/> со статусом сервера
-/// (карта, пресет, число игроков онлайн, лобби/раунд), вместо того чтобы спамить новыми сообщениями.
-/// Дополнительно форсирует немедленное обновление при смене <see cref="GameRunLevel"/> (лобби → раунд
-/// и обратно, в том числе после рестарта сервера), не дожидаясь конца интервала.
+/// _Duty: держит одно и то же сообщение в Discord-канале <see cref="DutyCCVars.DiscordStatusChannelId"/>
+/// в актуальном состоянии (карта, пресет, число игроков онлайн, лобби/раунд), редактируя его вместо
+/// того, чтобы спамить новыми.
+///
+/// Обновление триггерится СОБЫТИЯМИ (подключение/отключение игрока, смена <see cref="GameRunLevel"/>),
+/// а не только периодическим <see cref="Update"/> — это принципиально: движок ставит всю симуляцию
+/// на паузу через встроенный <c>game.auto_pause_empty</c> (<see cref="Robust.Server.BaseServer"/>),
+/// когда на сервере не остаётся ни одного игрока, и пока пауза активна, <see cref="Update"/> ни у одной
+/// EntitySystem не вызывается вообще. Событие отключения последнего игрока летит по сетевой шине
+/// до постановки на паузу, так что реакция на него всё ещё успевает уйти в Discord — а периодический
+/// Update() в этот момент уже не сработал бы. <see cref="Update"/> остаётся как доп. подстраховка на
+/// то время, пока сервер не пуст (раз в <see cref="DutyCCVars.DiscordStatusUpdateInterval"/> секунд).
+///
 /// ID отправленного сообщения хранится только в памяти системы: рестарт сервера или смена канала
 /// на лету теряет его, и следующее обновление просто отправляет новое сообщение.
 /// </summary>
@@ -37,62 +47,66 @@ public sealed class DiscordStatusSystem : EntitySystem
     private ulong? _messageId;
     private ulong _messageChannelId;
     private bool _updateInFlight;
-    private bool _loggedFirstUpdate;
 
     public override void Initialize()
     {
         base.Initialize();
 
         SubscribeLocalEvent<GameRunLevelChangedEvent>(OnRunLevelChanged);
+        _playerManager.PlayerStatusChanged += OnPlayerStatusChanged;
 
         Log.Info($"DiscordStatusSystem initialized. enabled={_cfg.GetCVar(DutyCCVars.DiscordStatusEnabled)} " +
                  $"channel='{_cfg.GetCVar(DutyCCVars.DiscordStatusChannelId)}' " +
                  $"interval={_cfg.GetCVar(DutyCCVars.DiscordStatusUpdateInterval)}");
+
+        // Сразу постим начальное состояние при старте сервера — не ждём Update(), т.к. при 0 игроков
+        // симуляция может быть на паузе с самого запуска (game.auto_pause_empty) и Update() не тикнет
+        // вообще, пока кто-то не зайдёт.
+        TriggerUpdateNow();
+    }
+
+    public override void Shutdown()
+    {
+        base.Shutdown();
+
+        _playerManager.PlayerStatusChanged -= OnPlayerStatusChanged;
     }
 
     private void OnRunLevelChanged(GameRunLevelChangedEvent args)
     {
         // Лобби → раунд и раунд → лобби (в т.ч. после рестарта) не должны ждать до конца интервала.
-        _nextUpdate = TimeSpan.Zero;
+        TriggerUpdateNow();
     }
 
-    private int _diagTickCount;
+    private void OnPlayerStatusChanged(object? sender, SessionStatusEventArgs args)
+    {
+        // Только Connected/Disconnected меняют то, что показывает эмбед (число игроков онлайн).
+        // Критично реагировать именно здесь, а не только в Update() — см. class-doc про auto-pause:
+        // отключение последнего игрока фактически ставит сервер на паузу сразу вслед за этим событием,
+        // так что это последний шанс отправить актуальное "0 игроков" в Discord.
+        if (args.NewStatus is SessionStatus.Connected or SessionStatus.Disconnected)
+            TriggerUpdateNow();
+    }
 
     public override void Update(float frameTime)
     {
-        // ВРЕМЕННО, без условий — проверяем, вызывается ли Update() вообще. Убрать после диагностики.
-        _diagTickCount++;
-        if (_diagTickCount <= 5)
-            Log.Info($"DiscordStatusSystem: Update() called, tick #{_diagTickCount}, frameTime={frameTime}");
-
         try
         {
-            UpdateCore();
+            if (_timing.CurTime >= _nextUpdate)
+                TriggerUpdateNow();
         }
         catch (Exception e)
         {
-            // Диагностика: EXCEPTION_TOLERANCE в этом форке может молча глотать исключения из
-            // Update() систем на более высоком уровне, не давая нам их увидеть вообще.
             Log.Error($"DiscordStatusSystem.Update threw: {e}");
         }
     }
 
-    private void UpdateCore()
+    private void TriggerUpdateNow()
     {
-        if (!_loggedFirstUpdate)
-        {
-            _loggedFirstUpdate = true;
-            Log.Info($"DiscordStatusSystem: first Update() tick reached. CurTime={_timing.CurTime} nextUpdate={_nextUpdate} " +
-                     $"enabled={_cfg.GetCVar(DutyCCVars.DiscordStatusEnabled)} updateInFlight={_updateInFlight}");
-        }
-
         if (_updateInFlight)
             return;
 
         if (!_cfg.GetCVar(DutyCCVars.DiscordStatusEnabled))
-            return;
-
-        if (_timing.CurTime < _nextUpdate)
             return;
 
         var interval = MathF.Max(MinUpdateIntervalSeconds, _cfg.GetCVar(DutyCCVars.DiscordStatusUpdateInterval));
@@ -109,7 +123,6 @@ public sealed class DiscordStatusSystem : EntitySystem
         }
 
         _updateInFlight = true;
-        Log.Info($"DiscordStatusSystem: sending/editing status embed in channel {channelId}...");
         UpdateDiscordMessageAsync(channelId, BuildEmbed());
     }
 
