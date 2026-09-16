@@ -43,6 +43,10 @@ public sealed class DiscordStatusSystem : EntitySystem
         base.Initialize();
 
         SubscribeLocalEvent<GameRunLevelChangedEvent>(OnRunLevelChanged);
+
+        Log.Info($"DiscordStatusSystem initialized. enabled={_cfg.GetCVar(DutyCCVars.DiscordStatusEnabled)} " +
+                 $"channel='{_cfg.GetCVar(DutyCCVars.DiscordStatusChannelId)}' " +
+                 $"interval={_cfg.GetCVar(DutyCCVars.DiscordStatusUpdateInterval)}");
     }
 
     private void OnRunLevelChanged(GameRunLevelChangedEvent args)
@@ -52,6 +56,20 @@ public sealed class DiscordStatusSystem : EntitySystem
     }
 
     public override void Update(float frameTime)
+    {
+        try
+        {
+            UpdateCore();
+        }
+        catch (Exception e)
+        {
+            // Диагностика: EXCEPTION_TOLERANCE в этом форке может молча глотать исключения из
+            // Update() систем на более высоком уровне, не давая нам их увидеть вообще.
+            Log.Error($"DiscordStatusSystem.Update threw: {e}");
+        }
+    }
+
+    private void UpdateCore()
     {
         if (_updateInFlight)
             return;
@@ -76,6 +94,7 @@ public sealed class DiscordStatusSystem : EntitySystem
         }
 
         _updateInFlight = true;
+        Log.Info($"DiscordStatusSystem: sending/editing status embed in channel {channelId}...");
         UpdateDiscordMessageAsync(channelId, BuildEmbed());
     }
 
@@ -136,13 +155,19 @@ public sealed class DiscordStatusSystem : EntitySystem
             {
                 var edited = await _discord.EditEmbedAsync(channelId, messageId, embed);
                 if (edited)
+                {
+                    Log.Info($"DiscordStatusSystem: edited status embed (message {messageId}).");
                     return;
+                }
 
                 // The message is gone (deleted, channel purged, etc.) — send a fresh one below.
                 _messageId = null;
             }
 
             _messageId = await _discord.SendEmbedAsync(channelId, embed);
+            Log.Info(_messageId is { } sentId
+                ? $"DiscordStatusSystem: sent new status embed (message {sentId})."
+                : "DiscordStatusSystem: SendEmbedAsync returned null (bot not connected or channel not found).");
         }
         catch (Exception e)
         {
