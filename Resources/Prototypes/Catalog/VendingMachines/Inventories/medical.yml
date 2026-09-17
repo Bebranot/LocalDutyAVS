@@ -11,7 +11,9 @@
         ADTSprayBottleStypticPowder: 3 # ADT-Tweak
         ADTSprayBottleSilverSulfadiazine: 3 # ADT-Tweak
         ADTBloodPackTransfusionFull: 3 # ADT Tweak: Blood IV
-        ChemistryBottleEpinephrine: 3
+        ChemistryBottleEpinephrine: 6
+        ChemistryBottleDexalinPlus: 3
+        ChemistryBottleSaline: 3
         PillCanisterTricordrazine: 2
     ADTVendingCategoryMedEquipment: # ADT-Tweak
         HandheldHealthAnalyzer: 1
