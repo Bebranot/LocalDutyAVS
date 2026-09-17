@@ -14,6 +14,12 @@ public sealed class NanoChatUiState : BoundUserInterfaceState
     public readonly bool NotificationsMuted;
     public readonly bool ListNumber;
 
+    /// <summary>
+    ///     The NanoChat number of the contact who is currently typing to us, if any and
+    ///     if it hasn't timed out yet.
+    /// </summary>
+    public readonly uint? TypingFrom;
+
     public NanoChatUiState(
         Dictionary<uint, NanoChatRecipient> recipients,
         Dictionary<uint, List<NanoChatMessage>> messages,
@@ -22,7 +28,8 @@ public sealed class NanoChatUiState : BoundUserInterfaceState
         uint ownNumber,
         int maxRecipients,
         bool notificationsMuted,
-        bool listNumber)
+        bool listNumber,
+        uint? typingFrom = null)
     {
         Recipients = recipients;
         Messages = messages;
@@ -32,5 +39,6 @@ public sealed class NanoChatUiState : BoundUserInterfaceState
         MaxRecipients = maxRecipients;
         NotificationsMuted = notificationsMuted;
         ListNumber = listNumber;
+        TypingFrom = typingFrom;
     }
 }
