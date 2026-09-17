@@ -159,11 +159,23 @@ public sealed class DiscordStatusSystem : EntitySystem
         if (!_cfg.GetCVar(DutyCCVars.DiscordStatusEnabled))
             return;
 
-        var interval = MathF.Max(MinUpdateIntervalSeconds, _cfg.GetCVar(DutyCCVars.DiscordStatusUpdateInterval));
-        _nextUpdate = _timing.CurTime + TimeSpan.FromSeconds(interval);
-
         if (!ulong.TryParse(_cfg.GetCVar(DutyCCVars.DiscordStatusChannelId), out var channelId) || channelId == 0)
             return;
+
+        if (!_discord.IsConnected)
+        {
+            // Гейтвей-клиент бота ещё не законнектился (обычная ситуация в первые секунды после
+            // старта сервера — Initialize() шлёт TriggerUpdateNow() раньше, чем DiscordLink успевает
+            // залогиниться). НЕ трогаем _messageId здесь: раньше это приводило к тому, что "неудачный"
+            // Edit/Send на самом деле означал "бот не готов", а не "сообщение удалено", и следующая
+            // успешная попытка слала новое сообщение вместо правки старого — отсюда дубликаты.
+            // Просто повторим скоро, без порчи состояния.
+            _nextUpdate = _timing.CurTime + TimeSpan.FromSeconds(MinUpdateIntervalSeconds);
+            return;
+        }
+
+        var interval = MathF.Max(MinUpdateIntervalSeconds, _cfg.GetCVar(DutyCCVars.DiscordStatusUpdateInterval));
+        _nextUpdate = _timing.CurTime + TimeSpan.FromSeconds(interval);
 
         if (channelId != _messageChannelId)
         {
