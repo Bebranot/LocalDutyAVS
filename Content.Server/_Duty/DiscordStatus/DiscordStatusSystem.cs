@@ -1,4 +1,6 @@
+using System.IO;
 using System.Text;
+using System.Text.Json;
 using Content.Server.GameTicking;
 using Content.Server.Maps;
 using Content.Server.Station.Components;
@@ -42,11 +44,17 @@ public sealed class DiscordStatusSystem : EntitySystem
     [Dependency] private readonly GameTicker _ticker = default!;
 
     private const float MinUpdateIntervalSeconds = 5f;
+    private const string StateFileName = "discord_status_message.json";
 
     private TimeSpan _nextUpdate;
     private ulong? _messageId;
     private ulong _messageChannelId;
     private bool _updateInFlight;
+
+    private static string StateFilePath =>
+        Path.Combine(AppContext.BaseDirectory, "data", StateFileName);
+
+    private sealed record PersistedMessage(ulong ChannelId, ulong MessageId);
 
     public override void Initialize()
     {
@@ -59,10 +67,52 @@ public sealed class DiscordStatusSystem : EntitySystem
                  $"channel='{_cfg.GetCVar(DutyCCVars.DiscordStatusChannelId)}' " +
                  $"interval={_cfg.GetCVar(DutyCCVars.DiscordStatusUpdateInterval)}");
 
+        // Переживает рестарт процесса: без этого каждый рестарт сервиса (билд/деплой/краш) терял
+        // _messageId и слал НОВОЕ сообщение вместо правки старого — отсюда дубликаты в канале.
+        LoadPersistedMessage();
+
         // Сразу постим начальное состояние при старте сервера — не ждём Update(), т.к. при 0 игроков
         // симуляция может быть на паузе с самого запуска (game.auto_pause_empty) и Update() не тикнет
         // вообще, пока кто-то не зайдёт.
         TriggerUpdateNow();
+    }
+
+    private void LoadPersistedMessage()
+    {
+        try
+        {
+            if (!File.Exists(StateFilePath))
+                return;
+
+            var json = File.ReadAllText(StateFilePath);
+            var state = JsonSerializer.Deserialize<PersistedMessage>(json);
+            if (state == null)
+                return;
+
+            _messageChannelId = state.ChannelId;
+            _messageId = state.MessageId;
+        }
+        catch (Exception e)
+        {
+            Log.Warning($"DiscordStatusSystem: failed to load persisted message state: {e}");
+        }
+    }
+
+    private void SavePersistedMessage(ulong channelId, ulong messageId)
+    {
+        try
+        {
+            var dir = Path.GetDirectoryName(StateFilePath);
+            if (dir != null)
+                Directory.CreateDirectory(dir);
+
+            var json = JsonSerializer.Serialize(new PersistedMessage(channelId, messageId));
+            File.WriteAllText(StateFilePath, json);
+        }
+        catch (Exception e)
+        {
+            Log.Warning($"DiscordStatusSystem: failed to persist message state: {e}");
+        }
     }
 
     public override void Shutdown()
@@ -185,6 +235,7 @@ public sealed class DiscordStatusSystem : EntitySystem
                 if (edited)
                 {
                     Log.Info($"DiscordStatusSystem: edited status embed (message {messageId}).");
+                    SavePersistedMessage(channelId, messageId);
                     return;
                 }
 
@@ -193,9 +244,15 @@ public sealed class DiscordStatusSystem : EntitySystem
             }
 
             _messageId = await _discord.SendEmbedAsync(channelId, embed);
-            Log.Info(_messageId is { } sentId
-                ? $"DiscordStatusSystem: sent new status embed (message {sentId})."
-                : "DiscordStatusSystem: SendEmbedAsync returned null (bot not connected or channel not found).");
+            if (_messageId is { } sentId)
+            {
+                Log.Info($"DiscordStatusSystem: sent new status embed (message {sentId}).");
+                SavePersistedMessage(channelId, sentId);
+            }
+            else
+            {
+                Log.Info("DiscordStatusSystem: SendEmbedAsync returned null (bot not connected or channel not found).");
+            }
         }
         catch (Exception e)
         {
