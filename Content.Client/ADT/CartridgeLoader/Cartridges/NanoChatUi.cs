@@ -18,9 +18,9 @@ public sealed partial class NanoChatUi : UIFragment
     {
         _fragment = new NanoChatUiFragment();
 
-        _fragment.OnMessageSent += (type, number, content, job) =>
+        _fragment.OnMessageSent += (type, number, content, job, groupMembers) =>
         {
-            SendNanoChatUiMessage(type, number, content, job, userInterface);
+            SendNanoChatUiMessage(type, number, content, job, groupMembers, userInterface);
         };
     }
 
@@ -34,9 +34,10 @@ public sealed partial class NanoChatUi : UIFragment
         uint? number,
         string? content,
         string? job,
+        List<uint>? groupMembers,
         BoundUserInterface userInterface)
     {
-        var nanoChatMessage = new NanoChatUiMessageEvent(type, number, content, job);
+        var nanoChatMessage = new NanoChatUiMessageEvent(type, number, content, job, groupMembers);
         var message = new CartridgeUiMessage(nanoChatMessage);
         userInterface.SendMessage(message);
     }

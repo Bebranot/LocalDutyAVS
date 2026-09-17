@@ -71,6 +71,16 @@
                         Margin="0 0 4 0"
                         StyleClasses="OpenBoth"
                         ToolTip="{Loc nano-chat-new-chat}" />
+                <Button Name="NewGroupChatButton"
+                        MaxSize="32 32"
+                        Margin="0 0 4 0"
+                        StyleClasses="OpenBoth"
+                        ToolTip="{Loc nano-chat-new-group}">
+                    <TextureRect StyleClasses="ButtonSquare"
+                                 TexturePath="/Textures/Interface/VerbIcons/group.svg.192dpi.png"
+                                 Stretch="KeepAspectCentered"
+                                 MinSize="18 18" />
+                </Button>
                 <Button Name="LookupButton"
                         MaxSize="32 32"
                         StyleClasses="OpenBoth"
@@ -154,6 +164,12 @@
                                           HorizontalExpand="True" />
                         </ScrollContainer>
                     </BoxContainer>
+
+                    <!-- "X is typing..." - only visible while the other side is actively typing -->
+                    <Label Name="TypingIndicatorLabel"
+                           StyleClasses="LabelSubText"
+                           Margin="4 0 0 2"
+                           Visible="False" />
 
                     <!-- Message input -->
                     <BoxContainer Name="MessageInputContainer"

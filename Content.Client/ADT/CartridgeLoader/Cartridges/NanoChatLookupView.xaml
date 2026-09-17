@@ -4,12 +4,20 @@
     HorizontalExpand="True"
     VerticalExpand="True"
     StyleClasses="AngleRect">
-    <ScrollContainer Margin="-10"
-                     VerticalExpand="True"
-                     HorizontalExpand="True">
-        <BoxContainer Name="ContactsList"
-                      Orientation="Vertical"
-                      VerticalExpand="True"
-                      HorizontalExpand="True" />
-    </ScrollContainer>
+    <BoxContainer Orientation="Vertical"
+                  HorizontalExpand="True"
+                  VerticalExpand="True">
+        <LineEdit Name="SearchInput"
+                  PlaceHolder="{Loc nano-chat-search-placeholder}"
+                  HorizontalExpand="True"
+                  Margin="4 4 4 2" />
+        <ScrollContainer Margin="-10 0 -10 -10"
+                         VerticalExpand="True"
+                         HorizontalExpand="True">
+            <BoxContainer Name="ContactsList"
+                          Orientation="Vertical"
+                          VerticalExpand="True"
+                          HorizontalExpand="True" />
+        </ScrollContainer>
+    </BoxContainer>
 </cartridges:NanoChatLookupView>

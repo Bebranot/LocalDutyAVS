@@ -1,0 +1,44 @@
+<DefaultWindow xmlns="https://spacestation14.io"
+               Title="{Loc nano-chat-new-group-title}"
+               MinSize="300 220">
+    <PanelContainer StyleClasses="AngleRect">
+        <BoxContainer Orientation="Vertical" Margin="4">
+            <!-- Group name input -->
+            <BoxContainer Orientation="Vertical" Margin="0 4">
+                <Label Text="{Loc nano-chat-name-label}"
+                       StyleClasses="LabelHeading" />
+                <PanelContainer StyleClasses="ButtonSquare">
+                    <LineEdit Name="NameInput"
+                              PlaceHolder="{Loc nano-chat-group-name-placeholder}" />
+                </PanelContainer>
+            </BoxContainer>
+
+            <!-- Member numbers input -->
+            <BoxContainer Orientation="Vertical" Margin="0 4">
+                <Label Text="{Loc nano-chat-group-members-label}"
+                       StyleClasses="LabelHeading" />
+                <PanelContainer StyleClasses="ButtonSquare">
+                    <LineEdit Name="MembersInput"
+                              PlaceHolder="{Loc nano-chat-group-members-placeholder}" />
+                </PanelContainer>
+                <Label Name="MembersHintLabel"
+                       StyleClasses="LabelSubText" />
+            </BoxContainer>
+
+            <!-- Action buttons -->
+            <BoxContainer Orientation="Horizontal"
+                          HorizontalAlignment="Right"
+                          Margin="0 8 0 0">
+                <Button Name="CancelButton"
+                        Text="{Loc nano-chat-cancel}"
+                        StyleClasses="OpenRight"
+                        MinSize="80 0" />
+                <Button Name="CreateButton"
+                        Text="{Loc nano-chat-create}"
+                        StyleClasses="OpenLeft"
+                        MinSize="80 0"
+                        Disabled="True" />
+            </BoxContainer>
+        </BoxContainer>
+    </PanelContainer>
+</DefaultWindow>
