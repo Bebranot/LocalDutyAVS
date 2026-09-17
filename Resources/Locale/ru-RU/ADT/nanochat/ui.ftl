@@ -14,6 +14,24 @@ nano-chat-new-message-title = Сообщение от { $sender }
 nano-chat-new-message-body = { $message }
 nano-chat-toggle-mute = Заглушить оповещения
 nano-chat-delivery-failed = Не удалось отправить
+nano-chat-delivered = Доставлено
+nano-chat-typing = { $name } печатает...
+nano-chat-search-placeholder = Поиск по имени или номеру...
+nano-chat-preview-you = Вы:
+nano-chat-new-group = Новая группа
+nano-chat-new-group-title = Создать групповой чат
+nano-chat-group-name-placeholder = Введите название группы
+nano-chat-group-members-label = Участники
+nano-chat-group-members-placeholder = Номера участников через запятую
+nano-chat-group-members-count = { $count ->
+        [0] Номера не распознаны
+        [one] Указан { $count } участник
+       *[other] Указано { $count } участников
+    }
+nano-chat-group-members-subtitle = { $count ->
+        [one] { $count } участник
+       *[other] { $count } участников
+    }
 nano-chat-look-up-no-server = Не удалось найти телекоммуникационный сервер
 nano-chat-look-up = Поиск номеров
 nano-chat-list-number = Список номеров
