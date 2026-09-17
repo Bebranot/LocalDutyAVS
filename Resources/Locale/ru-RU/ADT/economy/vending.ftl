@@ -26,6 +26,7 @@ vending-category-protection = Средства
 vending-category-sec-equipment = Снаряжение
 vending-category-medical = Медицина
 vending-category-med-equipment = Снаряжение
+vending-category-books = Книги
 
 vending-paint-window-title = Покраска одежды
 vending-paint-rgb = RGB
