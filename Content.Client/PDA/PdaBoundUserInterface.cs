@@ -1,15 +1,49 @@
+using System.Numerics;
+using Content.Client.ADT.CartridgeLoader.Cartridges;
 using Content.Client.CartridgeLoader;
 using Content.Shared.CartridgeLoader;
 using Content.Shared.Containers.ItemSlots;
 using Content.Shared.PDA;
 using JetBrains.Annotations;
+using Robust.Client.Animations;
 using Robust.Client.UserInterface;
+using Robust.Shared.Animations;
 
 namespace Content.Client.PDA
 {
     [UsedImplicitly]
     public sealed class PdaBoundUserInterface : CartridgeLoaderBoundUserInterface
     {
+        // Matches PdaMenu.xaml's own SetSize - the PDA window's normal size we return to
+        // once NanoChat (the one program dense enough to want more room) closes.
+        private static readonly Vector2 DefaultPdaSize = new(576, 450);
+        private static readonly Vector2 NanoChatPdaSize = new(760, 560);
+        private const string ResizeAnimationKey = "nano-chat-pda-resize";
+
+        private static readonly Animation ResizeToNanoChat = BuildResizeAnimation(DefaultPdaSize, NanoChatPdaSize);
+        private static readonly Animation ResizeToDefault = BuildResizeAnimation(NanoChatPdaSize, DefaultPdaSize);
+
+        private static Animation BuildResizeAnimation(Vector2 from, Vector2 to)
+        {
+            return new Animation
+            {
+                Length = TimeSpan.FromSeconds(0.15),
+                AnimationTracks =
+                {
+                    new AnimationTrackControlProperty
+                    {
+                        Property = "SetSize",
+                        InterpolationMode = AnimationInterpolationMode.Linear,
+                        KeyFrames =
+                        {
+                            new AnimationTrackProperty.KeyFrame(from, 0f),
+                            new AnimationTrackProperty.KeyFrame(to, 0.15f),
+                        },
+                    },
+                },
+            };
+        }
+
         private readonly PdaSystem _pdaSystem;
 
         [ViewVariables]
@@ -106,6 +140,11 @@ namespace Content.Client.PDA
         {
             _menu?.ProgramView.AddChild(cartridgeUIFragment);
             _menu?.ToProgramView(title ?? Loc.GetString("comp-pda-io-program-fallback-title"));
+
+            // NanoChat is dense enough (contact list + message pane) to want more room -
+            // grow the window while it's open, then shrink back on close.
+            if (cartridgeUIFragment is NanoChatUiFragment && _menu != null)
+                _menu.PlayAnimation(ResizeToNanoChat, ResizeAnimationKey);
         }
 
         protected override void DetachCartridgeUI(Control cartridgeUIFragment)
@@ -116,6 +155,9 @@ namespace Content.Client.PDA
             _menu.ToHomeScreen();
             _menu.HideProgramHeader();
             _menu.ProgramView.RemoveChild(cartridgeUIFragment);
+
+            if (cartridgeUIFragment is NanoChatUiFragment)
+                _menu.PlayAnimation(ResizeToDefault, ResizeAnimationKey);
         }
 
         protected override void UpdateAvailablePrograms(List<(EntityUid, CartridgeComponent)> programs)
