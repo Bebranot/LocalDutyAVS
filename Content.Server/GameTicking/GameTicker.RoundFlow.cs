@@ -864,9 +864,8 @@ namespace Content.Server.GameTicking
                 UpdateInfoText();
 
                 ReqWindowAttentionAll();
-                // Запуск голосования за Мапу и Режим в лобби
-                _voteManager.CreateStandardVote(initiator: null, voteType: StandardVoteType.Map);     // ADT-Tweak
-                _voteManager.CreateStandardVote(initiator: null, voteType: StandardVoteType.Preset);  // ADT-Tweak
+                // Автозапуск голосования за карту и режим при переходе в лобби отключён
+                // по запросу — теперь их можно вызвать только вручную через меню голосований.
             }
         }
 
