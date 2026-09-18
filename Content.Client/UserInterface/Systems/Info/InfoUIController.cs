@@ -2,19 +2,28 @@ using Content.Client.Gameplay;
 using Content.Client.Info;
 using Content.Shared.Guidebook;
 using Content.Shared.Info;
+using Robust.Client.Audio;
 using Robust.Client.Console;
 using Robust.Client.UserInterface.Controllers;
 using Robust.Client.UserInterface.Controls;
+using Robust.Shared.Audio;
+using Robust.Shared.Audio.Systems;
+using Robust.Shared.GameObjects;
 using Robust.Shared.Network;
+using Robust.Shared.Player;
 using Robust.Shared.Prototypes;
+using Robust.Shared.Timing;
 
 namespace Content.Client.UserInterface.Systems.Info;
 
 public sealed class InfoUIController : UIController, IOnStateExited<GameplayState>
 {
     [Dependency] private readonly IClientConsoleHost _consoleHost = default!;
+    [Dependency] private readonly IEntityManager _entMan = default!;
     [Dependency] private readonly INetManager _netManager = default!;
     [Dependency] private readonly IPrototypeManager _prototype = default!;
+
+    private static readonly SoundPathSpecifier FuckRulesSound = new("/Audio/_Duty/UI/rules_skip.ogg");
 
     private RulesPopup? _rulesPopup;
     private RulesAndInfoWindow? _infoWindow;
@@ -38,7 +47,10 @@ public sealed class InfoUIController : UIController, IOnStateExited<GameplayStat
             "",
             (_, _, _) =>
         {
-            OnAcceptPressed(true);
+            var audioParams = AudioParams.Default.WithVolume(-3f);
+            _entMan.System<AudioSystem>().PlayGlobal(FuckRulesSound, Filter.Local(), false, audioParams);
+
+            Timer.Spawn(1000, () => OnAcceptPressed(true));
         });
     }
 
