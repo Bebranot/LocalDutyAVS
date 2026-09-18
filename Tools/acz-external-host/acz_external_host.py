@@ -162,6 +162,15 @@ class Handler(http.server.BaseHTTPRequestHandler):
 
 class ThreadingHTTPServer(socketserver.ThreadingMixIn, http.server.HTTPServer):
     daemon_threads = True
+    allow_reuse_address = True
+    # socketserver's default backlog (5) is far too small for a public game server
+    # with soft_max_players=67 -- under any real connect burst, the OS refuses/drops
+    # new SYNs once the accept queue fills, which is exactly the connection-establish
+    # failure a real player hit ("не получен нужный отклик... разорвано соединение").
+    # Each in-flight full download also ties up a thread for a long time (a fresh
+    # client with zero cache pulls ~1.7GB in one request), so queued connects need
+    # real headroom while those finish.
+    request_queue_size = 128
 
 
 def main():
