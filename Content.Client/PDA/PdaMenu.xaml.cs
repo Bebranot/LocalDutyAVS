@@ -37,6 +37,7 @@ namespace Content.Client.PDA
 
 
         private int _currentView;
+        private TimeSpan _lastDrawnStationTime = TimeSpan.MinValue;
 
         public event Action<EntityUid>? OnProgramItemPressed;
         public event Action<EntityUid>? OnUninstallButtonPressed;
@@ -347,8 +348,15 @@ namespace Content.Client.PDA
         {
             base.Draw(handle);
 
+            // Second-granularity display, so skip the SetMarkup/Loc.GetString re-parse
+            // when the displayed value wouldn't change - Draw runs every frame, not every second.
             var stationTime = _gameTiming.CurTime.Subtract(_gameTicker.RoundStartTimeSpan);
+            stationTime = TimeSpan.FromSeconds(Math.Floor(stationTime.TotalSeconds));
 
+            if (stationTime == _lastDrawnStationTime)
+                return;
+
+            _lastDrawnStationTime = stationTime;
             StationTimeLabel.SetMarkup(Loc.GetString("comp-pda-ui-station-time",
                 ("time", stationTime.ToString("hh\\:mm\\:ss"))));
         }

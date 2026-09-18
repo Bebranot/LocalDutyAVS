@@ -1,0 +1,6 @@
+# _Duty: аксессуары-шутки "fun" (порт текстур из Lust Station, без их функционала).
+
+comp-sticky-start-stick-dildofun = Вы пытаетесь присосать игрушку к поверхности...
+comp-sticky-success-stick-dildofun = Игрушка присосалась к поверхности
+comp-sticky-start-unstick-dildofun = Вы пытаетесь отодрать игрушку от поверхности...
+comp-sticky-success-unstick-dildofun = Игрушка отклеилась от поверхности
