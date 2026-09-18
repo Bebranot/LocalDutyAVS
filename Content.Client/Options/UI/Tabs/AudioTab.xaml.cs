@@ -118,6 +118,9 @@ public sealed partial class AudioTab : Control
         };
         // ADT-tweak end
 
+        // _Duty: звук входа
+        Control.AddOptionCheckBox(DutyCCVars.LoginSoundEnabled, LoginSoundCheckBox);
+
         Control.Initialize();
     }
 

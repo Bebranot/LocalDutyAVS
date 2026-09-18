@@ -315,4 +315,12 @@ public sealed class DutyCCVars
     /// </summary>
     public static readonly CVarDef<float> DiscordStatusUpdateInterval =
         CVarDef.Create("duty.discord_status_update_interval", 60f, CVar.SERVERONLY);
+
+    // ── Звук при входе в игру ────────────────────────────────────────────────
+
+    /// <summary>
+    /// Проигрывать ли короткий звук при первом входе игрока в игру за сессию подключения.
+    /// </summary>
+    public static readonly CVarDef<bool> LoginSoundEnabled =
+        CVarDef.Create("duty.login_sound_enabled", true, CVar.ARCHIVE | CVar.CLIENTONLY);
 }

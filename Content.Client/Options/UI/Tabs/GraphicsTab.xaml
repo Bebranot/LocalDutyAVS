@@ -12,14 +12,18 @@
                 <!-- Quality -->
                 <Label Text="{Loc 'ui-options-quality-label'}" StyleClasses="LabelKeyText"/>
                 <ui:OptionDropDown Name="DropDownLightingQuality" Title="{Loc 'ui-options-lighting-label'}" />
-                <CheckBox Name="ViewportLowResCheckBox" Text="{Loc 'ui-options-vp-low-res'}" />
-                <CheckBox Name="ParallaxLowQualityCheckBox" Text="{Loc 'ui-options-parallax-low-quality'}" />
-                <CheckBox Name="AmbientOcclusionCheckBox" Text="{Loc 'ui-options-ambient-occlusion'}" />
+                <CheckBox Name="ViewportLowResCheckBox" Text="{Loc 'ui-options-vp-low-res'}"
+                          ToolTip="{Loc 'ui-options-vp-low-res-tooltip'}" />
+                <CheckBox Name="ParallaxLowQualityCheckBox" Text="{Loc 'ui-options-parallax-low-quality'}"
+                          ToolTip="{Loc 'ui-options-parallax-low-quality-tooltip'}" />
+                <CheckBox Name="AmbientOcclusionCheckBox" Text="{Loc 'ui-options-ambient-occlusion'}"
+                          ToolTip="{Loc 'ui-options-ambient-occlusion-tooltip'}" />
 
                 <!-- Interface -->
                 <Label Text="{Loc 'ui-options-interface-label'}" StyleClasses="LabelKeyText"/>
                 <ui:OptionDropDown Name="DropDownUIScale" Title="{Loc 'ui-options-scale-label'}" />
-                <CheckBox Name="ViewportStretchCheckBox" Text="{Loc 'ui-options-vp-stretch'}" />
+                <CheckBox Name="ViewportStretchCheckBox" Text="{Loc 'ui-options-vp-stretch'}"
+                          ToolTip="{Loc 'ui-options-vp-stretch-tooltip'}" />
                 <ui:OptionSlider Name="ViewportScaleSlider" Title="{Loc ui-options-vp-scale}" />
                 <ui:OptionSlider Name="ViewportWidthSlider" Title="{Loc ui-options-vp-width}" />
                 <CheckBox Name="IntegerScalingCheckBox"
