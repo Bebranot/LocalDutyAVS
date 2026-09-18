@@ -27,16 +27,31 @@ import http.server
 import socketserver
 import struct
 import sys
+import threading
 import zipfile
 
 
 class Manifest:
+    """zipfile.ZipFile is not safe for concurrent reads from multiple threads --
+    it shares one underlying file handle/seek position. With ThreadingHTTPServer,
+    two players downloading at once could interleave reads and get corrupt data
+    or a mid-response exception (seen live as "An error occurred while sending
+    the request" in the launcher). Each thread gets its own ZipFile instead."""
+
     def __init__(self, zip_path: str):
         self.zip_path = zip_path
-        self._zip = zipfile.ZipFile(zip_path, "r")
+        self._local = threading.local()
         self.entries: list[tuple[str, str]] = []  # (path, name_in_zip) in manifest order
         self._hash_to_name: dict[str, str] = {}  # content hash -> first zip name seen with that hash
         self._build()
+
+    @property
+    def _zip(self) -> zipfile.ZipFile:
+        zf = getattr(self._local, "zip", None)
+        if zf is None:
+            zf = zipfile.ZipFile(self.zip_path, "r")
+            self._local.zip = zf
+        return zf
 
     def _build(self):
         infos = self._zip.infolist()
