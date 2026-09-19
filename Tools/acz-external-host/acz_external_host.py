@@ -104,6 +104,8 @@ class Handler(http.server.BaseHTTPRequestHandler):
         self.send_header("Content-Type", "text/plain; charset=utf-8")
         self.send_header("Content-Length", str(len(data)))
         self.send_header("Access-Control-Allow-Origin", "*")
+        self.send_header("Cache-Control", "no-store, no-cache, must-revalidate")
+        self.send_header("Pragma", "no-cache")
         self.end_headers()
         self.wfile.write(data)
 
@@ -149,6 +151,8 @@ class Handler(http.server.BaseHTTPRequestHandler):
 
         self.send_response(200)
         self.send_header("Content-Type", "application/octet-stream")
+        self.send_header("Cache-Control", "no-store, no-cache, must-revalidate")
+        self.send_header("Pragma", "no-cache")
         self.end_headers()
 
         # Stream header: flags=0 (PreCompressed not set -- see module docstring).
