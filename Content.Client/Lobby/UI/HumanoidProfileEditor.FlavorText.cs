@@ -1,4 +1,5 @@
-﻿using Robust.Client.UserInterface.Controls;
+﻿using Content.Shared._Duty.ErpStatus;
+using Robust.Client.UserInterface.Controls;
 using Robust.Shared.Utility;
 
 namespace Content.Client.Lobby.UI;
@@ -28,6 +29,7 @@ public sealed partial class HumanoidProfileEditor
             _flavorText.OnFlavorTextChanged += OnFlavorTextChange;
             _flavorText.OnExploitableInfoChanged += OnExploitableInfoChange; // ADT-Tweak: скрытая информация персонажа
             _flavorText.OnHeadshotUrlChanged += OnHeadshotUrlChange;
+            _flavorText.OnErpStatusChanged += OnErpStatusChange; // _Duty
             _flavorText.OnPreviewRequested += OnFlavorPreviewRequested;
         }
         else
@@ -39,6 +41,7 @@ public sealed partial class HumanoidProfileEditor
             _flavorText.OnFlavorTextChanged -= OnFlavorTextChange;
             _flavorText.OnExploitableInfoChanged -= OnExploitableInfoChange; // ADT-Tweak: скрытая информация персонажа
             _flavorText.OnHeadshotUrlChanged -= OnHeadshotUrlChange;
+            _flavorText.OnErpStatusChanged -= OnErpStatusChange; // _Duty
             _flavorText.OnPreviewRequested -= OnFlavorPreviewRequested;
             _flavorText.Dispose();
             _flavorTextEdit?.Dispose();
@@ -67,6 +70,17 @@ public sealed partial class HumanoidProfileEditor
     }
     // ADT-Tweak-End
 
+    // _Duty-start
+    private void OnErpStatusChange(DutyErpStatus newErpStatus)
+    {
+        if (Profile is null)
+            return;
+
+        Profile = Profile.WithErpStatus(newErpStatus);
+        SetDirty();
+    }
+    // _Duty-end
+
     private void UpdateFlavorTextEdit()
     {
         if (_flavorTextEdit != null)
@@ -78,6 +92,7 @@ public sealed partial class HumanoidProfileEditor
         {
             _flavorText.CHeadshotUrlInput.Text = Profile?.HeadshotUrl ?? "";
             _flavorText.CExploitableInput.TextRope = new Rope.Leaf(Profile?.ExploitableInfo ?? ""); // ADT-Tweak: скрытая информация персонажа
+            _flavorText.ErpStatusButton.SelectId((int)(Profile?.ErpStatus ?? DutyErpStatus.None)); // _Duty
         }
     }
 }

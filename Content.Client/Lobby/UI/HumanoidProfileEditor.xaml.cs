@@ -3,7 +3,6 @@ using System.Linq;
 using System.Numerics;
 using System.Threading;
 using Content.Client.ADT.Antag;
-using Content.Shared._Duty.ErpStatus;
 using Content.Client.ADT.Lobby.UI;
 using Content.Client.ADT.Traits.UI;
 using Content.Client.Guidebook;
@@ -330,21 +329,6 @@ namespace Content.Client.Lobby.UI
 
             #endregion SpawnPriority
 
-            #region ErpStatus
-
-            foreach (var value in Enum.GetValues<DutyErpStatus>())
-            {
-                ErpStatusButton.AddItem(Loc.GetString($"duty-erp-status-option-{value.ToString().ToLower()}"), (int)value);
-            }
-
-            ErpStatusButton.OnItemSelected += args =>
-            {
-                ErpStatusButton.SelectId(args.Id);
-                SetErpStatus((DutyErpStatus)args.Id);
-            };
-
-            #endregion ErpStatus
-
             #region Eyes
 
             EyeColorPicker.OnEyeColorPicked += newColor =>
@@ -573,7 +557,6 @@ namespace Content.Client.Lobby.UI
             UpdateGenderControls();
             UpdateSkinColor();
             UpdateSpawnPriorityControls();
-            UpdateErpStatusControls();
             UpdateAgeEdit();
             UpdateEyePickers();
             UpdateSaveButton();

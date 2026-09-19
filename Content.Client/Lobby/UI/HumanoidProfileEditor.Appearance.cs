@@ -1,6 +1,5 @@
 using System.Linq;
 using Content.Client.UserInterface.Systems.Guidebook;
-using Content.Shared._Duty.ErpStatus;
 using Content.Shared.Guidebook;
 using Content.Shared.Humanoid;
 using Content.Shared.Humanoid.Prototypes;
@@ -145,18 +144,6 @@ public sealed partial class HumanoidProfileEditor
         SpawnPriorityButton.SelectId((int)Profile.SpawnPriority);
     }
 
-    // _Duty-start
-    private void UpdateErpStatusControls()
-    {
-        if (Profile == null)
-        {
-            return;
-        }
-
-        ErpStatusButton.SelectId((int)Profile.ErpStatus);
-    }
-    // _Duty-end
-
     /// <summary>
     /// Refreshes the species selector.
     /// </summary>
@@ -249,14 +236,6 @@ public sealed partial class HumanoidProfileEditor
         Profile = Profile?.WithSpawnPriorityPreference(newSpawnPriority);
         SetDirty();
     }
-
-    // _Duty-start
-    private void SetErpStatus(DutyErpStatus newErpStatus)
-    {
-        Profile = Profile?.WithErpStatus(newErpStatus);
-        SetDirty();
-    }
-    // _Duty-end
 
     private void OnSpeciesInfoButtonPressed(BaseButton.ButtonEventArgs args)
     {
