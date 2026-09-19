@@ -36,8 +36,6 @@
     price: 3800
   - id: ADTWeaponProtoKineticRailgun
     price: 5400
-  - id: ADTWeaponExperimentalProtoKineticAcellerator
-    price: 4800
 
 - type: miningShopSection
   id: Motion
