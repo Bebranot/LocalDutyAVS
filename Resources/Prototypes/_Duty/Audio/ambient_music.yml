@@ -317,7 +317,7 @@
         path: /Audio/_Duty/Ambient/CritMode/Dying.ogg
       duration: 19
     - sound:
-        path: /Audio/_Duty/Ambient/CritMode/isthistheend.ogg
+        path: /Audio/_Duty/Ambient/CritMode/Isthistheend.ogg
       duration: 349
     - sound:
         path: /Audio/_Duty/Ambient/CritMode/Lobotomy music _ ZCITY(1).ogg
