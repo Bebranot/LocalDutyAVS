@@ -23,6 +23,22 @@
       path: /Audio/_Duty/Ambient/tracksVeryGood/TVG (9).ogg
     - !type:SoundPathSpecifier
       path: /Audio/_Duty/Ambient/tracksVeryGood/TVG (10).ogg
+    - !type:SoundPathSpecifier
+      path: /Audio/_Duty/Ambient/AmbientPeace/PortBalreska/balreska_1.ogg
+    - !type:SoundPathSpecifier
+      path: /Audio/_Duty/Ambient/AmbientPeace/PortBalreska/balreska_2.ogg
+    - !type:SoundPathSpecifier
+      path: /Audio/_Duty/Ambient/AmbientPeace/PortBalreska/balreska_3.ogg
+    - !type:SoundPathSpecifier
+      path: /Audio/_Duty/Ambient/AmbientPeace/Tatsumoto/tatsumoto_1.ogg
+    - !type:SoundPathSpecifier
+      path: /Audio/_Duty/Ambient/AmbientPeace/Tatsumoto/tatsumoto_2.ogg
+    - !type:SoundPathSpecifier
+      path: /Audio/_Duty/Ambient/AmbientPeace/Tatsumoto/tatsumoto_3.ogg
+    - !type:SoundPathSpecifier
+      path: /Audio/_Duty/Ambient/AmbientPeace/mogott.ogg
+    - !type:SoundPathSpecifier
+      path: /Audio/_Duty/Ambient/AmbientPeace/OneShot OST - On Little Cat Feet.ogg
 
   # Хорошее состояние: 70–90% HP
   tracksGood:
@@ -52,6 +68,22 @@
       path: /Audio/_Duty/Ambient/tracksGood/TG (12).ogg
     - !type:SoundPathSpecifier
       path: /Audio/_Duty/Ambient/CasualtiesUnknown/whatswiththesand.ogg
+    - !type:SoundPathSpecifier
+      path: /Audio/_Duty/Ambient/AmbientPeace/Dochenskaya/dochenskaya_1.ogg
+    - !type:SoundPathSpecifier
+      path: /Audio/_Duty/Ambient/AmbientPeace/Dochenskaya/dochenskaya_2.ogg
+    - !type:SoundPathSpecifier
+      path: /Audio/_Duty/Ambient/AmbientPeace/DSM/Countsman/countsman_1.ogg
+    - !type:SoundPathSpecifier
+      path: /Audio/_Duty/Ambient/AmbientPeace/DSM/Countsman/countsman_2.ogg
+    - !type:SoundPathSpecifier
+      path: /Audio/_Duty/Ambient/AmbientPeace/DSM/Countsman/countsman_3.ogg
+    - !type:SoundPathSpecifier
+      path: /Audio/_Duty/Ambient/AmbientPeace/OneShot OST - Library Nap.ogg
+    - !type:SoundPathSpecifier
+      path: /Audio/_Duty/Ambient/AmbientPeace/OneShot OST - Library Stroll.ogg
+    - !type:SoundPathSpecifier
+      path: /Audio/_Duty/Ambient/AmbientPeace/OneShot OST - Children of the Ruins.ogg
 
   # Среднее состояние: 40–70% HP
   tracksMedium:
