@@ -1,4 +1,5 @@
-﻿using Content.Shared.Administration.Logs;
+﻿using Content.Shared._Duty.Traits;
+using Content.Shared.Administration.Logs;
 using Content.Shared.Body;
 using Content.Shared.Body.Components;
 using Content.Shared.Body.Systems;
@@ -278,7 +279,16 @@ public sealed partial class IngestionSystem : EntitySystem
         if (!CanConsume(args.User, entity, args.Ingested, out var solution, out var time))
             return;
 
-        if (!_doAfter.TryStartDoAfter(GetEdibleDoAfterArgs(args.User, entity, food, time ?? TimeSpan.Zero)))
+        // _Duty: прожорливость (VoraciousComponent) ест быстрее — не действует на принудительном кормлении.
+        var delay = time ?? TimeSpan.Zero;
+        if (!forceFed)
+        {
+            var delayEvent = new GetEatingDelayEvent(delay);
+            RaiseLocalEvent(entity.Owner, ref delayEvent);
+            delay = delayEvent.Delay;
+        }
+
+        if (!_doAfter.TryStartDoAfter(GetEdibleDoAfterArgs(args.User, entity, food, delay)))
             return;
 
         args.Handled = true;

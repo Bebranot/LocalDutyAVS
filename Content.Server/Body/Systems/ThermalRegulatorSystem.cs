@@ -1,5 +1,6 @@
 using Content.Server.Body.Components;
 using Content.Server.Temperature.Systems;
+using Content.Shared._Duty.Traits;
 using Content.Shared.ActionBlocker;
 using Content.Shared.Temperature.Components;
 using Robust.Shared.Timing;
@@ -52,7 +53,10 @@ public sealed class ThermalRegulatorSystem : EntitySystem
             return;
 
         // TODO: Why do we have two datafields for this if they are only ever used once here?
-        var totalMetabolismTempChange = ent.Comp1.MetabolismHeat - ent.Comp1.RadiatedHeat;
+        // _Duty: хладнокровие (ColdBloodedComponent) урезает метаболический нагрев/согревание/дрожь.
+        var regulation = new ModifyThermalRegulationEvent();
+        RaiseLocalEvent(ent.Owner, ref regulation);
+        var totalMetabolismTempChange = ent.Comp1.MetabolismHeat * regulation.MetabolismHeatMultiplier - ent.Comp1.RadiatedHeat;
 
         // implicit heat regulation
         var tempDiff = Math.Abs(ent.Comp2.CurrentTemperature - ent.Comp1.NormalBodyTemperature);
@@ -64,7 +68,7 @@ public sealed class ThermalRegulatorSystem : EntitySystem
         }
         else
         {
-            totalMetabolismTempChange += Math.Min(targetHeat, ent.Comp1.ImplicitHeatRegulation);
+            totalMetabolismTempChange += Math.Min(targetHeat, ent.Comp1.ImplicitHeatRegulation) * regulation.ImplicitHeatingMultiplier;
         }
 
         _tempSys.ChangeHeat(ent, totalMetabolismTempChange, ignoreHeatResistance: true, ent);
@@ -90,7 +94,7 @@ public sealed class ThermalRegulatorSystem : EntitySystem
             if (!_actionBlockerSys.CanShiver(ent))
                 return;
 
-            _tempSys.ChangeHeat(ent, Math.Min(targetHeat, ent.Comp1.ShiveringHeatRegulation), ignoreHeatResistance: true, ent);
+            _tempSys.ChangeHeat(ent, Math.Min(targetHeat, ent.Comp1.ShiveringHeatRegulation) * regulation.ShiveringMultiplier, ignoreHeatResistance: true, ent);
         }
     }
 }

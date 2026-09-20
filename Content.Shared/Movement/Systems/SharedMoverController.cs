@@ -8,6 +8,7 @@ using Content.Shared.Inventory;
 using Content.Shared.Maps;
 using Content.Shared.Mobs.Systems;
 using Content.Shared._Duty.Movement;
+using Content.Shared._Duty.Traits;
 using Content.Shared.Movement.Components;
 using Content.Shared.Movement.Events;
 using Content.Shared.Shuttles.Components;
@@ -423,8 +424,12 @@ public abstract partial class SharedMoverController : VirtualController
             {
                 var soundModifier = mover.Sprinting ? InputMoverComponent.SprintingSoundModifier : InputMoverComponent.WalkingSoundModifier;
 
+                // _Duty: лёгкая поступь (LightStepComponent) тише звучит.
+                var footstepVolume = new ModifyFootstepVolumeEvent();
+                RaiseLocalEvent(uid, ref footstepVolume);
+
                 var audioParams = sound.Params
-                    .WithVolume(sound.Params.Volume + soundModifier)
+                    .WithVolume(sound.Params.Volume + soundModifier + footstepVolume.Modifier)
                     .WithVariation(sound.Params.Variation ?? mobMover.FootstepVariation);
 
                 // If we're a relay target then predict the sound for all relays.
