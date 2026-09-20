@@ -1,0 +1,70 @@
+# _Duty: портировано из Space Onyx. Урезано относительно оригинала — убраны CollectiveMind,
+# Wires/WiresPanel, LanguageSpeaker/LanguageKnowledge и DatasetVocalizer(SlotMachineAds):
+# этих систем (или нужного датасета) в нашем форке ещё нет. Компонентный состав взят по образцу
+# уже существующего у нас BaseSlotMachine (ADT/Entities/Structures/Machines/gambling_machines.yml).
+- type: entity
+  id: ClawMachine
+  parent: BaseMachine
+  name: кран-машина
+  description: Конечно, нам урезали ДМС, и мы не получаем переработки в праздники, но зато — бесплатные кран-машины!
+  components:
+  - type: StationAiWhitelist
+  - type: Sprite
+    sprite: _Duty/Structures/Machines/Gambling/claw_machine.rsi
+    layers:
+    - state: clawmachine
+      map: [ "clawmachine" ]
+    - state: clawmachine_playing
+      visible: false
+      map: [ "clawmachine_playing" ]
+  - type: GenericVisualizer
+    visuals:
+      enum.ClawMachineVisuals.Spinning:
+        clawmachine_playing:
+          True: { visible: true }
+          False: { visible: false }
+      enum.ClawMachineVisuals.NormalSprite:
+        clawmachine:
+          True: { visible: true }
+          False: { visible: false }
+  - type: Appearance
+  - type: AmbientOnPowered
+  - type: AmbientSound
+    volume: -9
+    range: 3
+    enabled: false
+    sound:
+      path: /Audio/Ambience/Objects/vending_machine_hum.ogg
+  - type: Electrified
+    enabled: false
+    usesApcPower: true
+  - type: PointLight
+    enabled: false
+    castShadows: false
+    radius: 2
+    energy: 1.5
+    mask: /Textures/Effects/LightMasks/cone.png
+    autoRot: true
+  - type: LitOnPowered
+  - type: ApcPowerReceiver
+    powerLoad: 200
+  - type: Repairable
+    doAfterDelay: 8
+  - type: Anchorable
+  - type: TypingIndicator
+    proto: robot
+  - type: Speech
+    speechVerb: Robotic
+    speechSounds: Vending
+  - type: SentienceTarget
+    flavorKind: station-event-random-sentience-flavor-mechanical
+    weight: 0.125
+  - type: StaticPrice
+    price: 100
+  - type: ClawMachine
+    rewards:
+    - PlushieMoth
+    - PlushieHuman
+    - PlushiePenguin
+    - PlushieThrongler
+  - type: DoAfter
