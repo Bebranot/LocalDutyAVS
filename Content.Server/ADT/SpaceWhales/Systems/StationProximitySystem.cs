@@ -8,7 +8,6 @@ using Robust.Server.Audio;
 using Robust.Shared.Audio;
 using Robust.Shared.Configuration;
 using Robust.Shared.Map.Components;
-using Robust.Shared.Random;
 using Robust.Shared.Timing;
 using Content.Shared.ADT.CCVar;
 using Content.Server.ADT.MobCaller;
@@ -26,14 +25,17 @@ public sealed class StationProximitySystem : EntitySystem
     [Dependency] private readonly SharedTransformSystem _transform = default!;
     [Dependency] private readonly AudioSystem _audio = default!;
     [Dependency] private readonly IConfigurationManager _cfg = default!;
-    [Dependency] private readonly IRobustRandom _random = default!;
     [Dependency] private readonly MovementSpeedModifierSystem _moveSpeed = default!;
 
-    private const float CheckInterval = 60;
+    private const float CheckInterval = 1;
     private TimeSpan _nextCheck = TimeSpan.Zero;
 
     private EntityUid? _mobCaller;
     private bool _spawned = false;
+
+    // Reused across CheckStationProximity calls to avoid allocating a new
+    // Dictionary every second now that CheckInterval is 1s instead of 60s.
+    private readonly Dictionary<EntityUid, (MapGridComponent Grid, TransformComponent Xform)> _stationsBuffer = new();
 
     public override void Initialize()
     {
@@ -73,6 +75,7 @@ public sealed class StationProximitySystem : EntitySystem
         }
 
         QueueDel(ent.Comp.MobCaller);
+        _mobCaller = null;
         _spawned = false;
     }
 
@@ -80,10 +83,16 @@ public sealed class StationProximitySystem : EntitySystem
     {
         base.Update(frameTime);
 
+        if (_mobCaller.HasValue && TerminatingOrDeleted(_mobCaller.Value))
+        {
+            _mobCaller = null;
+            _spawned = false;
+        }
+
         var query = EntityQueryEnumerator<SpaceWhaleTargetComponent>();
         while (query.MoveNext(out var uid, out var comp))
         {
-            if (!comp.MobCaller.HasValue)
+            if (!comp.MobCaller.HasValue || TerminatingOrDeleted(comp.MobCaller.Value))
             {
                 RemCompDeferred(uid, comp);
                 continue;
@@ -110,15 +119,15 @@ public sealed class StationProximitySystem : EntitySystem
             return;
 
         var stationQuery = EntityQueryEnumerator<BecomesStationComponent, MapGridComponent>();
-        var stations = new Dictionary<EntityUid, (MapGridComponent Grid, TransformComponent Xform)>();
+        _stationsBuffer.Clear();
 
         while (stationQuery.MoveNext(out var uid, out _, out var grid))
         {
             var xform = Transform(uid);
-            stations.Add(uid, (grid, xform));
+            _stationsBuffer.Add(uid, (grid, xform));
         }
 
-        if (stations.Count == 0)
+        if (_stationsBuffer.Count == 0)
             return;
 
         var humanoidQuery = EntityQueryEnumerator<HumanoidProfileComponent, MobStateComponent, TransformComponent>();
@@ -128,7 +137,7 @@ public sealed class StationProximitySystem : EntitySystem
                 continue;
 
             var sameMap = false;
-            foreach (var (_, (_, stationXform)) in stations)
+            foreach (var (_, (_, stationXform)) in _stationsBuffer)
             {
                 if (stationXform.MapUid != humanoidXform.MapUid)
                     continue;
@@ -140,7 +149,7 @@ public sealed class StationProximitySystem : EntitySystem
             if (!sameMap)
                 continue;
 
-            CheckHumanoidProximity(uid, stations, humanoidXform);
+            CheckHumanoidProximity(uid, _stationsBuffer, humanoidXform);
         }
     }
 
@@ -155,7 +164,7 @@ public sealed class StationProximitySystem : EntitySystem
         }
 
         var humanoidWorldPos = _transform.GetWorldPosition(humanoidTransform);
-        var closestDistance = float.MaxValue;
+        var spawnDist = _cfg.GetCVar(ADTCCVars.SpaceWhaleSpawnDistance);
 
         foreach (var (stationUid, (grid, stationXform)) in stations)
         {
@@ -163,21 +172,20 @@ public sealed class StationProximitySystem : EntitySystem
                 continue;
 
             var stationWorldPos = _transform.GetWorldPosition(stationXform);
-            var distance = (humanoidWorldPos - stationWorldPos).Length();
+            var delta = humanoidWorldPos - stationWorldPos;
 
-            if (grid.LocalAABB.Size.Length() > 0)
+            // удаление считается отдельно по координате X и по координате Y
+            var dx = Math.Abs(delta.X);
+            var dy = Math.Abs(delta.Y);
+
+            if (dx < spawnDist && dy < spawnDist)
             {
-                var gridRadius = grid.LocalAABB.Size.Length() / 2f; // it needs to be halved to get correct mesurements
-                distance = Math.Max(0, distance - gridRadius);
+                RemCompDeferred<SpaceWhaleTargetComponent>(humanoid);
+                return;
             }
-
-            closestDistance = Math.Min(closestDistance, distance);
         }
 
-        if (closestDistance <= _cfg.GetCVar(ADTCCVars.SpaceWhaleSpawnDistance))
-            RemCompDeferred<SpaceWhaleTargetComponent>(humanoid);
-        else
-            HandleFarFromStation(humanoid);
+        HandleFarFromStation(humanoid);
     }
 
     private void HandleFarFromStation(EntityUid entity) // basically handles space whale spawnings
@@ -194,7 +202,7 @@ public sealed class StationProximitySystem : EntitySystem
             entity,
             PopupType.LargeCaution);
 
-        _audio.PlayGlobal(new SoundPathSpecifier("/Audio/ADT/Ambience/SpaceWhale/leviathan-appear.ogg"),
+        _audio.PlayGlobal(new SoundPathSpecifier("/Audio/_Duty/Effects/DevourerSpawn.ogg"),
             entity,
             AudioParams.Default.WithVolume(1f));
 
@@ -203,15 +211,15 @@ public sealed class StationProximitySystem : EntitySystem
         _transform.SetParent(_mobCaller.Value, entity);
         var mobCaller = new MobCallerComponent()
         {
-            SpawnProto = _random.Prob(0.5f) ? "ADTSpaceLeviathan" : "DutySpaceLeviathanEvil", // _Duty - 50/50 альтернативный скин
+            SpawnProto = "DutyUniverseDevourer", // _Duty - всегда Пожиратель Вселенных
             MaxAlive = 1,
             NeedAnchored = false,
             NeedPower = false,
-            MinDistance = 100f,
-            MaxDistance = 200f,
+            MinDistance = 75f,
+            MaxDistance = 125f,
             OcclusionDistance = 200f,
             GridOcclusionDistance = 200f,
-            SpawnSpacing = TimeSpan.FromSeconds(30),
+            SpawnSpacing = TimeSpan.FromSeconds(1),
         };
 
         AddComp(_mobCaller.Value, mobCaller);

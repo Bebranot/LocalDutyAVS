@@ -296,7 +296,7 @@ public sealed class ADTCCVars
     /// The distance to spawn a space whale from the station
     /// </summary>
     public static readonly CVarDef<int> SpaceWhaleSpawnDistance =
-        CVarDef.Create("misc.space_whale_spawn_distance", 1965, CVar.SERVER);
+        CVarDef.Create("misc.space_whale_spawn_distance", 6700, CVar.SERVER);
 
     /// <summary>
     /// If enabled, job icons in chat and status icons are available.

@@ -1,0 +1,86 @@
+# Отдельный прототип левиафана (ADTSpaceLeviathan не трогаем).
+# "Пожиратель Вселенных" - тот самый 67 монстр, но с собственным именем и описанием.
+
+# Сопротивления Пожирателя: не дышит, не давится давлением, не кровоточит.
+# Любой пулевой (Piercing) урон проходит целиком, но ХП 2500 - много патронов на убийство.
+# Взрывы/гранаты работают (Blunt за вычетом 20 и пополам). Лазеры/огонь/яды/эмпи (Heat и пр.) - 0.
+- type: damageModifierSet
+  id: DutyDevourerResistances
+  coefficients:
+    Blunt: 0.5
+    Slash: 0.3
+    Piercing: 1.0
+    Heat: 0
+    Cold: 0
+    Shock: 0
+    Caustic: 0
+    Cellular: 0
+    Poison: 0
+    Radiation: 0
+    Asphyxiation: 0
+    Bloodloss: 0
+    Structural: 0
+  flatReductions:
+    Blunt: 20
+    Slash: 40
+
+- type: entity
+  id: DutyUniverseDevourer
+  parent: ADTSpaceLeviathan
+  suffix: keeps tiles, no despawn
+  components:
+  - type: Vocal
+    wilhelm: "/Audio/_Duty/Effects/DevourerScream.ogg"
+    wilhelmProbability: 1
+  - type: EmitSoundOnSpawn
+    sound:
+      path: /Audio/_Duty/Effects/DevourerSpawn.ogg
+      params:
+        volume: 0
+        maxDistance: 80
+  - type: TailedEntity
+    prototype: DutyUniverseDevourerSegment
+  - type: DutyDevourerRamming
+  - type: RadarConsole
+    maxRange: 256
+    followEntity: true
+  - type: UserInterface
+    interfaces:
+      enum.RadarConsoleUiKey.Key:
+        type: RadarConsoleBoundUserInterface
+  - type: IntrinsicUI
+    uis:
+      enum.RadarConsoleUiKey.Key:
+        toggleAction: ActionDutyDevourerMassScan
+  - type: SpecialPressureImmunity
+  - type: Damageable
+    damageModifierSet: DutyDevourerResistances
+  - type: MobThresholds
+    thresholds:
+      0: Alive
+      2500: Dead
+  - type: Destructible
+    thresholds:
+    - trigger:
+        !type:DamageTrigger
+        damage: 2500
+      behaviors:
+      - !type:SpawnEntitiesBehavior
+        offset: 0
+        spawn:
+          DutyDevourerHeart:
+            min: 1
+            max: 1
+      - !type:GibBehavior
+  - type: Bloodstream
+    maxBleedAmount: 0
+
+- type: entity
+  id: DutyUniverseDevourerSegment
+  parent: ADTSpaceWhaleSegment
+  categories: [ HideSpawnMenu ]
+  components:
+  - type: Injurable
+    damageContainer: Biological
+  - type: Damageable
+  - type: DutyDevourerSegment

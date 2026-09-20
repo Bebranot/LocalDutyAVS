@@ -1,0 +1,42 @@
+# _Duty: трофей Пожирателя Вселенных. Выпадает из червя при смерти,
+# отдел снабжения выкупает его за миллион (StaticPrice).
+- type: entity
+  parent: BaseItem
+  id: DutyDevourerHeart
+  suffix: Duty, Трофей
+  name: Сердце Пожирателя Миров
+  description: Сердце существа, пожиравшего целые миры. Можно продать отделу снабжения
+    за миллион, а можно съесть — и медленно лечиться от всего до конца смены.
+  components:
+  - type: EmitSoundOnSpawn
+    sound:
+      path: /Audio/_Duty/Effects/DevourerDeath.ogg
+      params:
+        volume: 0
+        maxDistance: 80
+  - type: DutyDevourerHeart
+  - type: Sprite
+    sprite: _Duty/Objects/DevourerHeart/heart.rsi
+    layers:
+    - state: icon
+      map: ["base"]
+  - type: Appearance
+  - type: Item
+    size: Small
+  - type: Physics
+    bodyType: Dynamic
+    fixedRotation: true
+    linearDamping: 120
+    angularDamping: 120
+  - type: Fixtures
+    fixtures:
+      fix1:
+        shape: !type:PhysShapeAabb
+          bounds: "-0.25,-0.25,0.25,0.25"
+        density: 5000
+        mask:
+        - ItemMask
+        restitution: 0.0
+        friction: 1.0
+  - type: StaticPrice
+    price: 1000000
