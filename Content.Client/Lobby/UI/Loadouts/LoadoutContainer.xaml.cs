@@ -20,6 +20,9 @@ public sealed partial class LoadoutContainer : BoxContainer
 
     public Button Select => SelectButton;
 
+    /// <summary>_Duty: кнопка персонализации (кастомные имя/описание/цвет) — портировано из Space Onyx.</summary>
+    public Button Customize => CustomizeButton;
+
     public string? Text
     {
         get => SelectButton.Text;

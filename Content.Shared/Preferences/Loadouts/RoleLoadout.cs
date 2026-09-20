@@ -55,7 +55,9 @@ public sealed partial class RoleLoadout : IEquatable<RoleLoadout>
 
         foreach (var selected in SelectedLoadouts)
         {
-            weh.SelectedLoadouts.Add(selected.Key, new List<Loadout>(selected.Value));
+            // _Duty: глубокое копирование Loadout — иначе персонализация (CustomName/Color/Desc)
+            // расшаривалась бы между оригиналом и клоном.
+            weh.SelectedLoadouts.Add(selected.Key, selected.Value.Select(loadout => loadout.Clone()).ToList());
         }
         // ADT SAI Custom start
         foreach (var extra in ExtraData)

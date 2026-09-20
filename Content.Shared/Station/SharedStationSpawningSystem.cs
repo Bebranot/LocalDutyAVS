@@ -1,4 +1,5 @@
 using System.Linq;
+using Content.Shared._Duty.Loadouts;
 using Content.Shared.Hands.Components;
 using Content.Shared.Hands.EntitySystems;
 using Content.Shared.Inventory;
@@ -58,7 +59,7 @@ public abstract class SharedStationSpawningSystem : EntitySystem
                     continue;
                 }
 
-                EquipStartingGear(entity, loadoutProto, raiseEvent: false);
+                EquipStartingGear(entity, loadoutProto, raiseEvent: false, personalization: items); // _Duty
             }
         }
 
@@ -89,27 +90,27 @@ public abstract class SharedStationSpawningSystem : EntitySystem
         }
     }
 
-    public void EquipStartingGear(EntityUid entity, LoadoutPrototype loadout, bool raiseEvent = true)
+    public void EquipStartingGear(EntityUid entity, LoadoutPrototype loadout, bool raiseEvent = true, Loadout? personalization = null)
     {
-        EquipStartingGear(entity, loadout.StartingGear, raiseEvent);
-        EquipStartingGear(entity, (IEquipmentLoadout) loadout, raiseEvent);
+        EquipStartingGear(entity, loadout.StartingGear, raiseEvent, personalization);
+        EquipStartingGear(entity, (IEquipmentLoadout) loadout, raiseEvent, personalization);
     }
 
     /// <summary>
     /// <see cref="EquipStartingGear(Robust.Shared.GameObjects.EntityUid,System.Nullable{Robust.Shared.Prototypes.ProtoId{Content.Shared.Roles.StartingGearPrototype}},bool)"/>
     /// </summary>
-    public void EquipStartingGear(EntityUid entity, ProtoId<StartingGearPrototype>? startingGear, bool raiseEvent = true)
+    public void EquipStartingGear(EntityUid entity, ProtoId<StartingGearPrototype>? startingGear, bool raiseEvent = true, Loadout? personalization = null)
     {
         PrototypeManager.Resolve(startingGear, out var gearProto);
-        EquipStartingGear(entity, gearProto, raiseEvent);
+        EquipStartingGear(entity, gearProto, raiseEvent, personalization);
     }
 
     /// <summary>
     /// <see cref="EquipStartingGear(Robust.Shared.GameObjects.EntityUid,System.Nullable{Robust.Shared.Prototypes.ProtoId{Content.Shared.Roles.StartingGearPrototype}},bool)"/>
     /// </summary>
-    public void EquipStartingGear(EntityUid entity, StartingGearPrototype? startingGear, bool raiseEvent = true)
+    public void EquipStartingGear(EntityUid entity, StartingGearPrototype? startingGear, bool raiseEvent = true, Loadout? personalization = null)
     {
-        EquipStartingGear(entity, (IEquipmentLoadout?) startingGear, raiseEvent);
+        EquipStartingGear(entity, (IEquipmentLoadout?) startingGear, raiseEvent, personalization);
     }
 
     /// <summary>
@@ -118,7 +119,8 @@ public abstract class SharedStationSpawningSystem : EntitySystem
     /// <param name="entity">Entity to load out.</param>
     /// <param name="startingGear">Starting gear to use.</param>
     /// <param name="raiseEvent">Should we raise the event for equipped. Set to false if you will call this manually</param>
-    public void EquipStartingGear(EntityUid entity, IEquipmentLoadout? startingGear, bool raiseEvent = true)
+    /// <param name="personalization">_Duty: выбор лоадаута с кастомными именем/описанием/цветом — применяется к каждому заспавненному предмету.</param>
+    public void EquipStartingGear(EntityUid entity, IEquipmentLoadout? startingGear, bool raiseEvent = true, Loadout? personalization = null)
     {
         if (startingGear == null)
             return;
@@ -133,6 +135,7 @@ public abstract class SharedStationSpawningSystem : EntitySystem
                 if (!string.IsNullOrEmpty(equipmentStr))
                 {
                     var equipmentEntity = Spawn(equipmentStr, xform.Coordinates);
+                    ApplyLoadoutPersonalization(equipmentEntity, personalization); // _Duty
                     InventorySystem.TryEquip(entity, equipmentEntity, slot.Name, silent: true, force: true);
                 }
             }
@@ -145,6 +148,7 @@ public abstract class SharedStationSpawningSystem : EntitySystem
             foreach (var prototype in inhand)
             {
                 var inhandEntity = Spawn(prototype, coords);
+                ApplyLoadoutPersonalization(inhandEntity, personalization); // _Duty
 
                 if (_handsSystem.TryGetEmptyHand((entity, handsComponent), out var emptyHand))
                 {
@@ -199,6 +203,7 @@ public abstract class SharedStationSpawningSystem : EntitySystem
                     foreach (var entProto in entProtos)
                     {
                         var spawnedEntity = Spawn(entProto, coords);
+                        ApplyLoadoutPersonalization(spawnedEntity, personalization); // _Duty
 
                         _storage.Insert(slotEnt.Value, spawnedEntity, out _, storageComp: storage, playSound: false);
                     }
@@ -211,6 +216,29 @@ public abstract class SharedStationSpawningSystem : EntitySystem
             var ev = new StartingGearEquippedEvent(entity);
             RaiseLocalEvent(entity, ref ev);
         }
+    }
+
+    /// <summary>
+    /// _Duty: применяет персонализацию выбора лоадаута (кастомные имя/описание/цвет,
+    /// портировано из Space Onyx) к заспавненному предмету этого лоадаута.
+    /// </summary>
+    public void ApplyLoadoutPersonalization(EntityUid entity, Loadout? loadout)
+    {
+        if (loadout == null)
+            return;
+
+        if (!string.IsNullOrWhiteSpace(loadout.CustomName))
+            _metadata.SetEntityName(entity, loadout.CustomName);
+
+        if (!string.IsNullOrWhiteSpace(loadout.CustomDescription))
+            _metadata.SetEntityDescription(entity, loadout.CustomDescription);
+
+        if (string.IsNullOrEmpty(loadout.CustomColorTint) || Color.TryFromHex(loadout.CustomColorTint) is not { } color)
+            return;
+
+        var tint = EnsureComp<LoadoutTintComponent>(entity);
+        tint.Color = color;
+        Dirty(entity, tint);
     }
 
     /// <summary>

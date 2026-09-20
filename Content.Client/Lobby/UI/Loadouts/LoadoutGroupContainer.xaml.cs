@@ -26,6 +26,9 @@ public sealed partial class LoadoutGroupContainer : BoxContainer
     public event Action<ProtoId<LoadoutPrototype>>? OnLoadoutPressed;
     public event Action<ProtoId<LoadoutPrototype>>? OnLoadoutUnpressed;
 
+    /// <summary>_Duty: нажатие кнопки персонализации предмета лоадаута (портировано из Space Onyx).</summary>
+    public event Action<ProtoId<LoadoutPrototype>>? OnLoadoutCustomizePressed;
+
     public LoadoutGroupContainer(HumanoidCharacterProfile profile, RoleLoadout loadout, LoadoutGroupPrototype groupProto, ICommonSession session, IDependencyCollection collection, bool isSponsor)
     {
         RobustXamlLoader.Load(this);
@@ -255,7 +258,9 @@ public sealed partial class LoadoutGroupContainer : BoxContainer
 
         var cont = new LoadoutContainer(proto, !enabled, reason);
 
-        cont.Text = loadoutSystem.GetName(proto);
+        // _Duty: показываем кастомное имя, если игрок его задал (портировано из Space Onyx).
+        var current = selected.FirstOrDefault(e => e.Prototype == proto.ID);
+        cont.Text = current?.CustomName ?? loadoutSystem.GetName(proto);
 
         cont.Select.Pressed = pressed;
 
@@ -266,6 +271,9 @@ public sealed partial class LoadoutGroupContainer : BoxContainer
             else
                 OnLoadoutUnpressed?.Invoke(proto.ID);
         };
+
+        // _Duty: персонализация (портировано из Space Onyx).
+        cont.Customize.OnPressed += _ => OnLoadoutCustomizePressed?.Invoke(proto.ID);
 
         return cont;
     }

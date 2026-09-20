@@ -93,6 +93,12 @@ public sealed partial class HumanoidProfileEditor
             ReloadPreview();
         };
 
+        // _Duty: персонализация (портировано из Space Onyx).
+        _loadoutWindow.OnLoadoutCustomizePressed += (loadoutGroup, loadoutProto) =>
+        {
+            OpenLoadoutCustomization(loadoutGroup, loadoutProto, roleLoadout, session, collection);
+        };
+
         JobOverride = jobProto;
         ReloadPreview();
 
