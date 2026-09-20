@@ -1,4 +1,5 @@
 using System.Linq;
+using Content.Shared._Duty.Mech;
 using Content.Shared.Access.Components;
 using Content.Shared.ActionBlocker;
 using Content.Shared.Actions;
@@ -429,6 +430,10 @@ public abstract partial class SharedMechSystem : EntitySystem   // ADT - partial
         SetupUser(uid, toInsert.Value);
         _container.Insert(toInsert.Value, component.PilotSlot);
         UpdateAppearance(uid, component);
+
+        // _Duty: заменяет отсутствующий у нас OnVehicleEnteredEvent из Onyx.
+        var entered = new MechPilotEnteredEvent(uid, toInsert.Value);
+        RaiseLocalEvent(uid, ref entered);
         return true;
     }
 
@@ -461,6 +466,10 @@ public abstract partial class SharedMechSystem : EntitySystem   // ADT - partial
         RemComp<NoRotateOnMoveComponent>(uid);
         RemComp<ShowHealthBarsComponent>(pilot);
         // ADT Content end
+
+        // _Duty: заменяет отсутствующий у нас OnVehicleExitedEvent из Onyx.
+        var exited = new MechPilotExitedEvent(uid, pilot);
+        RaiseLocalEvent(uid, ref exited);
         return true;
     }
 

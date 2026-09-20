@@ -18,6 +18,7 @@ using Content.Shared.Mech.Equipment.Components;
 using Content.Shared.Movement.Components;
 using Content.Shared.Movement.Events;
 using Content.Shared.Popups;
+using Content.Shared.Power;
 using Content.Shared.Power.Components;
 using Content.Shared.Power.EntitySystems;
 using Content.Shared.Tools;
@@ -52,6 +53,7 @@ public sealed partial class MechSystem : SharedMechSystem
     [Dependency] private readonly AudioSystem _audio = default!;
     [Dependency] private readonly AccessReaderSystem _accessReader = default!;
     [Dependency] private readonly IRobustRandom _random = default!;
+    [Dependency] private readonly Content.Server._Duty.Mech.MechPilotFeedbackSystem _pilotFeedback = default!; // _Duty
 
     private static readonly ProtoId<ToolQualityPrototype> PryingQuality = "Prying";
 
@@ -68,6 +70,10 @@ public sealed partial class MechSystem : SharedMechSystem
         SubscribeLocalEvent<MechComponent, RemoveBatteryEvent>(OnRemoveBattery);
         SubscribeLocalEvent<MechComponent, MechEntryEvent>(OnMechEntry);
         SubscribeLocalEvent<MechComponent, MechExitEvent>(OnMechExit);
+
+        // _Duty: слепота пилота при разряде батареи (Onyx) — реагируем на любое изменение заряда,
+        // а не только на вставку батареи.
+        SubscribeLocalEvent<BatteryComponent, ChargeChangedEvent>(OnBatteryChargeChangedDuty);
 
         SubscribeLocalEvent<MechComponent, DamageChangedEvent>(OnDamageChanged);
         SubscribeLocalEvent<MechComponent, MechEquipmentRemoveMessage>(OnRemoveEquipmentMessage);
@@ -151,6 +157,20 @@ public sealed partial class MechSystem : SharedMechSystem
 
         Dirty(uid, component);
         _actionBlocker.UpdateCanMove(uid);
+        _pilotFeedback.UpdatePilotVision(uid, component); // _Duty
+    }
+
+    // _Duty: см. подписку в Initialize().
+    private void OnBatteryChargeChangedDuty(Entity<BatteryComponent> battery, ref ChargeChangedEvent args)
+    {
+        var parent = Transform(battery).ParentUid;
+        if (!TryComp<MechComponent>(parent, out var mech) || mech.BatterySlot.ContainedEntity != battery.Owner)
+            return;
+
+        mech.Energy = args.CurrentCharge;
+        mech.MaxEnergy = args.MaxCharge;
+        Dirty(parent, mech);
+        _pilotFeedback.UpdatePilotVision(parent, mech);
     }
 
     private void OnRemoveBattery(EntityUid uid, MechComponent component, RemoveBatteryEvent args)
