@@ -17,6 +17,7 @@ using Content.Shared.Inventory.Events;
 using Content.Shared.Mobs;
 using Content.Shared.Mobs.Systems;
 using Content.Shared.Movement.Components;
+using Content.Shared.Movement.Events;
 using Content.Shared.Movement.Systems;
 using Content.Shared.Popups;
 using Content.Shared.Standing;
@@ -93,6 +94,11 @@ public sealed class DutySprintSystem : EntitySystem
 
         SubscribeLocalEvent<DutyStaminaComponent, RefreshMovementSpeedModifiersEvent>(OnRefreshSprint);
 
+        // Переход в ходьбу (Shift) во время спринта — приравниваем к отпусканию C: иначе отпустив
+        // Shift обратно, игрок мгновенно возобновляет спринт (WantsSprint не менялся) с повторным
+        // проигрыванием стартового звука/анимации и в обход кулдауна.
+        SubscribeLocalEvent<DutyStaminaComponent, MoveInputEvent>(OnMoveInput);
+
         // Пересчёт спринта при смене снаряжения/ранении (важно только пока зажат C).
         SubscribeLocalEvent<DutyStaminaComponent, DidEquipEvent>((u, _, _) => Refresh(u));
         SubscribeLocalEvent<DutyStaminaComponent, DidUnequipEvent>((u, _, _) => Refresh(u));
@@ -115,19 +121,46 @@ public sealed class DutySprintSystem : EntitySystem
             ClearWantsSprint(ent.Owner, ent.Comp);
     }
 
+    private void OnMoveInput(Entity<DutyStaminaComponent> ent, ref MoveInputEvent args)
+    {
+        if (!_timing.IsFirstTimePredicted || !ent.Comp.WantsSprint)
+            return;
+
+        var startedWalking = (args.OldMovement & MoveButtons.Walk) == 0
+                              && (args.Entity.Comp.HeldMoveButtons & MoveButtons.Walk) != 0;
+
+        if (startedWalking)
+            StopSprint(ent.Owner, ent.Comp);
+    }
+
     /// <summary>Принудительно снимает намерение спринтовать (отсоединение, крит, смерть).</summary>
     private void ClearWantsSprint(EntityUid uid, DutyStaminaComponent comp)
     {
         if (!comp.WantsSprint)
             return;
 
-        comp.WantsSprint = false;
         comp.SprintElapsed = 0f;
-        // Пауза как при обычном отпускании клавиши — чтобы её нельзя было обойти смертью или
-        // переподключением с зажатой C.
+        StopSprint(uid, comp, emote: false);
+    }
+
+    /// <summary>
+    /// Снимает намерение спринтовать и заводит паузу до следующего рывка — та же логика, что при
+    /// отпускании клавиши C. Используется и на реальном отпускании, и всюду, где спринт обязан
+    /// оборваться сам (переход в ходьбу, крит, смерть, отсоединение), чтобы обход кулдауна был
+    /// невозможен ни одним из путей.
+    /// </summary>
+    private void StopSprint(EntityUid uid, DutyStaminaComponent comp, bool emote = true)
+    {
         comp.NextSprintAllowed = _timing.CurTime + TimeSpan.FromSeconds(comp.SprintCooldown);
+        comp.WantsSprint = false;
         Dirty(uid, comp);
         _movementSpeed.RefreshMovementSpeedModifiers(uid);
+
+        if (emote && _net.IsServer && !_mobState.IsIncapacitated(uid))
+        {
+            var msg = Loc.GetString("duty-sprint-emote-stop");
+            _popup.PopupEntity(msg, uid, Filter.Pvs(uid, entityManager: EntityManager), true);
+        }
     }
 
     public override void Shutdown()
@@ -184,26 +217,23 @@ public sealed class DutySprintSystem : EntitySystem
                 _popup.PopupClient(Loc.GetString("duty-sprint-blocked-cooldown"), uid, uid);
                 return;
             }
+
+            comp.WantsSprint = true;
+            Dirty(uid, comp);
+            EnsureComp<ActiveDutyStaminaComponent>(uid);
+            _movementSpeed.RefreshMovementSpeedModifiers(uid);
+
+            // Эмоция над головой (не в чат) — только если жив; шлёт сервер на всю PVS.
+            if (_net.IsServer && !_mobState.IsIncapacitated(uid))
+            {
+                var msg = Loc.GetString("duty-sprint-emote-start");
+                _popup.PopupEntity(msg, uid, Filter.Pvs(uid, entityManager: EntityManager), true);
+            }
         }
         else
         {
-            // Отпустили клавишу — заводим паузу до следующего рывка.
-            comp.NextSprintAllowed = _timing.CurTime + TimeSpan.FromSeconds(comp.SprintCooldown);
-        }
-
-        comp.WantsSprint = wants;
-        Dirty(uid, comp);
-
-        if (wants)
-            EnsureComp<ActiveDutyStaminaComponent>(uid);
-
-        _movementSpeed.RefreshMovementSpeedModifiers(uid);
-
-        // Эмоция над головой (не в чат) — только если жив; шлёт сервер на всю PVS.
-        if (_net.IsServer && !_mobState.IsIncapacitated(uid))
-        {
-            var msg = Loc.GetString(wants ? "duty-sprint-emote-start" : "duty-sprint-emote-stop");
-            _popup.PopupEntity(msg, uid, Filter.Pvs(uid, entityManager: EntityManager), true);
+            // Отпустили клавишу — та же остановка, что и при переходе в ходьбу/крите/смерти.
+            StopSprint(uid, comp);
         }
     }
 
