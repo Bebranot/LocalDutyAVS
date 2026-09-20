@@ -1,0 +1,8 @@
+# _Duty: портировано из Space Onyx.
+- type: shader
+  id: DutyDirtCoverage
+  kind: source
+  path: "/Textures/_Duty/Shaders/dirt_coverage.swsl"
+  params:
+    coverage: 0.0
+    dirt_color: 1.0, 1.0, 1.0

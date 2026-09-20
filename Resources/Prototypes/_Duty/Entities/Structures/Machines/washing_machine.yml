@@ -1,0 +1,53 @@
+# _Duty: портировано из Space Onyx. Упрощено — без узла в графе Construction/платы
+# (WashingMachineCircuitboard); машина статично собрана, как наши ClawMachine/CoinFlipper.
+- type: entity
+  id: WashingMachine
+  parent: BaseMachine
+  name: стиральная машина
+  description: Автоматическая машина для стирки грязной одежды.
+  components:
+  - type: Transform
+    noRot: true
+  - type: Sprite
+    noRot: true
+    sprite: _Duty/Structures/Machines/washingmachine.rsi
+    layers:
+    - state: base
+      map: [ "enum.StorageVisualLayers.Base" ]
+    - state: door_closed
+      map: [ "enum.StorageVisualLayers.Door" ]
+    - state: washing
+      map: [ "enum.WashingMachineVisualLayers.Washing" ]
+      visible: false
+  - type: Icon
+    sprite: _Duty/Structures/Machines/washingmachine.rsi
+    state: icon
+  - type: AmbientSound
+    enabled: false
+    volume: -5
+    range: 5
+    sound:
+      path: /Audio/Ambience/Objects/crushing.ogg
+  - type: WashingMachine
+  - type: ApcPowerReceiver
+    powerLoad: 500
+  - type: Appearance
+  - type: GenericVisualizer
+    visuals:
+      enum.WashingMachineVisuals.Washing:
+        enum.WashingMachineVisualLayers.Washing:
+          True: { visible: true }
+          False: { visible: false }
+  - type: Lock
+    locked: false
+  - type: EntityStorage
+    whitelist:
+      components:
+      - Clothing
+  - type: ContainerContainer
+    containers:
+      entity_storage: !type:Container
+  - type: EntityStorageVisuals
+    stateBaseClosed: base
+    stateDoorOpen: door_open
+    stateDoorClosed: door_closed

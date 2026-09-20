@@ -450,6 +450,12 @@
   physicalDesc: reagent-physical-desc-translucent
   flavor: water
   color: "#75b1f0"
+  # _Duty: вода отмывает грязь с одежды (портировано из Space Onyx)
+  reactiveEffects:
+    DutyCleanDirt:
+      methods: [ Touch ]
+      effects:
+      - !type:CleanDirt
   recognizable: true
   boilingPoint: 100.0
   meltingPoint: 0.0

@@ -39,6 +39,13 @@
   physicalDesc: reagent-physical-desc-lemony-fresh
   flavor: bitter
   color: "#c8ff69"
+  # _Duty: отмывает грязь с одежды эффективнее воды (портировано из Space Onyx)
+  reactiveEffects:
+    DutyCleanDirt:
+      methods: [ Touch ]
+      effects:
+      - !type:CleanDirt
+        multiplier: 1.5
   recognizable: true
   boilingPoint: 147.0 # Made this up, loosely based on bleach
   meltingPoint: -11.0

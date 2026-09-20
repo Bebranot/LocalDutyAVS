@@ -1,0 +1,44 @@
+# _Duty: портировано из Space Onyx без изменений.
+- type: entity
+  parent: BaseWallmountMetallic
+  id: Shower
+  name: душ
+  description: Настенный душ.
+  placement:
+    mode: SnapgridCenter
+    snap:
+    - Wallmount
+  components:
+  - type: Sprite
+    sprite: _Duty/Structures/shower.rsi
+    layers:
+    - state: shower
+    - state: water
+      map: ["enum.ShowerVisualLayers.Water"]
+      visible: false
+  - type: Appearance
+  - type: GenericVisualizer
+    visuals:
+      enum.ShowerVisuals.Enabled:
+        enum.ShowerVisualLayers.Water:
+          True: { visible: true }
+          False: { visible: false }
+  - type: Shower
+  - type: Anchorable
+  - type: Pullable
+  - type: Fixtures
+    fixtures:
+      fix1:
+        shape:
+          !type:PhysShapeAabb
+          bounds: "-0.35,-0.35,0.35,0.35"
+        density: 190
+        mask:
+        - MachineMask
+        layer:
+        - WallLayer
+        hard: false
+  - type: Injurable
+    damageContainer: Inorganic
+  - type: Damageable
+    damageModifierSet: Metallic

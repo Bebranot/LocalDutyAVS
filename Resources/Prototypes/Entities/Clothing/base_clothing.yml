@@ -14,6 +14,12 @@
   - type: FlavorProfile #yes not every peice of clothing is edible, but this way every edible piece of clothing should have the flavor without me having to track down what specific clothing can and cannot be eaten.
     flavors:
     - fiber
+  # _Duty: одежда пачкается (портировано из Space Onyx)
+  - type: ClothingDirtable
+  - type: SolutionContainerManager
+    solutions:
+      dirt:
+        maxVol: 20
 
 - type: entity
   abstract: true
