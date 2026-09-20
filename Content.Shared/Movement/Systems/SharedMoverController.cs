@@ -7,6 +7,7 @@ using Content.Shared.Gravity;
 using Content.Shared.Inventory;
 using Content.Shared.Maps;
 using Content.Shared.Mobs.Systems;
+using Content.Shared._Duty.Movement;
 using Content.Shared.Movement.Components;
 using Content.Shared.Movement.Events;
 using Content.Shared.Shuttles.Components;
@@ -582,6 +583,10 @@ public abstract partial class SharedMoverController : VirtualController
         ContentTileDefinition? tileDef = null)
     {
         sound = null;
+
+        // _Duty: в прыжке (JumpComponent) шагов не звучит — как в Onyx.
+        if (TryComp(uid, out JumpComponent? jump) && jump.IsJumping)
+            return false;
 
         if (!CanSound() || !(_tags.HasTag(uid, FootstepSoundTag) || _tags.HasTag(uid, SiliconFootstepSoundTag))) //ADT-Tweak
             return false;

@@ -186,6 +186,9 @@ binds:
 - function: Drop
   type: State
   key: Q
+- function: Jump # _Duty
+  type: State
+  key: Space
 - function: ActivateItemInHand
   type: State
   key: Z

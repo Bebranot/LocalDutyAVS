@@ -151,5 +151,6 @@ namespace Content.Shared.Input
         public static readonly BoundKeyFunction Resist = "Resist"; // ADT-Tweak
         public static readonly BoundKeyFunction DrawBackItem = "DrawBackItem"; // ADT-Tweak
         public static readonly BoundKeyFunction ADTDoorEmergencyAccess = "ADTDoorEmergencyAccess"; // ADT-Tweak
+        public static readonly BoundKeyFunction Jump = "Jump"; // _Duty
     }
 }

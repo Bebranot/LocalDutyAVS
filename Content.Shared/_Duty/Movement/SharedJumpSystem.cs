@@ -1,0 +1,344 @@
+// SPDX-FileCopyrightText: 2025 LocalDuty <https://github.com/Bebranot/LocalDuty_Reserve>
+//
+// SPDX-License-Identifier: AGPL-3.0-or-later
+
+using System.Numerics;
+using Content.Shared.ActionBlocker;
+using Content.Shared.Buckle.Components;
+using Content.Shared.Chasm;
+using Content.Shared.Climbing.Components;
+using Content.Shared.Climbing.Systems;
+using Content.Shared.Damage.Components;
+using Content.Shared.Damage.Systems;
+using Content.Shared.Gravity;
+using Content.Shared.Input;
+using Content.Shared.Item;
+using Content.Shared.LandMines;
+using Content.Shared.Mobs.Systems;
+using Content.Shared.Movement.Components;
+using Content.Shared.Movement.Systems;
+using Content.Shared.Mousetrap;
+using Content.Shared.Physics;
+using Content.Shared.Popups;
+using Content.Shared.Slippery;
+using Content.Shared.Standing;
+using Content.Shared.StepTrigger.Systems;
+using Content.Shared.Throwing;
+using Robust.Shared.GameObjects;
+using Robust.Shared.Input;
+using Robust.Shared.Input.Binding;
+using Robust.Shared.Map;
+using Robust.Shared.Physics.Components;
+using Robust.Shared.Physics.Systems;
+using Robust.Shared.Player;
+using Robust.Shared.Timing;
+
+namespace Content.Shared._Duty.Movement;
+
+/// <summary>
+/// _Duty: прыжок, портировано из Space Onyx (Content.Shared._Onyx.Movement.SharedJumpSystem).
+/// Отличия от оригинала: проверка спринта переведена на нашу <see cref="DutySprintSystem"/>
+/// (у нас нет их отдельной системы спринта), убрана проверка плавания — у нас нет системы
+/// открытой воды (<c>SharedOceanSwimmingSystem</c>), остальная логика — как есть.
+/// </summary>
+public abstract partial class SharedJumpSystem : EntitySystem
+{
+    [Dependency] private readonly ActionBlockerSystem _actionBlocker = default!;
+    [Dependency] private readonly ClimbSystem _climb = default!;
+    [Dependency] private readonly DutySprintSystem _duty = default!;
+    [Dependency] private readonly EntityLookupSystem _entityLookup = default!;
+    [Dependency] private readonly SharedGravitySystem _gravity = default!;
+    [Dependency] private readonly SharedItemSystem _item = default!;
+    [Dependency] private readonly MobStateSystem _mobState = default!;
+    [Dependency] private readonly SharedMoverController _mover = default!;
+    [Dependency] private readonly SharedPhysicsSystem _physics = default!;
+    [Dependency] private readonly SharedPopupSystem _popup = default!;
+    [Dependency] private readonly SharedStaminaSystem _stamina = default!;
+    [Dependency] private readonly StandingStateSystem _standing = default!;
+    [Dependency] private readonly SharedTransformSystem _transform = default!;
+    [Dependency] private readonly ThrowingSystem _throwing = default!;
+    [Dependency] private readonly IGameTiming _timing = default!;
+
+    public override void Initialize()
+    {
+        base.Initialize();
+        SubscribeLocalEvent<JumpComponent, BeforeThrowEvent>(OnBeforeThrow);
+        SubscribeLocalEvent<JumpComponent, ComponentShutdown>(OnShutdown);
+        SubscribeLocalEvent<JumpComponent, StepTriggerAttemptEvent>(OnStepTriggerAttempt);
+        SubscribeLocalEvent<JumpComponent, StopThrowEvent>(OnStopThrow);
+        CommandBinds.Builder
+            .Bind(ContentKeyFunctions.Jump, new JumpInputCmdHandler(this))
+            .Register<SharedJumpSystem>();
+    }
+
+    public override void Shutdown()
+    {
+        CommandBinds.Unregister<SharedJumpSystem>();
+        base.Shutdown();
+    }
+
+    public override void Update(float frameTime)
+    {
+        base.Update(frameTime);
+
+        var query = EntityQueryEnumerator<JumpComponent>();
+        while (query.MoveNext(out var uid, out var jump))
+        {
+            if (!jump.IsJumping)
+                continue;
+
+            if (jump.JumpEnds <= _timing.CurTime ||
+                jump.MountTable && !HasComp<ThrownItemComponent>(uid) && IsOverlappingTable(uid))
+                FinishJump((uid, jump));
+        }
+    }
+
+    private void HandleJumpInput(ICommonSession? session, IFullInputCmdMessage message)
+    {
+        if (message.State != BoundKeyState.Down || session?.AttachedEntity is not { } user)
+            return;
+
+        var uid = GetEffectiveMover(user);
+        if (TryComp(uid, out JumpComponent? jump))
+            TryJump((uid, jump));
+    }
+
+    /// <summary>
+    /// Разворачивает цепочку <see cref="RelayInputMoverComponent"/> до сущности, которая реально
+    /// получает ввод движения (напр. пилот меха/транспорта), как это делал оригинальный
+    /// <c>SharedMoverController.GetEffectiveMover</c> в Onyx — у нас такого хелпера нет.
+    /// </summary>
+    private EntityUid GetEffectiveMover(EntityUid entity)
+    {
+        var current = entity;
+        while (TryComp(current, out RelayInputMoverComponent? relay) && relay.RelayEntity != current)
+            current = relay.RelayEntity;
+
+        return current;
+    }
+
+    private void OnBeforeThrow(Entity<JumpComponent> ent, ref BeforeThrowEvent args)
+    {
+        if (!ent.Comp.IsJumping ||
+            !TryComp(args.ItemUid, out ItemComponent? item) ||
+            _item.GetSizePrototype(item.Size) > _item.GetSizePrototype("Normal"))
+            return;
+
+        // _Duty: в этом движке BeforeThrowEvent.Direction доступен только на чтение (в отличие
+        // от Onyx), поэтому броски в прыжке дальше не летят — режем только скорость.
+        args.ThrowSpeed = MathF.Max(0.1f, args.ThrowSpeed - 1f);
+    }
+
+    private void OnShutdown(Entity<JumpComponent> ent, ref ComponentShutdown args)
+    {
+        if (ent.Comp.IsJumping && TryComp(ent, out ClimbingComponent? climbing))
+            _climb.FinishJumpClimb(ent, climbing);
+    }
+
+    private void OnStopThrow(Entity<JumpComponent> ent, ref StopThrowEvent args)
+    {
+        if (args.User != ent.Owner || ent.Comp.JumpEnds > _timing.CurTime)
+            return;
+
+        FinishJump(ent);
+    }
+
+    private void OnStepTriggerAttempt(Entity<JumpComponent> ent, ref StepTriggerAttemptEvent args)
+    {
+        if (ent.Comp.IsJumping &&
+            args.Tripper == ent.Owner &&
+            (HasComp<LandMineComponent>(args.Source) ||
+             HasComp<MousetrapComponent>(args.Source) ||
+             HasComp<SlipperyComponent>(args.Source) ||
+             HasComp<ChasmComponent>(args.Source) ||
+             IsStepTriggerBlocked(args.Source)))
+            args.Cancelled = true;
+    }
+
+    protected virtual bool IsStepTriggerBlocked(EntityUid source)
+    {
+        return false;
+    }
+
+    protected virtual void OnJumpLanded(Entity<JumpComponent> ent)
+    {
+    }
+
+    protected virtual void OnJumpStarted(Entity<JumpComponent> ent)
+    {
+    }
+
+    public bool TryJump(Entity<JumpComponent> ent)
+    {
+        if (!CanJump(ent) || !TryComp(ent, out InputMoverComponent? mover))
+            return false;
+
+        var (walking, sprinting) = _mover.GetVelocityInput(mover);
+        var input = walking + sprinting;
+
+        var staminaCost = _gravity.IsWeightless((ent.Owner, null))
+            ? ent.Comp.StaminaCost * ent.Comp.WeightlessStaminaCostMultiplier
+            : ent.Comp.StaminaCost;
+        if (!TryComp(ent, out StaminaComponent? stamina) ||
+            stamina.CritThreshold - _stamina.GetStaminaDamage(ent, stamina) < ent.Comp.MinimumStamina)
+        {
+            _popup.PopupEntity(Loc.GetString("jump-cannot-catch-breath"), ent, ent);
+            return false;
+        }
+
+        _stamina.TakeStaminaDamage(ent, staminaCost, stamina, source: ent, visual: false);
+
+        if (input == Vector2.Zero)
+        {
+            ent.Comp.NextJump = _timing.CurTime + ent.Comp.Cooldown;
+            ent.Comp.IsJumping = true;
+            ent.Comp.MountTable = false;
+            ent.Comp.JumpStarted = _timing.CurTime;
+            ent.Comp.JumpEnds = _timing.CurTime + ent.Comp.StationaryDuration;
+            Dirty(ent);
+            OnJumpStarted(ent);
+            return true;
+        }
+
+        var direction = mover.TargetRelativeRotation.RotateVec(input).Normalized();
+        var xform = Transform(ent);
+        var table = FindTableAhead(xform.Coordinates, direction, ent.Comp.TableDistance);
+
+        float jumpDistance;
+        var mount = false;
+        if (table == null)
+        {
+            jumpDistance = IsSprinting(ent)
+                ? ent.Comp.SprintDistance
+                : ent.Comp.Distance;
+        }
+        else
+        {
+            jumpDistance = table.Value.Forward;
+            mount = true;
+        }
+
+        var target = xform.Coordinates.Offset(direction * jumpDistance);
+
+        if (TryComp(ent, out PhysicsComponent? throwPhysics))
+            _physics.SetLinearVelocity(ent, Vector2.Zero, body: throwPhysics);
+
+        _throwing.TryThrow(ent, target, ent.Comp.Speed, ent, recoil: false, animated: false, playSound: false, doSpin: false);
+
+        if (table != null &&
+            TryComp(ent, out ClimbingComponent? climbing) &&
+            TryComp(table.Value.Uid, out ClimbableComponent? climbable) &&
+            !climbing.IsClimbing)
+        {
+            _climb.StartJumpClimb(ent, climbing, table.Value.Uid, climbable);
+        }
+
+        ent.Comp.NextJump = _timing.CurTime + ent.Comp.Cooldown;
+        ent.Comp.IsJumping = true;
+        ent.Comp.MountTable = mount;
+        ent.Comp.JumpStarted = _timing.CurTime;
+        var airTime = MathF.Max(jumpDistance / ent.Comp.Speed, (float) ent.Comp.StationaryDuration.TotalSeconds);
+        ent.Comp.JumpEnds = _timing.CurTime + TimeSpan.FromSeconds(airTime);
+        Dirty(ent);
+        OnJumpStarted(ent);
+        return true;
+    }
+
+    /// <summary>_Duty: держит ли существо спринт прямо сейчас (наша третья ступень бега).</summary>
+    private bool IsSprinting(EntityUid uid)
+    {
+        return TryComp(uid, out DutyStaminaComponent? duty) && _duty.IsSprinting(uid, duty);
+    }
+
+    public bool CanJump(Entity<JumpComponent> ent)
+    {
+        return !ent.Comp.IsJumping &&
+               ent.Comp.NextJump <= _timing.CurTime &&
+               _actionBlocker.CanMove(ent) &&
+               _mobState.IsAlive(ent) &&
+               !_standing.IsDown((ent.Owner, null)) &&
+               (!TryComp(ent, out BuckleComponent? buckle) || !buckle.Buckled) &&
+               TryComp<StaminaComponent>(ent, out _) &&
+               HasComp<PhysicsComponent>(ent) &&
+               !HasComp<ThrownItemComponent>(ent);
+    }
+
+    private (EntityUid Uid, float Forward)? FindTableAhead(EntityCoordinates coordinates, Vector2 direction, float distance)
+    {
+        var origin = _transform.ToMapCoordinates(coordinates);
+        EntityUid? closest = null;
+        var closestForward = float.MaxValue;
+
+        foreach (var table in _entityLookup.GetEntitiesInRange<ClimbableComponent>(coordinates, distance + 0.5f))
+        {
+            if (!TryComp(table, out PhysicsComponent? physics) ||
+                (physics.CollisionLayer & (int) CollisionGroup.TableLayer) == 0)
+                continue;
+
+            var offset = _transform.GetMapCoordinates(table).Position - origin.Position;
+            var forwardDistance = Vector2.Dot(offset, direction);
+            var lateralDistance = MathF.Abs(direction.X * offset.Y - direction.Y * offset.X);
+            if (forwardDistance < 0.25f || forwardDistance > distance + 0.5f || lateralDistance > 0.6f)
+                continue;
+
+            if (forwardDistance >= closestForward)
+                continue;
+
+            closest = table;
+            closestForward = forwardDistance;
+        }
+
+        if (closest == null)
+            return null;
+
+        return (closest.Value, closestForward);
+    }
+
+    private bool IsOverlappingTable(EntityUid uid)
+    {
+        var bodyBox = _physics.GetWorldAABB(uid);
+        foreach (var candidate in _entityLookup.GetEntitiesInRange<ClimbableComponent>(Transform(uid).Coordinates, 1.2f))
+        {
+            if (candidate.Owner == uid)
+                continue;
+            if (_physics.GetWorldAABB(candidate).Intersects(bodyBox))
+                return true;
+        }
+
+        return false;
+    }
+
+    private void FinishJump(Entity<JumpComponent> ent)
+    {
+        if (!ent.Comp.IsJumping)
+            return;
+
+        ent.Comp.IsJumping = false;
+        if (ent.Comp.MountTable && TryComp(ent, out PhysicsComponent? physics))
+            _physics.SetLinearVelocity(ent, Vector2.Zero, wakeBody: false, body: physics);
+        Dirty(ent);
+
+        if (IsOverlappingTable(ent.Owner))
+        {
+            if (TryComp(ent, out ClimbingComponent? mountClimbing))
+                _climb.EnsureMountedState(ent, mountClimbing);
+
+            OnJumpLanded(ent);
+            return;
+        }
+
+        if (TryComp(ent, out ClimbingComponent? climbing))
+            _climb.FinishJumpClimb(ent, climbing);
+
+        OnJumpLanded(ent);
+    }
+
+    private sealed class JumpInputCmdHandler(SharedJumpSystem system) : InputCmdHandler
+    {
+        public override bool HandleCmdMessage(IEntityManager entManager, ICommonSession? session, IFullInputCmdMessage message)
+        {
+            system.HandleJumpInput(session, message);
+            return false;
+        }
+    }
+}

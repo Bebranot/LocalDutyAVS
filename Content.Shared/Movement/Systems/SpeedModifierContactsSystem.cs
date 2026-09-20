@@ -1,3 +1,4 @@
+using Content.Shared._Duty.Movement;
 using Content.Shared.Movement.Components;
 using Content.Shared.Movement.Events;
 using Content.Shared.Gravity;
@@ -86,6 +87,7 @@ public sealed class SpeedModifierContactsSystem : EntitySystem
 
         // Cache the result of the airborne check, as it's expensive and independent of contacting entities, hence need only be done once.
         var isAirborne = physicsComponent.BodyStatus == BodyStatus.InAir || _gravity.IsWeightless(uid);
+        var isJumping = TryComp<JumpComponent>(uid, out var jump) && jump.IsJumping; // _Duty: прыжок
 
         bool remove = true;
         var entries = 0;
@@ -99,7 +101,7 @@ public sealed class SpeedModifierContactsSystem : EntitySystem
                     continue;
 
                 // Entities that are airborne should not be affected by contact slowdowns that are specified to not affect airborne entities.
-                if (isAirborne && !slowContactsComponent.AffectAirborne)
+                if ((isAirborne || isJumping) && !slowContactsComponent.AffectAirborne) // _Duty: прыжок
                     continue;
 
                 walkSpeed += slowContactsComponent.WalkSpeedModifier;
@@ -108,7 +110,7 @@ public sealed class SpeedModifierContactsSystem : EntitySystem
             }
 
             // SpeedModifierContactsComponent takes priority over SlowedOverSlipperyComponent, effectively overriding the slippery slow.
-            if (HasComp<SlipperyComponent>(ent) && speedModified == false)
+            if (HasComp<SlipperyComponent>(ent) && speedModified == false && !isJumping) // _Duty: прыжок
             {
                 var evSlippery = new GetSlowedOverSlipperyModifierEvent();
                 RaiseLocalEvent(uid, ref evSlippery);

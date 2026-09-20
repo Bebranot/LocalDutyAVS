@@ -98,6 +98,7 @@
   - type: Internals
   - type: FloatingVisuals
   - type: Climbing
+  - type: Jump # _Duty
   - type: Cuffable
   - type: Ensnareable
     sprite: Objects/Misc/ensnare.rsi
