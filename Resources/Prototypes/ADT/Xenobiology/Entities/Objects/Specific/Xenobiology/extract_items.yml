@@ -31,21 +31,12 @@
       reagents:
       - ReagentId: Slime
         Quantity: 15
-#  - type: Organ
-#    onAdd:
-#    - type: LightningArcShooter
-#      arcDepth: 1
-#      maxLightningArc: 3
-#      shootMinInterval: 90
-#      shootMaxInterval: 300
-#      shootRange: 5
-#      lightningPrototype: Lightning
-#    intCap: 32
-#    integrity: 32
-#    integrityThresholds:
-#      Normal: 32
-#      Damaged: 9
-#      Destroyed: 0
+  - type: VolatileOrgan
+    arcDepth: 1
+    maxLightningArcs: 3
+    minInterval: 90
+    maxInterval: 300
+    range: 5
   - type: Metabolizer
     metabolizerTypes: [ Slime ]
   - type: Tag

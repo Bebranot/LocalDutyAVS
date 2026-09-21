@@ -23,7 +23,8 @@
       - !type:Jitter
         time: 5
         frequency: 20
-      - !type:AreaReactionEffect
+      - !type:DelayedExtractAreaReaction
+        delay: 5
         duration: 10
         prototypeId: AluminiumMetalFoam
         sound:
