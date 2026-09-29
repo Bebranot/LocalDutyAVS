@@ -2,6 +2,7 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
+using Content.Shared._Duty.Defibrillation;
 using Content.Shared._Duty.Trauma.Components;
 
 namespace Content.Shared._Duty.Trauma.Systems;
@@ -49,6 +50,13 @@ public sealed class TraumaAnalyzerSystem : EntitySystem
             (entries ??= new()).Add(
                 new TraumaAnalyzerEntry(TraumaAnalyzerKind.HeadTrauma, headTier: headTrauma.Tier));
         }
+
+        // Последствия дефибрилляции: пострадавшему не показываются, только медику в анализаторе.
+        if (HasComp<DutyArrhythmiaComponent>(uid))
+            (entries ??= new()).Add(new TraumaAnalyzerEntry(TraumaAnalyzerKind.Arrhythmia));
+
+        if (HasComp<DutyRevivalWeaknessComponent>(uid))
+            (entries ??= new()).Add(new TraumaAnalyzerEntry(TraumaAnalyzerKind.RevivalWeakness));
 
         return entries;
     }

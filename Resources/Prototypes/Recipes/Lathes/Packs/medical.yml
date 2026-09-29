@@ -43,6 +43,8 @@
   recipes:
   - Implanter
   - Defibrillator
+  - DutyDefibrillatorLifePak40s # _Duty
+  - DutyDefibGel # _Duty
   - HandheldHealthAnalyzer
   - DiseaseSwab
   - BodyBag

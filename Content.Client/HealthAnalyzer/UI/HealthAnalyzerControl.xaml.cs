@@ -271,6 +271,8 @@ public sealed partial class HealthAnalyzerControl : BoxContainer
             TraumaAnalyzerKind.HeadTrauma => Loc.GetString(
                 "health-analyzer-trauma-head",
                 ("tier", Loc.GetString(TraumaLoc.HeadTraumaTierKey(trauma.HeadTier)))),
+            TraumaAnalyzerKind.Arrhythmia => Loc.GetString("health-analyzer-trauma-arrhythmia"), // _Duty: последствия дефибрилляции
+            TraumaAnalyzerKind.RevivalWeakness => Loc.GetString("health-analyzer-trauma-revival-weakness"), // _Duty: последствия дефибрилляции
             _ => string.Empty,
         };
     }

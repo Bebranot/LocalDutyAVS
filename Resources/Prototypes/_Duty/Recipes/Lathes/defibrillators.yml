@@ -1,0 +1,19 @@
+# SPDX-FileCopyrightText: 2025 LocalDuty
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+# LifePak-40s и электродный гель — в статическом наборе медлата (MedicalStatic).
+
+- type: latheRecipe
+  id: DutyDefibrillatorLifePak40s
+  result: DutyDefibrillatorLifePak40sEmpty
+  completetime: 3
+  materials:
+    Steel: 300
+    Plastic: 100
+
+- type: latheRecipe
+  id: DutyDefibGel
+  result: DutyDefibGel
+  completetime: 1
+  materials:
+    Plastic: 50

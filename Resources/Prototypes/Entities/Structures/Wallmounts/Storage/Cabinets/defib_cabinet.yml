@@ -64,7 +64,7 @@
   - type: ContainerFill
     containers:
       ItemCabinet:
-      - Defibrillator
+      - DutyDefibrillatorLifePak40s # _Duty: LifePak-40s вместо старого дефиба
 
 - type: entity
   parent: [DefibrillatorCabinetFilled, DefibrillatorCabinetOpen]

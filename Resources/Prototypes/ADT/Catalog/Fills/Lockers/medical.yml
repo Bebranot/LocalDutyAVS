@@ -27,6 +27,7 @@
         - id: ClothingHeadHatParamedicsoft
         - id: ADTClothingHeadHatsParamedicBeret 
         - id: ADTHighVoltageDefibrillator 
+        - id: DutyDefibrillatorLifePak45A # _Duty
         - id: ClothingOuterWinterPara
         - id: ClothingUniformJumpsuitParamedic
         - id: ClothingUniformJumpskirtParamedic

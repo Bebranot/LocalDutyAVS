@@ -110,6 +110,8 @@
   id: ClothingOuterHardsuitBase
   name: base hardsuit
   components:
+  - type: DutyDefibChestCover # _Duty: электроды LifePak не достают до кожи
+    cover: Block
 # SlotBlocker blocked until UI change
 #  - type: SlotBlock
 #    slots: [innerclothing, feet]
@@ -168,6 +170,8 @@
   id: ClothingOuterEVASuitBase
   name: base EVA Suit
   components:
+  - type: DutyDefibChestCover # _Duty: электроды LifePak не достают до кожи
+    cover: Block
 # SlotBlocker blocked until UI change
 #  - type: SlotBlock
 #    slots: [innerclothing, feet]

@@ -47,6 +47,7 @@
     - id: ClothingBeltMedicalFilled
     - id: JetInjector
     - id: HandheldHealthAnalyzer
+    - id: DutyDefibrillatorLifePak45A # _Duty
     - id: ChemistryBottleLaughter # Widely recognized as the best medicine :o)
       prob: 0.01
     - id: PlushieLizardJobMedicaldoctor
@@ -122,6 +123,7 @@
     #ADT-Tweak-Start
     - id: ADTClothingHeadHatsParamedicBeret
     - id: ADTHighVoltageDefibrillator
+    - id: DutyDefibrillatorLifePak45A # _Duty
     - id: OxygenTankFilled
     - id: ClothingMaskBreathMedical
     #ADT-Tweak-End

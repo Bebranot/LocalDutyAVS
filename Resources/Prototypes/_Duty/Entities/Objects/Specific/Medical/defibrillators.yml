@@ -1,0 +1,172 @@
+# SPDX-FileCopyrightText: 2025 LocalDuty
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+# Автоматические дефибрилляторы LifePak. Оживляет ванильный Defibrillator,
+# DutyDefibProfile лишь решает, когда бить и насколько сильно.
+# Слоты подогнаны под нарисованные состояния: у 40s есть только suitStorage, у 45-A — только пояс.
+# Имена и описания — ent-* в ru-RU.
+
+- type: entity
+  id: DutyDefibrillatorLifePak40s
+  parent: [ BaseDefibrillator, PowerCellSlotSmallItem ]
+  name: LifePak-40s
+  description: A classic defibrillator, easy to use.
+  components:
+  - type: Sprite
+    sprite: _Duty/Objects/Specific/Medical/lifepak_40s.rsi
+  - type: Item
+    size: Normal
+  - type: Clothing
+    quickEquip: false
+    sprite: _Duty/Objects/Specific/Medical/lifepak_40s.rsi
+    slots:
+    - suitStorage
+  - type: Tag
+    tags:
+    - Defibrillator
+  - type: ItemToggle
+    soundActivate:
+      path: /Audio/_Duty/Defib/defib_on.ogg
+    soundDeactivate:
+      path: /Audio/_Duty/Defib/defib_off.ogg
+  - type: ToggleCellDraw
+  - type: PowerCellDraw
+    useCharge: 100
+  - type: Defibrillator
+    zapHeal:
+      types:
+        Asphyxiation: -30
+        Bloodloss: -10
+    zapDamage: 3
+    zapDelay: 6
+    doAfterDuration: 3 # длина зарядки = длина charge_low
+    canDefibCrit: false
+    chargeSound: null # зарядку играет профиль после вступления
+  - type: DutyDefibProfile
+    requireAnalysis: true
+    zapLead: 1.1 # «Stand clear», затем зарядка
+    chargeSound:
+      path: /Audio/_Duty/Defib/charge_low.ogg
+    analysisDuration: 4
+    analysisWindow: 20
+    suitBlocks: true
+    armorHealMultiplier: 0.75
+    spamHealMultipliers: [ 1, 0.6, 0.35 ]
+    spamShockMultipliers: [ 1, 1.5, 2 ]
+
+- type: entity
+  id: DutyDefibrillatorLifePak45A
+  parent: [ BaseDefibrillator, PowerCellSlotMediumItem ]
+  name: LifePak-45-A
+  description: An advanced automated defibrillator.
+  components:
+  - type: Sprite
+    sprite: _Duty/Objects/Specific/Medical/lifepak_45a.rsi
+  - type: Item
+    size: Large
+  - type: Clothing
+    quickEquip: false
+    sprite: _Duty/Objects/Specific/Medical/lifepak_45a.rsi
+    slots:
+    - belt
+  - type: Tag
+    tags:
+    - Defibrillator
+  - type: ItemToggle
+    soundActivate:
+      path: /Audio/_Duty/Defib/defib_on.ogg
+    soundDeactivate:
+      path: /Audio/_Duty/Defib/defib_off.ogg
+  - type: MultiHandedItem
+  - type: ToggleCellDraw
+  - type: PowerCellDraw
+    useCharge: 100
+  # Значения перезаписываются текущим уровнем энергии (стартовый — Standard).
+  - type: Defibrillator
+    zapHeal:
+      types:
+        Asphyxiation: -40
+        Bloodloss: -15
+    doAfterDuration: 5
+    canDefibCrit: false
+    chargeSound: null # зарядку играет профиль после вступления
+  - type: DutyDefibProfile
+    rhythmCheckVerb: true
+    zapLead: 1.5 # «Analyzing», затем решение сервера и зарядка
+    rhythmCheckDuration: 2
+    suitBlocks: false
+    suitHealMultiplier: 0.5
+    suitShockMultiplier: 1.5
+    armorHealMultiplier: 1
+    spamHealMultipliers: [ 1 ]
+    spamShockMultipliers: [ 1, 1.5, 2 ]
+    currentEnergy: 1
+    energies:
+    - name: duty-defib-energy-low
+      doAfter: 3
+      charge: 50
+      zapDamage: 2
+      cardioversion: true
+      chargeSound:
+        path: /Audio/_Duty/Defib/charge_low.ogg
+    - name: duty-defib-energy-standard
+      doAfter: 5
+      charge: 100
+      zapDamage: 5
+      heal:
+        types:
+          Asphyxiation: -40
+          Bloodloss: -15
+      chargeSound:
+        path: /Audio/_Duty/Defib/charge_standard.ogg
+    - name: duty-defib-energy-high
+      doAfter: 6
+      charge: 180
+      zapDamage: 10
+      arrhythmiaChance: 0.1
+      arrhythmiaRepeatChance: 0.4
+      heal:
+        types:
+          Asphyxiation: -55
+          Bloodloss: -15
+      chargeSound:
+        path: /Audio/_Duty/Defib/charge_high.ogg
+
+- type: entity
+  id: DutyDefibrillatorLifePak45AEmpty
+  parent: DutyDefibrillatorLifePak45A
+  suffix: Empty
+  components:
+  - type: ItemSlots
+    slots:
+      cell_slot:
+        name: power-cell-slot-component-slot-name-default
+
+- type: entity
+  id: DutyDefibrillatorLifePak40sEmpty
+  parent: DutyDefibrillatorLifePak40s
+  suffix: Empty
+  components:
+  - type: ItemSlots
+    slots:
+      cell_slot:
+        name: power-cell-slot-component-slot-name-default
+
+- type: entity
+  id: DutyDefibGel
+  parent: BaseItem
+  name: electrode gel
+  description: A tube of conductive gel. Apply to the chest before defibrillation.
+  components:
+  - type: Sprite
+    sprite: _Duty/Objects/Specific/Medical/defib_gel.rsi
+    state: icon
+  - type: Item
+    size: Tiny
+    sprite: _Duty/Objects/Specific/Medical/defib_gel.rsi
+  - type: DutyDefibGel
+    uses: 5
+    doAfter: 2
+    duration: 90
+  - type: StaticPrice
+    price: 15

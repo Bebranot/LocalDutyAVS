@@ -22,6 +22,7 @@ using Robust.Shared.Containers; // ADT-Tweak
 using Robust.Shared.Audio.Systems;
 using Robust.Shared.Player;
 using System.Linq;
+using Content.Shared._Duty.Defibrillation; // _Duty: хуки LifePak
 
 namespace Content.Shared.Medical;
 
@@ -128,6 +129,16 @@ public abstract class SharedDefibrillatorSystem : EntitySystem
         if (!TryComp<MobStateComponent>(target, out var mobState))
             return false;
 
+        // _Duty-start: LifePak — отказы до траты заряда (скафандр, пульс) и кардиоверсия по живому
+        var dutyCanZap = new DutyDefibCanZapEvent(target, user, targetCanBeAlive);
+        RaiseLocalEvent(ent.Owner, ref dutyCanZap);
+        if (dutyCanZap.Cancelled)
+            return false;
+
+        if (dutyCanZap.AllowAlive)
+            targetCanBeAlive = true;
+        // _Duty-end
+
         if (!_powerCell.HasActivatableCharge(ent.Owner, user: user, predicted: true))
             return false;
 
@@ -153,6 +164,14 @@ public abstract class SharedDefibrillatorSystem : EntitySystem
     {
         if (!Resolve(ent, ref ent.Comp))
             return false;
+
+        // _Duty-start: LifePak сам запускает анализ/разряд с голосом — до CanZap, чтобы живая цель
+        // получала голосовой отказ во время doafter, а не молчаливый отказ
+        var dutyStart = new DutyDefibStartZapEvent(target, user);
+        RaiseLocalEvent(ent.Owner, ref dutyStart);
+        if (dutyStart.Handled)
+            return dutyStart.Result;
+        // _Duty-end
 
         if (!CanZap(ent, target, user))
             return false;
@@ -201,8 +220,18 @@ public abstract class SharedDefibrillatorSystem : EntitySystem
         if (!TryComp<MobStateComponent>(target, out var targetMobState))
             return;
 
+        // _Duty-start: LifePak — множители лечения/шока (гель, одежда, серия ударов) и ожог электродами
+        var dutyModify = new DutyDefibZapModifyEvent(target, user);
+        RaiseLocalEvent(ent.Owner, ref dutyModify);
+        var zapDamage = (int) MathF.Round(ent.Comp.ZapDamage * dutyModify.ShockMultiplier);
+        var zapHeal = ent.Comp.ZapHeal * dutyModify.HealMultiplier;
+        if (dutyModify.ExtraDamage != null)
+            zapHeal += dutyModify.ExtraDamage;
+        var dutyWasDead = _mobState.IsDead(target, targetMobState);
+        // _Duty-end
+
         _audio.PlayPredicted(ent.Comp.ZapSound, ent.Owner, user);
-        _electrocution.TryDoElectrocution(target, ent.Owner, ent.Comp.ZapDamage, ent.Comp.WritheDuration, true, ignoreInsulation: true);
+        _electrocution.TryDoElectrocution(target, ent.Owner, zapDamage, ent.Comp.WritheDuration, true, ignoreInsulation: true); // _Duty: zapDamage вместо ent.Comp.ZapDamage
 
         _interactionSystem.GetEntitiesInteractingWithTarget(target, _interacters);
         foreach (var other in _interacters)
@@ -221,6 +250,13 @@ public abstract class SharedDefibrillatorSystem : EntitySystem
         }
 
         var failedRevive = true;
+        // _Duty-start: кардиоверсия живого — без ванильного оживления (иначе живой ушёл бы в крит)
+        if (dutyModify.SkipRevive)
+        {
+            failedRevive = false;
+        }
+        else
+        // _Duty-end
         if (_rotting.IsRotten(target))
         {
             _chat.TrySendInGameICMessage(ent.Owner, Loc.GetString("defibrillator-rotten"),
@@ -239,7 +275,7 @@ public abstract class SharedDefibrillatorSystem : EntitySystem
         else
         {
             if (_mobState.IsDead(target, targetMobState))
-                _damageable.TryChangeDamage(target, ent.Comp.ZapHeal, true, origin: user);
+                _damageable.TryChangeDamage(target, zapHeal, true, origin: user); // _Duty: zapHeal вместо ent.Comp.ZapHeal
 
             if (TryComp<MobThresholdsComponent>(target, out var targetThresholds) &&
                 _mobThreshold.TryGetThresholdForState(target, MobState.Dead, out var threshold, targetThresholds) &&
@@ -274,6 +310,11 @@ public abstract class SharedDefibrillatorSystem : EntitySystem
 
         var ev = new TargetDefibrillatedEvent(user, (ent.Owner, ent.Comp));
         RaiseLocalEvent(target, ref ev);
+
+        // _Duty-start: LifePak — последствия удара (гель, серия, слабость, аритмия, лужи)
+        var dutyZapped = new DutyDefibZappedEvent(target, user, dutyWasDead && !failedRevive && !dutyModify.SkipRevive, dutyModify.SkipRevive);
+        RaiseLocalEvent(ent.Owner, ref dutyZapped);
+        // _Duty-end
     }
 
     // TODO: SharedEuiManager so that we can just directly open the eui from shared.

@@ -1,0 +1,22 @@
+{
+  "version": 1,
+  "license": "CC-BY-SA-3.0",
+  "copyright": "Ointment sprite taken from tgstation at https://github.com/tgstation/tgstation/blob/a3568da5634e756d0849480104afda402c6f1c3c/icons/obj/medical/stack_medical.dmi, recolored for LocalDuty. In-hand sprites taken from Space Station 14 (Objects/Specific/Medical/medical.rsi)",
+  "size": {
+    "x": 32,
+    "y": 32
+  },
+  "states": [
+    {
+      "name": "icon"
+    },
+    {
+      "name": "inhand-left",
+      "directions": 4
+    },
+    {
+      "name": "inhand-right",
+      "directions": 4
+    }
+  ]
+}
