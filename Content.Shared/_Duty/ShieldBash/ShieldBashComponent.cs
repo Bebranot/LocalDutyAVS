@@ -69,4 +69,12 @@ public sealed partial class ShieldBashComponent : Component
     /// <summary>Звук удара по щиту при активации.</summary>
     [DataField]
     public SoundSpecifier Sound = new SoundPathSpecifier("/Audio/_Duty/Weapons/Melee/shield_bash.ogg");
+
+    /// <summary>Сколько раз подряд проигрывается <see cref="Sound"/> — серия ударов по щиту.</summary>
+    [DataField]
+    public int SoundRepeats = 4;
+
+    /// <summary>Пауза между ударами в серии.</summary>
+    [DataField]
+    public TimeSpan SoundRepeatInterval = TimeSpan.FromSeconds(0.1);
 }

@@ -22,6 +22,20 @@ public sealed class HeartbeatSystem : SharedHeartbeatSystem
 
     private float _beatAccum;
 
+    /// <summary>Сколько секунд пульс стучит без перерыва — для затихания после привыкания.</summary>
+    private float _beatingTime;
+
+    /// <summary>Уровень на прошлом кадре: усиление пульса снова делает его громким.</summary>
+    private HeartbeatLevel _lastLevel;
+    private bool _enabled;
+
+    public override void Initialize()
+    {
+        base.Initialize();
+
+        Subs.CVar(_cfg, DutyCCVars.HeartbeatEnabled, v => _enabled = v, true);
+    }
+
     // ВАЖНО: играем в FrameUpdate (раз в кадр), а НЕ в Update. Клиентский Update
     // вызывается многократно за тик во время re-prediction → аккумулятор набегал бы
     // быстрее реального времени и удары сыпались бы пачкой («бешено колотится»).
@@ -29,9 +43,9 @@ public sealed class HeartbeatSystem : SharedHeartbeatSystem
     {
         base.FrameUpdate(frameTime);
 
-        if (!_cfg.GetCVar(DutyCCVars.HeartbeatEnabled))
+        if (!_enabled)
         {
-            _beatAccum = 0f;
+            ResetBeat();
             return;
         }
 
@@ -40,9 +54,15 @@ public sealed class HeartbeatSystem : SharedHeartbeatSystem
             || !TryComp<HeartbeatComponent>(player, out var comp)
             || comp.Level == HeartbeatLevel.None)
         {
-            _beatAccum = 0f;
+            ResetBeat();
             return;
         }
+
+        // Стало хуже — пульс снова «бросается в уши», отсчёт привыкания заново.
+        if (comp.Level > _lastLevel)
+            _beatingTime = 0f;
+        _lastLevel = comp.Level;
+        _beatingTime += frameTime;
 
         var interval = comp.Level switch
         {
@@ -62,6 +82,17 @@ public sealed class HeartbeatSystem : SharedHeartbeatSystem
         _beatAccum = 0f;
 
         var sound = comp.Level == HeartbeatLevel.Light ? comp.LightSound : comp.HeavySound;
-        _audio.PlayGlobal(sound, Filter.Local(), false, sound.Params);
+        var fade = comp.FadeDuration > 0f
+            ? Math.Clamp((_beatingTime - comp.FadeDelay) / comp.FadeDuration, 0f, 1f)
+            : _beatingTime >= comp.FadeDelay ? 1f : 0f;
+        var audioParams = sound.Params.WithVolume(sound.Params.Volume + comp.FadedVolume * fade);
+        _audio.PlayGlobal(sound, Filter.Local(), false, audioParams);
+    }
+
+    private void ResetBeat()
+    {
+        _beatAccum = 0f;
+        _beatingTime = 0f;
+        _lastLevel = HeartbeatLevel.None;
     }
 }

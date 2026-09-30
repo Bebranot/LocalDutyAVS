@@ -48,14 +48,27 @@ public sealed partial class HeartbeatComponent : Component
     [DataField]
     public SoundSpecifier LightSound = new SoundCollectionSpecifier("DutyHeartbeatLight")
     {
-        Params = AudioParams.Default.WithVolume(-3f),
+        Params = AudioParams.Default.WithVolume(-6f),
     };
 
     [DataField]
     public SoundSpecifier HeavySound = new SoundCollectionSpecifier("DutyHeartbeatHeavy")
     {
-        Params = AudioParams.Default.WithVolume(-2f),
+        Params = AudioParams.Default.WithVolume(-5f),
     };
+
+    // ── Привыкание: пульс, стучащий дольше FadeDelay, уходит на фон ─────────────
+    /// <summary>Через сколько секунд непрерывного стука пульс начинает затихать.</summary>
+    [DataField]
+    public float FadeDelay = 10f;
+
+    /// <summary>За сколько секунд пульс плавно опускается до <see cref="FadedVolume"/>.</summary>
+    [DataField]
+    public float FadeDuration = 3f;
+
+    /// <summary>Насколько тише (дБ) пульс после привыкания.</summary>
+    [DataField]
+    public float FadedVolume = -12f;
 
     // ── Рантайм-заглушка (не сетится) ──────────────────────────────────────────
     /// <summary>
