@@ -114,6 +114,7 @@
   # человеческим голосом роботу нечем.
   - type: DutyStamina
     canGetWinded: false
+  - type: Jump # _Duty: по той же причине прыжок из BaseSpeciesMob до ИПЦ не доходил
   - type: VisualBody
   - type: PowerCellSlot
     cellSlotId: cell_slot

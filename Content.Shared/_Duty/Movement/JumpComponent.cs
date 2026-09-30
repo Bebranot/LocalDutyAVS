@@ -11,7 +11,7 @@ namespace Content.Shared._Duty.Movement;
 /// либо перепрыгивает через препятствия/степ-триггеры, либо запрыгивает на стол в зоне
 /// впереди (см. <see cref="SharedJumpSystem"/>).
 /// </summary>
-[RegisterComponent, NetworkedComponent, AutoGenerateComponentState, AutoGenerateComponentPause]
+[RegisterComponent, NetworkedComponent, AutoGenerateComponentState(true), AutoGenerateComponentPause]
 public sealed partial class JumpComponent : Component
 {
     [DataField]
@@ -41,6 +41,16 @@ public sealed partial class JumpComponent : Component
     [DataField]
     public float WeightlessStaminaCostMultiplier = 0.5f;
 
+    /// <summary>Шанс споткнуться при приземлении — случайный в этих пределах (0.05–0.10, как в Onyx).</summary>
+    [DataField]
+    public float StumbleChanceMin = 0.05f;
+
+    [DataField]
+    public float StumbleChanceMax = 0.10f;
+
+    [DataField]
+    public TimeSpan StumbleDuration = TimeSpan.FromSeconds(2);
+
     [AutoNetworkedField, AutoPausedField]
     public TimeSpan NextJump;
 
@@ -55,4 +65,12 @@ public sealed partial class JumpComponent : Component
 
     [AutoNetworkedField, AutoPausedField]
     public TimeSpan JumpEnds;
+
+    /// <summary>
+    /// Стоит на столе, на который запрыгнул. Пока флаг поднят, система каждый тик проверяет, что под
+    /// ногами всё ещё стол, и снимает «залезание», как только это не так — иначе коллизия со столами
+    /// оставалась снятой, персонаж «парил» и проходил на столы без прыжка.
+    /// </summary>
+    [AutoNetworkedField]
+    public bool JumpMounted;
 }

@@ -146,6 +146,17 @@ public sealed class StepTriggerSystem : EntitySystem
 
         RaiseLocalEvent(uid, ref msg);
 
+        // _Duty: спросить и самого наступившего (прыжок через мины/мышеловки/лужи). Отдельным
+        // событием, а не тем же StepTriggerAttemptEvent, как в Onyx: иначе его ловили бы обработчики
+        // ловушек, висящие на компонентах самого моба (Slippery и т.п.), и путали Source с собой.
+        if (msg.Continue && !msg.Cancelled)
+        {
+            var tripperEv = new StepTriggerTripperAttemptEvent(uid);
+            RaiseLocalEvent(otherUid, ref tripperEv);
+            if (tripperEv.Cancelled)
+                return false;
+        }
+
         return msg.Continue && !msg.Cancelled;
     }
 
@@ -247,6 +258,16 @@ public struct StepTriggerAttemptEvent
     /// <summary>
     ///     Set by systems which wish to cancel the step trigger event, regardless of event ordering.
     /// </summary>
+    public bool Cancelled;
+}
+
+/// <summary>
+/// _Duty: поднимается на наступившем, когда ловушка уже готова сработать. Отменой можно её
+/// «перешагнуть» (например, в прыжке).
+/// </summary>
+[ByRefEvent]
+public record struct StepTriggerTripperAttemptEvent(EntityUid Source)
+{
     public bool Cancelled;
 }
 

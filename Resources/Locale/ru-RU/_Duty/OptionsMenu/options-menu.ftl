@@ -5,3 +5,4 @@ ui-options-header-duty-general = LocalDuty - общее
 
 ui-options-function-block = Блок ближнего удара
 ui-options-function-sprint = Спринт
+ui-options-function-jump = Прыжок

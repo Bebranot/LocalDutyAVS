@@ -7,6 +7,7 @@ using Content.Shared.ActionBlocker;
 using Content.Shared.Buckle.Components;
 using Content.Shared.Chasm;
 using Content.Shared.Climbing.Components;
+using Content.Shared.Climbing.Events;
 using Content.Shared.Climbing.Systems;
 using Content.Shared.Damage.Components;
 using Content.Shared.Damage.Systems;
@@ -28,6 +29,7 @@ using Robust.Shared.GameObjects;
 using Robust.Shared.Input;
 using Robust.Shared.Input.Binding;
 using Robust.Shared.Map;
+using Robust.Shared.Network;
 using Robust.Shared.Physics.Components;
 using Robust.Shared.Physics.Systems;
 using Robust.Shared.Player;
@@ -58,14 +60,22 @@ public abstract partial class SharedJumpSystem : EntitySystem
     [Dependency] private readonly SharedTransformSystem _transform = default!;
     [Dependency] private readonly ThrowingSystem _throwing = default!;
     [Dependency] private readonly IGameTiming _timing = default!;
+    [Dependency] private readonly INetManager _net = default!;
+    [Dependency] private readonly ISharedPlayerManager _player = default!;
+
+    /// <summary>Запас к границам стола: между соседними столами есть щели, центр тела в них — всё ещё «на столе».</summary>
+    private const float TableEdgeMargin = 0.1f;
+
+    private readonly HashSet<Entity<ClimbableComponent>> _climbables = new();
 
     public override void Initialize()
     {
         base.Initialize();
         SubscribeLocalEvent<JumpComponent, BeforeThrowEvent>(OnBeforeThrow);
         SubscribeLocalEvent<JumpComponent, ComponentShutdown>(OnShutdown);
-        SubscribeLocalEvent<JumpComponent, StepTriggerAttemptEvent>(OnStepTriggerAttempt);
+        SubscribeLocalEvent<JumpComponent, StepTriggerTripperAttemptEvent>(OnStepTriggerAttempt);
         SubscribeLocalEvent<JumpComponent, StopThrowEvent>(OnStopThrow);
+        SubscribeLocalEvent<JumpComponent, EndClimbEvent>(OnEndClimb);
         CommandBinds.Builder
             .Bind(ContentKeyFunctions.Jump, new JumpInputCmdHandler(this))
             .Register<SharedJumpSystem>();
@@ -81,16 +91,63 @@ public abstract partial class SharedJumpSystem : EntitySystem
     {
         base.Update(frameTime);
 
+        // На клиенте ведём только своего персонажа — его прыжок предсказывается. Чужих трогать нельзя:
+        // клиент крутил бы им свою версию залезания (маски фикстур, IsClimbing) поверх серверной,
+        // и она расходилась бы с тем, что пришло по сети.
+        var isClient = _net.IsClient;
+        var local = _player.LocalEntity;
+        var now = _timing.CurTime;
+
         var query = EntityQueryEnumerator<JumpComponent>();
         while (query.MoveNext(out var uid, out var jump))
         {
-            if (!jump.IsJumping)
+            if (isClient && uid != local)
                 continue;
 
-            if (jump.JumpEnds <= _timing.CurTime ||
-                jump.MountTable && !HasComp<ThrownItemComponent>(uid) && IsOverlappingTable(uid))
-                FinishJump((uid, jump));
+            if (jump.IsJumping)
+            {
+                if (jump.JumpEnds <= now ||
+                    jump.MountTable && !HasComp<ThrownItemComponent>(uid) && IsOverTable(uid))
+                    FinishJump((uid, jump));
+                continue;
+            }
+
+            if (jump.JumpMounted)
+                CheckStillOnTable((uid, jump));
         }
+    }
+
+    /// <summary>
+    /// Страховка от залипания: пока стоим на столе после прыжка, убеждаемся, что стол под ногами. Обычно
+    /// залезание снимает сам <see cref="ClimbSystem"/> по концу контакта со столом, но если контакта
+    /// не было (приземлились у края), конца контакта не будет никогда — и коллизия со столами так и
+    /// оставалась выключенной.
+    /// </summary>
+    private void CheckStillOnTable(Entity<JumpComponent> ent)
+    {
+        if (!TryComp(ent, out ClimbingComponent? climbing) || !climbing.IsClimbing)
+        {
+            ent.Comp.JumpMounted = false;
+            Dirty(ent);
+            return;
+        }
+
+        // Идёт обычное залезание (DoAfter) — это уже не наше.
+        if (climbing.NextTransition != null || IsOverTable(ent.Owner))
+            return;
+
+        ent.Comp.JumpMounted = false;
+        Dirty(ent);
+        _climb.FinishJumpClimb(ent, climbing);
+    }
+
+    private void OnEndClimb(Entity<JumpComponent> ent, ref EndClimbEvent args)
+    {
+        if (!ent.Comp.JumpMounted)
+            return;
+
+        ent.Comp.JumpMounted = false;
+        Dirty(ent);
     }
 
     private void HandleJumpInput(ICommonSession? session, IFullInputCmdMessage message)
@@ -129,24 +186,29 @@ public abstract partial class SharedJumpSystem : EntitySystem
         args.ThrowSpeed = MathF.Max(0.1f, args.ThrowSpeed - 1f);
     }
 
+    /// <summary>Клиент ведёт прыжок только своего персонажа — см. <see cref="Update"/>.</summary>
+    private bool IsSimulated(EntityUid uid) => !_net.IsClient || uid == _player.LocalEntity;
+
     private void OnShutdown(Entity<JumpComponent> ent, ref ComponentShutdown args)
     {
-        if (ent.Comp.IsJumping && TryComp(ent, out ClimbingComponent? climbing))
+        if (!IsSimulated(ent))
+            return;
+
+        if ((ent.Comp.IsJumping || ent.Comp.JumpMounted) && TryComp(ent, out ClimbingComponent? climbing))
             _climb.FinishJumpClimb(ent, climbing);
     }
 
     private void OnStopThrow(Entity<JumpComponent> ent, ref StopThrowEvent args)
     {
-        if (args.User != ent.Owner || ent.Comp.JumpEnds > _timing.CurTime)
+        if (!IsSimulated(ent) || args.User != ent.Owner || ent.Comp.JumpEnds > _timing.CurTime)
             return;
 
         FinishJump(ent);
     }
 
-    private void OnStepTriggerAttempt(Entity<JumpComponent> ent, ref StepTriggerAttemptEvent args)
+    private void OnStepTriggerAttempt(Entity<JumpComponent> ent, ref StepTriggerTripperAttemptEvent args)
     {
         if (ent.Comp.IsJumping &&
-            args.Tripper == ent.Owner &&
             (HasComp<LandMineComponent>(args.Source) ||
              HasComp<MousetrapComponent>(args.Source) ||
              HasComp<SlipperyComponent>(args.Source) ||
@@ -182,14 +244,13 @@ public abstract partial class SharedJumpSystem : EntitySystem
         if (!TryComp(ent, out StaminaComponent? stamina) ||
             stamina.CritThreshold - _stamina.GetStaminaDamage(ent, stamina) < ent.Comp.MinimumStamina)
         {
-            _popup.PopupEntity(Loc.GetString("jump-cannot-catch-breath"), ent, ent);
+            _popup.PopupClient(Loc.GetString("jump-cannot-catch-breath"), ent, ent);
             return false;
         }
 
-        _stamina.TakeStaminaDamage(ent, staminaCost, stamina, source: ent, visual: false);
-
         if (input == Vector2.Zero)
         {
+            _stamina.TakeStaminaDamage(ent, staminaCost, stamina, source: ent, visual: false);
             ent.Comp.NextJump = _timing.CurTime + ent.Comp.Cooldown;
             ent.Comp.IsJumping = true;
             ent.Comp.MountTable = false;
@@ -223,7 +284,16 @@ public abstract partial class SharedJumpSystem : EntitySystem
         if (TryComp(ent, out PhysicsComponent? throwPhysics))
             _physics.SetLinearVelocity(ent, Vector2.Zero, body: throwPhysics);
 
-        _throwing.TryThrow(ent, target, ent.Comp.Speed, ent, recoil: false, animated: false, playSound: false, doSpin: false);
+        // pushbackRatio: 0 — бросаем сами себя, и «отдача бросающему» (в невесомости она ×2 от
+        // импульса броска) била бы по тому же телу в обратную сторону: в космосе прыжок уносил назад.
+        _throwing.TryThrow(ent, target, ent.Comp.Speed, ent, pushbackRatio: 0f, recoil: false, animated: false, playSound: false, doSpin: false);
+
+        // TryThrow ничего не возвращает; если бросок не состоялся (тело не динамическое и т.п.),
+        // прыжка нет — не тратим на него откат и не зависаем в «прыжке» до таймаута.
+        if (!HasComp<ThrownItemComponent>(ent))
+            return false;
+
+        _stamina.TakeStaminaDamage(ent, staminaCost, stamina, source: ent, visual: false);
 
         if (table != null &&
             TryComp(ent, out ClimbingComponent? climbing) &&
@@ -294,14 +364,26 @@ public abstract partial class SharedJumpSystem : EntitySystem
         return (closest.Value, closestForward);
     }
 
-    private bool IsOverlappingTable(EntityUid uid)
+    /// <summary>
+    /// Стоит ли персонаж на столе: центр тела внутри границ стола. Раньше проверялось пересечение
+    /// границ тела и стола — оно истинно и для того, кто просто стоит вплотную к столу, и после
+    /// прыжка с перелётом персонажа «ставило на стол» рядом с ним.
+    /// </summary>
+    private bool IsOverTable(EntityUid uid)
     {
-        var bodyBox = _physics.GetWorldAABB(uid);
-        foreach (var candidate in _entityLookup.GetEntitiesInRange<ClimbableComponent>(Transform(uid).Coordinates, 1.2f))
+        var xform = Transform(uid);
+        var position = _transform.GetWorldPosition(xform);
+
+        _climbables.Clear();
+        _entityLookup.GetEntitiesInRange(xform.Coordinates, 1f, _climbables);
+        foreach (var candidate in _climbables)
         {
-            if (candidate.Owner == uid)
+            if (candidate.Owner == uid ||
+                !TryComp(candidate, out PhysicsComponent? physics) ||
+                (physics.CollisionLayer & (int) CollisionGroup.TableLayer) == 0)
                 continue;
-            if (_physics.GetWorldAABB(candidate).Intersects(bodyBox))
+
+            if (_physics.GetWorldAABB(candidate).Enlarged(TableEdgeMargin).Contains(position))
                 return true;
         }
 
@@ -318,10 +400,14 @@ public abstract partial class SharedJumpSystem : EntitySystem
             _physics.SetLinearVelocity(ent, Vector2.Zero, wakeBody: false, body: physics);
         Dirty(ent);
 
-        if (IsOverlappingTable(ent.Owner))
+        if (IsOverTable(ent.Owner))
         {
             if (TryComp(ent, out ClimbingComponent? mountClimbing))
+            {
                 _climb.EnsureMountedState(ent, mountClimbing);
+                ent.Comp.JumpMounted = true;
+                Dirty(ent);
+            }
 
             OnJumpLanded(ent);
             return;

@@ -1,3 +1,4 @@
+using Content.Shared.Climbing.Components; // _Duty
 using Content.Shared.Alert;
 using Content.Shared.Buckle.Components;
 using Content.Shared.CCVar;
@@ -487,9 +488,18 @@ public abstract partial class SharedStunSystem
 
         var ourAABB = _entityLookup.GetAABBNoContainer(entity, entity.Comp.LocalPosition, entity.Comp.LocalRotation);
 
+        // _Duty-start: упавший на столе (залез прыжком или через DoAfter) лежит прямо на столе, а маска стола
+        // включает MidImpassable — без этого исключения стол под ним вечно считался «нет места встать»,
+        // и встать со стола было невозможно вообще.
+        var onTable = TryComp<ClimbingComponent>(entity, out var climbing) && climbing.IsClimbing;
+        // _Duty-end
+
         foreach (var ent in intersecting)
         {
             if (!fixtureQuery.TryGetComponent(ent, out var fixtures))
+                continue;
+
+            if (onTable && HasComp<ClimbableComponent>(ent)) // _Duty: см. выше
                 continue;
 
             if (!xformQuery.TryComp(ent, out var xformComp))

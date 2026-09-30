@@ -678,9 +678,8 @@ binds:
 - function: DrawBackItem
   type: State
   key: F
-- function: CMUniqueAction
-  type: State
-  key: Space
+# _Duty: CMUniqueAction (затвор/действие оружия RMC) без клавиши по умолчанию — Space занят прыжком.
+# Назначить можно в настройках управления.
 - function: Resist
   type: State
   key: B

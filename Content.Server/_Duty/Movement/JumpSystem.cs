@@ -9,6 +9,7 @@ using Content.Shared.Mobs.Systems;
 using Content.Shared.Popups;
 using Content.Shared.Standing;
 using Content.Shared.Stunnable;
+using Robust.Shared.Player;
 using Robust.Shared.Random;
 
 namespace Content.Server._Duty.Movement;
@@ -37,15 +38,19 @@ public sealed partial class JumpSystem : SharedJumpSystem
     {
         if (!_mobState.IsAlive(ent) ||
             _standing.IsDown((ent.Owner, null)) ||
-            !_random.Prob(_random.Next(5, 11) / 100f))
+            !_random.Prob(_random.NextFloat(ent.Comp.StumbleChanceMin, ent.Comp.StumbleChanceMax)))
             return;
 
-        _popup.PopupPredicted(
-            Loc.GetString("jump-stumble-self"),
+        // Приземление обрабатывается только здесь, на сервере, — клиент его не предсказывает.
+        // Поэтому PopupPredicted не годится: он не шлёт сообщение самому прыгнувшему, считая, что
+        // тот уже показал его у себя, и игрок так и не узнавал, почему упал.
+        _popup.PopupEntity(Loc.GetString("jump-stumble-self"), ent, ent, PopupType.MediumCaution);
+        _popup.PopupEntity(
             Loc.GetString("jump-stumble-others", ("jumper", Identity.Entity(ent, EntityManager))),
             ent,
-            ent,
+            Filter.PvsExcept(ent, entityManager: EntityManager),
+            true,
             PopupType.MediumCaution);
-        _stun.TryKnockdown((ent.Owner, null), TimeSpan.FromSeconds(2), force: true);
+        _stun.TryKnockdown((ent.Owner, null), ent.Comp.StumbleDuration, force: true);
     }
 }

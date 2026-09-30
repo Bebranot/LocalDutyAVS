@@ -33,6 +33,7 @@ public sealed class DutySprintVisualsSystem : EntitySystem
     [Dependency] private readonly MobStateSystem _mobState = default!;
     [Dependency] private readonly SpriteSystem _sprite = default!;
     [Dependency] private readonly StunSystem _stun = default!;
+    [Dependency] private readonly JumpSystem _jump = default!;
 
     /// <summary>
     /// Ключ анимации тряски. НЕ совпадает с ключом "stamina" боевой стамины
@@ -152,6 +153,10 @@ public sealed class DutySprintVisualsSystem : EntitySystem
             return false;
 
         if (_mobState.IsIncapacitated(ent.Owner))
+            return false;
+
+        // В прыжке Offset занят подлётом: тряска запомнила бы точку в воздухе как исходную.
+        if (_jump.TryGetRestingOffset(ent.Owner, out _))
             return false;
 
         return !_animation.HasRunningAnimation(ent.Owner, "stamina");

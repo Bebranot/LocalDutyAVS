@@ -148,6 +148,7 @@ namespace Content.Client.Options.UI.Tabs
             AddHeader("ui-options-header-duty-general");
             AddButton(ContentKeyFunctions.Block);
             AddButton(ContentKeyFunctions.Sprint);
+            AddButton(ContentKeyFunctions.Jump); // _Duty: прыжок
 
             // ADT TWEAK START
             AddHeader("ui-options-header-rmc");

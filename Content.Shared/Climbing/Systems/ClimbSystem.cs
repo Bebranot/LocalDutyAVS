@@ -386,6 +386,11 @@ public sealed partial class ClimbSystem : VirtualController
 
     private void OnClimbEndCollide(EntityUid uid, ClimbingComponent component, ref EndCollideEvent args)
     {
+        // _Duty: прыжок на стол (порт Space Onyx). Пока летим, коллизия со столами снята целиком:
+        // потеря контакта с одной плиткой стола не должна обрывать залезание и впечатывать в соседнюю.
+        if (IsJumpClimbing(uid))
+            return;
+
         if (args.OurFixtureId != ClimbingFixtureName
             || !component.IsClimbing
             || component.NextTransition != null)

@@ -77,9 +77,19 @@ public sealed partial class ClimbSystem
 
     public void FinishJumpClimb(EntityUid uid, ClimbingComponent climbing)
     {
+        // Обычное приземление на пол: не залезали — снимать нечего. Без этой отсечки каждый прыжок
+        // гонял StopClimb: лишний Dirty по сети и ложный EndClimbEvent.
+        if (!climbing.IsClimbing && climbing.DisabledFixtureMasks.Count == 0)
+            return;
+
         if (!TryComp(uid, out FixturesComponent? fixtures))
             return;
 
         StopClimb(uid, climbing, fixtures);
+    }
+
+    private bool IsJumpClimbing(EntityUid uid)
+    {
+        return TryComp<JumpComponent>(uid, out var jump) && jump.IsJumping && jump.MountTable;
     }
 }
