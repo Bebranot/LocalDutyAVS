@@ -35,6 +35,7 @@
   - type: DrainableSolution
     solution: tank
   - type: ReagentTank
+  - type: ClothingDirtWasher # _Duty: стирка вещей и умывание у раковины
   - type: Drain
     autoDrain: false
   - type: DumpableSolution

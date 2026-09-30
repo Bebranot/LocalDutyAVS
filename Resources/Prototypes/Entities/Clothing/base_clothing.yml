@@ -14,12 +14,10 @@
   - type: FlavorProfile #yes not every peice of clothing is edible, but this way every edible piece of clothing should have the flavor without me having to track down what specific clothing can and cannot be eaten.
     flavors:
     - fiber
-  # _Duty: одежда пачкается (портировано из Space Onyx)
+  # _Duty: одежда пачкается (портировано из Space Onyx). Раствор "dirt" создаёт
+  # ClothingDirtSystem при первом загрязнении — в прототипе его не держим, потому что
+  # SolutionContainerManager дочерних прототипов (food у обуви/перчаток/шапок) его затирал.
   - type: ClothingDirtable
-  - type: SolutionContainerManager
-    solutions:
-      dirt:
-        maxVol: 20
 
 - type: entity
   abstract: true

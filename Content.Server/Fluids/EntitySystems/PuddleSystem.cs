@@ -1,3 +1,4 @@
+using Content.Shared._Duty.Clothing; // _Duty
 using Content.Server.Fluids.Components;
 using Content.Server.Spreader;
 using Content.Shared.Chemistry;
@@ -29,6 +30,7 @@ namespace Content.Server.Fluids.EntitySystems;
 public sealed partial class PuddleSystem : SharedPuddleSystem
 {
     [Dependency] private readonly SharedMapSystem _map = default!;
+    [Dependency] private readonly ClothingDirtSystem _clothingDirt = default!; // _Duty
     [Dependency] private readonly IPrototypeManager _prototypeManager = default!;
     [Dependency] private readonly IRobustRandom _random = default!;
     [Dependency] private readonly EntityLookupSystem _lookup = default!;
@@ -428,6 +430,10 @@ public sealed partial class PuddleSystem : SharedPuddleSystem
             // between 5 and 30%
             var splitAmount = spilled.Volume * _random.NextFloat(0.05f, 0.30f);
             var splitSolution = spilled.SplitSolution(splitAmount);
+
+            // _Duty: брызги пачкают одежду (порт Space Onyx).
+            _clothingDirt.TryDirtyWornSplash(owner, splitSolution,
+                FixedPoint2.Min(splitSolution.Volume, FixedPoint2.New(1)));
 
             if (user != null)
             {

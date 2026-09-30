@@ -1,3 +1,4 @@
+using Content.Shared._Duty.Clothing; // _Duty
 using Content.Shared.Alert;
 using Content.Shared.Body.Components;
 using Content.Shared.Body.Events;
@@ -37,6 +38,7 @@ public abstract class SharedBloodstreamSystem : EntitySystem
     [Dependency] private readonly SharedAudioSystem _audio = default!;
     [Dependency] private readonly SharedPopupSystem _popup = default!;
     [Dependency] private readonly SharedPuddleSystem _puddle = default!;
+    [Dependency] private readonly ClothingDirtSystem _clothingDirt = default!; // _Duty
     [Dependency] private readonly StatusEffectsSystem _status = default!;
     [Dependency] private readonly AlertsSystem _alertsSystem = default!;
     [Dependency] private readonly MobStateSystem _mobStateSystem = default!;
@@ -474,6 +476,11 @@ public abstract class SharedBloodstreamSystem : EntitySystem
         }
 
         var leakedBlood = SolutionContainer.SplitSolution(ent.Comp.BloodSolution.Value, amount);
+
+        // _Duty: кровь проступает на одежду (порт Space Onyx). Раствор не расходуется —
+        // ClothingDirtSystem берёт с него пробу, лужа ниже получает всё.
+        _clothingDirt.TryDirtyWorn(ent.Owner, leakedBlood,
+            FixedPoint2.Min(leakedBlood.Volume, FixedPoint2.New(1)), ClothingDirtSystem.BleedSlots);
 
         if (!SolutionContainer.ResolveSolution(ent.Owner, ent.Comp.BloodTemporarySolutionName, ref ent.Comp.TemporarySolution, out var tempSolution))
             return true;

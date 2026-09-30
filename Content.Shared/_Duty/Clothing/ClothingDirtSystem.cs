@@ -18,6 +18,7 @@ using Content.Shared.Inventory;
 using Content.Shared.Item;
 using Robust.Shared.Network;
 using Robust.Shared.Prototypes;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 
 namespace Content.Shared._Duty.Clothing;
@@ -25,6 +26,48 @@ namespace Content.Shared._Duty.Clothing;
 public sealed partial class ClothingDirtSystem : EntitySystem
 {
     public const string DefaultSolutionName = "dirt";
+
+    /// <summary>Что пачкает кровотечение: кровь проступает на нижний слой одежды.</summary>
+    public static readonly SlotFlags BleedSlots = SlotFlags.INNERCLOTHING;
+
+    /// <summary>
+    /// Зоны тела и слои одежды, которые их закрывают (от внешнего к внутреннему). В Onyx это
+    /// поля частей тела (DirtExposures/DirtCoverageLayers); частей тела у нас нет, поэтому та же
+    /// таблица зашита сюда. Грязь попадает на САМЫЙ ВНЕШНИЙ надетый слой каждой задетой зоны.
+    /// Парные зоны (руки, ноги, кисти, ступни) перечислены дважды — как две части тела в Onyx,
+    /// чтобы доля грязи на предмет делилась так же.
+    /// </summary>
+    private static readonly (DirtExposure Exposure, SlotFlags[] Layers)[] BodyZones =
+    [
+        // Торс
+        (DirtExposure.Splash | DirtExposure.Crawl | DirtExposure.FullBody,
+            [SlotFlags.OUTERCLOTHING, SlotFlags.INNERCLOTHING, SlotFlags.NECK]),
+        // Голова
+        (DirtExposure.Splash | DirtExposure.Crawl | DirtExposure.Face | DirtExposure.FullBody,
+            [SlotFlags.HEAD, SlotFlags.MASK]),
+        // Руки
+        (DirtExposure.Splash | DirtExposure.Crawl | DirtExposure.FullBody,
+            [SlotFlags.OUTERCLOTHING, SlotFlags.INNERCLOTHING]),
+        (DirtExposure.Splash | DirtExposure.Crawl | DirtExposure.FullBody,
+            [SlotFlags.OUTERCLOTHING, SlotFlags.INNERCLOTHING]),
+        // Кисти
+        (DirtExposure.Splash | DirtExposure.Crawl | DirtExposure.Hands | DirtExposure.FullBody,
+            [SlotFlags.GLOVES]),
+        (DirtExposure.Splash | DirtExposure.Crawl | DirtExposure.Hands | DirtExposure.FullBody,
+            [SlotFlags.GLOVES]),
+        // Ноги
+        (DirtExposure.Splash | DirtExposure.Crawl | DirtExposure.FullBody,
+            [SlotFlags.OUTERCLOTHING, SlotFlags.INNERCLOTHING]),
+        (DirtExposure.Splash | DirtExposure.Crawl | DirtExposure.FullBody,
+            [SlotFlags.OUTERCLOTHING, SlotFlags.INNERCLOTHING]),
+        // Ступни
+        (DirtExposure.Splash | DirtExposure.Ground | DirtExposure.Crawl | DirtExposure.FullBody,
+            [SlotFlags.FEET, SlotFlags.SOCKS]),
+        (DirtExposure.Splash | DirtExposure.Ground | DirtExposure.Crawl | DirtExposure.FullBody,
+            [SlotFlags.FEET, SlotFlags.SOCKS]),
+    ];
+
+    private readonly HashSet<EntityUid> _dirtTargets = new();
 
     [Dependency] private readonly InventorySystem _inventory = default!;
     [Dependency] private readonly SharedItemSystem _item = default!;
@@ -36,13 +79,26 @@ public sealed partial class ClothingDirtSystem : EntitySystem
     private readonly List<EntityUid> _dryingBuffer = new();
     private float _dryUpdateAccumulator;
 
+    /// <summary>Кэш <see cref="GetCleanMultiplier"/> по id реагента — иначе на каждый реагент
+    /// каждой операции заново перебирались бы все ReactiveEffects прототипа.</summary>
+    private readonly Dictionary<string, float> _cleanMultipliers = new();
+
     public override void Initialize()
     {
         base.Initialize();
         SubscribeLocalEvent<ClothingDirtableComponent, MapInitEvent>(OnMapInit);
         SubscribeLocalEvent<ClothingDirtableComponent, ComponentShutdown>(OnShutdown);
         SubscribeLocalEvent<ClothingDirtableComponent, ExaminedEvent>(OnExamined);
-        SubscribeLocalEvent<ClothingDirtableComponent, SolutionChangedEvent>(OnSolutionChanged);
+        // SolutionChangedEvent поднимается на сущности самого раствора, а не на одежде — до
+        // владельца доходит только релей SolutionContainerChangedEvent.
+        SubscribeLocalEvent<ClothingDirtableComponent, SolutionContainerChangedEvent>(OnSolutionChanged);
+        SubscribeLocalEvent<PrototypesReloadedEventArgs>(OnPrototypesReloaded);
+    }
+
+    private void OnPrototypesReloaded(PrototypesReloadedEventArgs args)
+    {
+        if (args.WasModified<ReagentPrototype>())
+            _cleanMultipliers.Clear();
     }
 
     private void OnShutdown(Entity<ClothingDirtableComponent> ent, ref ComponentShutdown args)
@@ -84,11 +140,11 @@ public sealed partial class ClothingDirtSystem : EntitySystem
         }
     }
 
-    private void OnSolutionChanged(Entity<ClothingDirtableComponent> ent, ref SolutionChangedEvent args)
+    private void OnSolutionChanged(Entity<ClothingDirtableComponent> ent, ref SolutionContainerChangedEvent args)
     {
-        if (!_net.IsServer || args.Solution.Comp.Solution.Name != ent.Comp.Solution)
+        if (!_net.IsServer || args.SolutionId != ent.Comp.Solution)
             return;
-        Refresh(ent, args.Solution.Comp.Solution);
+        Refresh(ent, args.Solution);
     }
 
     private void OnExamined(Entity<ClothingDirtableComponent> ent, ref ExaminedEvent args)
@@ -109,7 +165,7 @@ public sealed partial class ClothingDirtSystem : EntitySystem
     {
         if (!_net.IsServer || amount <= 0 || source.Volume <= 0 ||
             !Resolve(clothing, ref component, false) ||
-            !_solutions.TryGetSolution(clothing, component.Solution, out var solutionEnt, out var dirt))
+            !TryEnsureDirtSolution(clothing, component, out var solutionEnt, out var dirt))
             return false;
 
         var target = FixedPoint2.Min(amount, source.Volume, dirt.AvailableVolume);
@@ -128,11 +184,11 @@ public sealed partial class ClothingDirtSystem : EntitySystem
                 sample.AddReagent(reagent.Reagent, accepted);
         }
 
+        // TryAddSolution/UpdateChemicals поднимают SolutionContainerChangedEvent → Refresh.
         if (sample.Volume <= 0 || !_solutions.TryAddSolution(solutionEnt.Value, sample))
             return false;
         if (ProcessCleaners(dirt))
             _solutions.UpdateChemicals(solutionEnt.Value);
-        Refresh((clothing, component), dirt);
         return true;
     }
 
@@ -165,7 +221,6 @@ public sealed partial class ClothingDirtSystem : EntitySystem
 
         if (ProcessCleaners(dirt))
             _solutions.UpdateChemicals(solutionEnt.Value);
-        Refresh((clothing, component), dirt);
         return true;
     }
 
@@ -181,9 +236,7 @@ public sealed partial class ClothingDirtSystem : EntitySystem
         if (multiplier <= 0)
             return false;
 
-        var washable = dirt.Contents
-            .Where(x => !IsCleaner(x.Reagent))
-            .Aggregate(FixedPoint2.Zero, (total, x) => total + x.Quantity);
+        var washable = GetWashableVolume(dirt);
         var remaining = FixedPoint2.Min(amount * multiplier, washable);
         if (remaining <= 0)
             return true;
@@ -207,7 +260,6 @@ public sealed partial class ClothingDirtSystem : EntitySystem
         }
 
         _solutions.UpdateChemicals(solutionEnt.Value);
-        Refresh((clothing, component), dirt);
         return original > remaining;
     }
 
@@ -221,8 +273,73 @@ public sealed partial class ClothingDirtSystem : EntitySystem
         if (removed <= 0)
             return false;
         _solutions.UpdateChemicals(solutionEnt.Value);
-        Refresh((dirtable, component), dirt);
         return true;
+    }
+
+    /// <summary>Облили или забрызгали — пачкается всё, что снаружи.</summary>
+    public bool TryDirtyWornSplash(EntityUid wearer, Solution source, FixedPoint2 amount)
+        => TryDirtyBody(wearer, source, amount, DirtExposure.Splash);
+
+    /// <summary>Прошёл по луже — пачкается обувь (или носки, если босиком).</summary>
+    public bool TryDirtyWornPuddleStep(EntityUid wearer, Solution source, FixedPoint2 amount)
+        => TryDirtyBody(wearer, source, amount, DirtExposure.Ground);
+
+    /// <summary>Ползёт по луже — пачкается всё тело, каждая зона получает полную порцию.</summary>
+    public bool TryDirtyWornPuddleCrawl(EntityUid wearer, Solution source, FixedPoint2 amount)
+        => TryDirtyBody(wearer, source, amount, DirtExposure.Crawl, splitAmount: false);
+
+    /// <summary>
+    /// Пачкает внешний слой одежды на всех зонах тела, подверженных <paramref name="exposure"/>.
+    /// Голые зоны (одежды нет) тоже учитываются в делителе: их долю грязи «забирает кожа», как в
+    /// Onyx, — иначе один носок впитывал бы всю лужу.
+    /// </summary>
+    public bool TryDirtyBody(EntityUid body, Solution source, FixedPoint2 amount, DirtExposure exposure,
+        bool splitAmount = true)
+    {
+        if (!_net.IsServer || amount <= 0 || source.Volume <= 0 || !HasComp<InventoryComponent>(body))
+            return false;
+
+        _dirtTargets.Clear();
+        var bareZones = 0;
+        foreach (var (zoneExposure, layers) in BodyZones)
+        {
+            if ((zoneExposure & exposure) == 0)
+                continue;
+            if (!AddOuterLayer(body, layers))
+                bareZones++;
+        }
+
+        if (_dirtTargets.Count == 0)
+            return false;
+
+        var amountPerTarget = splitAmount ? amount / (_dirtTargets.Count + bareZones) : amount;
+        var changed = false;
+        foreach (var target in _dirtTargets)
+            changed |= TryDirtyClothing(target, source, amountPerTarget);
+        return changed;
+    }
+
+    /// <summary>Добавляет в цели предметы первого из <paramref name="layers"/>, в котором что-то надето.</summary>
+    private bool AddOuterLayer(EntityUid body, SlotFlags[] layers)
+    {
+        foreach (var layer in layers)
+        {
+            if (!_inventory.TryGetContainerSlotEnumerator(body, out var enumerator, layer))
+                continue;
+
+            var found = false;
+            while (enumerator.NextItem(out var item))
+            {
+                if (!HasComp<ClothingDirtableComponent>(item))
+                    continue;
+                _dirtTargets.Add(item);
+                found = true;
+            }
+
+            if (found)
+                return true;
+        }
+        return false;
     }
 
     /// <summary>Пачкает всю одежду в указанных слотах инвентаря (например, при контакте с лужей).</summary>
@@ -261,9 +378,12 @@ public sealed partial class ClothingDirtSystem : EntitySystem
                 changed |= dirt.RemoveReagent(reagent.Reagent, remove) > 0;
         }
 
+        // При изменении Refresh придёт через SolutionContainerChangedEvent; иначе сушить нечего —
+        // Refresh снимет предмет с сушки.
         if (changed)
             _solutions.UpdateChemicals(solutionEnt.Value);
-        Refresh(ent, dirt);
+        else
+            Refresh(ent, dirt);
     }
 
     private bool ProcessCleaners(Solution dirt)
@@ -278,9 +398,7 @@ public sealed partial class ClothingDirtSystem : EntitySystem
             if (multiplier <= 0)
                 continue;
 
-            var washable = dirt.Contents
-                .Where(x => !IsCleaner(x.Reagent))
-                .Aggregate(FixedPoint2.Zero, (total, reagent) => total + reagent.Quantity);
+            var washable = GetWashableVolume(dirt);
             if (washable <= 0)
                 break;
 
@@ -301,9 +419,7 @@ public sealed partial class ClothingDirtSystem : EntitySystem
 
     private FixedPoint2 RemoveWashableDirt(Solution dirt, FixedPoint2 amount)
     {
-        var washable = dirt.Contents
-            .Where(x => !IsCleaner(x.Reagent))
-            .Aggregate(FixedPoint2.Zero, (total, reagent) => total + reagent.Quantity);
+        var washable = GetWashableVolume(dirt);
         var remaining = FixedPoint2.Min(amount, washable);
         var removed = FixedPoint2.Zero;
         if (remaining <= 0)
@@ -323,11 +439,56 @@ public sealed partial class ClothingDirtSystem : EntitySystem
         return removed;
     }
 
+    /// <summary>
+    /// Раствор грязи создаётся лениво, при первом попадании грязи. Держать его в прототипе нельзя:
+    /// базовые прототипы обуви, перчаток, шапок, униформы и т.д. объявляют свой
+    /// SolutionContainerManager (раствор «food» для молей), и он целиком заменяет родительский —
+    /// «dirt» у них пропадал, и такие вещи не пачкались вовсе. Заодно чистая одежда (почти вся
+    /// одежда на карте) не тащит лишнюю сущность раствора.
+    /// </summary>
+    private bool TryEnsureDirtSolution(EntityUid clothing, ClothingDirtableComponent component,
+        [NotNullWhen(true)] out Entity<SolutionComponent>? solutionEnt, [NotNullWhen(true)] out Solution? solution)
+    {
+        if (_solutions.TryGetSolution(clothing, component.Solution, out solutionEnt, out solution))
+            return true;
+
+        solution = null;
+        if (!_net.IsServer ||
+            !_solutions.EnsureSolutionEntity(clothing, component.Solution, out solutionEnt, component.Capacity) ||
+            solutionEnt is not { } created)
+            return false;
+
+        solution = created.Comp.Solution;
+        return true;
+    }
+
+    /// <summary>Объём «грязи» — всего, что не является моющим средством.</summary>
+    private FixedPoint2 GetWashableVolume(Solution dirt)
+    {
+        var total = FixedPoint2.Zero;
+        foreach (var reagent in dirt.Contents)
+        {
+            if (!IsCleaner(reagent.Reagent))
+                total += reagent.Quantity;
+        }
+        return total;
+    }
+
     private bool IsCleaner(ReagentId reagent)
         => _prototype.Resolve<ReagentPrototype>(reagent.Prototype, out var prototype) &&
            GetCleanMultiplier(prototype) > 0;
 
-    private static float GetCleanMultiplier(ReagentPrototype prototype)
+    private float GetCleanMultiplier(ReagentPrototype prototype)
+    {
+        if (!_cleanMultipliers.TryGetValue(prototype.ID, out var multiplier))
+        {
+            multiplier = ComputeCleanMultiplier(prototype);
+            _cleanMultipliers[prototype.ID] = multiplier;
+        }
+        return multiplier;
+    }
+
+    private static float ComputeCleanMultiplier(ReagentPrototype prototype)
     {
         if (prototype.ReactiveEffects == null)
             return 0f;
@@ -344,26 +505,58 @@ public sealed partial class ClothingDirtSystem : EntitySystem
         return 0f;
     }
 
+    /// <summary>
+    /// Шаги квантования цвета грязи. Кровь капает на одежду каждый тик кровотечения, и без округления
+    /// цвет менялся бы на тысячные доли каждый раз: сетевое состояние предмета, пересборка слоёв
+    /// одежды и новый шейдер у каждого игрока рядом — ради разницы, которую глаз не видит.
+    /// С шагом 1/20 по покрытию и 1/32 по каналам цвет обновляется только заметными ступенями.
+    /// </summary>
+    private const float DirtAlphaSteps = 20f;
+    private const float DirtColorSteps = 32f;
+
+    private static float Quantize(float value, float steps)
+        => MathF.Round(value * steps) / steps;
+
     private void Refresh(Entity<ClothingDirtableComponent> ent, Solution dirt)
     {
-        var dryable = dirt.Contents.Any(x =>
-            _prototype.Resolve<ReagentPrototype>(x.Reagent.Prototype, out var prototype) &&
-            prototype.EvaporationSpeed > 0 && x.Quantity > 0);
         if (_net.IsServer)
         {
+            var dryable = false;
+            foreach (var reagent in dirt.Contents)
+            {
+                if (reagent.Quantity <= 0 ||
+                    !_prototype.Resolve<ReagentPrototype>(reagent.Reagent.Prototype, out var prototype) ||
+                    prototype.EvaporationSpeed <= 0)
+                    continue;
+                dryable = true;
+                break;
+            }
+
             if (dryable) _drying.Add(ent.Owner);
             else _drying.Remove(ent.Owner);
         }
 
-        var visibleDirt = dirt.Contents.Where(x => !IsCleaner(x.Reagent)).ToArray();
-        var visibleVolume = visibleDirt.Aggregate(FixedPoint2.Zero, (total, reagent) => total + reagent.Quantity);
+        var visibleVolume = GetWashableVolume(dirt);
         Color? color = null;
         var visualCapacity = FixedPoint2.Min(ent.Comp.Capacity, ent.Comp.MaxReagentAmount);
         if (visibleVolume > 0 && visualCapacity > 0)
         {
-            var alpha = Math.Clamp(visibleVolume.Float() / visualCapacity.Float(),
+            var alpha = Math.Clamp(Quantize(visibleVolume.Float() / visualCapacity.Float(), DirtAlphaSteps),
                 ent.Comp.MinVisualCoverage, 1f);
-            color = new Solution(visibleDirt).GetColor(_prototype).WithAlpha(alpha);
+
+            // Раствор под цвет собираем только когда грязь реально видна.
+            var visibleDirt = new Solution();
+            foreach (var reagent in dirt.Contents)
+            {
+                if (!IsCleaner(reagent.Reagent))
+                    visibleDirt.AddReagent(reagent.Reagent, reagent.Quantity);
+            }
+            var mixed = visibleDirt.GetColor(_prototype);
+            color = new Color(
+                Quantize(mixed.R, DirtColorSteps),
+                Quantize(mixed.G, DirtColorSteps),
+                Quantize(mixed.B, DirtColorSteps),
+                alpha);
         }
         if (ent.Comp.DirtColor == color)
             return;
@@ -371,4 +564,22 @@ public sealed partial class ClothingDirtSystem : EntitySystem
         Dirty(ent);
         _item.VisualsChanged(ent.Owner);
     }
+}
+
+/// <summary>Как грязь попадает на тело — определяет, какие зоны (и чья одежда) пачкаются.</summary>
+[Flags]
+public enum DirtExposure : byte
+{
+    None = 0,
+    /// <summary>Брызги: облили, забрызгали, окатили из ведра.</summary>
+    Splash = 1 << 0,
+    /// <summary>Шаг по луже — только ступни.</summary>
+    Ground = 1 << 1,
+    /// <summary>Ползком по луже — всё тело.</summary>
+    Crawl = 1 << 2,
+    /// <summary>Руки (мытьё рук).</summary>
+    Hands = 1 << 3,
+    /// <summary>Лицо (умывание).</summary>
+    Face = 1 << 4,
+    FullBody = 1 << 5,
 }

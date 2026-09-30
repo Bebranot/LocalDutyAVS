@@ -73,7 +73,13 @@ public sealed partial class ClothingDirtVisualizerSystem : EntitySystem
     }
 
     private void OnStartup(Entity<ClothingDirtableComponent> ent, ref ComponentStartup args)
-        => _pending.Add(ent);
+    {
+        // Чистой одежде (а это почти вся одежда на карте) делать нечего — без этой отсечки каждый
+        // предмет при входе в PVS дёргал бы VisualsChanged впустую. Если грязь придёт позже,
+        // предмет попадёт в очередь через OnState.
+        if (ent.Comp.DirtColor != null)
+            _pending.Add(ent);
+    }
 
     private void OnRemove(Entity<ClothingDirtableComponent> ent, ref ComponentRemove args)
     {

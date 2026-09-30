@@ -452,7 +452,7 @@
   color: "#75b1f0"
   # _Duty: вода отмывает грязь с одежды (портировано из Space Onyx)
   reactiveEffects:
-    DutyCleanDirt:
+    Extinguish: # _Duty: группа реакции на касание — та же, что в Onyx
       methods: [ Touch ]
       effects:
       - !type:CleanDirt

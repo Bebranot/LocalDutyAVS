@@ -17,3 +17,8 @@ shower-verb-enable = Включить
 shower-verb-disable = Выключить
 
 washing-machine-verb-start = Начать стирку
+
+clothing-dirt-washing-self = Вы застирываете { $clothing }.
+clothing-dirt-washing-others = { CAPITALIZE($user) } застирывает { $clothing }.
+body-dirt-wash-hands-verb = Вымыть руки
+body-dirt-wash-face-verb = Умыть лицо

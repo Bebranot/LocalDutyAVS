@@ -1,3 +1,4 @@
+using Content.Shared._Duty.Clothing; // _Duty
 using Content.Shared.Chemistry;
 using Content.Shared.Chemistry.Components;
 using Content.Shared.Chemistry.EntitySystems;
@@ -24,6 +25,7 @@ public abstract partial class SharedPuddleSystem
 {
     private static readonly FixedPoint2 MeleeHitTransferProportion = 0.25;
     [Dependency] private readonly InjectorSystem _injectorSystem = default!;
+    [Dependency] private readonly ClothingDirtSystem _clothingDirt = default!; // _Duty
 
     protected virtual void InitializeSpillable()
     {
@@ -172,7 +174,12 @@ public abstract partial class SharedPuddleSystem
             if (_adtMedicalSpray.ShouldBlockSplash(splitSolution))
                 TrySpillAt(Transform(hit).Coordinates, splitSolution, out _);
             else
+            {
+                // _Duty: брызги пачкают одежду (порт Space Onyx).
+                _clothingDirt.TryDirtyWornSplash(hit, splitSolution,
+                    FixedPoint2.Min(splitSolution.Volume, FixedPoint2.New(1)));
                 Reactive.DoEntityReaction(hit, splitSolution, ReactionMethod.Touch);
+            }
             // ADT-Tweak end
 
             Popups.PopupClient(Loc.GetString("spill-melee-hit-attacker",

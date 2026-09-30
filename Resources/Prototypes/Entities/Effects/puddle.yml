@@ -199,6 +199,7 @@
       puddle:
         maxVol: 1000
   - type: Puddle
+  - type: SurfaceDirtSource # _Duty: лужа пачкает одежду тех, кто по ней ходит
   - type: MixableSolution
     solution: puddle
   - type: Appearance
