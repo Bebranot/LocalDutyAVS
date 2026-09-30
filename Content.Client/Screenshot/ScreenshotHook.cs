@@ -67,6 +67,11 @@ namespace Content.Client.Screenshot
                         filename = $"{filename}-{i}";
                     }
 
+                    // _Duty: два скриншота за одну секунду дают одинаковое имя — сразу берём
+                    // следующее свободное, а не ловим IOException с простынёй стектрейса в лог.
+                    if (_resourceManager.UserData.Exists(BaseScreenshotPath / $"{filename}.png"))
+                        continue;
+
                     await using var file =
                         _resourceManager.UserData.Open(BaseScreenshotPath / $"{filename}.png", FileMode.CreateNew, FileAccess.Write, FileShare.None);
 

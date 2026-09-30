@@ -15,7 +15,15 @@ public sealed partial class AuthApiHelper
 
         try
         {
-            HttpResponseMessage response = await _httpClient.GetAsync(url);
+            using var response = await _httpClient.GetAsync(url);
+
+            // _Duty: 404 — штатная ситуация для гостевых и локальных (dev) аккаунтов, которых нет
+            // на сервере авторизации. Предупреждение на каждый заход новичка было шумом в логе.
+            if (response.StatusCode == System.Net.HttpStatusCode.NotFound)
+            {
+                Logger.Debug($"Account {uuid} is not registered on the auth server (guest/local account).");
+                return "Аккаунт не найден (гостевой/локальный)";
+            }
 
             if (!response.IsSuccessStatusCode)
             {
