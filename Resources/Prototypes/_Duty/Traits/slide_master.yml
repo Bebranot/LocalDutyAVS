@@ -1,0 +1,14 @@
+# _Duty: «Мастер подкатов» — спринт + «лечь» даёт подкат вместо обычного падения.
+- type: trait
+  id: DutySlideMaster
+  name: trait-duty-slide-master-name
+  description: trait-duty-slide-master-desc
+  category: PhysicalTraits
+  cost: 2
+  conflicts:
+    - Paralyzed
+    - ImpairedMobility
+  effects:
+    - !type:AddCompsEffect
+      components:
+        - type: DutySlideMaster

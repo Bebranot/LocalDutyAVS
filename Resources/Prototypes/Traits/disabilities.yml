@@ -92,6 +92,10 @@
   description: trait-paralyzed-desc
   category: Disabilities
   cost: -4
+  # _Duty-tweak-start: обратный конфликт — UI выбора трейтов проверяет конфликты только у выбираемого
+  conflicts:
+    - DutySlideMaster
+  # _Duty-tweak-end
   speciesBlacklist:
     - IPC
   departmentBlacklist:
@@ -185,6 +189,10 @@
   description: trait-impaired-mobility-desc
   category: Disabilities
   cost: -1
+  # _Duty-tweak-start: обратный конфликт — UI выбора трейтов проверяет конфликты только у выбираемого
+  conflicts:
+    - DutySlideMaster
+  # _Duty-tweak-end
   effects:
     - !type:AddCompsEffect
       components:
