@@ -38,9 +38,11 @@ public sealed class DutyBreathingSystem : EntitySystem
         StopNow();
     }
 
-    public override void Update(float frameTime)
+    // FrameUpdate, а не Update: клиентский Update при повторной симуляции зовётся по нескольку раз
+    // за тик, и затухание отдышки обрывалось бы тем быстрее, чем выше пинг.
+    public override void FrameUpdate(float frameTime)
     {
-        base.Update(frameTime);
+        base.FrameUpdate(frameTime);
 
         // Стрим мог быть удалён движком (закончился/выгрузился) — сбрасываем ссылку.
         if (_stream != null && (Deleted(_stream) || TerminatingOrDeleted(_stream.Value)))

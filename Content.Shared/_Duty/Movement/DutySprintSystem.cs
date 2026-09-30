@@ -45,6 +45,7 @@ public sealed class DutySprintSystem : EntitySystem
     [Dependency] private readonly IConfigurationManager _config = default!;
     [Dependency] private readonly IGameTiming _timing = default!;
     [Dependency] private readonly INetManager _net = default!;
+    [Dependency] private readonly ISharedPlayerManager _player = default!;
     [Dependency] private readonly AlertsSystem _alerts = default!;
     [Dependency] private readonly InventorySystem _inventory = default!;
     [Dependency] private readonly MobStateSystem _mobState = default!;
@@ -80,6 +81,15 @@ public sealed class DutySprintSystem : EntitySystem
     private const float TorsoFractureCrackDrainPenalty = 0.1f;
     private const float TorsoFractureFullDrainPenalty = 0.3f;
     private const float TorsoFractureOpenDrainPenalty = 0.5f;
+
+    /// <summary>Поля, которые меняет тиковый расход/восстановление, — только они уходят дельтой.</summary>
+    private static readonly string[] TickDirtyFields =
+    {
+        nameof(DutyStaminaComponent.Current),
+        nameof(DutyStaminaComponent.Exhausted),
+        nameof(DutyStaminaComponent.NextRegen),
+        nameof(DutyStaminaComponent.Breathing),
+    };
 
     public override void Initialize()
     {
@@ -123,7 +133,10 @@ public sealed class DutySprintSystem : EntitySystem
 
     private void OnMoveInput(Entity<DutyStaminaComponent> ent, ref MoveInputEvent args)
     {
-        if (!_timing.IsFirstTimePredicted || !ent.Comp.WantsSprint)
+        // Без отсечки по IsFirstTimePredicted: при повторной симуляции ввод движения переигрывается,
+        // и остановка спринта обязана переиграться вместе с ним — иначе после каждого пакета с сервера
+        // клиент ещё RTT считал бы бег спринтом и дёргал позицию назад, когда придёт правда.
+        if (!ent.Comp.WantsSprint)
             return;
 
         var startedWalking = (args.OldMovement & MoveButtons.Walk) == 0
@@ -194,9 +207,12 @@ public sealed class DutySprintSystem : EntitySystem
 
     private void SetWantsSprint(ICommonSession? session, bool wants)
     {
-        if (!_timing.IsFirstTimePredicted)
-            return;
-
+        // Отсечки по IsFirstTimePredicted здесь быть не должно. Клиент при повторной симуляции
+        // сбрасывает компонент к серверному состоянию и переигрывает нажатия клавиш; пропусти мы
+        // этот повтор, WantsSprint оставался бы false (или true после отпускания) целый RTT — спринт
+        // включался бы с задержкой пинга, а позиция дёргалась бы при каждой правке с сервера.
+        // Побочные эффекты повтор не задваивает: PopupClient сам показывает только в первом проходе,
+        // эмоции шлёт только сервер, звук рывка — в Update под IsFirstTimePredicted.
         if (session?.AttachedEntity is not { Valid: true } uid
             || !TryComp<DutyStaminaComponent>(uid, out var comp)
             || comp.WantsSprint == wants)
@@ -398,9 +414,17 @@ public sealed class DutySprintSystem : EntitySystem
             return;
 
         var now = _timing.CurTime;
+        var isClient = _net.IsClient;
+        var local = _player.LocalEntity;
         var query = EntityQueryEnumerator<ActiveDutyStaminaComponent, DutyStaminaComponent>();
         while (query.MoveNext(out var uid, out _, out var comp))
         {
+            // Клиент предсказывает только своё тело. Чужой запас и так приходит с сервера каждый тик,
+            // а своя симуляция чужих лишь тратила кадр, снимала с них сетевой маркер и проигрывала
+            // звук рывка второй раз поверх серверного PlayPredicted.
+            if (isClient && uid != local)
+                continue;
+
             var sprinting = IsSprinting(uid, comp);
             var old = comp.Current;
             var oldBreathing = comp.Breathing;
@@ -472,7 +496,7 @@ public sealed class DutySprintSystem : EntitySystem
             }
 
             if (staminaChanged || comp.Breathing != oldBreathing)
-                Dirty(uid, comp);
+                DirtyFields(uid, comp, null, TickDirtyFields);
 
             // Пока клавиша зажата, маркер НЕ снимаем, даже если запас полон. Иначе: держим C,
             // останавливаемся, выносливость дотикивает до максимума, маркер уходит — и дальше

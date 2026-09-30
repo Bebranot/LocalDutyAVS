@@ -176,6 +176,13 @@ public sealed class HudAimFadeSystem : EntitySystem
         private float _current = 1f;
         private bool _suppressed;
 
+        /// <summary>
+        /// Группа полностью видима и клики восстановлены — делать нечего, пока цель не сменится.
+        /// Без этого каждый кадр всей игры (а не только прицеливания) шёл рекурсивный поиск контролов
+        /// по дереву хотбара и перезапись Modulate.
+        /// </summary>
+        private bool _settled;
+
         public HudFadeGroup(Func<UIScreen, Control?> resolve)
         {
             _resolve = resolve;
@@ -192,10 +199,14 @@ public sealed class HudAimFadeSystem : EntitySystem
             _to = target;
             _elapsed = 0f;
             _duration = duration;
+            _settled = false;
         }
 
         public void Tick(float dt, UIScreen? screen)
         {
+            if (_settled)
+                return;
+
             if (_duration <= 0f)
             {
                 _current = _to;
@@ -209,15 +220,23 @@ public sealed class HudAimFadeSystem : EntitySystem
             }
 
             Apply(screen);
+
+            // Модулейт по умолчанию белый, так что и виджет, пересозданный при смене экрана,
+            // уже выглядит так, как мы бы его выставили.
+            _settled = _current >= 1f && !_suppressed;
         }
 
         /// <summary>Мгновенно (без анимации) вернуть alpha=1 и восстановить клики.</summary>
         public void HardReset(UIScreen? screen)
         {
+            if (_settled)
+                return;
+
             _from = _to = _current = 1f;
             _elapsed = 0f;
             _duration = 0f;
             Apply(screen);
+            _settled = !_suppressed;
         }
 
         private void Apply(UIScreen? screen)

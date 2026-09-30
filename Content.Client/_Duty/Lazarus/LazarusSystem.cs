@@ -136,9 +136,11 @@ public sealed class LazarusSystem : EntitySystem
         FadeOutAudio();
     }
 
-    public override void Update(float frameTime)
+    // FrameUpdate, а не Update: клиентский Update при повторной симуляции зовётся по нескольку раз
+    // за тик, и затухание при обрыве шло бы тем быстрее, чем выше пинг.
+    public override void FrameUpdate(float frameTime)
     {
-        base.Update(frameTime);
+        base.FrameUpdate(frameTime);
 
         if (_pendingLastStand != null && _timing.RealTime >= _lastStandTime)
         {

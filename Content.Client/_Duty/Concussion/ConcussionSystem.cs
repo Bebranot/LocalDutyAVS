@@ -79,9 +79,11 @@ public sealed class ConcussionSystem : SharedConcussionSystem
         return _mobState.IsIncapacitated(player.Value);
     }
 
-    public override void Update(float frameTime)
+    // FrameUpdate, а не Update: клиентский Update при повторной симуляции зовётся по нескольку раз
+    // за тик — громкость звона переставлялась бы пачкой на каждом тике, тем чаще, чем выше пинг.
+    public override void FrameUpdate(float frameTime)
     {
-        base.Update(frameTime);
+        base.FrameUpdate(frameTime);
 
         var suppressed = !EffectsEnabled || IsLocalSuppressed();
         _overlay.Suppressed = suppressed;

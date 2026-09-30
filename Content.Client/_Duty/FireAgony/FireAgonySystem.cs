@@ -53,9 +53,11 @@ public sealed class FireAgonySystem : EntitySystem
         StopScream(immediate: true);
     }
 
-    public override void Update(float frameTime)
+    // FrameUpdate, а не Update: клиентский Update при повторной симуляции зовётся по нескольку раз
+    // за тик, и фейд виньетки шёл бы тем быстрее, чем выше пинг.
+    public override void FrameUpdate(float frameTime)
     {
-        base.Update(frameTime);
+        base.FrameUpdate(frameTime);
 
         var active = IsLocalActive();
 

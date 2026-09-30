@@ -25,7 +25,12 @@ public sealed class ConcussionSystem : SharedConcussionSystem
     [Dependency] private readonly IConfigurationManager _cfg = default!;
 
     private EntityQuery<ConcussionComponent> _concussionQuery;
-    private readonly HashSet<EntityUid> _lookupSet = new();
+    /// <summary>
+    /// Лукап сразу по компоненту: выстрел — самое частое событие боя (очередь — десяток в секунду),
+    /// а в 8 тайлах вокруг лежат сотни сущностей (стены, пол, предметы), из которых контузия
+    /// нужна единицам.
+    /// </summary>
+    private readonly HashSet<Entity<ConcussionComponent>> _lookupSet = new();
 
     /// <summary>Радиус лукапа вокруг выстрела (с запасом над дефолтным ShotRange).</summary>
     private const float LookupRange = 8f;
@@ -59,11 +64,8 @@ public sealed class ConcussionSystem : SharedConcussionSystem
         _lookupSet.Clear();
         _lookup.GetEntitiesInRange(coords, LookupRange, _lookupSet);
 
-        foreach (var target in _lookupSet)
+        foreach (var (target, comp) in _lookupSet)
         {
-            if (!_concussionQuery.TryComp(target, out var comp))
-                continue;
-
             var dist = (_transform.GetMapCoordinates(target).Position - mapPos.Position).Length();
             if (dist > comp.ShotRange)
                 continue;

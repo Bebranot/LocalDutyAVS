@@ -18,7 +18,12 @@ namespace Content.Shared._Duty.Movement;
 /// Скорость спринта = бег × <see cref="SprintBonus"/> × ХП × выносливость × оружие-в-руках × слоты.
 /// На нуле выносливости спринт становится медленнее обычного бега. См. <see cref="DutySprintSystem"/>.
 /// </summary>
-[RegisterComponent, NetworkedComponent, AutoGenerateComponentState(true), AutoGenerateComponentPause]
+/// <remarks>
+/// Дельта-состояния: пока игрок бежит или отдыхает, запас меняется каждый тик, и без них по сети
+/// каждый тик уходили бы все ~18 полей (почти все — неизменные настройки из прототипа) каждому
+/// игроку в PVS. Тиковое изменение помечается через DirtyFields — уходят только изменившиеся поля.
+/// </remarks>
+[RegisterComponent, NetworkedComponent, AutoGenerateComponentState(true, fieldDeltas: true), AutoGenerateComponentPause]
 public sealed partial class DutyStaminaComponent : Component
 {
     /// <summary>Зажата ли клавиша спринта (C). Ставится инпут-хендлером, предсказывается.</summary>

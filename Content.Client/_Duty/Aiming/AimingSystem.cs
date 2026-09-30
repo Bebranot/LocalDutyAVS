@@ -28,6 +28,15 @@ public sealed class AimingSystem : EntitySystem
     [Dependency] private readonly SharedHandsSystem _hands = default!;
     [Dependency] private readonly IGameTiming _timing = default!;
 
+    /// <summary>
+    /// Пауза между повторными заявками, пока клавиша зажата, а прицеливание так и не началось
+    /// (курсор слишком близко, оружие не взято в обе руки на сервере и т.п.). Без неё отклонённая
+    /// заявка уходила на сервер каждый тик — десятки сетевых сообщений в секунду впустую.
+    /// </summary>
+    private static readonly TimeSpan RequestRetryInterval = TimeSpan.FromSeconds(0.2);
+
+    private TimeSpan _nextAimRequest;
+
     public override void Update(float frameTime)
     {
         if (!_timing.IsFirstTimePredicted)
@@ -41,12 +50,15 @@ public sealed class AimingSystem : EntitySystem
 
         if (!down)
         {
+            // Новое нажатие должно начинать прицел сразу, без ожидания паузы от прошлого.
+            _nextAimRequest = TimeSpan.Zero;
+
             if (aiming)
                 RaisePredictiveEvent(new RequestStopAimEvent());
             return;
         }
 
-        if (aiming)
+        if (aiming || _timing.CurTime < _nextAimRequest)
             return;
 
         if (!TryGetAimableGun(user, out var gunUid))
@@ -59,6 +71,7 @@ public sealed class AimingSystem : EntitySystem
 
         var coordinates = _xform.ToCoordinates(user, mousePos);
 
+        _nextAimRequest = _timing.CurTime + RequestRetryInterval;
         RaisePredictiveEvent(new RequestAimEvent
         {
             Gun = GetNetEntity(gunUid),

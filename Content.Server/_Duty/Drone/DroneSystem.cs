@@ -49,6 +49,8 @@ public sealed partial class DroneSystem : SharedDroneSystem
     [Dependency] private readonly InventorySystem _inventory = default!;
     [Dependency] private readonly SharedTransformSystem _transform = default!;
 
+    private readonly HashSet<Entity<MindContainerComponent>> _nearbyMinds = new();
+
     public override void Initialize()
     {
         base.Initialize();
@@ -235,10 +237,14 @@ public sealed partial class DroneSystem : SharedDroneSystem
 
     private bool NonDronesInRange(Entity<DroneComponent> ent)
     {
+        // Зовётся на каждое использование предмета дроном. Лукап сразу по MindContainer и в
+        // переиспользуемый набор — без нового HashSet всех сущностей вокруг на каждый клик.
         var coordinates = _transform.GetMapCoordinates(Transform(ent));
-        foreach (var entity in _lookup.GetEntitiesInRange(coordinates, ent.Comp.InteractionBlockRange))
+        _nearbyMinds.Clear();
+        _lookup.GetEntitiesInRange(coordinates, ent.Comp.InteractionBlockRange, _nearbyMinds);
+        foreach (var (entity, _) in _nearbyMinds)
         {
-            if (!HasComp<MindContainerComponent>(entity) || HasComp<DroneComponent>(entity) || HasComp<GhostComponent>(entity))
+            if (HasComp<DroneComponent>(entity) || HasComp<GhostComponent>(entity))
                 continue;
             if (TryComp<MobStateComponent>(entity, out var state) && _mobState.IsDead(entity, state))
                 continue;
