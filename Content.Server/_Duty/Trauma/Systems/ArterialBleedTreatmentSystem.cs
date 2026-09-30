@@ -5,6 +5,7 @@
 using Content.Server._Duty.Trauma.Components;
 using Content.Shared._Duty.Trauma;
 using Content.Shared._Duty.Trauma.Components;
+using Content.Shared._Duty.Trauma.Systems;
 using Content.Shared._Duty.Trauma.UI;
 using Content.Shared.DoAfter;
 using Content.Shared.Hands.EntitySystems;
@@ -33,7 +34,7 @@ public sealed partial class ArterialBleedTreatmentSystem : EntitySystem
 {
     [Dependency] private SharedUserInterfaceSystem _ui = default!;
     [Dependency] private SharedDoAfterSystem _doAfter = default!;
-    [Dependency] private MovementSpeedModifierSystem _movementSpeed = default!;
+    [Dependency] private ArterialTreatmentSlowdownSystem _slowdown = default!;
     [Dependency] private SharedContentEyeSystem _contentEye = default!;
     [Dependency] private SharedHandsSystem _hands = default!;
     [Dependency] private SharedStackSystem _stack = default!;
@@ -88,7 +89,6 @@ public sealed partial class ArterialBleedTreatmentSystem : EntitySystem
         SubscribeLocalEvent<ArterialBleedComponent, ArterialTreatmentStepMessage>(OnStep);
 
         SubscribeLocalEvent<ActiveArterialTreatmentComponent, ArterialTreatmentDoAfterEvent>(OnDoAfter);
-        SubscribeLocalEvent<ActiveArterialTreatmentComponent, RefreshMovementSpeedModifiersEvent>(OnRefreshSpeed);
         SubscribeLocalEvent<ActiveArterialTreatmentComponent, ComponentShutdown>(OnSessionShutdown);
     }
 
@@ -281,12 +281,6 @@ public sealed partial class ArterialBleedTreatmentSystem : EntitySystem
         PushState(session.Patient, ent.Owner, session);
     }
 
-    private void OnRefreshSpeed(EntityUid uid, ActiveArterialTreatmentComponent comp, RefreshMovementSpeedModifiersEvent args)
-    {
-        if (comp.EffectsApplied)
-            args.ModifySpeed(SlowdownModifier);
-    }
-
     private void OnSessionShutdown(Entity<ActiveArterialTreatmentComponent> ent, ref ComponentShutdown args)
     {
         // Отменяем незавершённый DoAfter.
@@ -302,7 +296,7 @@ public sealed partial class ArterialBleedTreatmentSystem : EntitySystem
 
         // Снимаем слоудаун и зум, каким бы путём сессия ни удалялась.
         ent.Comp.EffectsApplied = false;
-        _movementSpeed.RefreshMovementSpeedModifiers(ent.Owner);
+        _slowdown.Remove(ent.Owner);
         _contentEye.SetZoom(ent.Owner, SharedContentEyeSystem.DefaultZoom);
     }
 
@@ -366,7 +360,9 @@ public sealed partial class ArterialBleedTreatmentSystem : EntitySystem
     private void ApplyHealerEffects(EntityUid healer, ActiveArterialTreatmentComponent session)
     {
         session.EffectsApplied = true;
-        _movementSpeed.RefreshMovementSpeedModifiers(healer);
+        // Замедление — сетевым компонентом, а не модификатором этой серверной сессии: иначе клиент
+        // при своём пересчёте скорости его не видел и бежал быстрее сервера.
+        _slowdown.Apply(healer, SlowdownModifier);
         _contentEye.SetZoom(healer, TreatmentZoom);
     }
 
