@@ -12,6 +12,7 @@ using Content.Shared.Weapons.Ranged.Systems;
 using Content.Shared.Wieldable;
 using Content.Shared.Wieldable.Components;
 using Robust.Shared.Maths;
+using Robust.Shared.Network;
 using Robust.Shared.Player;
 using Robust.Shared.Prototypes;
 using Robust.Shared.Timing;
@@ -34,6 +35,7 @@ public sealed partial class SharedAimingSystem : EntitySystem
     [Dependency] private SharedPopupSystem _popup = default!;
     [Dependency] private SharedTransformSystem _transform = default!;
     [Dependency] private IGameTiming _timing = default!;
+    [Dependency] private INetManager _net = default!;
 
     private static readonly EntProtoId AimRecoveryEffect = "AimRecoveryImmobilizeStatusEffect";
     private static readonly TimeSpan TooCloseWarningCooldown = TimeSpan.FromSeconds(5);
@@ -284,8 +286,18 @@ public sealed partial class SharedAimingSystem : EntitySystem
 
     private void OnAimingDamaged(Entity<AimingComponent> ent, ref DamageChangedEvent args)
     {
-        if (args.DamageIncreased)
-            StopAiming(ent);
+        if (!args.DamageIncreased)
+            return;
+
+        // Попадание решает только сервер, и у клиента-жертвы нечего предсказывать: рывок камеры
+        // приходит с задержкой в пинг, как и сам урон.
+        if (_net.IsServer)
+        {
+            var damage = args.DamageDelta?.GetTotal().Float() ?? 0f;
+            RaiseNetworkEvent(new AimFlinchEvent(damage), ent.Owner);
+        }
+
+        StopAiming(ent);
     }
 
     private void OnAimingStunned(Entity<AimingComponent> ent, ref StunnedEvent args)
