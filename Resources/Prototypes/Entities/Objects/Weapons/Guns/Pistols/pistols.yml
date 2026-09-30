@@ -82,6 +82,7 @@
   - type: Aimable # _Duty: одноручный прицел (ПКМ) — без wield, с сильным штрафом к скорости
     requiresWield: false
 
+
 - type: entity
   name: viper
   parent: [BaseWeaponPistol, BaseSyndicateContraband, ADTBaseAttachableHolder] # adt tweak
@@ -120,6 +121,10 @@
   - type: StaticPrice
     price: 1000
 # ADT TWEAK START
+  - type: Multishot
+    spreadMultiplier: 2.5
+    spreadAddition: 15
+    staminaDamage: 3.5
   - type: AttachableHolder
     slots:
       rmc-aslot-underbarrel:
@@ -136,6 +141,7 @@
       rmc-aslot-underbarrel: 0.235, -0.00875
       rmc-aslot-barrel: 0.84375, 0.09735
 # ADT TWEAK END
+
 
 - type: entity
   name: echis
@@ -229,6 +235,10 @@
   - type: StaticPrice
     price: 1500
 # ADT TWEAK START
+  - type: Multishot
+    spreadMultiplier: 2.5
+    spreadAddition: 15
+    staminaDamage: 3
   - type: AttachableHolder
     slots:
       rmc-aslot-underbarrel:
@@ -285,6 +295,10 @@
   - type: StealTarget
     stealGroup: OfficerHandgun
 # ADT TWEAK START
+  - type: Multishot
+    spreadMultiplier: 2.5
+    spreadAddition: 15
+    staminaDamage: 3.5
   - type: AttachableHolder
     slots:
       rmc-aslot-underbarrel:

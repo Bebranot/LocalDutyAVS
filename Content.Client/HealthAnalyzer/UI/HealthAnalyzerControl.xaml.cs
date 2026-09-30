@@ -96,10 +96,12 @@ public sealed partial class HealthAnalyzerControl : BoxContainer
         {
             NoPatientDataText.Visible = true;
             SetCriticalState(false, false); // _Duty
+            SetPatientSectionsVisible(false); // ADT-Tweak
             return;
         }
 
         NoPatientDataText.Visible = false;
+        SetPatientSectionsVisible(true); // ADT-Tweak
 
         // _Duty: мёртв → «Сердце остановлено.»; HP < ~10% → мигающая крит-табличка.
         var dead = state.MobState == MobState.Dead;
@@ -241,7 +243,7 @@ public sealed partial class HealthAnalyzerControl : BoxContainer
         var groupOrder = new List<ProtoId<DamageGroupPrototype>> { "Burn", "Brute", "Airloss", "Toxin", "Genetic" };
         var sortedGroups = _damageable.GetDamagePerGroup(target.Value)
             .Where(g => g.Value > 0)
-            .OrderBy(g => groupOrder.IndexOf(g.Key))
+            .OrderBy(g => groupOrder.Contains(g.Key) ? groupOrder.IndexOf(g.Key) : groupOrder.Count)
             .ToDictionary(g => g.Key, g => g.Value);
 
         DrawDiagnosticGroups(sortedGroups, damagePerType);
@@ -282,6 +284,7 @@ public sealed partial class HealthAnalyzerControl : BoxContainer
         return mobState switch
         {
             MobState.Alive => Loc.GetString("health-analyzer-window-entity-alive-text"),
+            MobState.SoftCritical => Loc.GetString("health-analyzer-window-entity-soft-critical-text"), // ADT-Tweak
             MobState.Critical => Loc.GetString("health-analyzer-window-entity-critical-text"),
             MobState.Dead => Loc.GetString("health-analyzer-window-entity-dead-text"),
             _ => Loc.GetString("health-analyzer-window-entity-unknown-text"),
@@ -289,11 +292,35 @@ public sealed partial class HealthAnalyzerControl : BoxContainer
     }
 
     // ADT-Tweak start
+    private void SetPatientSectionsVisible(bool visible)
+    {
+        PatientDataContainer.Visible = visible;
+        GroupsDivider.Visible = visible;
+        GroupsContainer.Visible = visible;
+
+        if (visible)
+            return;
+
+        AlertsDivider.Visible = false;
+        AlertsContainer.Visible = false;
+        ChemicalsDivider.Visible = false;
+        ChemicalsContainer.Visible = false;
+        AddictionsDivider.Visible = false;
+        AddictionsContainer.Visible = false;
+    }
+
     private void DrawDiagnosticGroups(
         Dictionary<ProtoId<DamageGroupPrototype>, FixedPoint2> groups,
         IReadOnlyDictionary<ProtoId<DamageTypePrototype>, FixedPoint2> damageDict)
     {
         GroupsContainer.RemoveAllChildren();
+
+        var hasGroups = groups.Count > 0;
+        GroupsDivider.Visible = hasGroups;
+        GroupsContainer.Visible = hasGroups;
+
+        if (!hasGroups)
+            return;
 
         var gridContainer = new GridContainer
         {
@@ -407,6 +434,13 @@ public sealed partial class HealthAnalyzerControl : BoxContainer
 
         if (!hasChemicals || reagents == null)
             return;
+
+        ChemicalsContainer.AddChild(new Label
+        {
+            Text = Loc.GetString("health-analyzer-window-chemicals-title"),
+            Margin = new Thickness(0, 0, 0, 4),
+            FontColorOverride = Color.LightSkyBlue,
+        });
 
         var sortedReagents = reagents.OrderByDescending(r => r.Quantity).ToList();
 

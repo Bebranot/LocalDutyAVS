@@ -34,6 +34,10 @@ nano-chat-group-members-subtitle = { $count ->
     }
 nano-chat-look-up-no-server = Не удалось найти телекоммуникационный сервер
 nano-chat-look-up = Поиск номеров
+nano-chat-look-up-search = Имя, должность или номер...
+nano-chat-look-up-not-found = Никого не найдено
+nano-chat-look-up-write = Написать
+nano-chat-look-up-open = Открыть
 nano-chat-list-number = Список номеров
 nano-chat-new-title = Создать новый чат
 nano-chat-number-label = Пользователь

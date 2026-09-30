@@ -2,6 +2,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Numerics;
 using Content.Client.Lobby;
+using Content.Shared.ADT.Construction;
 using Content.Client.Stylesheets;
 using Content.Client.UserInterface.Systems.MenuBar.Widgets;
 using Content.Shared.CCVar;
@@ -41,6 +42,7 @@ namespace Content.Client.Construction.UI
 
         private readonly IConstructionMenuView _constructionView;
         private readonly EntityWhitelistSystem _whitelistSystem;
+        private readonly ADTConstructionRestrictionSystem _adtConstructionRestriction; // ADT-Tweak
 
         private ConstructionSystem? _constructionSystem;
         private ConstructionPrototype? _selected;
@@ -106,6 +108,7 @@ namespace Content.Client.Construction.UI
             IoCManager.InjectDependencies(this);
             _constructionView = new ConstructionMenu();
             _whitelistSystem = _entManager.System<EntityWhitelistSystem>();
+            _adtConstructionRestriction = _entManager.System<ADTConstructionRestrictionSystem>(); // ADT-Tweak
             _spriteSystem = _entManager.System<SpriteSystem>();
             _sawmill = _logManager.GetSawmill("construction.ui");
 
@@ -338,7 +341,8 @@ namespace Content.Client.Construction.UI
             if (_playerManager.LocalSession == null || _playerManager.LocalEntity is not { } player)
                 return false;
 
-            return !_whitelistSystem.IsWhitelistFail(recipe.EntityWhitelist, player);
+            return !_whitelistSystem.IsWhitelistFail(recipe.EntityWhitelist, player)
+                && _adtConstructionRestriction.CanConstruct(player, recipe); // ADT-Tweak
         }
 
         private bool MatchesCategory(ConstructionPrototype recipe, string category)

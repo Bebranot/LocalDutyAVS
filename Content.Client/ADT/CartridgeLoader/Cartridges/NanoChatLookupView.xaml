@@ -8,15 +8,14 @@
                   HorizontalExpand="True"
                   VerticalExpand="True">
         <LineEdit Name="SearchInput"
-                  PlaceHolder="{Loc nano-chat-search-placeholder}"
+                  PlaceHolder="{Loc nano-chat-look-up-search}"
                   HorizontalExpand="True"
-                  Margin="4 4 4 2" />
-        <ScrollContainer Margin="-10 0 -10 -10"
-                         VerticalExpand="True"
-                         HorizontalExpand="True">
+                  Margin="0 0 0 4" />
+        <ScrollContainer VerticalExpand="True"
+                         HorizontalExpand="True"
+                         HScrollEnabled="False">
             <BoxContainer Name="ContactsList"
                           Orientation="Vertical"
-                          VerticalExpand="True"
                           HorizontalExpand="True" />
         </ScrollContainer>
     </BoxContainer>

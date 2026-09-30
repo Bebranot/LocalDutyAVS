@@ -44,6 +44,7 @@ using Robust.Shared.Utility;
 using Content.Server.ADT.Antag;
 using Content.Server.ADT.Export;
 using Content.Server._Duty.Logging;
+using Content.Server.ADT.JoinQueue;
 using Content.Shared.Emp;
 
 namespace Content.Server.Entry
@@ -164,6 +165,7 @@ namespace Content.Server.Entry
             IoCManager.Resolve<SponsorsManager>().Initialize(); // Corvax-Sponsors
             IoCManager.Resolve<Content.Server.ADT.Sponsors.SponsorManager>().Initialize(); // ADT-Tweak
             IoCManager.Resolve<JoinQueueManager>().Initialize(); // Corvax-Queue
+            IoCManager.Resolve<QueueGamesManager>().Initialize(); // ADT-Tweak: queue games
             IoCManager.Resolve<AntagRollBonusManager>().Initialize(); // ADT Antag roll bonus
         }
 

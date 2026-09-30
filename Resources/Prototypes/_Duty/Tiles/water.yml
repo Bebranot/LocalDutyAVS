@@ -87,13 +87,33 @@
     layers:
       - state: water1
     # Goobstation - fishing
-  # _Duty: раньше во всех четырёх водоёмах стоял StalkerFishingTier1 — таблицу так и не завезли,
-  # и рыбалка молча не давала улова. Взяли готовую WaterFishingLootTable из ADT-рыбалки.
-  - type: FishingSpot
-    fishList: !type:NestedSelector
-      tableId: WaterFishingLootTable
-    fishDefaultTimer: 25.0
-    fishTimerVariety: 15.0
+  # _Duty: рыбалка как у обычной воды (ADT). Остальные водоёмы Сталкера наследуют её отсюда.
+  - type: ADTFishingSpot
+    requiresBait: false
+    junkChance: 0.7
+    junk: !type:NestedSelector
+      tableId: BasicFishingLootTable
+    shoreFish:
+    - ADTFishAngler
+    - ADTFishBass
+    - ADTFishBlob
+    - ADTFishBlueFintuna
+    - ADTFishCat
+    - ADTFishTropicalClown
+    - ADTFishPuffer
+    - ADTFishSilver
+    - ADTFishTropicalSun
+    - ADTFishTropical
+    deepFish:
+    - ADTFishAlien
+    - ADTFishBingle
+    - ADTFishBoyFisher
+    - ADTFishNukeDisk
+    - ADTFishGib
+    - ADTFishMutant
+    - ADTFishNuker
+    - ADTFishToxic
+    - ADTFishIan
   # Goobstation - fishing
 - type: entity
   parent: FloorWaterEntityStalker1Duty
@@ -108,13 +128,6 @@
     drawdepth: BelowFloor
     layers:
       - state: water2
-    # Goobstation - fishing
-  - type: FishingSpot
-    fishList: !type:NestedSelector
-      tableId: WaterFishingLootTable
-    fishDefaultTimer: 25.0
-    fishTimerVariety: 15.0
-  # Goobstation - fishing
 - type: entity
   parent: FloorWaterEntityStalker1Duty
   id: FloorWaterEntityStalker3Duty
@@ -128,13 +141,6 @@
     drawdepth: BelowFloor
     layers:
       - state: water3
-    # Goobstation - fishing
-  - type: FishingSpot
-    fishList: !type:NestedSelector
-      tableId: WaterFishingLootTable
-    fishDefaultTimer: 25.0
-    fishTimerVariety: 15.0
-  # Goobstation - fishing
 - type: entity
   parent: FloorWaterEntityStalker1Duty
   id: FloorWaterEntityStalker4Duty
@@ -156,13 +162,6 @@
     energy: 1
     color: "#c7e153"
     castShadows: false
-    # Goobstation - fishing
-  - type: FishingSpot
-    fishList: !type:NestedSelector
-      tableId: WaterFishingLootTable
-    fishDefaultTimer: 25.0
-    fishTimerVariety: 15.0
-  # Goobstation - fishing
 - type: entity
   parent: FloorWaterEntityStalker1Duty
   name: химические отходы

@@ -272,7 +272,6 @@
     #ADT-tweak-end
     - XenobioPack #ADT Tweak
     - XenobagHoldingPack #ADT Tweak
-    - ADTBluespaceCrystalTech #ADT Tweak
     - PartsDynamic #ADT-Tweak: machine parts
   - type: EmagLatheRecipes
     emagDynamicPacks:
@@ -422,6 +421,7 @@
     - ADTPhazonPack
     - ADTMechEquipmentPack
     - ADTBorgModules
+    - ADTJanicartUpgradesPack
     # ADT-tweak-end
     # _Duty-start
     - DutyMechMeleePack
@@ -512,6 +512,7 @@
     - ADTMagazineStaticPack
     - ADTScienceTrigger
     - ADTScienceExplosives
+    - ADTFiringPinStaticPack
     # ADT-Tweak-End
     # duty nizhe: сталкерские магазины и коробки патронов
     - StalkerAmmoStatic
@@ -529,6 +530,7 @@
     - ADTAttachmentPack
     - ADT40mmGrenadePack
     - ADTMechEquipmentSecTechfabPack
+    - ADTFiringPinsResearchPack
     # ADT-tweak-end
     # _Duty-start
     - DutySecImplantsPack
@@ -623,6 +625,7 @@
     - ADTAdvancedMedicalCarePack
     - ADTCryoTech
     - ADTThermoTech
+    - ADTMedbeamPack
     #ADT-Tweak End
   - type: Machine
     board: MedicalTechFabCircuitboard
