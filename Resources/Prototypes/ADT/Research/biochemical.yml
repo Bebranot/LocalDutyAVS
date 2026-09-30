@@ -35,15 +35,17 @@
 
 - type: technology
   id: ADTHighVoltageDefibrillator
-  name: research-technology-highvolt-defib
+  # _Duty-tweak-start: высоковольтный дефиб заменён на LifePak-45-A
+  name: duty-research-technology-lifepak-45a
   icon:
-    sprite: ADT/Objects/Specific/Medical/high-volt_defib.rsi
+    sprite: _Duty/Objects/Specific/Medical/lifepak_45a.rsi
     state: icon
+  # _Duty-tweak-end
   discipline: Biochemical
   tier: 2
   cost: 5000
   recipeUnlocks:
-  - ADTHighVoltageDefibrillator
+  - DutyDefibrillatorLifePak45A # _Duty: вместо ADTHighVoltageDefibrillator
   requiredTech:
   - ADTAdvancedMedicalCare
   position: 4,-2

@@ -42,7 +42,7 @@
   id: MedicalStatic
   recipes:
   - Implanter
-  - Defibrillator
+#  - Defibrillator # _Duty: заменён на LifePak-40s
   - DutyDefibrillatorLifePak40s # _Duty
   - DutyDefibGel # _Duty
   - HandheldHealthAnalyzer

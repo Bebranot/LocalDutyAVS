@@ -2,6 +2,7 @@
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
 # LifePak-40s и электродный гель — в статическом наборе медлата (MedicalStatic).
+# LifePak-45-A — исследование ADTHighVoltageDefibrillator (вместо высоковольтного дефиба).
 
 - type: latheRecipe
   id: DutyDefibrillatorLifePak40s
@@ -10,6 +11,15 @@
   materials:
     Steel: 300
     Plastic: 100
+
+- type: latheRecipe
+  id: DutyDefibrillatorLifePak45A
+  result: DutyDefibrillatorLifePak45AEmpty
+  completetime: 5
+  materials:
+    Plastic: 250
+    Steel: 700
+    Copper: 500
 
 - type: latheRecipe
   id: DutyDefibGel

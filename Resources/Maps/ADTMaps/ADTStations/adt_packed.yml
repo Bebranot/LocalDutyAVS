@@ -39029,7 +39029,7 @@ entities:
     - type: Transform
       pos: 38.5,22.5
       parent: 2
-- proto: Defibrillator
+- proto: DutyDefibrillatorLifePak40s
   entities:
   - uid: 5874
     components:

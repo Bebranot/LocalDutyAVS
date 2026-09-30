@@ -77,7 +77,7 @@
         BoxBodyBag: 1
         # Optional / Situational Gear
         BoxBottle: 3
-        Defibrillator: 2 # Easily shared between several people
+#        Defibrillator: 2 # Easily shared between several people # _Duty: заменён на LifePak-40s
         DutyDefibrillatorLifePak40s: 2 # _Duty
         DutyDefibGel: 5 # _Duty
         Syringe: 4

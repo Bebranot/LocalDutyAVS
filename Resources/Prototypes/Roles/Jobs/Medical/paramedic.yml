@@ -29,7 +29,6 @@
   storage:
     back:
     - EmergencyRollerBedSpawnFolded
-    - DutyDefibrillatorLifePak45A # _Duty
 
 - type: chameleonOutfit
   id: ParamedicChameleonOutfit

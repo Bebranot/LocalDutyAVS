@@ -56,7 +56,6 @@
   storage:
     back:
     - Flash
-    - DutyDefibrillatorLifePak45A # _Duty
     - ADTtelescopicBaton #ADT-CustomADTLoadout
 - type: chameleonOutfit
   id: ChiefMedicalOfficerChameleonOutfit

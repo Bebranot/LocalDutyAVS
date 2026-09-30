@@ -276,7 +276,8 @@
     - id: MedTekCartridge
     # ADT-Tweak Start
     - id: ADTReagentAnalyzer
-    - id: ADTMobileDefibrillator
+#    - id: ADTMobileDefibrillator # _Duty: заменён на LifePak-45-A ГВ (цель кражи)
+    - id: DutyDefibrillatorLifePak45ACMO # _Duty
     - id: ADTBriefcaseBrownHikingCmoFilled
     - id: ADTBriefcaseMedicalFilled
     - id: ADTtelescopicBaton

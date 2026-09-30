@@ -2586,7 +2586,7 @@ entities:
       parent: 1
     - type: Physics
       canCollide: False
-- proto: Defibrillator
+- proto: DutyDefibrillatorLifePak40s
   entities:
   - uid: 567
     components:

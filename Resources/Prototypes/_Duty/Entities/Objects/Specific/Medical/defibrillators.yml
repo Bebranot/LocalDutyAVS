@@ -142,6 +142,16 @@
       cell_slot:
         name: power-cell-slot-component-slot-name-default
 
+# Экземпляр из шкафа ГВ — цель кражи предателя (вместо ADT-шного мобильного дефиба).
+# Отдельный прототип, чтобы 45-A парамедика или с лата цель не закрывал.
+- type: entity
+  id: DutyDefibrillatorLifePak45ACMO
+  parent: DutyDefibrillatorLifePak45A
+  suffix: CMO, Steal Target
+  components:
+  - type: StealTarget
+    stealGroup: DutyDefibrillatorLifePak45A
+
 - type: entity
   id: DutyDefibrillatorLifePak40sEmpty
   parent: DutyDefibrillatorLifePak40s

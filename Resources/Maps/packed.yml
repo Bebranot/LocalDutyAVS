@@ -44031,7 +44031,7 @@ entities:
     - type: Transform
       pos: 42.5,25.5
       parent: 2
-- proto: Defibrillator
+- proto: DutyDefibrillatorLifePak40s
   entities:
   - uid: 11416
     components:

@@ -28,7 +28,8 @@
     CaptainGunStealObjective: 0.5
     CaptainJetpackStealObjective: 0.5
     HandTeleporterStealObjective: 0.5
-    ADTMobileDefibrillatorStealObjective: 1
+#    ADTMobileDefibrillatorStealObjective: 1 # _Duty: мобильный дефиб убран, цель — LifePak-45-A ГВ
+    DutyLifePak45AStealObjective: 1 # _Duty
 
 - type: weightedRandom
   id: TraitorLightObjectiveGroupTeachLesson

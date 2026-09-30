@@ -26,7 +26,7 @@
         - id: ClothingOuterCoatParamedicWB
         - id: ClothingHeadHatParamedicsoft
         - id: ADTClothingHeadHatsParamedicBeret 
-        - id: ADTHighVoltageDefibrillator 
+#        - id: ADTHighVoltageDefibrillator # _Duty: заменён на LifePak-45-A
         - id: DutyDefibrillatorLifePak45A # _Duty
         - id: ClothingOuterWinterPara
         - id: ClothingUniformJumpsuitParamedic

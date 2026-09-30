@@ -1,0 +1,23 @@
+# SPDX-FileCopyrightText: 2025 LocalDuty
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+# Цель кражи LifePak-45-A из шкафа ГВ — заменяет ADT-шный мобильный дефибриллятор,
+# которого больше нет в раздаче.
+
+- type: stealTargetGroup
+  id: DutyDefibrillatorLifePak45A
+  name: duty-steal-target-groups-lifepak-45a
+  sprite:
+    sprite: _Duty/Objects/Specific/Medical/lifepak_45a.rsi
+    state: icon
+
+- type: entity
+  categories: [ HideSpawnMenu ]
+  parent: BaseTraitorStealObjective
+  id: DutyLifePak45AStealObjective
+  components:
+  - type: NotJobRequirement
+    jobs: [ChiefMedicalOfficer]
+  - type: StealCondition
+    stealGroup: DutyDefibrillatorLifePak45A
+    owner: job-name-cmo

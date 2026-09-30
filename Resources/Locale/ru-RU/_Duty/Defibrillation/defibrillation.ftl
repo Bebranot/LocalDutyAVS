@@ -8,6 +8,11 @@ ent-DutyDefibrillatorLifePak45A = LifePak-45-A
     .desc = Продвинутый автоматический дефибриллятор.
 ent-DutyDefibrillatorLifePak45AEmpty = { ent-DutyDefibrillatorLifePak45A }
     .desc = { ent-DutyDefibrillatorLifePak45A.desc }
+ent-DutyDefibrillatorLifePak45ACMO = { ent-DutyDefibrillatorLifePak45A }
+    .desc = { ent-DutyDefibrillatorLifePak45A.desc }
+    .suffix = ГВ, цель кражи
+duty-steal-target-groups-lifepak-45a = LifePak-45-A главного врача
+duty-research-technology-lifepak-45a = Дефибриллятор LifePak-45-A
 ent-DutyDefibGel = электродный гель
     .desc = Тюбик токопроводящего геля. Нанесите на грудь перед разрядом: лечение чуть сильнее, ожогов от электродов нет.
 

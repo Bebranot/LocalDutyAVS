@@ -169984,7 +169984,7 @@ entities:
     - type: Transform
       pos: 1.5,29.5
       parent: 2
-- proto: Defibrillator
+- proto: DutyDefibrillatorLifePak40s
   entities:
   - uid: 27595
     components:
@@ -170068,7 +170068,7 @@ entities:
       parent: 54328
     - type: Fixtures
       fixtures: {}
-- proto: DefibrillatorEmpty
+- proto: DutyDefibrillatorLifePak40sEmpty
   entities:
   - uid: 27605
     components:
