@@ -8,9 +8,9 @@ namespace Content.Server._Duty.Weapons.WispBuff;
 /// рук и снятие бонуса при потере <see cref="WispBuffComponent"/> (возврат виспа в фонарь —
 /// см. <c>ADTWispLanternSystem</c>).
 /// </summary>
-public sealed class WispBuffSystem : EntitySystem
+public sealed partial class WispBuffSystem : EntitySystem
 {
-    [Dependency] private readonly SharedWispBuffSystem _wispBuff = default!;
+    [Dependency] private SharedWispBuffSystem _wispBuff = default!;
 
     public override void Initialize()
     {

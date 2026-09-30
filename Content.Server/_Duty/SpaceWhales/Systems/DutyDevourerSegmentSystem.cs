@@ -13,10 +13,10 @@ namespace Content.Server._Duty.SpaceWhales.Systems;
 /// Forwards damage taken by Devourer tail segments to the worm head (shared HP pool),
 /// and instantly kills anything the Devourer head rams into.
 /// </summary>
-public sealed class DutyDevourerSegmentSystem : EntitySystem
+public sealed partial class DutyDevourerSegmentSystem : EntitySystem
 {
-    [Dependency] private readonly DamageableSystem _damageable = default!;
-    [Dependency] private readonly MobStateSystem _mobState = default!;
+    [Dependency] private DamageableSystem _damageable = default!;
+    [Dependency] private MobStateSystem _mobState = default!;
 
     public override void Initialize()
     {

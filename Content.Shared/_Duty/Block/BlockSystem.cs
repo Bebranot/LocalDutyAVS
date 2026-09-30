@@ -31,18 +31,18 @@ namespace Content.Shared._Duty.Block;
 /// Написано с нуля, старая (реализованная и откаченная 6 августа) система блока/парирования/QTE
 /// сознательно не переиспользуется ни кодом, ни концепцией.
 /// </summary>
-public sealed class BlockSystem : EntitySystem
+public sealed partial class BlockSystem : EntitySystem
 {
-    [Dependency] private readonly IGameTiming _timing = default!;
-    [Dependency] private readonly INetManager _netMan = default!;
-    [Dependency] private readonly SharedMeleeWeaponSystem _melee = default!;
-    [Dependency] private readonly ActionBlockerSystem _actionBlocker = default!;
-    [Dependency] private readonly MovementModStatusSystem _movementMod = default!;
-    [Dependency] private readonly StandingStateSystem _standing = default!;
-    [Dependency] private readonly SharedChatSystem _chat = default!;
-    [Dependency] private readonly SharedAudioSystem _audio = default!;
-    [Dependency] private readonly BlockPunishStunSystem _punishStun = default!;
-    [Dependency] private readonly BlockGunLockSystem _gunLock = default!;
+    [Dependency] private IGameTiming _timing = default!;
+    [Dependency] private INetManager _netMan = default!;
+    [Dependency] private SharedMeleeWeaponSystem _melee = default!;
+    [Dependency] private ActionBlockerSystem _actionBlocker = default!;
+    [Dependency] private MovementModStatusSystem _movementMod = default!;
+    [Dependency] private StandingStateSystem _standing = default!;
+    [Dependency] private SharedChatSystem _chat = default!;
+    [Dependency] private SharedAudioSystem _audio = default!;
+    [Dependency] private BlockPunishStunSystem _punishStun = default!;
+    [Dependency] private BlockGunLockSystem _gunLock = default!;
 
     /// <summary>
     /// Длительность окна блока — гасит все попадания за это время, не только первое.

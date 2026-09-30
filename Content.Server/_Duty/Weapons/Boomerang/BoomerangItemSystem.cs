@@ -14,16 +14,16 @@ using Robust.Shared.Timing;
 
 namespace Content.Server._Duty.Weapons.Boomerang;
 
-public sealed class BoomerangItemSystem : EntitySystem
+public sealed partial class BoomerangItemSystem : EntitySystem
 {
-    [Dependency] private readonly AudioSystem _audio = default!;
-    [Dependency] private readonly SharedPhysicsSystem _physics = default!;
-    [Dependency] private readonly SharedTransformSystem _transform = default!;
-    [Dependency] private readonly ThrowingSystem _throwing = default!;
-    [Dependency] private readonly IGameTiming _timing = default!;
-    [Dependency] private readonly SharedHandsSystem _hands = default!;
-    [Dependency] private readonly ThrownItemSystem _thrownItem = default!;
-    [Dependency] private readonly FixtureSystem _fixtures = default!;
+    [Dependency] private AudioSystem _audio = default!;
+    [Dependency] private SharedPhysicsSystem _physics = default!;
+    [Dependency] private SharedTransformSystem _transform = default!;
+    [Dependency] private ThrowingSystem _throwing = default!;
+    [Dependency] private IGameTiming _timing = default!;
+    [Dependency] private SharedHandsSystem _hands = default!;
+    [Dependency] private ThrownItemSystem _thrownItem = default!;
+    [Dependency] private FixtureSystem _fixtures = default!;
 
     private const string ThrowingFixture = "throw-fixture";
 

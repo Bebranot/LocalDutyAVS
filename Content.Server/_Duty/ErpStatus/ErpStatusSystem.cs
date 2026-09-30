@@ -12,10 +12,10 @@ namespace Content.Server._Duty.ErpStatus;
 /// обрабатывает запросы на смену статуса с Escape/F10 — с серверно-авторитетным кулдауном.
 /// Клиенту не доверяем ни новое значение статуса, ни момент запроса.
 /// </summary>
-public sealed class ErpStatusSystem : SharedErpStatusSystem
+public sealed partial class ErpStatusSystem : SharedErpStatusSystem
 {
-    [Dependency] private readonly IGameTiming _timing = default!;
-    [Dependency] private readonly SharedPopupSystem _popup = default!;
+    [Dependency] private IGameTiming _timing = default!;
+    [Dependency] private SharedPopupSystem _popup = default!;
 
     public override void Initialize()
     {

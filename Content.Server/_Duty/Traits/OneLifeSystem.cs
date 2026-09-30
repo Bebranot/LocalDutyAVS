@@ -10,7 +10,7 @@ namespace Content.Server._Duty.Traits;
 
 public sealed partial class OneLifeSystem : EntitySystem
 {
-    [Dependency] private readonly GibbingSystem _gibbing = default!;
+    [Dependency] private GibbingSystem _gibbing = default!;
 
     public override void Initialize()
     {

@@ -11,9 +11,9 @@ namespace Content.Server._Duty.Hydroponics;
 /// Пока растёт — с него собираются горошины вместо стручков (обычный харвест, отдельного кода не
 /// требует). А если грядку выкопать лопатой, из неё выпадает сам горохострел-пистолет.
 /// </summary>
-public sealed class DutyPeaShooterSystem : EntitySystem
+public sealed partial class DutyPeaShooterSystem : EntitySystem
 {
-    [Dependency] private readonly PopupSystem _popup = default!;
+    [Dependency] private PopupSystem _popup = default!;
 
     /// <summary>PacketPrototype мутировавшего семени — так отличаем горохострел от обычного гороха,
     /// не трогая ванильный SeedData ради ещё одного маркерного поля.</summary>

@@ -18,12 +18,12 @@ namespace Content.Server._Duty.Trauma.Systems;
 /// игрок — быстрее и надёжнее (5с, 70%). Провал не усугубляет травму: просто боль и потерянное
 /// время. Успех снимает вывих, зона переходит в короткую остаточную слабость.
 /// </summary>
-public sealed class DislocationTreatmentSystem : EntitySystem
+public sealed partial class DislocationTreatmentSystem : EntitySystem
 {
-    [Dependency] private readonly SharedDoAfterSystem _doAfter = default!;
-    [Dependency] private readonly SharedPopupSystem _popup = default!;
-    [Dependency] private readonly IRobustRandom _random = default!;
-    [Dependency] private readonly DislocationSystem _dislocation = default!;
+    [Dependency] private SharedDoAfterSystem _doAfter = default!;
+    [Dependency] private SharedPopupSystem _popup = default!;
+    [Dependency] private IRobustRandom _random = default!;
+    [Dependency] private DislocationSystem _dislocation = default!;
 
     // ── Тюнинг (Phase 6). ──────────────────────────────────────────────────────
     private static readonly TimeSpan SelfReduceTime = TimeSpan.FromSeconds(10);

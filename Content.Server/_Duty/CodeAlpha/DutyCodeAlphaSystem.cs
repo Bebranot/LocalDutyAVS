@@ -34,17 +34,17 @@ namespace Content.Server._Duty.CodeAlpha;
 /// админское, а не механическое. Отсчёт идёт от самого объявления кода: пятнадцать минут с этого
 /// момента и есть срок, по истечении которого оперативники вылетают.
 /// </summary>
-public sealed class DutyCodeAlphaSystem : EntitySystem
+public sealed partial class DutyCodeAlphaSystem : EntitySystem
 {
-    [Dependency] private readonly IAdminLogManager _adminLogger = default!;
-    [Dependency] private readonly IChatManager _chat = default!;
-    [Dependency] private readonly IGameTiming _timing = default!;
-    [Dependency] private readonly IPlayerManager _player = default!;
-    [Dependency] private readonly IRobustRandom _random = default!;
-    [Dependency] private readonly AlertLevelSystem _alertLevel = default!;
-    [Dependency] private readonly IdCardSystem _idCard = default!;
-    [Dependency] private readonly InventorySystem _inventory = default!;
-    [Dependency] private readonly SharedHandsSystem _hands = default!;
+    [Dependency] private IAdminLogManager _adminLogger = default!;
+    [Dependency] private IChatManager _chat = default!;
+    [Dependency] private IGameTiming _timing = default!;
+    [Dependency] private IPlayerManager _player = default!;
+    [Dependency] private IRobustRandom _random = default!;
+    [Dependency] private AlertLevelSystem _alertLevel = default!;
+    [Dependency] private IdCardSystem _idCard = default!;
+    [Dependency] private InventorySystem _inventory = default!;
+    [Dependency] private SharedHandsSystem _hands = default!;
 
     private static readonly Color NoticeColor = Color.Gray;
 

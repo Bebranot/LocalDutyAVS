@@ -9,9 +9,9 @@ using Robust.Shared.Timing;
 
 namespace Content.Server._Duty.InteractionVerbs;
 
-public sealed class PointHighlightSystem : EntitySystem
+public sealed partial class PointHighlightSystem : EntitySystem
 {
-    [Dependency] private readonly IGameTiming _timing = default!;
+    [Dependency] private IGameTiming _timing = default!;
 
     public override void Update(float frameTime)
     {

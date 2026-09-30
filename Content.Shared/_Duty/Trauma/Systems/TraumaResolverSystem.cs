@@ -31,16 +31,16 @@ namespace Content.Shared._Duty.Trauma.Systems;
 /// вместе и складываются с диминишингом (худший — в полную силу, остальные — вполовину) и общим
 /// потолком, поэтому травмы всегда ощутимы, но не превращаются в мгновенный soft-lock.
 /// </summary>
-public sealed class TraumaResolverSystem : EntitySystem
+public sealed partial class TraumaResolverSystem : EntitySystem
 {
-    [Dependency] private readonly IGameTiming _timing = default!;
-    [Dependency] private readonly INetManager _net = default!;
-    [Dependency] private readonly IRobustRandom _random = default!;
-    [Dependency] private readonly DamageableSystem _damageable = default!;
-    [Dependency] private readonly SharedBloodstreamSystem _bloodstream = default!;
-    [Dependency] private readonly SharedStunSystem _stun = default!;
-    [Dependency] private readonly SharedPopupSystem _popup = default!;
-    [Dependency] private readonly SharedTransformSystem _xform = default!;
+    [Dependency] private IGameTiming _timing = default!;
+    [Dependency] private INetManager _net = default!;
+    [Dependency] private IRobustRandom _random = default!;
+    [Dependency] private DamageableSystem _damageable = default!;
+    [Dependency] private SharedBloodstreamSystem _bloodstream = default!;
+    [Dependency] private SharedStunSystem _stun = default!;
+    [Dependency] private SharedPopupSystem _popup = default!;
+    [Dependency] private SharedTransformSystem _xform = default!;
 
     // ── Тюнинг (Phase 6). ──────────────────────────────────────────────────────
     private static readonly TimeSpan EffectInterval = TimeSpan.FromSeconds(1);

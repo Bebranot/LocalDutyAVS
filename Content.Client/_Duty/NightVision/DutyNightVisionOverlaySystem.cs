@@ -6,9 +6,9 @@ namespace Content.Client._Duty.NightVision;
 /// _Duty: держит зелёный оверлей ПНВ (<see cref="DutyNightVisionOverlay"/>) добавленным.
 /// Сам оверлей в BeforeDraw решает, рисоваться ли (по активности ПНВ у локального игрока).
 /// </summary>
-public sealed class DutyNightVisionOverlaySystem : EntitySystem
+public sealed partial class DutyNightVisionOverlaySystem : EntitySystem
 {
-    [Dependency] private readonly IOverlayManager _overlay = default!;
+    [Dependency] private IOverlayManager _overlay = default!;
 
     private DutyNightVisionOverlay _overlayInstance = default!;
 

@@ -23,15 +23,15 @@ namespace Content.Server._Duty.SpawnMenu;
 /// «хочу вот этот прототип вот в этой точке», всё остальное — доступ по сикею, лимит
 /// на раунд и дистанция — проверяется здесь.
 /// </summary>
-public sealed class DutySpawnMenuSystem : EntitySystem
+public sealed partial class DutySpawnMenuSystem : EntitySystem
 {
-    [Dependency] private readonly IPrototypeManager _proto = default!;
-    [Dependency] private readonly IConfigurationManager _cfg = default!;
-    [Dependency] private readonly SharedPopupSystem _popup = default!;
-    [Dependency] private readonly SharedTransformSystem _xform = default!;
-    [Dependency] private readonly IAdminLogManager _adminLog = default!;
-    [Dependency] private readonly EntityLookupSystem _lookup = default!;
-    [Dependency] private readonly MobStateSystem _mobState = default!;
+    [Dependency] private IPrototypeManager _proto = default!;
+    [Dependency] private IConfigurationManager _cfg = default!;
+    [Dependency] private SharedPopupSystem _popup = default!;
+    [Dependency] private SharedTransformSystem _xform = default!;
+    [Dependency] private IAdminLogManager _adminLog = default!;
+    [Dependency] private EntityLookupSystem _lookup = default!;
+    [Dependency] private MobStateSystem _mobState = default!;
 
     /// <summary>
     /// Сколько чего уже выдано за раунд: сикей (в нижнем регистре) → прототип → количество.

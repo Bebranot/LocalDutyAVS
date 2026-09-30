@@ -51,23 +51,23 @@ namespace Content.Shared._Duty.Defibrillation;
 /// Ванильный <c>SharedDefibrillatorSystem</c> поднимает на аппарате хуки <see cref="DutyDefibStartZapEvent"/>,
 /// <see cref="DutyDefibCanZapEvent"/>, <see cref="DutyDefibZapModifyEvent"/>, <see cref="DutyDefibZappedEvent"/>.
 /// </remarks>
-public abstract class SharedDutyDefibrillationSystem : EntitySystem
+public abstract partial class SharedDutyDefibrillationSystem : EntitySystem
 {
-    [Dependency] protected readonly IGameTiming Timing = default!;
-    [Dependency] private readonly INetManager _net = default!;
-    [Dependency] private readonly IPrototypeManager _proto = default!;
-    [Dependency] private readonly SharedAudioSystem _audio = default!;
-    [Dependency] private readonly SharedConcussionSystem _concussion = default!;
-    [Dependency] private readonly SharedDoAfterSystem _doAfter = default!;
-    [Dependency] private readonly InventorySystem _inventory = default!;
-    [Dependency] private readonly MobStateSystem _mobState = default!;
-    [Dependency] private readonly MobThresholdSystem _mobThreshold = default!;
-    [Dependency] private readonly MovementSpeedModifierSystem _movement = default!;
-    [Dependency] private readonly SharedPopupSystem _popup = default!;
-    [Dependency] private readonly PowerCellSystem _powerCell = default!;
-    [Dependency] private readonly SharedRottingSystem _rotting = default!;
-    [Dependency] private readonly ItemToggleSystem _toggle = default!;
-    [Dependency] private readonly UseDelaySystem _useDelay = default!;
+    [Dependency] protected IGameTiming Timing = default!;
+    [Dependency] private INetManager _net = default!;
+    [Dependency] private IPrototypeManager _proto = default!;
+    [Dependency] private SharedAudioSystem _audio = default!;
+    [Dependency] private SharedConcussionSystem _concussion = default!;
+    [Dependency] private SharedDoAfterSystem _doAfter = default!;
+    [Dependency] private InventorySystem _inventory = default!;
+    [Dependency] private MobStateSystem _mobState = default!;
+    [Dependency] private MobThresholdSystem _mobThreshold = default!;
+    [Dependency] private MovementSpeedModifierSystem _movement = default!;
+    [Dependency] private SharedPopupSystem _popup = default!;
+    [Dependency] private PowerCellSystem _powerCell = default!;
+    [Dependency] private SharedRottingSystem _rotting = default!;
+    [Dependency] private ItemToggleSystem _toggle = default!;
+    [Dependency] private UseDelaySystem _useDelay = default!;
 
     private const string ChestSlot = "outerClothing";
     private const string BurnType = "Heat";

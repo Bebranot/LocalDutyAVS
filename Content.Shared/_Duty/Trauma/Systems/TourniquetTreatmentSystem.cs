@@ -36,16 +36,16 @@ namespace Content.Shared._Duty.Trauma.Systems;
 /// ванильный DoAfter и звук, которых сервер не запускал. Всё, что меняет состояние, идёт только на
 /// сервере.
 /// </summary>
-public sealed class TourniquetTreatmentSystem : EntitySystem
+public sealed partial class TourniquetTreatmentSystem : EntitySystem
 {
-    [Dependency] private readonly INetManager _net = default!;
-    [Dependency] private readonly SharedUserInterfaceSystem _ui = default!;
-    [Dependency] private readonly SharedDoAfterSystem _doAfter = default!;
-    [Dependency] private readonly SharedHandsSystem _hands = default!;
-    [Dependency] private readonly SharedPopupSystem _popup = default!;
-    [Dependency] private readonly SharedAudioSystem _audio = default!;
-    [Dependency] private readonly TagSystem _tag = default!;
-    [Dependency] private readonly HealingSystem _healing = default!;
+    [Dependency] private INetManager _net = default!;
+    [Dependency] private SharedUserInterfaceSystem _ui = default!;
+    [Dependency] private SharedDoAfterSystem _doAfter = default!;
+    [Dependency] private SharedHandsSystem _hands = default!;
+    [Dependency] private SharedPopupSystem _popup = default!;
+    [Dependency] private SharedAudioSystem _audio = default!;
+    [Dependency] private TagSystem _tag = default!;
+    [Dependency] private HealingSystem _healing = default!;
 
     /// <summary>Длительность быстрой остановки (Phase 6). Рвётся движением и уроном.</summary>
     private static readonly TimeSpan QuickTreatmentTime = TimeSpan.FromSeconds(3);

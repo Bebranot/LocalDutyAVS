@@ -21,14 +21,14 @@ namespace Content.Server._Duty.RoundStartVote;
 /// При победе "Да" рассылается <see cref="RoundStartVoteEffectAppliedEvent"/> с EffectId
 /// прототипа — конкретный эффект (например, дебаг-заряд СМЭС) реализует отдельная система.
 /// </summary>
-public sealed class RoundStartVoteSystem : EntitySystem
+public sealed partial class RoundStartVoteSystem : EntitySystem
 {
-    [Dependency] private readonly IAdminLogManager _adminLogger = default!;
-    [Dependency] private readonly IChatManager _chat = default!;
-    [Dependency] private readonly IConfigurationManager _cfg = default!;
-    [Dependency] private readonly IPrototypeManager _proto = default!;
-    [Dependency] private readonly IRobustRandom _random = default!;
-    [Dependency] private readonly IVoteManager _voteManager = default!;
+    [Dependency] private IAdminLogManager _adminLogger = default!;
+    [Dependency] private IChatManager _chat = default!;
+    [Dependency] private IConfigurationManager _cfg = default!;
+    [Dependency] private IPrototypeManager _proto = default!;
+    [Dependency] private IRobustRandom _random = default!;
+    [Dependency] private IVoteManager _voteManager = default!;
 
     private const string YesOption = "yes";
     private const string NoOption = "no";

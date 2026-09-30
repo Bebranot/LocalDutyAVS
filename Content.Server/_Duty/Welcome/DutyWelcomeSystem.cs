@@ -23,12 +23,12 @@ namespace Content.Server._Duty.Welcome;
 /// - галочка «не показывать снова» подавляет показ до следующего рестарта независимо от критерия выше;
 /// - вся фича целиком выключается CVar'ом <see cref="DutyCCVars.WelcomeEnabled"/>.
 /// </summary>
-public sealed class DutyWelcomeSystem : EntitySystem
+public sealed partial class DutyWelcomeSystem : EntitySystem
 {
-    [Dependency] private readonly EuiManager _euiManager = default!;
-    [Dependency] private readonly PlayTimeTrackingManager _playTime = default!;
-    [Dependency] private readonly UserDbDataManager _userDb = default!;
-    [Dependency] private readonly IConfigurationManager _cfg = default!;
+    [Dependency] private EuiManager _euiManager = default!;
+    [Dependency] private PlayTimeTrackingManager _playTime = default!;
+    [Dependency] private UserDbDataManager _userDb = default!;
+    [Dependency] private IConfigurationManager _cfg = default!;
 
     public override void Initialize()
     {

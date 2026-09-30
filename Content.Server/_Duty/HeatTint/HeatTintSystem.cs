@@ -12,7 +12,7 @@ namespace Content.Server._Duty.HeatTint;
 
 public sealed partial class HeatTintSystem : SharedHeatTintSystem
 {
-    [Dependency] private readonly SharedAppearanceSystem _appearance = default!;
+    [Dependency] private SharedAppearanceSystem _appearance = default!;
 
     public override void Initialize()
     {

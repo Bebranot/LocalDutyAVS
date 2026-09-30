@@ -17,7 +17,7 @@ namespace Content.Client._Duty.PocketPlayer;
 [GenerateTypedNameReferences]
 public sealed partial class PocketPlayerMenu : FancyWindow
 {
-    [Dependency] private readonly IEntityManager _entManager = default!;
+    [Dependency] private IEntityManager _entManager = default!;
     private readonly AudioSystem _audioSystem;
 
     private bool _playState;

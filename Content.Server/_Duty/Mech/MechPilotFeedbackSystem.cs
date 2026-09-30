@@ -16,8 +16,8 @@ namespace Content.Server._Duty.Mech;
 
 public sealed partial class MechPilotFeedbackSystem : EntitySystem
 {
-    [Dependency] private readonly ChatSystem _chat = default!;
-    [Dependency] private readonly BlindableSystem _blindable = default!;
+    [Dependency] private ChatSystem _chat = default!;
+    [Dependency] private BlindableSystem _blindable = default!;
 
     public override void Initialize()
     {

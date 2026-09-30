@@ -15,12 +15,12 @@ namespace Content.Server._Duty.ServerLifecycle;
 /// так никто и не подключится — раунд принудительно завершается и сервер уходит в лобби.
 /// Подключение любого игрока в любой момент отменяет отсчёт и штатно снимает паузу.
 /// </summary>
-public sealed class EmptyServerLifecycleSystem : EntitySystem
+public sealed partial class EmptyServerLifecycleSystem : EntitySystem
 {
-    [Dependency] private readonly IPlayerManager _playerManager = default!;
-    [Dependency] private readonly IConfigurationManager _cfg = default!;
-    [Dependency] private readonly GameTicker _gameTicker = default!;
-    [Dependency] private readonly IMapManager _mapManager = default!;
+    [Dependency] private IPlayerManager _playerManager = default!;
+    [Dependency] private IConfigurationManager _cfg = default!;
+    [Dependency] private GameTicker _gameTicker = default!;
+    [Dependency] private IMapManager _mapManager = default!;
 
     private CancellationTokenSource _restartTimerCancel = new();
     private bool _timerActive;

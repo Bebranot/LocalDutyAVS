@@ -22,15 +22,15 @@ namespace Content.Shared._Duty.Trauma.Systems;
 /// шинирование — в отдельных системах). Наложение приходит серверным <see cref="TraumaRolledEvent"/>,
 /// пассивный тик заживления крутится на сервере, а осмотр здоровья — в shared.
 /// </summary>
-public sealed class FractureSystem : EntitySystem
+public sealed partial class FractureSystem : EntitySystem
 {
-    [Dependency] private readonly IGameTiming _timing = default!;
-    [Dependency] private readonly INetManager _net = default!;
-    [Dependency] private readonly MovementSpeedModifierSystem _movementSpeed = default!;
-    [Dependency] private readonly SharedTransformSystem _transform = default!;
-    [Dependency] private readonly SharedPopupSystem _popup = default!;
-    [Dependency] private readonly IRobustRandom _random = default!;
-    [Dependency] private readonly AlertsSystem _alerts = default!;
+    [Dependency] private IGameTiming _timing = default!;
+    [Dependency] private INetManager _net = default!;
+    [Dependency] private MovementSpeedModifierSystem _movementSpeed = default!;
+    [Dependency] private SharedTransformSystem _transform = default!;
+    [Dependency] private SharedPopupSystem _popup = default!;
+    [Dependency] private IRobustRandom _random = default!;
+    [Dependency] private AlertsSystem _alerts = default!;
 
     /// <summary>Алерт-иконка (по типу HP/стамины) — показывается, пока сломана хотя бы одна зона.</summary>
     private static readonly ProtoId<AlertPrototype> BrokenBoneAlert = "DutyBrokenBone";

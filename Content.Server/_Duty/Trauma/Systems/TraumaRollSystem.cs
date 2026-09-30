@@ -31,12 +31,12 @@ namespace Content.Server._Duty.Trauma.Systems;
 /// конкретного эффекта (перелом/вывих/артерия) делают отдельные системы-механики. Это единая
 /// точка расширения: новый тип травмы = новый обработчик события, без правок роллера.
 /// </summary>
-public sealed class TraumaRollSystem : EntitySystem
+public sealed partial class TraumaRollSystem : EntitySystem
 {
-    [Dependency] private readonly IRobustRandom _random = default!;
-    [Dependency] private readonly DamageableSystem _damageable = default!;
-    [Dependency] private readonly MobStateSystem _mobState = default!;
-    [Dependency] private readonly MobThresholdSystem _mobThreshold = default!;
+    [Dependency] private IRobustRandom _random = default!;
+    [Dependency] private DamageableSystem _damageable = default!;
+    [Dependency] private MobStateSystem _mobState = default!;
+    [Dependency] private MobThresholdSystem _mobThreshold = default!;
 
     private static readonly ProtoId<DamageTypePrototype> Blunt = "Blunt";
     private static readonly ProtoId<DamageTypePrototype> Slash = "Slash";

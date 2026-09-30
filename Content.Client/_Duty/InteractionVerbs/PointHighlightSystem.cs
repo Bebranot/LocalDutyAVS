@@ -14,11 +14,11 @@ using Robust.Shared.Prototypes;
 
 namespace Content.Client._Duty.InteractionVerbs;
 
-public sealed class PointHighlightSystem : EntitySystem
+public sealed partial class PointHighlightSystem : EntitySystem
 {
     private static readonly ProtoId<ShaderPrototype> ShaderId = "PointHighlightOutline";
 
-    [Dependency] private readonly IPrototypeManager _protoMan = default!;
+    [Dependency] private IPrototypeManager _protoMan = default!;
 
     private ShaderInstance _shader = default!;
 

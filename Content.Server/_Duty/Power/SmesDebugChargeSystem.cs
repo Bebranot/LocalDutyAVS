@@ -19,13 +19,13 @@ namespace Content.Server._Duty.Power;
 /// Раз в секунду достаточно — топит заряд на всех СМЭС станции разом, включая появившиеся
 /// после применения эффекта (стройка/админ-спавн).
 /// </summary>
-public sealed class SmesDebugChargeSystem : EntitySystem
+public sealed partial class SmesDebugChargeSystem : EntitySystem
 {
     public const string EffectId = "SmesInfiniteCharge";
 
     private const float RefreshInterval = 1f;
 
-    [Dependency] private readonly SharedBatterySystem _battery = default!;
+    [Dependency] private SharedBatterySystem _battery = default!;
 
     private bool _active;
     private float _accumulator;

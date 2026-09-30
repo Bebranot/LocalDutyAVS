@@ -33,12 +33,12 @@ namespace Content.Client._Duty.Aiming;
 /// прозрачность из накопленного modulate экранного хэндла (см. правку <c>// _Duty</c> в движковом
 /// <c>SpriteView.Draw</c>) — без неё спрайтовый HUD не тускнел бы вместе с родителем.
 /// </summary>
-public sealed class HudAimFadeSystem : EntitySystem
+public sealed partial class HudAimFadeSystem : EntitySystem
 {
-    [Dependency] private readonly IUserInterfaceManager _ui = default!;
-    [Dependency] private readonly IPlayerManager _player = default!;
-    [Dependency] private readonly IGameTiming _timing = default!;
-    [Dependency] private readonly MobStateSystem _mobState = default!;
+    [Dependency] private IUserInterfaceManager _ui = default!;
+    [Dependency] private IPlayerManager _player = default!;
+    [Dependency] private IGameTiming _timing = default!;
+    [Dependency] private MobStateSystem _mobState = default!;
 
     // --- Тюнинг (настройка через CCVar — вне скоупа ТЗ) ---
 

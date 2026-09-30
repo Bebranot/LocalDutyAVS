@@ -25,8 +25,8 @@ namespace Content.Client._Duty.CodeAlpha;
 [GenerateTypedNameReferences]
 public sealed partial class DutyCodeAlphaTimerWidget : UIWidget
 {
-    [Dependency] private readonly IResourceCache _resCache = default!;
-    [Dependency] private readonly IGameTiming _timing = default!;
+    [Dependency] private IResourceCache _resCache = default!;
+    [Dependency] private IGameTiming _timing = default!;
 
     /// <summary>Игрок спрятал панель вручную. Сбрасывается контроллером на порогах.</summary>
     public bool Dismissed;

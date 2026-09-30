@@ -12,13 +12,13 @@ namespace Content.Client._Duty.FuryStimulator;
 /// сила которых зависит от текущей стадии локального игрока (тряска экрана делается отдельно
 /// через <c>GetEyeOffsetEvent</c> в <see cref="FuryStimulatorSystem"/>).
 /// </summary>
-public sealed class FuryOverlay : Overlay
+public sealed partial class FuryOverlay : Overlay
 {
     private static readonly ProtoId<ShaderPrototype> FuryShader = "FuryVision";
 
-    [Dependency] private readonly IEntityManager _entMan = default!;
-    [Dependency] private readonly IPrototypeManager _proto = default!;
-    [Dependency] private readonly ISharedPlayerManager _player = default!;
+    [Dependency] private IEntityManager _entMan = default!;
+    [Dependency] private IPrototypeManager _proto = default!;
+    [Dependency] private ISharedPlayerManager _player = default!;
 
     public override bool RequestScreenTexture => true;
     public override OverlaySpace Space => OverlaySpace.WorldSpace;

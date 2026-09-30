@@ -34,14 +34,14 @@ namespace Content.Server._Duty.DiscordStatus;
 /// ID отправленного сообщения хранится только в памяти системы: рестарт сервера или смена канала
 /// на лету теряет его, и следующее обновление просто отправляет новое сообщение.
 /// </summary>
-public sealed class DiscordStatusSystem : EntitySystem
+public sealed partial class DiscordStatusSystem : EntitySystem
 {
-    [Dependency] private readonly DiscordLinkService _discord = default!;
-    [Dependency] private readonly IConfigurationManager _cfg = default!;
-    [Dependency] private readonly IGameTiming _timing = default!;
-    [Dependency] private readonly IPlayerManager _playerManager = default!;
-    [Dependency] private readonly IGameMapManager _gameMapManager = default!;
-    [Dependency] private readonly GameTicker _ticker = default!;
+    [Dependency] private DiscordLinkService _discord = default!;
+    [Dependency] private IConfigurationManager _cfg = default!;
+    [Dependency] private IGameTiming _timing = default!;
+    [Dependency] private IPlayerManager _playerManager = default!;
+    [Dependency] private IGameMapManager _gameMapManager = default!;
+    [Dependency] private GameTicker _ticker = default!;
 
     private const float MinUpdateIntervalSeconds = 5f;
     private const string StateFileName = "discord_status_message.json";

@@ -29,20 +29,20 @@ namespace Content.Server._Duty.FuryStimulator;
 /// с crossfade (fade 0.5 c) и передоз (гиб без урона окружающим).
 /// Общая предсказываемая математика и таблицы силы по фазам — в <see cref="SharedFuryStimulatorSystem"/>.
 /// </summary>
-public sealed class FuryStimulatorSystem : SharedFuryStimulatorSystem
+public sealed partial class FuryStimulatorSystem : SharedFuryStimulatorSystem
 {
-    [Dependency] private readonly IGameTiming _timing = default!;
-    [Dependency] private readonly IRobustRandom _random = default!;
-    [Dependency] private readonly SharedAudioSystem _audio = default!;
-    [Dependency] private readonly DamageableSystem _damageable = default!;
-    [Dependency] private readonly MovementSpeedModifierSystem _movement = default!;
-    [Dependency] private readonly SharedGunSystem _gun = default!;
-    [Dependency] private readonly SharedHandsSystem _hands = default!;
-    [Dependency] private readonly GibbingSystem _gib = default!;
-    [Dependency] private readonly SharedPopupSystem _popup = default!;
-    [Dependency] private readonly ExplosionSystem _explosion = default!;
-    [Dependency] private readonly SharedCameraRecoilSystem _recoil = default!;
-    [Dependency] private readonly SharedAppearanceSystem _appearance = default!;
+    [Dependency] private IGameTiming _timing = default!;
+    [Dependency] private IRobustRandom _random = default!;
+    [Dependency] private SharedAudioSystem _audio = default!;
+    [Dependency] private DamageableSystem _damageable = default!;
+    [Dependency] private MovementSpeedModifierSystem _movement = default!;
+    [Dependency] private SharedGunSystem _gun = default!;
+    [Dependency] private SharedHandsSystem _hands = default!;
+    [Dependency] private GibbingSystem _gib = default!;
+    [Dependency] private SharedPopupSystem _popup = default!;
+    [Dependency] private ExplosionSystem _explosion = default!;
+    [Dependency] private SharedCameraRecoilSystem _recoil = default!;
+    [Dependency] private SharedAppearanceSystem _appearance = default!;
 
     private static readonly string[] WarningPopups =
         { "fury-popup-warn-1", "fury-popup-warn-2", "fury-popup-warn-3" };

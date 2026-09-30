@@ -23,14 +23,14 @@ namespace Content.Server._Duty.Clothing;
 
 public sealed partial class WashingMachineSystem : EntitySystem
 {
-    [Dependency] private readonly AppearanceSystem _appearance = default!;
-    [Dependency] private readonly SharedAmbientSoundSystem _ambient = default!;
-    [Dependency] private readonly SharedAudioSystem _audio = default!;
-    [Dependency] private readonly ClothingDirtSystem _dirt = default!;
-    [Dependency] private readonly SharedContainerSystem _container = default!;
-    [Dependency] private readonly SharedJitteringSystem _jitter = default!;
-    [Dependency] private readonly LockSystem _lock = default!;
-    [Dependency] private readonly PowerReceiverSystem _power = default!;
+    [Dependency] private AppearanceSystem _appearance = default!;
+    [Dependency] private SharedAmbientSoundSystem _ambient = default!;
+    [Dependency] private SharedAudioSystem _audio = default!;
+    [Dependency] private ClothingDirtSystem _dirt = default!;
+    [Dependency] private SharedContainerSystem _container = default!;
+    [Dependency] private SharedJitteringSystem _jitter = default!;
+    [Dependency] private LockSystem _lock = default!;
+    [Dependency] private PowerReceiverSystem _power = default!;
 
     public override void Initialize()
     {

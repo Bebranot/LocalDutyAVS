@@ -20,12 +20,12 @@ namespace Content.Server._Duty.Clothing;
 
 public sealed partial class ShowerSystem : EntitySystem
 {
-    [Dependency] private readonly AppearanceSystem _appearance = default!;
-    [Dependency] private readonly ClothingDirtSystem _dirt = default!;
-    [Dependency] private readonly EntityLookupSystem _lookup = default!;
-    [Dependency] private readonly InventorySystem _inventory = default!;
-    [Dependency] private readonly PuddleSystem _puddle = default!;
-    [Dependency] private readonly PopupSystem _popup = default!;
+    [Dependency] private AppearanceSystem _appearance = default!;
+    [Dependency] private ClothingDirtSystem _dirt = default!;
+    [Dependency] private EntityLookupSystem _lookup = default!;
+    [Dependency] private InventorySystem _inventory = default!;
+    [Dependency] private PuddleSystem _puddle = default!;
+    [Dependency] private PopupSystem _popup = default!;
 
     private readonly HashSet<EntityUid> _entities = [];
 

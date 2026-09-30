@@ -19,11 +19,11 @@ namespace Content.Client.MainMenu.UI;
 ///     Курсорная реакция сглаживается по реальному времени кадра, а не по количеству кадров,
 ///     поэтому скорость "доводки" к курсору одинаковая на любом FPS.
 /// </summary>
-public sealed class MainMenuParallaxControl_Duty : Control
+public sealed partial class MainMenuParallaxControl_Duty : Control
 {
-    [Dependency] private readonly IGameTiming _timing      = default!;
-    [Dependency] private readonly IParallaxManager _parallax = default!;
-    [Dependency] private readonly IInputManager _input      = default!;
+    [Dependency] private IGameTiming _timing      = default!;
+    [Dependency] private IParallaxManager _parallax = default!;
+    [Dependency] private IInputManager _input      = default!;
 
     private const string PrototypeName = "ParallaxDuty";
 

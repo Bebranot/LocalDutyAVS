@@ -24,16 +24,16 @@ namespace Content.Shared._Duty.Aiming;
 /// Нельзя сменить стойку (лечь/встать) во время прицеливания; выход из прицеливания лёжа
 /// на короткое время обездвиживает персонажа.
 /// </summary>
-public sealed class SharedAimingSystem : EntitySystem
+public sealed partial class SharedAimingSystem : EntitySystem
 {
-    [Dependency] private readonly SharedContentEyeSystem _contentEye = default!;
-    [Dependency] private readonly SharedHandsSystem _hands = default!;
-    [Dependency] private readonly MovementSpeedModifierSystem _movementSpeedModifier = default!;
-    [Dependency] private readonly MovementModStatusSystem _movementMod = default!;
-    [Dependency] private readonly SharedGunSystem _gun = default!;
-    [Dependency] private readonly SharedPopupSystem _popup = default!;
-    [Dependency] private readonly SharedTransformSystem _transform = default!;
-    [Dependency] private readonly IGameTiming _timing = default!;
+    [Dependency] private SharedContentEyeSystem _contentEye = default!;
+    [Dependency] private SharedHandsSystem _hands = default!;
+    [Dependency] private MovementSpeedModifierSystem _movementSpeedModifier = default!;
+    [Dependency] private MovementModStatusSystem _movementMod = default!;
+    [Dependency] private SharedGunSystem _gun = default!;
+    [Dependency] private SharedPopupSystem _popup = default!;
+    [Dependency] private SharedTransformSystem _transform = default!;
+    [Dependency] private IGameTiming _timing = default!;
 
     private static readonly EntProtoId AimRecoveryEffect = "AimRecoveryImmobilizeStatusEffect";
     private static readonly TimeSpan TooCloseWarningCooldown = TimeSpan.FromSeconds(5);

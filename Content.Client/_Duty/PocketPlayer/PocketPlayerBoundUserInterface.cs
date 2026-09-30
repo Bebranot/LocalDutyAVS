@@ -9,9 +9,9 @@ using Robust.Shared.Prototypes;
 
 namespace Content.Client._Duty.PocketPlayer;
 
-public sealed class PocketPlayerBoundUserInterface : BoundUserInterface
+public sealed partial class PocketPlayerBoundUserInterface : BoundUserInterface
 {
-    [Dependency] private readonly IPrototypeManager _protoManager = default!;
+    [Dependency] private IPrototypeManager _protoManager = default!;
 
     private PocketPlayerMenu? _menu;
 

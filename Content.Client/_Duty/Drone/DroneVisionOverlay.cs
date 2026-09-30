@@ -19,9 +19,9 @@ namespace Content.Client._Duty.Drone;
 
 public sealed partial class DroneVisionOverlay : Overlay
 {
-    [Dependency] private readonly IEntityManager _entity = default!;
-    [Dependency] private readonly IPlayerManager _player = default!;
-    [Dependency] private readonly IEyeManager _eye = default!;
+    [Dependency] private IEntityManager _entity = default!;
+    [Dependency] private IPlayerManager _player = default!;
+    [Dependency] private IEyeManager _eye = default!;
 
     private readonly ContainerSystem _container;
     private readonly SpriteSystem _sprite;

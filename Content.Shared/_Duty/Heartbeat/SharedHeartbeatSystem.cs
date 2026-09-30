@@ -15,11 +15,11 @@ namespace Content.Shared._Duty.Heartbeat;
 /// Воспроизведение звука тела живёт в серверной <c>HeartbeatSystem</c>; звук в
 /// анализаторе — в клиентской <c>HealthAnalyzerAudioSystem</c>.
 /// </summary>
-public abstract class SharedHeartbeatSystem : EntitySystem
+public abstract partial class SharedHeartbeatSystem : EntitySystem
 {
-    [Dependency] private readonly DamageableSystem _damageable = default!;
-    [Dependency] private readonly MobThresholdSystem _mobThreshold = default!;
-    [Dependency] private readonly IGameTiming _timing = default!;
+    [Dependency] private DamageableSystem _damageable = default!;
+    [Dependency] private MobThresholdSystem _mobThreshold = default!;
+    [Dependency] private IGameTiming _timing = default!;
 
     /// <summary>Ниже этой «живучести» пациент считается на грани смерти (мед-алерт в анализаторе).</summary>
     public const float NearDeathFraction = 0.10f;

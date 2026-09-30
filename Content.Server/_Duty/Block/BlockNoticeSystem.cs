@@ -9,10 +9,10 @@ namespace Content.Server._Duty.Block;
 /// Печатает серые системные строки систем блока в чат конкретному игроку. Отдельная серверная
 /// система, потому что IChatManager серверный, а сами системы блока живут в Content.Shared.
 /// </summary>
-public sealed class BlockNoticeSystem : EntitySystem
+public sealed partial class BlockNoticeSystem : EntitySystem
 {
-    [Dependency] private readonly IChatManager _chat = default!;
-    [Dependency] private readonly IPlayerManager _player = default!;
+    [Dependency] private IChatManager _chat = default!;
+    [Dependency] private IPlayerManager _player = default!;
 
     private static readonly Color NoticeColor = Color.Gray;
 

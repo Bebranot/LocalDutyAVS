@@ -18,12 +18,12 @@ namespace Content.Client._Duty.FireAgony;
 /// ведёт единый владелец <c>HudAimFadeSystem</c>; приглушение звука — <c>DynamicAmbientMusicSystem</c>;
 /// зум камеры ставит сервер.
 /// </summary>
-public sealed class FireAgonySystem : EntitySystem
+public sealed partial class FireAgonySystem : EntitySystem
 {
-    [Dependency] private readonly IOverlayManager _overlayMan = default!;
-    [Dependency] private readonly IPlayerManager _player = default!;
-    [Dependency] private readonly SharedAudioSystem _audio = default!;
-    [Dependency] private readonly ContentAudioSystem _contentAudio = default!;
+    [Dependency] private IOverlayManager _overlayMan = default!;
+    [Dependency] private IPlayerManager _player = default!;
+    [Dependency] private SharedAudioSystem _audio = default!;
+    [Dependency] private ContentAudioSystem _contentAudio = default!;
 
     private FireAgonyOverlay _overlay = default!;
 

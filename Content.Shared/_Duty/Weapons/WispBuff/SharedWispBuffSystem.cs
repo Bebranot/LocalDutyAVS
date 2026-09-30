@@ -11,9 +11,9 @@ namespace Content.Shared._Duty.Weapons.WispBuff;
 /// (см. <c>WispBuffSystem</c>), сама математика удара — здесь, чтобы клиент предсказывал урон
 /// одинаково с сервером (образец — <see cref="Content.Shared._Duty.ShieldBash.SharedShieldBashSystem"/>).
 /// </summary>
-public sealed class SharedWispBuffSystem : EntitySystem
+public sealed partial class SharedWispBuffSystem : EntitySystem
 {
-    [Dependency] private readonly SharedMeleeWeaponSystem _meleeWeapon = default!;
+    [Dependency] private SharedMeleeWeaponSystem _meleeWeapon = default!;
 
     public override void Initialize()
     {

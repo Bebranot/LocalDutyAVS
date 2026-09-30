@@ -20,18 +20,18 @@ namespace Content.Server._Duty.Weapons.MoraleBuff;
 /// Выдаёт Action владельцу пока алебарда взята в две руки (wielded), при активации
 /// баффает кастера и живых гуманоидов рядом (см. <see cref="MoraleBuffSystem"/>).
 /// </summary>
-public sealed class MoraleFlagSystem : EntitySystem
+public sealed partial class MoraleFlagSystem : EntitySystem
 {
-    [Dependency] private readonly SharedActionsSystem _actions = default!;
-    [Dependency] private readonly SharedHandsSystem _hands = default!;
-    [Dependency] private readonly SharedPopupSystem _popup = default!;
-    [Dependency] private readonly ChatSystem _chat = default!;
-    [Dependency] private readonly SharedAudioSystem _audio = default!;
-    [Dependency] private readonly EntityLookupSystem _lookup = default!;
-    [Dependency] private readonly MobStateSystem _mobState = default!;
-    [Dependency] private readonly IGameTiming _timing = default!;
-    [Dependency] private readonly IRobustRandom _random = default!;
-    [Dependency] private readonly MoraleBuffSystem _buff = default!;
+    [Dependency] private SharedActionsSystem _actions = default!;
+    [Dependency] private SharedHandsSystem _hands = default!;
+    [Dependency] private SharedPopupSystem _popup = default!;
+    [Dependency] private ChatSystem _chat = default!;
+    [Dependency] private SharedAudioSystem _audio = default!;
+    [Dependency] private EntityLookupSystem _lookup = default!;
+    [Dependency] private MobStateSystem _mobState = default!;
+    [Dependency] private IGameTiming _timing = default!;
+    [Dependency] private IRobustRandom _random = default!;
+    [Dependency] private MoraleBuffSystem _buff = default!;
 
     private readonly HashSet<EntityUid> _targets = new();
 

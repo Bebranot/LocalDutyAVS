@@ -9,9 +9,9 @@ namespace Content.Server._Duty.Weapons.Module;
 
 // Порт из STALKER-14 (Фаза 1 DutyAVS, без зум-скоупинга).
 // Модули в слотах ствола (gun_module_*, gun_auto_sear) меняют статы Gun и доступные режимы огня.
-public sealed class STWeaponModuleSystem : STSharedWeaponModuleSystem
+public sealed partial class STWeaponModuleSystem : STSharedWeaponModuleSystem
 {
-    [Dependency] private readonly SharedGunSystem _gun = default!;
+    [Dependency] private SharedGunSystem _gun = default!;
 
     private EntityQuery<ContainerManagerComponent> _containerMangerQuery;
     private EntityQuery<STWeaponModuleContainerComponent> _containerModuleQuery;

@@ -20,14 +20,14 @@ namespace Content.Client._Duty.Trauma;
 /// Отдельным оверлеем, а не через <c>DamageOverlay.PainLevel</c>: тот уровень пересчитывается
 /// контроллером по урону на каждом изменении порогов и затёр бы разовую вспышку.
 /// </summary>
-public sealed class DutyPainFlashOverlay : Overlay
+public sealed partial class DutyPainFlashOverlay : Overlay
 {
     private static readonly ProtoId<ShaderPrototype> CircleMaskShader = "GradientCircleMask";
 
-    [Dependency] private readonly IEntityManager _entity = default!;
-    [Dependency] private readonly IPlayerManager _player = default!;
-    [Dependency] private readonly IPrototypeManager _proto = default!;
-    [Dependency] private readonly IGameTiming _timing = default!;
+    [Dependency] private IEntityManager _entity = default!;
+    [Dependency] private IPlayerManager _player = default!;
+    [Dependency] private IPrototypeManager _proto = default!;
+    [Dependency] private IGameTiming _timing = default!;
 
     private readonly ShaderInstance _shader;
 

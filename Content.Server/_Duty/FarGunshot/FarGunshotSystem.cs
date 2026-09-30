@@ -9,10 +9,10 @@ namespace Content.Server._Duty.FarGunshot;
 
 // «Эхо» выстрела. Подписывается на GunShotEvent (его наш форк уже шлёт на ствол) —
 // никаких правок upstream SharedGunSystem не требуется. Звучит только на сервере.
-public sealed class FarGunshotSystem : EntitySystem
+public sealed partial class FarGunshotSystem : EntitySystem
 {
-    [Dependency] private readonly SharedAudioSystem _audio = default!;
-    [Dependency] private readonly TransformSystem _transform = default!;
+    [Dependency] private SharedAudioSystem _audio = default!;
+    [Dependency] private TransformSystem _transform = default!;
 
     public override void Initialize()
     {

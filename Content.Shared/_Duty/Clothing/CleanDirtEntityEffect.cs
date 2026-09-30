@@ -12,7 +12,7 @@ namespace Content.Shared._Duty.Clothing;
 public sealed partial class CleanDirtEntityEffectSystem
     : EntityEffectSystem<ClothingDirtableComponent, CleanDirt>
 {
-    [Dependency] private readonly ClothingDirtSystem _dirt = default!;
+    [Dependency] private ClothingDirtSystem _dirt = default!;
 
     protected override void Effect(Entity<ClothingDirtableComponent> entity, ref EntityEffectEvent<CleanDirt> args)
     {

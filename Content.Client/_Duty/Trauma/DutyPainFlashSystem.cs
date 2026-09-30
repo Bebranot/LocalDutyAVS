@@ -12,9 +12,9 @@ namespace Content.Client._Duty.Trauma;
 /// <see cref="DutyPainFlashEvent"/> и плавно гаснет. Оверлей висит всегда, но сам себя не рисует,
 /// пока сила равна нулю, поэтому добавлять и снимать его на каждую вспышку не нужно.
 /// </summary>
-public sealed class DutyPainFlashSystem : EntitySystem
+public sealed partial class DutyPainFlashSystem : EntitySystem
 {
-    [Dependency] private readonly IOverlayManager _overlay = default!;
+    [Dependency] private IOverlayManager _overlay = default!;
 
     private DutyPainFlashOverlay _flash = default!;
 

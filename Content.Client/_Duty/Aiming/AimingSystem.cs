@@ -18,15 +18,15 @@ namespace Content.Client._Duty.Aiming;
 /// Следит за состоянием клавиши Aim (по умолчанию ПКМ) и шлёт предсказанные запросы
 /// на начало/конец прицеливания. Серверная/общая валидация и эффекты — в SharedAimingSystem.
 /// </summary>
-public sealed class AimingSystem : EntitySystem
+public sealed partial class AimingSystem : EntitySystem
 {
-    [Dependency] private readonly IEyeManager _eyeManager = default!;
-    [Dependency] private readonly IInputManager _inputManager = default!;
-    [Dependency] private readonly IPlayerManager _player = default!;
-    [Dependency] private readonly InputSystem _inputSystem = default!;
-    [Dependency] private readonly SharedTransformSystem _xform = default!;
-    [Dependency] private readonly SharedHandsSystem _hands = default!;
-    [Dependency] private readonly IGameTiming _timing = default!;
+    [Dependency] private IEyeManager _eyeManager = default!;
+    [Dependency] private IInputManager _inputManager = default!;
+    [Dependency] private IPlayerManager _player = default!;
+    [Dependency] private InputSystem _inputSystem = default!;
+    [Dependency] private SharedTransformSystem _xform = default!;
+    [Dependency] private SharedHandsSystem _hands = default!;
+    [Dependency] private IGameTiming _timing = default!;
 
     /// <summary>
     /// Пауза между повторными заявками, пока клавиша зажата, а прицеливание так и не началось

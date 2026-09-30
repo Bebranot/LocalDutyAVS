@@ -18,11 +18,11 @@ namespace Content.Client._Duty.Movement;
 /// активен сетевой флаг <see cref="DutyStaminaComponent.Breathing"/>. Останавливается плавно
 /// (fade-out), переживает «мёртвый» стрим и смерть игрока — чтобы звук не залипал петлёй.
 /// </summary>
-public sealed class DutyBreathingSystem : EntitySystem
+public sealed partial class DutyBreathingSystem : EntitySystem
 {
-    [Dependency] private readonly IPlayerManager _player = default!;
-    [Dependency] private readonly MobStateSystem _mobState = default!;
-    [Dependency] private readonly SharedAudioSystem _audio = default!;
+    [Dependency] private IPlayerManager _player = default!;
+    [Dependency] private MobStateSystem _mobState = default!;
+    [Dependency] private SharedAudioSystem _audio = default!;
 
     private const float BreathVolume = -5f;     // рабочая громкость, негромко
     private const float SilenceVolume = -32f;   // куда уводим при fade-out

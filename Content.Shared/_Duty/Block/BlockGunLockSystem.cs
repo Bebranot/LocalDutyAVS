@@ -13,10 +13,10 @@ namespace Content.Shared._Duty.Block;
 /// оружие в руках — "бейся тем же, чем заблокировал". Вешается BlockSystem'ом при активации
 /// полного уровня блока оружием с GunComponent, независимо от исхода блока.
 /// </summary>
-public sealed class BlockGunLockSystem : EntitySystem
+public sealed partial class BlockGunLockSystem : EntitySystem
 {
-    [Dependency] private readonly IGameTiming _timing = default!;
-    [Dependency] private readonly INetManager _netMan = default!;
+    [Dependency] private IGameTiming _timing = default!;
+    [Dependency] private INetManager _netMan = default!;
 
     /// <summary>Не чаще раза в этот интервал — иначе строка в чат спамит при частых попытках.</summary>
     private static readonly TimeSpan NoticeDebounce = TimeSpan.FromSeconds(1);

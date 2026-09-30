@@ -29,12 +29,12 @@ namespace Content.Client._Duty.AmbientMusic;
 /// комнат лежит в тех же папках, и без этого фильтра гудящая машина в техах глушила бы музыку
 /// навсегда.
 /// </summary>
-public sealed class DutyMusicDirector : EntitySystem
+public sealed partial class DutyMusicDirector : EntitySystem
 {
-    [Dependency] private readonly IGameTiming _timing = default!;
-    [Dependency] private readonly IPlayerManager _player = default!;
-    [Dependency] private readonly IPrototypeManager _proto = default!;
-    [Dependency] private readonly RulesSystem _rules = default!;
+    [Dependency] private IGameTiming _timing = default!;
+    [Dependency] private IPlayerManager _player = default!;
+    [Dependency] private IPrototypeManager _proto = default!;
+    [Dependency] private RulesSystem _rules = default!;
 
     /// <summary>Приоритет динамической музыки. Всё, что выше, её глушит.</summary>
     public const int DynamicMusicPriority = 0;

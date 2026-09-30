@@ -20,11 +20,11 @@ namespace Content.Shared._Duty.Trauma.Systems;
 /// Наложение приходит серверным <see cref="TraumaRolledEvent"/>, истечение остаточной слабости
 /// крутится на сервере, осмотр — в shared.
 /// </summary>
-public sealed class DislocationSystem : EntitySystem
+public sealed partial class DislocationSystem : EntitySystem
 {
-    [Dependency] private readonly IGameTiming _timing = default!;
-    [Dependency] private readonly INetManager _net = default!;
-    [Dependency] private readonly MovementSpeedModifierSystem _movementSpeed = default!;
+    [Dependency] private IGameTiming _timing = default!;
+    [Dependency] private INetManager _net = default!;
+    [Dependency] private MovementSpeedModifierSystem _movementSpeed = default!;
 
     /// <summary>Сколько длится остаточная слабость зоны после вправления (Phase 6 — тюнинг).</summary>
     public static readonly TimeSpan ResidualDuration = TimeSpan.FromSeconds(30);

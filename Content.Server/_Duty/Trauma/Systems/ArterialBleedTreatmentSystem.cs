@@ -29,17 +29,17 @@ namespace Content.Server._Duty.Trauma.Systems;
 /// <see cref="ActiveArterialTreatmentComponent"/>, поэтому любой путь удаления сессии
 /// (завершение, закрытие окна, смерть/дисконнект лечащего) откатывает состояние корректно.
 /// </summary>
-public sealed class ArterialBleedTreatmentSystem : EntitySystem
+public sealed partial class ArterialBleedTreatmentSystem : EntitySystem
 {
-    [Dependency] private readonly SharedUserInterfaceSystem _ui = default!;
-    [Dependency] private readonly SharedDoAfterSystem _doAfter = default!;
-    [Dependency] private readonly MovementSpeedModifierSystem _movementSpeed = default!;
-    [Dependency] private readonly SharedContentEyeSystem _contentEye = default!;
-    [Dependency] private readonly SharedHandsSystem _hands = default!;
-    [Dependency] private readonly SharedStackSystem _stack = default!;
-    [Dependency] private readonly SharedPopupSystem _popup = default!;
-    [Dependency] private readonly TagSystem _tag = default!;
-    [Dependency] private readonly SharedContainerSystem _container = default!;
+    [Dependency] private SharedUserInterfaceSystem _ui = default!;
+    [Dependency] private SharedDoAfterSystem _doAfter = default!;
+    [Dependency] private MovementSpeedModifierSystem _movementSpeed = default!;
+    [Dependency] private SharedContentEyeSystem _contentEye = default!;
+    [Dependency] private SharedHandsSystem _hands = default!;
+    [Dependency] private SharedStackSystem _stack = default!;
+    [Dependency] private SharedPopupSystem _popup = default!;
+    [Dependency] private TagSystem _tag = default!;
+    [Dependency] private SharedContainerSystem _container = default!;
 
     /// <summary>Контейнер, в котором на время лечения прячется многоразовый жгут-предмет.</summary>
     private const string TourniquetStashId = "DutyTourniquetStash";

@@ -18,9 +18,9 @@ namespace Content.Server._Duty.Trauma.Commands;
 /// как от настоящей травмы; шанс высокий, но не 100% — см. описание команды.
 /// </summary>
 [AdminCommand(AdminFlags.Debug)]
-public sealed class DutyBreakBoneCommand : IConsoleCommand
+public sealed partial class DutyBreakBoneCommand : IConsoleCommand
 {
-    [Dependency] private readonly IEntityManager _entMan = default!;
+    [Dependency] private IEntityManager _entMan = default!;
 
     public string Command => "dutybreakbone";
     public string Description => Loc.GetString("duty-trauma-debug-fracture-description");
@@ -51,9 +51,9 @@ public sealed class DutyBreakBoneCommand : IConsoleCommand
 /// суставной (рука/нога); без явной зоны — случайная среди доступных существу суставов.
 /// </summary>
 [AdminCommand(AdminFlags.Debug)]
-public sealed class DutyDislocateCommand : IConsoleCommand
+public sealed partial class DutyDislocateCommand : IConsoleCommand
 {
-    [Dependency] private readonly IEntityManager _entMan = default!;
+    [Dependency] private IEntityManager _entMan = default!;
 
     public string Command => "dutydislocate";
     public string Description => Loc.GetString("duty-trauma-debug-dislocation-description");
@@ -81,9 +81,9 @@ public sealed class DutyDislocateCommand : IConsoleCommand
 
 /// <summary>_Duty (тест): <c>dutybleedout [цель]</c> — форсирует ролл артериального кровотечения.</summary>
 [AdminCommand(AdminFlags.Debug)]
-public sealed class DutyBleedOutCommand : IConsoleCommand
+public sealed partial class DutyBleedOutCommand : IConsoleCommand
 {
-    [Dependency] private readonly IEntityManager _entMan = default!;
+    [Dependency] private IEntityManager _entMan = default!;
 
     public string Command => "dutybleedout";
     public string Description => Loc.GetString("duty-trauma-debug-arterial-description");
@@ -109,9 +109,9 @@ public sealed class DutyBleedOutCommand : IConsoleCommand
 /// <c>BrainTraumaSystem</c>, подписанную на перелом головы, ровно как от настоящего удара.
 /// </summary>
 [AdminCommand(AdminFlags.Debug)]
-public sealed class DutyConcussionCommand : IConsoleCommand
+public sealed partial class DutyConcussionCommand : IConsoleCommand
 {
-    [Dependency] private readonly IEntityManager _entMan = default!;
+    [Dependency] private IEntityManager _entMan = default!;
 
     public string Command => "dutyconcussion";
     public string Description => Loc.GetString("duty-trauma-debug-head-description");

@@ -19,9 +19,9 @@ namespace Content.Client._Duty.HealthAnalyzer;
 ///  • при смерти цели — один раз flatline.ogg.
 /// Все цикличные потоки явно останавливаются при выходе из анализатора / состояния / смерти.
 /// </summary>
-public sealed class HealthAnalyzerAudioSystem : EntitySystem
+public sealed partial class HealthAnalyzerAudioSystem : EntitySystem
 {
-    [Dependency] private readonly SharedAudioSystem _audio = default!;
+    [Dependency] private SharedAudioSystem _audio = default!;
 
     private readonly SoundSpecifier _critLoop = new SoundCollectionSpecifier("DutyHeartbeatCriticalLoop");
     private readonly SoundSpecifier _alert = new SoundCollectionSpecifier("DutyHeartbeatPanelAlert");

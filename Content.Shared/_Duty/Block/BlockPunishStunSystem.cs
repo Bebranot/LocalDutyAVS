@@ -18,11 +18,11 @@ namespace Content.Shared._Duty.Block;
 /// компонент вместо ванильного StunnedComponent — набор подписок скопирован по составу с
 /// SharedStunSystem, но независимо, чтобы не зависеть от чужих систем, завязанных на Stunned.
 /// </summary>
-public sealed class BlockPunishStunSystem : EntitySystem
+public sealed partial class BlockPunishStunSystem : EntitySystem
 {
-    [Dependency] private readonly IGameTiming _timing = default!;
-    [Dependency] private readonly INetManager _netMan = default!;
-    [Dependency] private readonly ActionBlockerSystem _actionBlocker = default!;
+    [Dependency] private IGameTiming _timing = default!;
+    [Dependency] private INetManager _netMan = default!;
+    [Dependency] private ActionBlockerSystem _actionBlocker = default!;
 
     private const string NoticePunishStun = "duty-block-notice-punish-stun";
 

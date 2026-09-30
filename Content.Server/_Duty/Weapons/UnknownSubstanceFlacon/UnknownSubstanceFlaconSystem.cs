@@ -17,14 +17,14 @@ using Robust.Shared.Containers;
 
 namespace Content.Server._Duty.Weapons.UnknownSubstanceFlacon;
 
-public sealed class UnknownSubstanceFlaconSystem : EntitySystem
+public sealed partial class UnknownSubstanceFlaconSystem : EntitySystem
 {
-    [Dependency] private readonly IRobustRandom _random = default!;
-    [Dependency] private readonly MetaDataSystem _metaData = default!;
-    [Dependency] private readonly SharedAppearanceSystem _appearance = default!;
-    [Dependency] private readonly ChatSystem _chat = default!;
+    [Dependency] private IRobustRandom _random = default!;
+    [Dependency] private MetaDataSystem _metaData = default!;
+    [Dependency] private SharedAppearanceSystem _appearance = default!;
+    [Dependency] private ChatSystem _chat = default!;
 
-    [Dependency] private readonly SharedItemSystem _item = default!;
+    [Dependency] private SharedItemSystem _item = default!;
 
     public override void Initialize()
     {

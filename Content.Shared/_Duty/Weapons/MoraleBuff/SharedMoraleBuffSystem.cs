@@ -16,11 +16,11 @@ namespace Content.Shared._Duty.Weapons.MoraleBuff;
 /// алерт) спрятаны под <c>_net.IsServer</c>. Наложение/снятие по таймеру — в серверном
 /// <c>MoraleBuffSystem</c>.
 /// </summary>
-public sealed class SharedMoraleBuffSystem : EntitySystem
+public sealed partial class SharedMoraleBuffSystem : EntitySystem
 {
-    [Dependency] private readonly MovementSpeedModifierSystem _movement = default!;
-    [Dependency] private readonly AlertsSystem _alerts = default!;
-    [Dependency] private readonly INetManager _net = default!;
+    [Dependency] private MovementSpeedModifierSystem _movement = default!;
+    [Dependency] private AlertsSystem _alerts = default!;
+    [Dependency] private INetManager _net = default!;
 
     public override void Initialize()
     {

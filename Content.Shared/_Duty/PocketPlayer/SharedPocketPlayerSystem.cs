@@ -5,9 +5,9 @@ using Robust.Shared.Audio.Systems;
 
 namespace Content.Shared._Duty.PocketPlayer;
 
-public abstract class SharedPocketPlayerSystem : EntitySystem
+public abstract partial class SharedPocketPlayerSystem : EntitySystem
 {
-    [Dependency] protected readonly SharedAudioSystem Audio = default!;
+    [Dependency] protected SharedAudioSystem Audio = default!;
 
     /// <summary>
     /// Громкость, которую считаем практически неразличимой на слух — форсируется,

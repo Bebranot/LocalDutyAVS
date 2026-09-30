@@ -13,12 +13,12 @@ namespace Content.Client._Duty.Concussion;
 /// постоянное «приглушение» по уровню шкалы, короткое моргание от выстрела
 /// и резкий blackout с долгим fade-out от взрыва. Итоговая альфа — максимум из них.
 /// </summary>
-public sealed class ConcussionOverlay : Overlay
+public sealed partial class ConcussionOverlay : Overlay
 {
-    [Dependency] private readonly IEntityManager _entMan = default!;
-    [Dependency] private readonly IPlayerManager _player = default!;
-    [Dependency] private readonly IGameTiming _timing = default!;
-    [Dependency] private readonly IConfigurationManager _cfg = default!;
+    [Dependency] private IEntityManager _entMan = default!;
+    [Dependency] private IPlayerManager _player = default!;
+    [Dependency] private IGameTiming _timing = default!;
+    [Dependency] private IConfigurationManager _cfg = default!;
 
     private readonly SharedConcussionSystem _concussion;
 

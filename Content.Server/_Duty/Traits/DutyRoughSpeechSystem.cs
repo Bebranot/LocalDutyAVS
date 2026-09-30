@@ -6,11 +6,11 @@ namespace Content.Server._Duty.Traits;
 /// <summary>
 /// Выдаёт язык грубой речи и удерживает его активным.
 /// </summary>
-public sealed class DutyRoughSpeechSystem : EntitySystem
+public sealed partial class DutyRoughSpeechSystem : EntitySystem
 {
     public const string LanguageId = "DutyRough";
 
-    [Dependency] private readonly LanguageSystem _language = default!;
+    [Dependency] private LanguageSystem _language = default!;
 
     public override void Initialize()
     {

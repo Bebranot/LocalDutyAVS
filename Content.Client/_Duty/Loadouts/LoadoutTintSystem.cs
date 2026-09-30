@@ -15,8 +15,8 @@ namespace Content.Client._Duty.Loadouts;
 
 public sealed partial class LoadoutTintSystem : EntitySystem
 {
-    [Dependency] private readonly SharedItemSystem _item = default!;
-    [Dependency] private readonly SpriteSystem _sprite = default!;
+    [Dependency] private SharedItemSystem _item = default!;
+    [Dependency] private SpriteSystem _sprite = default!;
 
     public override void Initialize()
     {

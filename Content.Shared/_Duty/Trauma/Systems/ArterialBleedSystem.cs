@@ -28,13 +28,13 @@ namespace Content.Shared._Duty.Trauma.Systems;
 /// на практике почти не срабатывает при нашей модели (кровь стабилизируется у пола, см. ниже).
 /// Объём крови при этом падает медленно и не уходит в ноль (держим у пола, а не до смерти).
 /// </summary>
-public sealed class ArterialBleedSystem : EntitySystem
+public sealed partial class ArterialBleedSystem : EntitySystem
 {
-    [Dependency] private readonly SharedBloodstreamSystem _bloodstream = default!;
-    [Dependency] private readonly DamageableSystem _damageable = default!;
-    [Dependency] private readonly IGameTiming _timing = default!;
-    [Dependency] private readonly INetManager _net = default!;
-    [Dependency] private readonly AlertsSystem _alerts = default!;
+    [Dependency] private SharedBloodstreamSystem _bloodstream = default!;
+    [Dependency] private DamageableSystem _damageable = default!;
+    [Dependency] private IGameTiming _timing = default!;
+    [Dependency] private INetManager _net = default!;
+    [Dependency] private AlertsSystem _alerts = default!;
 
     /// <summary>Алерт-иконка (по типу HP/стамины) — показывается, пока активно кровотечение.</summary>
     private static readonly ProtoId<AlertPrototype> ArteryAlert = "DutyArtery";

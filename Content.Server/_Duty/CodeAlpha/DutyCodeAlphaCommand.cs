@@ -23,11 +23,11 @@ namespace Content.Server._Duty.CodeAlpha;
 ///    в космосе он не работает.
 /// </summary>
 [AdminCommand(AdminFlags.Fun)]
-public sealed class DutyCodeAlphaCommand : LocalizedEntityCommands
+public sealed partial class DutyCodeAlphaCommand : LocalizedEntityCommands
 {
-    [Dependency] private readonly DutyCodeAlphaSystem _alpha = default!;
-    [Dependency] private readonly AlertLevelSystem _alertLevel = default!;
-    [Dependency] private readonly SharedStationSystem _station = default!;
+    [Dependency] private DutyCodeAlphaSystem _alpha = default!;
+    [Dependency] private AlertLevelSystem _alertLevel = default!;
+    [Dependency] private SharedStationSystem _station = default!;
 
     public override string Command => "dutycodealpha";
 

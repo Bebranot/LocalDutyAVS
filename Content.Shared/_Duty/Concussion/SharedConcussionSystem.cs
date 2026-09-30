@@ -8,10 +8,10 @@ namespace Content.Shared._Duty.Concussion;
 /// Поведение (детекция выстрелов/взрывов, алерты, импульсы) живёт в серверном
 /// <c>ConcussionSystem</c>; визуал/звук — в клиентском.
 /// </summary>
-public abstract class SharedConcussionSystem : EntitySystem
+public abstract partial class SharedConcussionSystem : EntitySystem
 {
-    [Dependency] protected readonly IGameTiming Timing = default!;
-    [Dependency] private readonly InventorySystem _inventory = default!;
+    [Dependency] protected IGameTiming Timing = default!;
+    [Dependency] private InventorySystem _inventory = default!;
 
     /// <summary>Слоты, в которых ищем защиту слуха.</summary>
     private static readonly string[] ProtectionSlots = { "head", "ears", "mask" };

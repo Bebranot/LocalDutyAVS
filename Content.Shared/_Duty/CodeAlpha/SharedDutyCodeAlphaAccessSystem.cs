@@ -24,9 +24,9 @@ namespace Content.Shared._Duty.CodeAlpha;
 /// кода остаётся ровно такой, какой была. Включение — <c>AddComp</c>, выключение —
 /// <c>RemComp</c>, и это одинаково работает на клиенте и на сервере.
 /// </summary>
-public sealed class SharedDutyCodeAlphaAccessSystem : EntitySystem
+public sealed partial class SharedDutyCodeAlphaAccessSystem : EntitySystem
 {
-    [Dependency] private readonly IPrototypeManager _proto = default!;
+    [Dependency] private IPrototypeManager _proto = default!;
 
     /// <summary>
     /// Уровни доступа, которые код «Альфа» НЕ выдаёт: антагонисты, ЦентКом, космическая полиция,
