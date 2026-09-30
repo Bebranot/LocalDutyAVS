@@ -52,7 +52,9 @@ arrest-warrant-reason-26 = Статья 302. Нанесение серьёзны
 arrest-warrant-reason-27 = Статья 304. Клевета, мошенничество и коррупция
 arrest-warrant-reason-28 = Статья 306. Незаконное владение холодным оружием
 arrest-warrant-reason-29 = Статья 307. Кража
-arrest-warrant-reason-30 = Статья 311. Жестокое обращение с животными
+# _Duty: статья 309 была только в en-US — добавлена, нумерация выровнена (31 статья)
+arrest-warrant-reason-30 = Статья 309. Проникновение на стратегически важный участок
+arrest-warrant-reason-31 = Статья 311. Жестокое обращение с животными
 
 centcom-operator-name-1 = Дж. Маккиннон
 centcom-operator-name-2 = А. Волков

@@ -16,7 +16,7 @@
 
 - type: radioChannel
   id: ADTTransSolar19482Channel
-  name: ТСФ 1948.2
+  name: ADT-TransSolar-19482-Channel-name # _Duty: ключ локали вместо сырого текста
   keycode: 'j'
   frequency: 1947
   color: "#75c1ff"
@@ -24,7 +24,7 @@
 
 - type: radioChannel
   id: ADTTransSolar19487Channel
-  name: ТСФ 1948.7
+  name: ADT-TransSolar-19487-Channel-name # _Duty: ключ локали вместо сырого текста
   keycode: 'k'
   frequency: 1948
   color: "#75c1ff"
@@ -32,7 +32,7 @@
 
 - type: radioChannel
   id: ADTTransSolar19489Channel
-  name: ТСФ 1948.9
+  name: ADT-TransSolar-19489-Channel-name # _Duty: ключ локали вместо сырого текста
   keycode: 'l'
   frequency: 1949
   color: "#75c1ff"
@@ -48,7 +48,7 @@
 
 - type: radioChannel
   id: ADTUSSPChannel
-  name: СССП
+  name: ADT-USSP-Channel-name # _Duty: ключ локали вместо сырого текста
   keycode: 'я'
   frequency: 1304
   color: "#7ecc8e"

@@ -34,7 +34,7 @@ public sealed partial class MechEquipmentMenu : RadialMenu
         {
             StyleClasses = { "RadialMenuButton" },
             SetSize = new Vector2(64f, 64f),
-            ToolTip = Loc.GetString("Ничего" ?? String.Empty),
+            ToolTip = Loc.GetString("mech-equipment-menu-none"), // _Duty: был сырой текст вместо ключа
             Entity = null,
         };
 
