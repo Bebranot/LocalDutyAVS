@@ -112,6 +112,21 @@ public sealed partial class DutyStaminaComponent : Component
     [DataField(customTypeSerializer: typeof(TimeOffsetSerializer)), AutoNetworkedField, AutoPausedField]
     public TimeSpan NextSprintAllowed = TimeSpan.Zero;
 
+    /// <summary>
+    /// Сколько секунд можно стоять с зажатой C, прежде чем рывок считается законченным. Короткая
+    /// пауза нужна, чтобы смена направления (отпустил W, нажал D) не обрывала спринт.
+    /// </summary>
+    [DataField]
+    public float SprintStopGrace = 0.3f;
+
+    /// <summary>Служебное: в текущем нажатии C персонаж уже реально бежал.</summary>
+    [ViewVariables]
+    public bool SprintStarted;
+
+    /// <summary>Служебное: с какого момента персонаж стоит на месте с зажатой C.</summary>
+    [ViewVariables]
+    public TimeSpan? SprintIdleSince;
+
     // ── Отдышка (клиентский звук) ─────────────────────────────────────────────
 
     /// <summary>

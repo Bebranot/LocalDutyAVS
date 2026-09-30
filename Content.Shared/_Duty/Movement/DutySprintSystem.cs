@@ -166,6 +166,8 @@ public sealed class DutySprintSystem : EntitySystem
     {
         comp.NextSprintAllowed = _timing.CurTime + TimeSpan.FromSeconds(comp.SprintCooldown);
         comp.WantsSprint = false;
+        comp.SprintStarted = false;
+        comp.SprintIdleSince = null;
         Dirty(uid, comp);
         _movementSpeed.RefreshMovementSpeedModifiers(uid);
 
@@ -366,6 +368,38 @@ public sealed class DutySprintSystem : EntitySystem
         };
     }
 
+    /// <summary>Обрывает спринт, если персонаж с зажатой C простоял дольше <see cref="DutyStaminaComponent.SprintStopGrace"/>.</summary>
+    private bool UpdateSprintIdle(EntityUid uid, DutyStaminaComponent comp, bool sprinting, TimeSpan now)
+    {
+        if (!comp.WantsSprint)
+            return false;
+
+        if (sprinting)
+        {
+            comp.SprintStarted = true;
+            comp.SprintIdleSince = null;
+            return false;
+        }
+
+        // Ещё ни разу не побежал в этом нажатии (нажал C стоя) или стоит не по своей воле
+        // (лежит, невесомость) — ждём, это не остановка рывка.
+        if (!comp.SprintStarted
+            || !CanSprint(uid)
+            || !TryComp<InputMoverComponent>(uid, out var mover)
+            || mover.HasDirectionalMovement)
+        {
+            comp.SprintIdleSince = null;
+            return false;
+        }
+
+        comp.SprintIdleSince ??= now;
+        if (now - comp.SprintIdleSince.Value < TimeSpan.FromSeconds(comp.SprintStopGrace))
+            return false;
+
+        StopSprint(uid, comp);
+        return true;
+    }
+
     /// <summary>
     /// Реально ли существо сейчас спринтует: клавиша зажата, состояние тела позволяет, ходьба не
     /// включена и есть ввод направления. Публично — этим же предикатом клиент решает, пора ли
@@ -426,6 +460,13 @@ public sealed class DutySprintSystem : EntitySystem
                 continue;
 
             var sprinting = IsSprinting(uid, comp);
+
+            // Остановился посреди рывка с зажатой C — рывок окончен, как при отпускании клавиши.
+            // Иначе стоило тронуться снова, и звук, пыль и ускорение запускались заново в обход
+            // SprintCooldown. Снова побежать — только повторным нажатием C после отката.
+            if (UpdateSprintIdle(uid, comp, sprinting, now))
+                sprinting = false;
+
             var old = comp.Current;
             var oldBreathing = comp.Breathing;
 
