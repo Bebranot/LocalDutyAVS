@@ -33,11 +33,13 @@ public sealed class ConcussionSystem : SharedConcussionSystem
     private const float RingMinDb = -28f;
     private const float RingMaxDb = -4f;
 
-    private bool EffectsEnabled => _cfg.GetCVar(DutyCCVars.ConcussionEffectsEnabled);
+    private bool _effectsEnabled;
 
     public override void Initialize()
     {
         base.Initialize();
+
+        Subs.CVar(_cfg, DutyCCVars.ConcussionEffectsEnabled, v => _effectsEnabled = v, true);
 
         _overlay = new ConcussionOverlay();
         _overlayMan.AddOverlay(_overlay);
@@ -55,7 +57,7 @@ public sealed class ConcussionSystem : SharedConcussionSystem
 
     private void OnImpulse(ConcussionImpulseEvent ev)
     {
-        if (!EffectsEnabled || IsLocalSuppressed())
+        if (!_effectsEnabled || IsLocalSuppressed())
             return;
 
         switch (ev.Type)
@@ -85,7 +87,7 @@ public sealed class ConcussionSystem : SharedConcussionSystem
     {
         base.FrameUpdate(frameTime);
 
-        var suppressed = !EffectsEnabled || IsLocalSuppressed();
+        var suppressed = !_effectsEnabled || IsLocalSuppressed();
         _overlay.Suppressed = suppressed;
 
         var player = _player.LocalEntity;

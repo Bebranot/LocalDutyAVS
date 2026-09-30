@@ -62,13 +62,14 @@ public sealed class DevourerHeartSystem : EntitySystem
         var query = EntityQueryEnumerator<DutyDevourerHeartRegenComponent>();
         while (query.MoveNext(out var uid, out var comp))
         {
-            if (_mobState.IsDead(uid))
-                continue;
-
             if (_timing.CurTime < comp.LastHeal + TimeSpan.FromSeconds(comp.HealInterval))
                 continue;
 
+            // Таймер двигаем и у мёртвых — иначе проверка IsDead шла бы каждый тик.
             comp.LastHeal = _timing.CurTime;
+
+            if (_mobState.IsDead(uid))
+                continue;
 
             foreach (var group in comp.HealGroups)
             {

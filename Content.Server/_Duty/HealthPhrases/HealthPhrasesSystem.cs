@@ -46,9 +46,15 @@ public sealed class HealthPhrasesSystem : EntitySystem
     private float _damageScreamChance;
     private float _damageScreamCooldown;
 
+    private const float UpdateInterval = 0.5f;
+    private float _updateAccumulator;
+    private EntityQuery<MobThresholdsComponent> _thresholdsQuery;
+
     public override void Initialize()
     {
         base.Initialize();
+
+        _thresholdsQuery = GetEntityQuery<MobThresholdsComponent>();
 
         SubscribeLocalEvent<PlayerSpawnCompleteEvent>(OnPlayerSpawn);
         SubscribeLocalEvent<HealthPhrasesComponent, DamageDealtEvent>(OnDamageDealt);
@@ -129,6 +135,12 @@ public sealed class HealthPhrasesSystem : EntitySystem
         if (!_enabled)
             return;
 
+        // Реплики идут с интервалом в секунды — пересчитывать HP каждого гуманоида каждый тик незачем.
+        _updateAccumulator += frameTime;
+        if (_updateAccumulator < UpdateInterval)
+            return;
+        _updateAccumulator = 0f;
+
         var now = _timing.CurTime;
         var query = EntityQueryEnumerator<HealthPhrasesComponent, DamageableComponent, HumanoidProfileComponent, MobStateComponent>();
 
@@ -137,7 +149,11 @@ public sealed class HealthPhrasesSystem : EntitySystem
             if (mobState.CurrentState != MobState.Alive)
                 continue;
 
-            if (!TryComp<MobThresholdsComponent>(uid, out var thresholds))
+            // Ни один таймер ещё не созрел — HP можно не считать.
+            if (now < phrases.NextPopupTime && now < phrases.NextSpeechTime && now < phrases.NextCritScreamTime)
+                continue;
+
+            if (!_thresholdsQuery.TryComp(uid, out var thresholds))
                 continue;
 
             FixedPoint2 critThreshold = 0;

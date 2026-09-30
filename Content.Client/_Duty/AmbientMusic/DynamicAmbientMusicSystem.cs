@@ -447,10 +447,10 @@ public sealed partial class DynamicAmbientMusicSystem : EntitySystem
         _lastMobState = mobState;
 
         var inCombat = IsInCombatMode(player.Value);
-        var hpPercent = GetHpPercent(player.Value);
         var proto = GetProto();
         var threshold = proto?.CombatLowHpThreshold ?? 10f;
-        var inCombatLow = inCombat && hpPercent < threshold;
+        // HP нужен только в бою — вне боя не перебираем пороги и урон каждый тик.
+        var inCombatLow = inCombat && GetHpPercent(player.Value) < threshold;
 
         // Боевая музыка зациклена, и ветка «вышел из боя» ниже срабатывает только при !inCombat.
         // Если игрок выключил боевую музыку, не выходя из боевого режима, трек продолжал крутиться

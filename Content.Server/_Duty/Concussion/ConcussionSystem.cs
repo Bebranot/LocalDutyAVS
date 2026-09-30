@@ -25,6 +25,7 @@ public sealed class ConcussionSystem : SharedConcussionSystem
     [Dependency] private readonly IConfigurationManager _cfg = default!;
 
     private EntityQuery<ConcussionComponent> _concussionQuery;
+
     /// <summary>
     /// Лукап сразу по компоненту: выстрел — самое частое событие боя (очередь — десяток в секунду),
     /// а в 8 тайлах вокруг лежат сотни сущностей (стены, пол, предметы), из которых контузия
@@ -40,11 +41,13 @@ public sealed class ConcussionSystem : SharedConcussionSystem
 
     private float _reconcileAccumulator;
 
-    private bool Enabled => _cfg.GetCVar(DutyCCVars.ConcussionEnabled);
+    private bool _enabled;
 
     public override void Initialize()
     {
         base.Initialize();
+
+        Subs.CVar(_cfg, DutyCCVars.ConcussionEnabled, v => _enabled = v, true);
 
         _concussionQuery = GetEntityQuery<ConcussionComponent>();
         SubscribeLocalEvent<GunComponent, GunShotEvent>(OnGunShot);
@@ -52,7 +55,7 @@ public sealed class ConcussionSystem : SharedConcussionSystem
 
     private void OnGunShot(Entity<GunComponent> ent, ref GunShotEvent args)
     {
-        if (!Enabled)
+        if (!_enabled)
             return;
 
         var coords = args.FromCoordinates;
@@ -85,7 +88,7 @@ public sealed class ConcussionSystem : SharedConcussionSystem
     /// <summary>Вызывается из ExplosionSystem для каждой задетой взрывом сущности.</summary>
     public void ApplyExplosionConcussion(EntityUid uid, float totalDamage)
     {
-        if (!Enabled || totalDamage <= 0f)
+        if (!_enabled || totalDamage <= 0f)
             return;
 
         if (!_concussionQuery.TryComp(uid, out var comp))

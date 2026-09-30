@@ -22,6 +22,10 @@ public sealed partial class ErpStatusWindow : DefaultWindow
 
     private DutyErpStatus _selected = DutyErpStatus.None;
 
+    // Что сейчас выведено в лейблах; -1/null — «ещё ничего не выводили».
+    private DutyErpStatus? _shownStatus;
+    private int _shownSeconds = -2;
+
     public ErpStatusWindow()
     {
         RobustXamlLoader.Load(this);
@@ -54,18 +58,35 @@ public sealed partial class ErpStatusWindow : DefaultWindow
         if (_player.LocalEntity is not { } local ||
             !_entMan.TryGetComponent<ErpStatusComponent>(local, out var comp))
         {
-            CurrentStatusLabel.Text = Loc.GetString("duty-erp-status-window-no-character");
-            CooldownLabel.Text = string.Empty;
+            if (_shownStatus != null || _shownSeconds != -1)
+            {
+                CurrentStatusLabel.Text = Loc.GetString("duty-erp-status-window-no-character");
+                CooldownLabel.Text = string.Empty;
+                _shownStatus = null;
+                _shownSeconds = -1;
+            }
+
             ApplyButton.Disabled = true;
             return;
         }
 
-        CurrentStatusLabel.Text = Loc.GetString("duty-erp-status-window-current", ("status", StatusName(comp.Status)));
+        // Refresh зовётся каждый кадр — тексты пересобираем только когда реально поменялись
+        // статус или целое число секунд кулдауна, а не 60+ раз в секунду.
+        if (_shownStatus != comp.Status)
+        {
+            _shownStatus = comp.Status;
+            CurrentStatusLabel.Text = Loc.GetString("duty-erp-status-window-current", ("status", StatusName(comp.Status)));
+        }
 
         var remaining = comp.NextChangeAllowedAt - _timing.CurTime;
-        CooldownLabel.Text = remaining > TimeSpan.Zero
-            ? Loc.GetString("duty-erp-status-window-cooldown", ("seconds", (int) Math.Ceiling(remaining.TotalSeconds)))
-            : Loc.GetString("duty-erp-status-window-cooldown-ready");
+        var seconds = remaining > TimeSpan.Zero ? (int) Math.Ceiling(remaining.TotalSeconds) : 0;
+        if (_shownSeconds != seconds)
+        {
+            _shownSeconds = seconds;
+            CooldownLabel.Text = seconds > 0
+                ? Loc.GetString("duty-erp-status-window-cooldown", ("seconds", seconds))
+                : Loc.GetString("duty-erp-status-window-cooldown-ready");
+        }
 
         // Инициализируем выбор текущим статусом только один раз, чтобы не сбрасывать
         // невыбранный игроком вариант каждый кадр.
@@ -75,7 +96,7 @@ public sealed partial class ErpStatusWindow : DefaultWindow
             UpdateOptionButtons();
         }
 
-        UpdateApplyButton();
+        UpdateApplyButton(comp);
     }
 
     private void UpdateOptionButtons()
@@ -94,6 +115,11 @@ public sealed partial class ErpStatusWindow : DefaultWindow
             return;
         }
 
+        UpdateApplyButton(comp);
+    }
+
+    private void UpdateApplyButton(ErpStatusComponent comp)
+    {
         var onCooldown = _timing.CurTime < comp.NextChangeAllowedAt;
         ApplyButton.Disabled = onCooldown || _selected == comp.Status;
     }

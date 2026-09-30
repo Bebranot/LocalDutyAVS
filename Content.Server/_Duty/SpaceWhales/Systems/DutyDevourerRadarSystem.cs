@@ -28,17 +28,21 @@ public sealed class DutyDevourerRadarSystem : EntitySystem
             return;
         _accumulator = 0f;
 
+        // Список доков — полный проход по всем DockingComponent, поэтому собираем его один раз
+        // за обновление и только если хоть у одного пожирателя радар реально открыт.
+        Dictionary<NetEntity, List<DockingPortState>>? docks = null;
+
         var query = EntityQueryEnumerator<RadarConsoleComponent, IntrinsicUIComponent>();
         while (query.MoveNext(out var uid, out var radar, out var iui))
         {
-            if (!UsesDevourerRadar(iui))
+            if (!UsesDevourerRadar(iui) || !_ui.IsUiOpen(uid, RadarConsoleUiKey.Key))
                 continue;
 
             var xform = Transform(uid);
             var coordinates = radar.FollowEntity ? new EntityCoordinates(uid, Vector2.Zero) : xform.Coordinates;
             var angle = radar.FollowEntity ? Angle.Zero : xform.LocalRotation;
 
-            var docks = _console.GetAllDocks();
+            docks ??= _console.GetAllDocks();
             var state = _console.GetNavState(uid, docks, coordinates, angle);
             state.RotateWithEntity = !radar.FollowEntity;
 
