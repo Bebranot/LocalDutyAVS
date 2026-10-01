@@ -47,6 +47,7 @@ public sealed class DutySprintVisualsSystem : EntitySystem
     private const float ReducedMotionScale = 0.3f;
 
     private bool _reducedMotion;
+    private bool _lowEnd;
 
     public override void Initialize()
     {
@@ -55,6 +56,7 @@ public sealed class DutySprintVisualsSystem : EntitySystem
         SubscribeLocalEvent<DutyStaminaComponent, AnimationCompletedEvent>(OnAnimationCompleted);
 
         Subs.CVar(_cfg, CCVars.ReducedMotion, value => _reducedMotion = value, true);
+        Subs.CVar(_cfg, DutyCCVars.LowEndMode, value => _lowEnd = value, true);
     }
 
     public override void Update(float frameTime)
@@ -80,6 +82,14 @@ public sealed class DutySprintVisualsSystem : EntitySystem
     private void UpdateDust(EntityUid uid, DutyStaminaComponent comp, TimeSpan now)
     {
         var sprinting = _sprint.IsSprinting(uid, comp);
+
+        // Режим для слабых ПК: облака — чистая косметика, но это спавн клиентской сущности с анимацией
+        // на каждый шаг каждого бегущего в поле зрения. Сам бег и так видно по скорости и тряске.
+        if (_lowEnd)
+        {
+            comp.WasSprintingVisual = sprinting;
+            return;
+        }
 
         // Фронт «побежал» — одно большое облако.
         if (sprinting && !comp.WasSprintingVisual)
