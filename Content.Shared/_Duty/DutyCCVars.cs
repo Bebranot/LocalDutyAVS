@@ -323,4 +323,22 @@ public sealed class DutyCCVars
     /// </summary>
     public static readonly CVarDef<bool> LoginSoundEnabled =
         CVarDef.Create("duty.login_sound_enabled", true, CVar.ARCHIVE | CVar.CLIENTONLY);
+
+    // ── Производительность ───────────────────────────────────────────────────
+
+    /// <summary>
+    /// Режим для слабых устройств: разом опускает тяжёлые настройки графики и звука до минимума.
+    /// Работает только через существующие CVar-ы движка и контента — лаунчер ставит игрокам
+    /// стоковый Robust.Client, так что на свои правки движка тут рассчитывать нельзя.
+    /// </summary>
+    public static readonly CVarDef<bool> LowEndMode =
+        CVarDef.Create("duty.low_end_mode", false, CVar.ARCHIVE | CVar.CLIENTONLY);
+
+    /// <summary>
+    /// Служебный: значения настроек игрока до включения <see cref="LowEndMode"/>, чтобы выключение
+    /// вернуло всё как было. Непустая строка означает «пресет сейчас применён». Должен переживать
+    /// рестарт клиента — иначе, выйдя из игры с включённым режимом, игрок потерял бы свои настройки.
+    /// </summary>
+    public static readonly CVarDef<string> LowEndModeSaved =
+        CVarDef.Create("duty.low_end_mode_saved", string.Empty, CVar.ARCHIVE | CVar.CLIENTONLY);
 }
