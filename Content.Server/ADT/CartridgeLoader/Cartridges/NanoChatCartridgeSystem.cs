@@ -733,10 +733,17 @@ public sealed class NanoChatCartridgeSystem : EntitySystem
             UpdateUI((uid, comp), cartridge.LoaderUid.Value, refreshContacts);
         }
 
+        // _Duty: справочник контактов у ИИ общий на станцию — обновляем его окна, только когда справочник
+        // мог измениться. Иначе каждое сообщение и каждый пинг «печатает...» на станции слали бы
+        // полное состояние (со всей историей переписки ИИ) во все окна ИИ.
+        if (!refreshContacts)
+            return;
+
         var aiQuery = EntityQueryEnumerator<StationAiNanoChatComponent>();
         while (aiQuery.MoveNext(out var uid, out var comp))
         {
-            UpdateStationAiUi((uid, comp));
+            if (uid != cardUid) // _Duty: свою карту ИИ уже обновили выше
+                UpdateStationAiUi((uid, comp));
         }
     }
 
@@ -817,6 +824,11 @@ public sealed class NanoChatCartridgeSystem : EntitySystem
         if (!TryComp<NanoChatCardComponent>(ent.Owner, out var card))
             return;
 
+        // _Duty: индикатор «печатает...» и для ИИ — карта у него живёт на нём самом.
+        uint? typingFrom = null;
+        if (_typingIndicators.TryGetValue(ent.Owner, out var typing) && typing.Expires > _timing.CurTime)
+            typingFrom = typing.From;
+
         var state = new NanoChatUiState(card.Recipients,
             card.Messages,
             GetContacts(_station.GetOwningStation(ent.Owner)),
@@ -824,7 +836,8 @@ public sealed class NanoChatCartridgeSystem : EntitySystem
             card.Number ?? 0,
             card.MaxRecipients,
             card.NotificationsMuted,
-            card.ListNumber);
+            card.ListNumber,
+            typingFrom); // _Duty
 
         _ui.SetUiState(ent.Owner, StationAiNanoChatUiKey.Key, state);
     }
