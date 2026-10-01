@@ -501,7 +501,10 @@ public abstract partial class SharedDutySlideSystem : EntitySystem
     private float GetTackleChance(EntityUid uid, DutySlideMasterComponent master)
     {
         var hpFrac = 1f;
-        if (_mobThreshold.TryGetThresholdForState(uid, MobState.Critical, out var threshold) && threshold > 0)
+        // До первого выхода из строя (софт-крит, если есть), а не до крита.
+        if (TryComp<MobThresholdsComponent>(uid, out var thresholds)
+            && _mobThreshold.TryGetIncapThreshold(uid, out var threshold, thresholds)
+            && threshold > 0)
             hpFrac = 1f - (_damageable.GetTotalDamage(uid) / threshold.Value).Float();
 
         var stamFrac = 1f;

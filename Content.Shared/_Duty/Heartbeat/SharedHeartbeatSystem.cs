@@ -25,31 +25,53 @@ public abstract partial class SharedHeartbeatSystem : EntitySystem
     public const float NearDeathFraction = 0.10f;
 
     /// <summary>
-    /// «Живучесть» сущности: 1 = полное HP, 0 = у порога крита, отрицательное = в крите
-    /// на пути к смерти (−1 = у порога смерти). Значение непрерывно проходит через ноль.
+    /// «Живучесть» сущности: 1 = полное HP, 0 = у порога недееспособности (софт-крит, если он
+    /// есть, иначе крит), отрицательное = за ним на пути к смерти (−1 = у порога смерти).
+    /// Значение непрерывно проходит через ноль.
     /// </summary>
+    /// <remarks>
+    /// Ноль — именно первый порог выхода из строя: с софт-критом порог крита отодвинулся на 150,
+    /// и при 99 урона (уже на грани софт-крита) пациент выглядел бы «на треть здоровым».
+    /// </remarks>
     public float GetVitalFraction(EntityUid uid, DamageableComponent? dmg = null)
     {
-        if (!Resolve(uid, ref dmg, false))
+        if (!Resolve(uid, ref dmg, false) || !TryComp<MobThresholdsComponent>(uid, out var thresholds))
             return 1f;
 
-        if (!_mobThreshold.TryGetThresholdForState(uid, MobState.Critical, out var crit) || crit is not { } critT || critT <= 0)
+        if (!_mobThreshold.TryGetIncapThreshold(uid, out var incap, thresholds) || incap is not { } incapT || incapT <= 0)
             return 1f;
 
         var total = _damageable.GetTotalDamage((uid, dmg));
 
-        if (total <= critT)
-            return Math.Clamp(1f - (total / critT).Float(), 0f, 1f);
+        if (total <= incapT)
+            return Math.Clamp(1f - (total / incapT).Float(), 0f, 1f);
 
-        // Уже в крите: уходим в минус от порога крита к порогу смерти.
-        if (_mobThreshold.TryGetThresholdForState(uid, MobState.Dead, out var dead)
-            && dead is { } deadT && deadT > critT)
+        // Уже выведен из строя: уходим в минус от порога недееспособности к порогу смерти.
+        if (_mobThreshold.TryGetThresholdForState(uid, MobState.Dead, out var dead, thresholds)
+            && dead is { } deadT && deadT > incapT)
         {
-            var deep = ((total - critT) / (deadT - critT)).Float();
+            var deep = ((total - incapT) / (deadT - incapT)).Float();
             return -Math.Clamp(deep, 0f, 1f);
         }
 
         return 0f;
+    }
+
+    /// <summary>Глубина настоящего крита: 0 = у порога крита, 1 = у порога смерти.</summary>
+    private float GetCritDepth(EntityUid uid)
+    {
+        if (!TryComp<MobThresholdsComponent>(uid, out var thresholds)
+            || !_mobThreshold.TryGetThresholdForState(uid, MobState.Critical, out var crit, thresholds)
+            || crit is not { } critT
+            || !_mobThreshold.TryGetThresholdForState(uid, MobState.Dead, out var dead, thresholds)
+            || dead is not { } deadT
+            || deadT <= critT)
+        {
+            return 0f;
+        }
+
+        var total = _damageable.GetTotalDamage(uid);
+        return Math.Clamp(((total - critT) / (deadT - critT)).Float(), 0f, 1f);
     }
 
     /// <summary>Текущий уровень пульса по mob-состоянию и доле HP.</summary>
@@ -68,9 +90,10 @@ public abstract partial class SharedHeartbeatSystem : EntitySystem
                 return HeartbeatLevel.None;
 
             case MobState.Critical:
-                var deep = -GetVitalFraction(uid); // 0..1 глубина крита
+                var deep = GetCritDepth(uid); // 0..1 глубина крита
                 return deep >= comp.CriticalDeepFraction ? HeartbeatLevel.Critical : HeartbeatLevel.Heavy;
 
+            // Софт-крит попадает сюда: «живучесть» уже отрицательная — тяжёлый пульс.
             default:
                 var hp = GetVitalFraction(uid); // 0..1
                 if (hp < comp.HeavyHpThreshold)

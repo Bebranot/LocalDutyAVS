@@ -199,6 +199,10 @@ public sealed partial class FireAgonySystem : EntitySystem
         // При крите/смерти stun снимается движком сам; нам остаётся оборвать сцену (флаг + камера).
         if (args.NewMobState is MobState.Critical or MobState.Dead)
             EndScene(ent, ent.Comp, releaseParalyze: false);
+        // Софт-крит stun не снимает, а крик агонии поверх звуков софт-крита неуместен —
+        // обрываем сцену и отпускаем паралич сами.
+        else if (args.NewMobState == MobState.SoftCritical)
+            EndScene(ent, ent.Comp);
     }
 
     /// <summary>

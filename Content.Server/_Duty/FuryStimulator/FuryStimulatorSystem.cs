@@ -162,7 +162,8 @@ public sealed partial class FuryStimulatorSystem : SharedFuryStimulatorSystem
 
             // Маленький хил, пока носитель в крите: препарат не даёт умереть, медленно вытягивая из крита.
             // Вне крита таймер сбрасываем, чтобы при входе в крит лечение началось сразу.
-            if (TryComp<MobStateComponent>(uid, out var mobState) && mobState.CurrentState == MobState.Critical)
+            // Софт-крит — тоже «выведен из строя»: препарат тянет и из него.
+            if (TryComp<MobStateComponent>(uid, out var mobState) && mobState.CurrentState is MobState.SoftCritical or MobState.Critical)
             {
                 if (now >= comp.NextCritHeal)
                 {

@@ -156,16 +156,7 @@ public sealed class HealthPhrasesSystem : EntitySystem
             if (!_thresholdsQuery.TryComp(uid, out var thresholds))
                 continue;
 
-            FixedPoint2 critThreshold = 0;
-            foreach (var (threshold, state) in thresholds.Thresholds)
-            {
-                if (state == MobState.Critical)
-                {
-                    critThreshold = threshold;
-                    break;
-                }
-            }
-
+            var critThreshold = GetIncapThreshold(thresholds);
             if (critThreshold <= 0)
                 continue;
 
@@ -378,6 +369,25 @@ public sealed class HealthPhrasesSystem : EntitySystem
         _ => new List<string>()
     };
 
+    /// <summary>
+    /// Порог, где персонаж выходит из строя: софт-крит, если он есть, иначе крит. Фразы
+    /// «на грани» должны звучать перед софт-критом, а не за 50 урона после него.
+    /// </summary>
+    private static FixedPoint2 GetIncapThreshold(MobThresholdsComponent thresholds)
+    {
+        FixedPoint2 crit = 0;
+        foreach (var (threshold, state) in thresholds.Thresholds)
+        {
+            if (state == MobState.SoftCritical)
+                return threshold;
+
+            if (state == MobState.Critical)
+                crit = threshold;
+        }
+
+        return crit;
+    }
+
     public HpLevel GetHpLevel(float hp) => hp switch
     {
         >= 0.55f and < 0.70f => HpLevel.Level70,
@@ -430,11 +440,7 @@ public sealed class HealthPhrasesSystem : EntitySystem
             return;
         }
 
-        FixedPoint2 critThreshold = 0;
-        foreach (var (threshold, state) in thresholds.Thresholds)
-        {
-            if (state == MobState.Critical) { critThreshold = threshold; break; }
-        }
+        var critThreshold = GetIncapThreshold(thresholds);
 
         if (critThreshold <= 0)
         {

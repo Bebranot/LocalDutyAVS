@@ -15,6 +15,7 @@ using Content.Shared.Input;
 using Content.Shared.Inventory;
 using Content.Shared.Inventory.Events;
 using Content.Shared.Mobs;
+using Content.Shared.Mobs.Components;
 using Content.Shared.Mobs.Systems;
 using Content.Shared.Movement.Components;
 using Content.Shared.Movement.Events;
@@ -305,7 +306,10 @@ public sealed class DutySprintSystem : EntitySystem
         if (!TryComp<DamageableComponent>(uid, out var dmg) || _damageable.GetTotalDamage((uid, dmg)) <= 0)
             return 1f;
 
-        if (!_mobThreshold.TryGetThresholdForState(uid, MobState.Critical, out var threshold) || threshold <= 0)
+        // Меряем до первого выхода из строя (софт-крит, если есть), а не до крита.
+        if (!TryComp<MobThresholdsComponent>(uid, out var thresholds)
+            || !_mobThreshold.TryGetIncapThreshold(uid, out var threshold, thresholds)
+            || threshold <= 0)
             return 1f;
 
         var frac = Math.Clamp((_damageable.GetTotalDamage((uid, dmg)) / threshold.Value).Float(), 0f, 1f);

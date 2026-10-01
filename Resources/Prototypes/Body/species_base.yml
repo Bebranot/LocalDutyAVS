@@ -17,6 +17,10 @@
   # ADT-Tweak start
   - type: SoftCrit
     speedModifier: 0.35
+    # _Duty: зацикленные звуки состояний глушим — софт-крит и крит у нас озвучивают пульс
+    # (Heartbeat) и музыка крита, вместе они накладывались в кашу. Звук «возвращения» оставлен.
+    softCritSound: null
+    critSound: null
   - type: MobThresholds
     thresholds:
       0: Alive
