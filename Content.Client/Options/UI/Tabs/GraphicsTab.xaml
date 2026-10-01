@@ -20,6 +20,16 @@
                 <CheckBox Name="AmbientOcclusionCheckBox" Text="{Loc 'ui-options-ambient-occlusion'}"
                           ToolTip="{Loc 'ui-options-ambient-occlusion-tooltip'}" />
 
+                <!-- _Duty-start: режим для слабых устройств и низкая сетевая задержка -->
+                <Label Text="{Loc 'ui-options-duty-performance-label'}" StyleClasses="LabelKeyText"/>
+                <CheckBox Name="DutyLowEndModeCheckBox" Text="{Loc 'ui-options-duty-low-end-mode'}"
+                          ToolTip="{Loc 'ui-options-duty-low-end-mode-tooltip'}" />
+                <Label Name="DutyLowEndModeWarning" Text="{Loc 'ui-options-duty-low-end-mode-warning'}"
+                       StyleClasses="LabelSubText" Visible="False" Margin="24 0 0 4" />
+                <CheckBox Name="DutyLowLatencyCheckBox" Text="{Loc 'ui-options-duty-low-latency'}"
+                          ToolTip="{Loc 'ui-options-duty-low-latency-tooltip'}" />
+                <!-- _Duty-end -->
+
                 <!-- Interface -->
                 <Label Text="{Loc 'ui-options-interface-label'}" StyleClasses="LabelKeyText"/>
                 <ui:OptionDropDown Name="DropDownUIScale" Title="{Loc 'ui-options-scale-label'}" />
