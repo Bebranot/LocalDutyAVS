@@ -273,6 +273,7 @@
     - XenobioPack #ADT Tweak
     - XenobagHoldingPack #ADT Tweak
     - PartsDynamic #ADT-Tweak: machine parts
+    - CivilBracelets # _Duty: браслеты из технологии Bracelets не печатались нигде
   - type: EmagLatheRecipes
     emagDynamicPacks:
     - SecurityAmmo
@@ -534,6 +535,7 @@
     # ADT-tweak-end
     # _Duty-start
     - DutySecImplantsPack
+    - BraceletSecurity # браслеты СБ из технологии Bracelets не печатались нигде
     # _Duty-end
   - type: EmagLatheRecipes
     emagStaticPacks:
