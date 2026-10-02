@@ -74,6 +74,10 @@
       - !type:GibBehavior
   - type: Bloodstream
     maxBleedAmount: 0
+  # Червь не дешевле своего трофея (DutyDevourerHeart, миллион): иначе уничтожение «печатает»
+  # деньги (MaterialArbitrageTest). Продать его самого нельзя — при смерти он гибается.
+  - type: StaticPrice
+    price: 1000000
 
 - type: entity
   id: DutyUniverseDevourerSegment
