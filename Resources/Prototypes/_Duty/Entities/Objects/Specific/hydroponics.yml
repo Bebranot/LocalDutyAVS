@@ -192,8 +192,10 @@
 
 - type: reaction
   id: MossFiltration
+  # Перемешивание, а не центрифуга: в центрифуге получившийся омнизин тут же разбирала
+  # ADTOmnizineBreakdown, и до игрока он не доходил (TryAllReactionsTest).
   requiredMixerCategories:
-  - Centrifuge
+  - Stir
   reactants:
     MossJuice:
       amount: 1
