@@ -45,6 +45,7 @@
   - type: DutyDefibProfile
     requireAnalysis: true
     zapLead: 1.1 # «Stand clear», затем зарядка
+    zapDuration: 15 # дешёвый аппарат долго готовится к разряду
     chargeSound:
       path: /Audio/_Duty/Defib/charge_low.ogg
     analysisDuration: 4
@@ -93,6 +94,7 @@
   - type: DutyDefibProfile
     rhythmCheckVerb: true
     zapLead: 1.5 # «Analyzing», затем решение сервера и зарядка
+    zapDuration: 10 # на любом уровне энергии; разница уходит в паузу анализа
     rhythmCheckDuration: 2
     suitBlocks: false
     suitHealMultiplier: 0.5

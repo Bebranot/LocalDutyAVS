@@ -484,7 +484,11 @@ public abstract partial class SharedDutyDefibrillationSystem : EntitySystem
             return;
         }
 
-        args.Result = StartDeviceDoAfter(ent, target, user, ent.Comp.ZapLead + defib.DoAfterDuration,
+        var lead = ent.Comp.ZapLead;
+        if (ent.Comp.ZapDuration > lead + defib.DoAfterDuration)
+            lead = ent.Comp.ZapDuration - defib.DoAfterDuration;
+
+        args.Result = StartDeviceDoAfter(ent, target, user, lead + defib.DoAfterDuration,
             new DefibrillatorZapDoAfterEvent());
         if (!args.Result)
             return;
@@ -500,7 +504,7 @@ public abstract partial class SharedDutyDefibrillationSystem : EntitySystem
             Announce(ent, null, Loc.GetString("duty-defib-voice-analyzing"));
         }
 
-        ScheduleCheck(ent, user, target, ent.Comp.ZapLead, DutyDefibCheck.ZapLead);
+        ScheduleCheck(ent, user, target, lead, DutyDefibCheck.ZapLead);
     }
 
     /// <summary>

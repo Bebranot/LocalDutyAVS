@@ -16,6 +16,7 @@ namespace Content.Shared._Duty.Defibrillation;
 /// <remarks>
 /// Doafter разряда = <see cref="ZapLead"/> (голосовое вступление, после которого сервер решает, заряжать ли)
 /// + время зарядки (<c>DefibrillatorComponent.DoAfterDuration</c>, совпадает с длиной звука зарядки).
+/// Если задан <see cref="ZapDuration"/>, вступление удлиняется до него.
 /// </remarks>
 [RegisterComponent, NetworkedComponent, AutoGenerateComponentState, AutoGenerateComponentPause]
 public sealed partial class DutyDefibProfileComponent : Component
@@ -47,6 +48,13 @@ public sealed partial class DutyDefibProfileComponent : Component
     /// </summary>
     [DataField]
     public TimeSpan ZapLead = TimeSpan.FromSeconds(1.5);
+
+    /// <summary>
+    /// Полная длительность doafter разряда, не зависящая от уровня энергии. Ноль — вступление + зарядка как есть.
+    /// Растягивается вступление, а не зарядка: зарядка обязана совпадать с длиной своего звука.
+    /// </summary>
+    [DataField]
+    public TimeSpan ZapDuration = TimeSpan.Zero;
 
     /// <summary>Когда во время анализа 40s отзвучит «Analyzing»: проверка пульса и «Stand clear».</summary>
     [DataField]
