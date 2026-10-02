@@ -11,10 +11,13 @@ namespace Content.Client.ADT.Silicons.Borgs;
 
 public sealed partial class BorgSwitchableSubtypeSystem : SharedBorgSwitchableSubtypeSystem
 {
-    [Dependency] private readonly IResourceCache _resourceCache = default!;
-    [Dependency] private readonly IPrototypeManager _prototypeManager = default!;
-    [Dependency] private readonly AppearanceSystem _appearance = default!;
-    [Dependency] private readonly BorgSystem _borgSystem = default!;
+    // _Duty-start: [Dependency] без readonly (RA0051) и SpriteSystem вместо устаревших методов SpriteComponent
+    [Dependency] private IResourceCache _resourceCache = default!;
+    [Dependency] private IPrototypeManager _prototypeManager = default!;
+    [Dependency] private AppearanceSystem _appearance = default!;
+    [Dependency] private BorgSystem _borgSystem = default!;
+    [Dependency] private SpriteSystem _sprite = default!;
+    // _Duty-end
 
     public override void Initialize()
     {
@@ -65,20 +68,23 @@ public sealed partial class BorgSwitchableSubtypeSystem : SharedBorgSwitchableSu
             if (!_appearance.TryGetData<bool>(ent, BorgVisuals.HasPlayer, out var hasPlayer))
                 hasPlayer = false;
 
-            sprite.LayerSetState(BorgVisualLayers.Body, bodyState);
-            sprite.LayerSetState(BorgVisualLayers.Light, hasPlayer ? hasMindState : noMindState);
-            sprite.LayerSetState(BorgVisualLayers.LightStatus, toggleLightState);
-
-            sprite.LayerSetRSI(BorgVisualLayers.Body.GetHashCode(), resource.RSI);
-            sprite.LayerSetRSI(BorgVisualLayers.Light.GetHashCode(), resource.RSI);
-            sprite.LayerSetRSI(BorgVisualLayers.LightStatus.GetHashCode(), resource.RSI);
+            // _Duty-start: RSI и состояние ставим одним вызовом и по ключу слоя. Раньше RSI искался по
+            // индексу GetHashCode() enum-а — совпадало с ключами лишь при текущем порядке слоёв в yml.
+            Entity<SpriteComponent?> spriteEnt = (ent.Owner, sprite);
+            _sprite.LayerSetRsi(spriteEnt, BorgVisualLayers.Body, resource.RSI, bodyState);
+            _sprite.LayerSetRsi(spriteEnt, BorgVisualLayers.Light, resource.RSI, hasPlayer ? hasMindState : noMindState);
+            _sprite.LayerSetRsi(spriteEnt, BorgVisualLayers.LightStatus, resource.RSI, toggleLightState);
+            // _Duty-end
 
             if (TryComp(ent, out BorgChassisComponent? chassis))
             {
+                // _Duty: состояния берём те же, что выставлены слоям выше (от типа). Поля подтипа ни в
+                // одном yml не заданы и всегда дефолтные "robot_e"/"robot_e_r", которых в RSI подтипов
+                // нет — индикатор разума у всех подтипов киборгов ломался (DummyIconTest).
                 _borgSystem.SetMindStates(
                     (ent.Owner, chassis),
-                    subtypePrototype.SpriteHasMindState,
-                    subtypePrototype.SpriteNoMindState);
+                    hasMindState,
+                    noMindState);
 
                 if (TryComp(ent, out AppearanceComponent? appearance))
                 {
