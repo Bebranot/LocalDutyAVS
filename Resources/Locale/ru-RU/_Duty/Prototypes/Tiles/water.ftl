@@ -1,0 +1,12 @@
+ent-STFloorWaterEntityDuty = вода
+    .desc = Мутная вода Зоны.
+ent-FloorWaterEntityStalker1Duty = { ent-STFloorWaterEntityDuty }
+    .desc = { ent-STFloorWaterEntityDuty.desc }
+ent-FloorWaterEntityStalker2Duty = { ent-STFloorWaterEntityDuty }
+    .desc = { ent-STFloorWaterEntityDuty.desc }
+ent-FloorWaterEntityStalker3Duty = { ent-STFloorWaterEntityDuty }
+    .desc = { ent-STFloorWaterEntityDuty.desc }
+ent-FloorWaterEntityStalker4Duty = облучённая вода
+    .desc = Светящаяся вода Зоны. Задерживаться в ней не стоит.
+ent-FloorWaterEntityStalker5Duty = химические отходы
+    .desc = Яркие химические отходы Зоны.
