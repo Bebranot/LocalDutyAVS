@@ -576,7 +576,7 @@
   description: тупан.
   components:
     - type: MachineBoard
-      prototype: Autolathe
+      prototype: AutolatheSyndieFXX # _Duty: плата собирала обычный автолат вместо синдикатского
       stackRequirements:
         Manipulator: 4
         Glass: 1
@@ -591,7 +591,7 @@
   - type: Sprite
     state: science
   - type: MachineBoard
-    prototype: Protolathe
+    prototype: ProtolatheSyndieFXX # _Duty: плата собирала обычный протолат вместо синдикатского
     stackRequirements:
       Manipulator: 4
     tagRequirements:
@@ -607,7 +607,7 @@
   - type: Sprite
     state: science
   - type: MachineBoard
-    prototype: ExosuitFabricator
+    prototype: ExosuitFabricatorSyndieFXX # _Duty: плата собирала обычный фабрикатор вместо синдикатского
     stackRequirements:
       Manipulator: 4
       Glass: 5
@@ -643,6 +643,7 @@
         - Sheet
         - RawMaterial
         - Ingot
+        - ADTBSCrystal # _Duty: как в ванильном якоре — рецепты протолата требуют блюспейс-кристаллы
   - type: OreSiloClient
   - type: Lathe
     idleState: icon
