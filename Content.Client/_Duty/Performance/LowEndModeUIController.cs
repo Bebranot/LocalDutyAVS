@@ -54,7 +54,6 @@ public sealed partial class LowEndModeUIController : UIController
             // «Режим выключен, а снапшот остался» бывает только после ручной правки конфига или
             // падения посреди переключения — правильнее всего вернуть игроку его значения.
             Disable();
-            _cfg.SaveToFile();
         }
 
         _cfg.OnValueChanged(DutyCCVars.LowEndMode, OnModeChanged);
@@ -101,7 +100,9 @@ public sealed partial class LowEndModeUIController : UIController
         else
             Disable();
 
-        _cfg.SaveToFile();
+        // SaveToFile здесь не зовём: из меню настроек его сразу после нас делает «Применить»,
+        // а пути при запуске идемпотентны — если не сохранились, повторятся с тем же итогом.
+        // Лишний вызов вредил бы: без загруженного конфига (тесты) он пишет предупреждение.
     }
 
     private void Enable()
@@ -127,7 +128,6 @@ public sealed partial class LowEndModeUIController : UIController
         if (_cfg.GetCVar(DutyCCVars.LowEndModeSaved) == string.Empty)
         {
             Enable();
-            _cfg.SaveToFile();
             return;
         }
 
