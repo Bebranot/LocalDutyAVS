@@ -1,0 +1,518 @@
+# Перенесено из других форков (Space Onyx, Afgan14). Идентификаторы с суффиксом PortedDuty.
+
+- type: tile
+  id: FloorAbductorPortedDuty
+  name: tiles-abductor-floor-ported-duty
+  sprite: /Textures/_Duty/Ported/Onyx/Tiles/Abductor/abductor_tile.png
+  isSubfloor: true
+  footstepSounds:
+    collection: FootstepAsteroid
+  heatCapacity: 10000
+  weather: false
+  indestructible: true
+
+- type: tile
+  id: FloorCosmicGlyphPortedDuty
+  name: tiles-cosmiccult-floor-glyph-ported-duty
+  sprite: /Textures/_Duty/Ported/Onyx/CosmicCult/Tileset/cosmicfloor/tile_glyph.png
+  baseTurf: Plating
+  isSubfloor: false
+  deconstructTools: [ Prying ]
+  footstepSounds:
+    collection: FootstepTile
+  heatCapacity: 10000
+  weather: true
+
+- type: tile
+  id: FloorCosmicSmoothPortedDuty
+  name: tiles-cosmiccult-floor-smooth-ported-duty
+  sprite: /Textures/_Duty/Ported/Onyx/CosmicCult/Tileset/cosmicfloor/tile_smooth.png
+  baseTurf: Plating
+  isSubfloor: false
+  deconstructTools: [ Prying ]
+  footstepSounds:
+    collection: FootstepTile
+  heatCapacity: 10000
+  weather: true
+
+- type: tile
+  id: FloorCosmicHalfPortedDuty
+  name: tiles-cosmiccult-floor-half-ported-duty
+  sprite: /Textures/_Duty/Ported/Onyx/CosmicCult/Tileset/cosmicfloor/tile_half.png
+  baseTurf: Plating
+  isSubfloor: false
+  deconstructTools: [ Prying ]
+  footstepSounds:
+    collection: FootstepTile
+  heatCapacity: 10000
+  weather: true
+
+- type: tile
+  id: FloorCosmicSplitPortedDuty
+  name: tiles-cosmiccult-floor-split-ported-duty
+  sprite: /Textures/_Duty/Ported/Onyx/CosmicCult/Tileset/cosmicfloor/tile_split.png
+  baseTurf: Plating
+  isSubfloor: false
+  deconstructTools: [ Prying ]
+  footstepSounds:
+    collection: FootstepTile
+  heatCapacity: 10000
+  weather: true
+
+- type: tile
+  id: FloorCosmicNotchedPortedDuty
+  name: tiles-cosmiccult-floor-notched-ported-duty
+  sprite: /Textures/_Duty/Ported/Onyx/CosmicCult/Tileset/cosmicfloor/tile_notched.png
+  baseTurf: Plating
+  isSubfloor: false
+  deconstructTools: [ Prying ]
+  footstepSounds:
+    collection: FootstepTile
+  heatCapacity: 10000
+  weather: true
+
+- type: tile
+  id: FloorCosmicCorruptionPortedDuty
+  name: tiles-cosmiccult-floor-malign-ported-duty
+  sprite: /Textures/_Duty/Ported/Onyx/CosmicCult/Tileset/cosmicfloor/tile_malign.png
+  variants: 4
+  placementVariants:
+  - 1.0
+  - 1.0
+  - 1.0
+  - 1.0
+  baseTurf: Plating
+  isSubfloor: false
+  deconstructTools: [ Prying ]
+  footstepSounds:
+    collection: FootstepTile
+  heatCapacity: 10000
+  weather: true
+
+- type: tile
+  id: FloorCosmicVoidPortedDuty
+  name: tiles-cosmiccult-floor-void-ported-duty
+  sprite: /Textures/_Duty/Ported/Onyx/CosmicCult/Tileset/cosmicfloor/floor_void.png
+  baseTurf: Plating
+  isSubfloor: false
+  deconstructTools: [ Prying ]
+  footstepSounds:
+    collection: FootstepTile
+  heatCapacity: 10000
+  weather: true
+
+- type: tile
+  id: LatticeDiagonalNWPortedDuty
+  name: tiles-lattice-diagonal-NW-ported-duty
+  sprite: /Textures/_Duty/Ported/Onyx/Tiles/latticeDiagonalNW.png
+  baseTurf: Space
+  isSubfloor: true
+  deconstructTools: [Cutting]
+  weather: true
+  footstepSounds: { collection: FootstepCatwalk }
+  friction: 1.5
+  isSpace: true
+  itemDrop: PartRodMetal1
+  heatCapacity: 10000
+  mass: 200
+
+- type: tile
+  id: LatticeDiagonalNEPortedDuty
+  name: tiles-lattice-diagonal-NE-ported-duty
+  sprite: /Textures/_Duty/Ported/Onyx/Tiles/latticeDiagonalNE.png
+  baseTurf: Space
+  isSubfloor: true
+  deconstructTools: [Cutting]
+  weather: true
+  footstepSounds: { collection: FootstepCatwalk }
+  friction: 1.5
+  isSpace: true
+  itemDrop: PartRodMetal1
+  heatCapacity: 10000
+  mass: 200
+
+- type: tile
+  id: LatticeDiagonalSWPortedDuty
+  name: tiles-lattice-diagonal-SW-ported-duty
+  sprite: /Textures/_Duty/Ported/Onyx/Tiles/latticeDiagonalSW.png
+  baseTurf: Space
+  isSubfloor: true
+  deconstructTools: [Cutting]
+  weather: true
+  footstepSounds: { collection: FootstepCatwalk }
+  friction: 1.5
+  isSpace: true
+  itemDrop: PartRodMetal1
+  heatCapacity: 10000
+  mass: 200
+
+- type: tile
+  id: LatticeDiagonalSEPortedDuty
+  name: tiles-lattice-diagonal-SE-ported-duty
+  sprite: /Textures/_Duty/Ported/Onyx/Tiles/latticeDiagonalSE.png
+  baseTurf: Space
+  isSubfloor: true
+  deconstructTools: [Cutting]
+  weather: true
+  footstepSounds: { collection: FootstepCatwalk }
+  friction: 1.5
+  isSpace: true
+  itemDrop: PartRodMetal1
+  heatCapacity: 10000
+  mass: 200
+
+- type: tile
+  id: FloorExoVisceraPortedDuty
+  parent: BaseStationTile
+  name: tiles-exo-viscera-ported-duty
+  sprite: /Textures/_Duty/Ported/Onyx/Tiles/Exo/exo-viscera.png
+  variants: 3
+  footstepSounds:
+    collection: FootstepBlood
+
+- type: tile
+  id: FloorExoHullPortedDuty
+  parent: BaseStationTile
+  name: tiles-exo-hull-ported-duty
+  sprite: /Textures/_Duty/Ported/Onyx/Tiles/Exo/exo-hull.png
+  footstepSounds:
+    collection: FootstepTile
+
+- type: tile
+  id: FloorExoTechmaintPortedDuty
+  parent: BaseStationTile
+  name: tiles-exo-techmaint-ported-duty
+  sprite: /Textures/_Duty/Ported/Onyx/Tiles/Exo/exo-maint.png
+  footstepSounds:
+    collection: FootstepHull
+
+- type: tile
+  id: FloorExoHorizontalPortedDuty
+  parent: BaseStationTile
+  name: tiles-exo-horizontal-ported-duty
+  sprite: /Textures/_Duty/Ported/Onyx/Tiles/Exo/exo-horizontal.png
+  footstepSounds:
+    collection: FootstepTile
+
+- type: tile
+  id: FloorExoVerticalPortedDuty
+  parent: BaseStationTile
+  name: tiles-exo-vertical-ported-duty
+  sprite: /Textures/_Duty/Ported/Onyx/Tiles/Exo/exo-vertical.png
+  footstepSounds:
+    collection: FootstepTile
+
+- type: tile
+  id: FloorExoCornerNEPortedDuty
+  parent: BaseStationTile
+  name: tiles-exo-corner-ne-ported-duty
+  sprite: /Textures/_Duty/Ported/Onyx/Tiles/Exo/exo-NE.png
+  footstepSounds:
+    collection: FootstepTile
+
+- type: tile
+  id: FloorExoCornerNWPortedDuty
+  parent: BaseStationTile
+  name: tiles-exo-corner-nw-ported-duty
+  sprite: /Textures/_Duty/Ported/Onyx/Tiles/Exo/exo-NW.png
+  footstepSounds:
+    collection: FootstepTile
+
+- type: tile
+  id: FloorExoCornerSEPortedDuty
+  parent: BaseStationTile
+  name: tiles-exo-corner-se-ported-duty
+  sprite: /Textures/_Duty/Ported/Onyx/Tiles/Exo/exo-SE.png
+  footstepSounds:
+    collection: FootstepTile
+
+- type: tile
+  id: FloorExoCornerSWPortedDuty
+  parent: BaseStationTile
+  name: tiles-exo-corner-sw-ported-duty
+  sprite: /Textures/_Duty/Ported/Onyx/Tiles/Exo/exo-SW.png
+  footstepSounds:
+    collection: FootstepTile
+
+- type: tile
+  id: FloorExoBorgPortedDuty
+  name: tiles-exo-borg-ported-duty
+  sprite: /Textures/_Duty/Ported/Onyx/Tiles/Exo/exo-borg.png
+  baseTurf: Plating
+  isSubfloor: false
+  deconstructTools: [ Prying ]
+  footstepSounds:
+    collection: FootstepHull
+  heatCapacity: 10000
+
+- type: tile
+  id: FloorGlassPlasmaPortedDuty
+  parent: BaseStationTile
+  name: tiles-plasma-glass-floor-ported-duty
+  sprite: /Textures/_Duty/Ported/Onyx/Tiles/Glass/glass-plasma.png
+  footstepSounds:
+    collection: FootstepTile
+  itemDrop: SheetPlasma1
+
+- type: tile
+  id: FloorGlassUraniumPortedDuty
+  parent: BaseStationTile
+  name: tiles-uranium-glass-floor-ported-duty
+  sprite: /Textures/_Duty/Ported/Onyx/Tiles/Glass/glass-uranium.png
+  footstepSounds:
+    collection: FootstepTile
+  itemDrop: SheetUranium1
+
+- type: tile
+  id: FloorGlassPlastitaniumPortedDuty
+  parent: BaseStationTile
+  name: tiles-plastitanium-glass-floor-ported-duty
+  sprite: /Textures/_Duty/Ported/Onyx/Tiles/Glass/glass-plastitanium.png
+  footstepSounds:
+    collection: FootstepTile
+  itemDrop: SheetPlasma1
+
+- type: tile
+  id: FloorWhiteMarblePortedDuty
+  parent: BaseStationTile
+  name: tiles-white-marble-ported-duty
+  sprite: /Textures/_Duty/Ported/Onyx/Tiles/Marble/white-marble.png
+  variants: 6
+  footstepSounds:
+    collection: FootstepTile
+  friction: 0.8
+
+- type: tile
+  id: FloorWhiteMarbleMonoPortedDuty
+  parent: FloorWhiteMarblePortedDuty
+  name: tiles-white-marble-ported-duty
+  sprite: /Textures/_Duty/Ported/Onyx/Tiles/Marble/white-marble-mono.png
+  variants: 6
+
+- type: tile
+  id: FloorDarkMarblePortedDuty
+  parent: FloorWhiteMarblePortedDuty
+  name: tiles-dark-marble-ported-duty
+  sprite: /Textures/_Duty/Ported/Onyx/Tiles/Marble/dark-marble.png
+  variants: 6
+
+- type: tile
+  id: FloorDarkMarbleMonoPortedDuty
+  parent: FloorWhiteMarblePortedDuty
+  name: tiles-dark-marble-ported-duty
+  sprite: /Textures/_Duty/Ported/Onyx/Tiles/Marble/dark-marble-mono.png
+  variants: 6
+
+- type: tile
+  id: FloorAfganPortedDuty
+  name: tiles-floorafgan-ported-duty
+  sprite: /Textures/_Duty/Ported/Afgan/desert.png
+  variants: 6
+  placementVariants:
+  - 0.75
+  - 0.06
+  - 0.06
+  - 0.06
+  - 0.06
+  - 0.01
+  isSubfloor: true
+  footstepSounds:
+    collection: FootstepAsteroid
+  heatCapacity: 10000
+  weather: true
+  indestructible: true
+
+- type: tile
+  id: FloorLowAfganPortedDuty
+  name: tiles-floorlowafgan-ported-duty
+  sprite: /Textures/_Duty/Ported/Afgan/low_desert.png
+  variants: 6
+  placementVariants:
+  - 1.0
+  - 1.0
+  - 1.0
+  - 1.0
+  - 1.0
+  - 1.0
+  isSubfloor: true
+  footstepSounds:
+    collection: FootstepAsteroid
+  heatCapacity: 10000
+  weather: false
+  indestructible: true
+
+- type: tile
+  id: FloorAfganRedPortedDuty
+  name: tiles-floorafganred-ported-duty
+  sprite: /Textures/_Duty/Ported/Afgan/red.png
+  variants: 6
+  placementVariants:
+  - 0.75
+  - 0.06
+  - 0.06
+  - 0.06
+  - 0.06
+  - 0.01
+  isSubfloor: true
+  footstepSounds:
+    collection: FootstepAsteroid
+  heatCapacity: 10000
+  weather: false
+  indestructible: true
+
+- type: tile
+  id: FloorAfganRustPortedDuty
+  name: tiles-floorafganrust-ported-duty
+  sprite: /Textures/_Duty/Ported/Afgan/rust.png
+  variants: 6
+  placementVariants:
+  - 0.75
+  - 0.06
+  - 0.06
+  - 0.06
+  - 0.06
+  - 0.01
+  isSubfloor: true
+  footstepSounds:
+    collection: FootstepHull
+  heatCapacity: 10000
+  weather: false
+  indestructible: true
+
+- type: tile
+  id: FloorAfganWoodPortedDuty
+  name: tiles-floorafganwood-ported-duty
+  sprite: /Textures/_Duty/Ported/Afgan/wood.png
+  variants: 6
+  placementVariants:
+  - 0.75
+  - 0.06
+  - 0.06
+  - 0.06
+  - 0.06
+  - 0.01
+  isSubfloor: true
+  footstepSounds:
+    collection: FootstepWood
+  heatCapacity: 10000
+  weather: false
+  indestructible: true
+
+
+
+#complex
+
+- type: tile
+  id: FloorAfganComplex1PortedDuty
+  name: tiles-floorafgancomplex1-ported-duty
+  sprite: /Textures/_Duty/Ported/Afgan/complex.png
+  variants: 1
+  placementVariants:
+  - 0.75
+  isSubfloor: false
+  footstepSounds:
+    collection: FootstepFloor
+  heatCapacity: 10000
+  weather: false
+  indestructible: true
+
+- type: tile
+  id: FloorAfganComplex2PortedDuty
+  name: tiles-floorafgancomplex2-ported-duty
+  sprite: /Textures/_Duty/Ported/Afgan/complex2.png
+  variants: 1
+  placementVariants:
+  - 0.75
+  isSubfloor: false
+  footstepSounds:
+    collection: FootstepFloor
+  heatCapacity: 10000
+  weather: false
+  indestructible: true
+
+- type: tile
+  id: FloorAfganComplex3PortedDuty
+  name: tiles-floorafgancomplex3-ported-duty
+  sprite: /Textures/_Duty/Ported/Afgan/complex3.png
+  variants: 1
+  placementVariants:
+  - 0.75
+  isSubfloor: false
+  footstepSounds:
+    collection: FootstepFloor
+  heatCapacity: 10000
+  weather: false
+  indestructible: true
+
+- type: tile
+  id: FloorAfganComplex4PortedDuty
+  name: tiles-floorafgancomplex4-ported-duty
+  sprite: /Textures/_Duty/Ported/Afgan/complex4.png
+  variants: 1
+  placementVariants:
+  - 0.75
+  isSubfloor: false
+  footstepSounds:
+    collection: FootstepFloor
+  heatCapacity: 10000
+  weather: false
+  indestructible: true
+
+
+# dvkish
+
+- type: tile
+  id: FloorAfganMudPortedDuty
+  name: tiles-floorafganmud-ported-duty
+  sprite: /Textures/_Duty/Ported/Afgan/mud.png
+  variants: 1
+  placementVariants:
+  - 0.75
+  isSubfloor: false
+  footstepSounds:
+    collection: FootstepAsteroid
+  heatCapacity: 10000
+  weather: true
+  indestructible: true
+
+- type: tile
+  id: FloorAfganDirtPortedDuty
+  name: tiles-floorafgandirt-ported-duty
+  sprite: /Textures/_Duty/Ported/Afgan/dirt.png
+  variants: 1
+  placementVariants:
+  - 0.75
+  isSubfloor: false
+  footstepSounds:
+    collection: FootstepAsteroid
+  heatCapacity: 10000
+  weather: true
+  indestructible: true
+
+- type: tile
+  id: FloorAfganGrassPortedDuty
+  name: tiles-floorafgangrass-ported-duty
+  sprite: /Textures/_Duty/Ported/Afgan/grass.png
+  variants: 1
+  placementVariants:
+  - 0.75
+  isSubfloor: false
+  footstepSounds:
+    collection: FootstepAsteroid
+  heatCapacity: 10000
+  weather: true
+  indestructible: true
+
+- type: tile
+  id: FloorAfganStonerPortedDuty
+  name: tiles-floorafganstoner-ported-duty
+  sprite: /Textures/_Duty/Ported/Afgan/stoner.png
+  variants: 1
+  placementVariants:
+  - 0.75
+  isSubfloor: false
+  footstepSounds:
+    collection: FootstepFloor
+  heatCapacity: 10000
+  weather: false
+  indestructible: true
