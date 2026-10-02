@@ -19,7 +19,7 @@
   isSubfloor: false
   deconstructTools: [ Prying ]
   footstepSounds:
-    collection: FootstepTile
+    collection: FootstepCosmicPortedDuty
   heatCapacity: 10000
   weather: true
 
@@ -31,7 +31,7 @@
   isSubfloor: false
   deconstructTools: [ Prying ]
   footstepSounds:
-    collection: FootstepTile
+    collection: FootstepCosmicPortedDuty
   heatCapacity: 10000
   weather: true
 
@@ -43,7 +43,7 @@
   isSubfloor: false
   deconstructTools: [ Prying ]
   footstepSounds:
-    collection: FootstepTile
+    collection: FootstepCosmicPortedDuty
   heatCapacity: 10000
   weather: true
 
@@ -55,7 +55,7 @@
   isSubfloor: false
   deconstructTools: [ Prying ]
   footstepSounds:
-    collection: FootstepTile
+    collection: FootstepCosmicPortedDuty
   heatCapacity: 10000
   weather: true
 
@@ -67,7 +67,7 @@
   isSubfloor: false
   deconstructTools: [ Prying ]
   footstepSounds:
-    collection: FootstepTile
+    collection: FootstepCosmicPortedDuty
   heatCapacity: 10000
   weather: true
 
@@ -85,7 +85,7 @@
   isSubfloor: false
   deconstructTools: [ Prying ]
   footstepSounds:
-    collection: FootstepTile
+    collection: FootstepCosmicPortedDuty
   heatCapacity: 10000
   weather: true
 
@@ -97,7 +97,7 @@
   isSubfloor: false
   deconstructTools: [ Prying ]
   footstepSounds:
-    collection: FootstepTile
+    collection: FootstepCosmicPortedDuty
   heatCapacity: 10000
   weather: true
 
@@ -317,7 +317,7 @@
   - 0.01
   isSubfloor: true
   footstepSounds:
-    collection: FootstepAsteroid
+    collection: FootstepAfganSandPortedDuty
   heatCapacity: 10000
   weather: true
   indestructible: true
@@ -336,7 +336,7 @@
   - 1.0
   isSubfloor: true
   footstepSounds:
-    collection: FootstepAsteroid
+    collection: FootstepAfganSandPortedDuty
   heatCapacity: 10000
   weather: false
   indestructible: true
@@ -355,7 +355,7 @@
   - 0.01
   isSubfloor: true
   footstepSounds:
-    collection: FootstepAsteroid
+    collection: FootstepAfganSandPortedDuty
   heatCapacity: 10000
   weather: false
   indestructible: true
@@ -374,7 +374,7 @@
   - 0.01
   isSubfloor: true
   footstepSounds:
-    collection: FootstepHull
+    collection: FootstepAfganMetalPortedDuty
   heatCapacity: 10000
   weather: false
   indestructible: true
@@ -470,7 +470,7 @@
   - 0.75
   isSubfloor: false
   footstepSounds:
-    collection: FootstepAsteroid
+    collection: FootstepAfganSandPortedDuty
   heatCapacity: 10000
   weather: true
   indestructible: true
@@ -484,7 +484,7 @@
   - 0.75
   isSubfloor: false
   footstepSounds:
-    collection: FootstepAsteroid
+    collection: FootstepAfganSandPortedDuty
   heatCapacity: 10000
   weather: true
   indestructible: true
@@ -498,7 +498,7 @@
   - 0.75
   isSubfloor: false
   footstepSounds:
-    collection: FootstepAsteroid
+    collection: FootstepAfganSandPortedDuty
   heatCapacity: 10000
   weather: true
   indestructible: true
