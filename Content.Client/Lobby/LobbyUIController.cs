@@ -79,8 +79,7 @@ public sealed partial class LobbyUIController : UIController, IOnStateEntered<Lo
         });
 
         _configurationManager.OnValueChanged(CCVars.GameRoleTimers, _ => RefreshProfileEditor());
-        _configurationManager.OnValueChanged(CCVars.GameRoleLoadoutTimers, _ => RefreshProfileEditor());
-        _configurationManager.OnValueChanged(CCVars.GameRoleLoadoutTimers, _ => RefreshProfileEditor());
+        _configurationManager.OnValueChanged(CCVars.GameRoleLoadoutTimers, _ => RefreshProfileEditor()); // _Duty: дубль подписки убран
 
         _configurationManager.OnValueChanged(CCVars.GameRoleWhitelist, _ => RefreshProfileEditor());
     }
@@ -245,10 +244,14 @@ public sealed partial class LobbyUIController : UIController, IOnStateEntered<Lo
         _characterSetupWindow?.Close(); // ADT-Tweak 
     }
 
-    private void OpenSavePanel()
+    private void OpenSavePanel(Action? afterResolved = null)
     {
         if (_savePanel is { IsOpen: true })
             return;
+
+        // _Duty: действие после «сохранить»/«не сохранять» (по умолчанию — закрыть редактор), чтобы то же окно
+        // подтверждения работало и при смене слота персонажа.
+        afterResolved ??= CloseProfileEditor;
 
         _savePanel = new CharacterSetupGuiSavePanel();
 
@@ -258,15 +261,18 @@ public sealed partial class LobbyUIController : UIController, IOnStateEntered<Lo
 
             _savePanel.Close();
 
-            CloseProfileEditor();
+            afterResolved();
         };
 
         _savePanel.NoSaveButton.OnPressed += _ =>
         {
             _savePanel.Close();
 
-            CloseProfileEditor();
+            afterResolved();
         };
+
+        // При отмене слот остаётся прежним — вернём кнопки выбора в исходное состояние.
+        _savePanel.OnClose += () => _characterSetup?.ReloadCharacterPickers();
 
         _savePanel.OpenCentered();
     }
@@ -375,8 +381,21 @@ public sealed partial class LobbyUIController : UIController, IOnStateEntered<Lo
 
         _characterSetup.SelectCharacter += args =>
         {
-            _preferencesManager.SelectCharacter(args);
-            ReloadCharacterSetup();
+            // _Duty-start: повторный клик по текущему слоту ничего не делает, а несохранённые правки не теряются молча.
+            if (EditedSlot == args)
+                return;
+
+            void Switch()
+            {
+                _preferencesManager.SelectCharacter(args);
+                ReloadCharacterSetup();
+            }
+
+            if (_profileEditor is { Profile: not null, IsDirty: true })
+                OpenSavePanel(Switch);
+            else
+                Switch();
+            // _Duty-end
         };
 
         _characterSetup.DeleteCharacter += args =>

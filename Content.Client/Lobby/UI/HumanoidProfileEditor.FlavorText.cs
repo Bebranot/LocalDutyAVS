@@ -16,6 +16,7 @@ public sealed partial class HumanoidProfileEditor
     /// </summary>
     public void RefreshFlavorText()
     {
+        _allowFlavorText = _cfgManager.GetCVar(Content.Shared.CCVar.CCVars.FlavorText); // _Duty: переключение CVar на лету раньше не имело эффекта
         if (_allowFlavorText)
         {
             if (_flavorText != null)

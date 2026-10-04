@@ -1,3 +1,4 @@
+using System.Linq;
 // Система полностью переписана под ADT, под новые трейты
 
 using Content.Shared.ADT.CCVar;
@@ -115,7 +116,11 @@ public sealed class TraitSystem : EntitySystem
         var categoryTraitCounts = new Dictionary<ProtoId<TraitCategoryPrototype>, int>();
         var categoryPointTotals = new Dictionary<ProtoId<TraitCategoryPrototype>, int>();
 
-        foreach (var traitId in selectedTraits)
+        // _Duty: порядок обхода HashSet был случайным, и положительная черта могла отсекаться раньше отрицательной,
+        // которая её «оплачивает». Сначала дающие очки (меньшая цена), затем по id — результат детерминирован.
+        foreach (var traitId in selectedTraits
+                     .OrderBy(id => _prototype.TryIndex(id, out var sortTrait) ? sortTrait.Cost : 0)
+                     .ThenBy(id => id.Id, StringComparer.Ordinal))
         {
             if (!_prototype.TryIndex(traitId, out var trait))
             {

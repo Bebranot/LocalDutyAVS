@@ -3,67 +3,72 @@
               HorizontalExpand="True"
               VerticalExpand="True">
 
-    <!-- Header Panel with Global Stats -->
-    <PanelContainer StyleClasses="TraitsHeaderPanel" Margin="0 0 0 8">
-        <BoxContainer Orientation="Vertical" Margin="12 10">
-            <!-- Title Row -->
-            <BoxContainer Orientation="Horizontal" Margin="0 0 0 8">
-                <Label Text="{Loc 'trait-editor-title'}"
-                       StyleClasses="TraitsTitleLabel"/>
+    <!-- _Duty: переработанная вкладка черт: категории слева, карточки в центре, детали и «Мой персонаж» справа -->
+
+    <!-- Шапка: счётчик черт и баланс очков -->
+    <PanelContainer StyleClasses="TraitsHeaderPanel" Margin="0 0 0 6">
+        <BoxContainer Orientation="Vertical" Margin="12 8">
+            <BoxContainer Orientation="Horizontal">
+                <Label Text="{Loc 'trait-editor-title'}" StyleClasses="TraitsTitleLabel"/>
                 <Control HorizontalExpand="True"/>
-                <Label Name="GlobalTraitCountLabel"
-                       StyleClasses="TraitsStatLabel"/>
+                <Label Name="GlobalTraitCountLabel" StyleClasses="TraitsStatLabel" Margin="0 0 16 0"/>
+                <Label Name="GlobalPointsLabel" StyleClasses="TraitsStatLabel"/>
             </BoxContainer>
-
-            <!-- Points Progress Bar -->
-            <BoxContainer Orientation="Vertical" Margin="0 4 0 0">
-                <BoxContainer Orientation="Horizontal" Margin="0 0 0 4">
-                    <Label Text="{Loc 'trait-editor-points-label'}"
-                           StyleClasses="TraitsSubtitleLabel"/>
-                    <Control HorizontalExpand="True"/>
-                    <Label Name="GlobalPointsLabel"
-                           StyleClasses="TraitsStatLabel"/>
-                </BoxContainer>
-
-                <!-- Progress Bar Container -->
-                <PanelContainer StyleClasses="TraitsProgressBarBg" SetHeight="12">
-                    <PanelContainer Name="GlobalPointsBar"
-                                    StyleClasses="TraitsProgressBarFill"
-                                    HorizontalExpand="True"
-                                    HorizontalAlignment="Left"/>
-                </PanelContainer>
-            </BoxContainer>
+            <ProgressBar Name="PointsBar" MinValue="0" MaxValue="1" Value="0" SetHeight="8" Margin="0 6 0 0" Visible="False"/>
         </BoxContainer>
     </PanelContainer>
 
-    <!-- Search Bar -->
-    <PanelContainer StyleClasses="TraitsSearchBar" Margin="0 0 0 8">
+    <!-- Поиск и фильтры -->
+    <BoxContainer Orientation="Horizontal" Margin="0 0 0 4">
         <LineEdit Name="SearchBar"
                   PlaceHolder="{Loc 'trait-editor-search-placeholder'}"
                   HorizontalExpand="True"
-                  StyleClasses="TraitsSearchInput"
-                  Margin="10 8"/>
-    </PanelContainer>
+                  StyleClasses="TraitsSearchInput"/>
+        <Button Name="ClearSearchButton" Text="✕" ToolTip="{Loc 'duty-traits-clear-search'}" Visible="False"/>
+    </BoxContainer>
+    <BoxContainer Name="FilterRow" Orientation="Horizontal" Margin="0 0 0 6"/>
 
-    <!-- Categories Container (Scrollable) -->
-    <ScrollContainer VerticalExpand="True"
-                     HScrollEnabled="False">
-        <BoxContainer Name="CategoriesContainer"
-                      Orientation="Vertical"
-                      HorizontalExpand="True"
-                      Margin="0 0 4 0"/>
-    </ScrollContainer>
+    <!-- Основная часть -->
+    <BoxContainer Orientation="Horizontal" VerticalExpand="True" HorizontalExpand="True">
+        <ScrollContainer SetWidth="175" HScrollEnabled="False" Margin="0 0 6 0">
+            <BoxContainer Name="CategoryList" Orientation="Vertical"/>
+        </ScrollContainer>
 
-    <!-- Footer Info -->
-    <PanelContainer StyleClasses="TraitsFooterPanel" Margin="0 8 0 0">
-        <BoxContainer Orientation="Horizontal" Margin="10 6">
-            <Label Name="FooterHintLabel"
-                   Text="{Loc 'trait-editor-footer-hint'}"
-                   StyleClasses="TraitsFooterText"/>
-            <Control HorizontalExpand="True"/>
-            <Label Name="FooterInfoLabel"
-                   Text="{Loc 'trait-editor-footer-info'}"
-                   StyleClasses="TraitsFooterText"/>
+        <ScrollContainer Name="ListScroll" HorizontalExpand="True" VerticalExpand="True" HScrollEnabled="False">
+            <BoxContainer Name="TraitSections" Orientation="Vertical" HorizontalExpand="True" Margin="0 0 4 0"/>
+        </ScrollContainer>
+
+        <BoxContainer Orientation="Vertical" SetWidth="280" Margin="6 0 0 0">
+            <!-- Подробности о черте -->
+            <PanelContainer StyleClasses="TraitsHeaderPanel" VerticalExpand="True" Margin="0 0 0 6">
+                <ScrollContainer HScrollEnabled="False">
+                    <BoxContainer Orientation="Vertical" Margin="10 8">
+                        <Label Name="DetailName" StyleClasses="TraitsTitleLabel" ClipText="True"/>
+                        <Label Name="DetailCost" StyleClasses="TraitsSubtitleLabel" Margin="0 2 0 6"/>
+                        <RichTextLabel Name="DetailDescription" HorizontalExpand="True"/>
+                        <RichTextLabel Name="DetailMeta" HorizontalExpand="True" Margin="0 8 0 0"/>
+                    </BoxContainer>
+                </ScrollContainer>
+            </PanelContainer>
+
+            <!-- Мой персонаж -->
+            <PanelContainer StyleClasses="TraitsHeaderPanel" VerticalExpand="True">
+                <BoxContainer Orientation="Vertical" Margin="10 8">
+                    <BoxContainer Orientation="Horizontal">
+                        <Label Text="{Loc 'duty-traits-my-character'}" StyleClasses="TraitsTitleLabel"/>
+                        <Control HorizontalExpand="True"/>
+                        <Button Name="ResetTraitsButton" Text="{Loc 'duty-traits-reset'}" ToolTip="{Loc 'duty-traits-reset-tooltip'}"/>
+                    </BoxContainer>
+                    <ScrollContainer VerticalExpand="True" HScrollEnabled="False" Margin="0 6 0 0">
+                        <BoxContainer Name="SelectedList" Orientation="Vertical"/>
+                    </ScrollContainer>
+                </BoxContainer>
+            </PanelContainer>
         </BoxContainer>
+    </BoxContainer>
+
+    <!-- Строка состояния: причина отказа или подсказка -->
+    <PanelContainer StyleClasses="TraitsFooterPanel" Margin="0 6 0 0">
+        <Label Name="StatusLabel" StyleClasses="TraitsFooterText" Margin="10 6" ClipText="True"/>
     </PanelContainer>
 </BoxContainer>

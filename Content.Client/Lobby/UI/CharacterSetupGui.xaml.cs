@@ -112,6 +112,22 @@ namespace Content.Client.Lobby.UI
                     SelectCharacter?.Invoke(slot);
                 };
 
+                // _Duty-start: дублирование персонажа; кнопка недоступна, когда слотов не осталось
+                characterPickerButton.DuplicateButton.Disabled = _preferencesManager.Preferences.Characters.Count >= _preferencesManager.Settings.MaxCharacterSlots;
+                characterPickerButton.OnDuplicatePressed += () =>
+                {
+                    if (_preferencesManager.Preferences.Characters.Count >= _preferencesManager.Settings.MaxCharacterSlots)
+                        return;
+
+                    var copyName = Loc.GetString("duty-character-copy-name", ("name", character.Name));
+                    if (copyName.Length > HumanoidCharacterProfile.MaxNameLength)
+                        copyName = copyName[..HumanoidCharacterProfile.MaxNameLength];
+
+                    _preferencesManager.CreateCharacter(character.WithName(copyName));
+                    ReloadCharacterPickers();
+                };
+                // _Duty-end
+
                 characterPickerButton.OnDeletePressed += () =>
                 {
                     DeleteCharacter?.Invoke(slot);

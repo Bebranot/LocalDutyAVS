@@ -198,13 +198,17 @@ public sealed partial class HumanoidProfileEditor
         UpdateSexControls(); // update sex for new species
         UpdateSpeciesGuidebookIcon();
         UpdateBodyTypeControls(); // ADT-Tweak
+        // _Duty-start: список голосов и условия черт зависят от вида — раньше оставались от прежнего вида
+        UpdateTTSVoicesControls();
+        RefreshTraits();
+        // _Duty-end
         ReloadPreview();
     }
 
     private void SetAge(int newAge)
     {
         Profile = Profile?.WithAge(newAge);
-        ReloadPreview();
+        ReloadProfilePreview(); // _Duty: лёгкая перезагрузка вместо пересоздания манекена на каждый символ
     }
 
     private void SetSex(Sex newSex)
@@ -226,13 +230,14 @@ public sealed partial class HumanoidProfileEditor
 
         UpdateGenderControls();
         _markingsModel.SetOrganSexes(newSex);
+        UpdateTTSVoicesControls(); // _Duty: голоса зависят от пола
         ReloadPreview();
     }
 
     private void SetGender(Gender newGender)
     {
         Profile = Profile?.WithGender(newGender);
-        ReloadPreview();
+        ReloadProfilePreview(); // _Duty
     }
 
     private void SetSpawnPriority(SpawnPriorityPreference newSpawnPriority)

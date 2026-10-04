@@ -74,7 +74,7 @@ public sealed partial class LoadoutGroupContainer : BoxContainer
             });
         }
 
-        LoadoutsContainer.RemoveAllChildren();
+        LoadoutsContainer.DisposeAllChildren(); // _Duty: RemoveAllChildren оставлял сущности превью (утечка при каждом выборе)
 
         // Get all loadout prototypes for this group.
         var validProtos = _groupProto.Loadouts.Select(id => protoMan.Index(id));
