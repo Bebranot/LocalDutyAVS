@@ -340,6 +340,7 @@ namespace Content.Client.Administration.UI
             {
                 Title = Loc.GetString("permissions-eui-menu-title");
                 MinSize = new Vector2(760, 460);
+                SetSize = new Vector2(860, 520); // фиксированный размер: содержимое не должно растягивать окно
 
                 var tab = new TabContainer();
 
@@ -412,6 +413,7 @@ namespace Content.Client.Administration.UI
                 PermissionsEuiState.AdminData? data)
             {
                 MinSize = new Vector2(820, 560);
+                SetSize = new Vector2(940, 640); // фиксированный размер: описания флагов не должны растягивать окно
                 SourceData = data;
 
                 Control nameControl;
@@ -515,6 +517,7 @@ namespace Content.Client.Administration.UI
                 KeyValuePair<int, PermissionsEuiState.AdminRankData>? data)
             {
                 MinSize = new Vector2(760, 540);
+                SetSize = new Vector2(900, 620); // фиксированный размер
                 Title = Loc.GetString("permissions-eui-edit-admin-rank-window-title");
                 SourceId = data?.Key;
 

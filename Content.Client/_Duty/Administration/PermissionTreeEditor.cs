@@ -134,15 +134,27 @@ public sealed class PermissionTreeEditor : BoxContainer
             },
         });
 
+        // Панель описания фиксированной высоты с прокруткой: длинный текст не должен менять размер окна
         _info = new RichTextLabel { HorizontalExpand = true };
         AddChild(new PanelContainer
         {
             PanelOverride = new StyleBoxFlat { BackgroundColor = Color.FromHex("#00000050") },
-            MinSize = new Vector2(0, 76),
-            Children = { new Control { Margin = new Thickness(6), Children = { _info } } },
+            SetHeight = 96,
+            HorizontalExpand = true,
+            Children =
+            {
+                new ScrollContainer
+                {
+                    HScrollEnabled = false,
+                    HorizontalExpand = true,
+                    VerticalExpand = true,
+                    Margin = new Thickness(6),
+                    Children = { _info },
+                },
+            },
         });
 
-        _summary = new Label { StyleClasses = { "LabelSubText" } };
+        _summary = new Label { StyleClasses = { "LabelSubText" }, ClipText = true };
         AddChild(_summary);
 
         BuildEntries();
