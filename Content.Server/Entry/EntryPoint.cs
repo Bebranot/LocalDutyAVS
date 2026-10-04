@@ -138,6 +138,8 @@ namespace Content.Server.Entry
             _log.GetSawmill("db.ef").Level = LogLevel.Info;
             // _Duty: спам "Received late nwVar message" не является ошибкой, глушим Warning
             _log.GetSawmill("cfg").Level = LogLevel.Error;
+            // _Duty: уровни логов по каналам из duty.log_levels (тише консоль), меняется и на лету
+            _cfg.OnValueChanged(DutyCCVars.LogLevels, v => DutyLogLevels.Apply(_log, v), true);
 
 #if RELEASE
             _dutyErrorLogHandler = new DutyErrorLogHandler();

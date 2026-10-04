@@ -341,4 +341,13 @@ public sealed class DutyCCVars
     /// </summary>
     public static readonly CVarDef<string> LowEndModeSaved =
         CVarDef.Create("duty.low_end_mode_saved", string.Empty, CVar.ARCHIVE | CVar.CLIENTONLY);
+
+    /// <summary>
+    /// Уровни логирования по каналам для консоли сервера: <c>канал=Уровень;канал=Уровень</c>.
+    /// По умолчанию глушим запросы лаунчера к статусу сервера и раздачу ACZ (<c>statushost</c>) —
+    /// они пишут Info на каждое обновление списка серверов и забивают консоль.
+    /// См. <c>DutyLogLevels</c>.
+    /// </summary>
+    public static readonly CVarDef<string> LogLevels =
+        CVarDef.Create("duty.log_levels", "statushost=Warning", CVar.ARCHIVE | CVar.SERVERONLY);
 }
