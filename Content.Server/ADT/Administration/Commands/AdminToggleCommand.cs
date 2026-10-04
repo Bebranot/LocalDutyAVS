@@ -40,11 +40,37 @@ public sealed class AdminToggleCommand : LocalizedCommands
             return;
 
         var mgr = IoCManager.Resolve<IAdminManager>();
+
+        // _Duty-start: нельзя трогать админа с большими правами; для не-админа DeAdmin бросал исключение из async void
+        if (mgr.GetAdminData(targetSession, includeDeAdmin: true) == null)
+        {
+            shell.WriteError(Loc.GetString("duty-admin-toggle-not-admin"));
+            return;
+        }
+
+        if (shell.Player is { } invoker && mgr.IsOutranked(invoker, targetSession))
+        {
+            shell.WriteError(Loc.GetString("duty-admin-toggle-outranked"));
+            return;
+        }
+
+        if (args[1] != "deadmin" && args[1] != "readmin")
+        {
+            shell.WriteError(Loc.GetString("duty-admin-toggle-bad-action"));
+            return;
+        }
+
+        IoCManager.Resolve<Content.Server.Administration.Logs.IAdminLogManager>().Add(
+            Content.Shared.Database.LogType.AdminCommands,
+            Content.Shared.Database.LogImpact.Extreme,
+            $"{shell.Player} выполнил {args[1]} для {targetSession}");
+        // _Duty-end
+
         if (args[1] == "deadmin")
         {
             mgr.DeAdmin(targetSession);
         }
-        else if (args[1] == "readmin" && !(mgr.GetAdminData(targetSession, includeDeAdmin: true) == null))
+        else
         {
             mgr.ReAdmin(targetSession);
         }

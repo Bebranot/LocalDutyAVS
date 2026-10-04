@@ -8,7 +8,7 @@ using Robust.Shared.Network;
 
 namespace Content.Server.ADT.Administration.Commands;
 
-[AdminCommand(AdminFlags.Moderator)]
+[AdminCommand(AdminFlags.Permissions)] // _Duty: выдача времени = выдача доступа к ролям, Moderator хватало для обхода Permissions
 public sealed class PlayTimeAddOverallAsyncCommand : IConsoleCommand
 {
     [Dependency] private readonly IPlayerManager _playerManager = default!;
@@ -85,7 +85,7 @@ public sealed class PlayTimeAddOverallAsyncCommand : IConsoleCommand
 }
 
 
-[AdminCommand(AdminFlags.Moderator)]
+[AdminCommand(AdminFlags.Permissions)] // _Duty: см. выше
 public sealed class PlayTimeAddRoleAsyncCommand : IConsoleCommand
 {
     [Dependency] private readonly IPlayerManager _playerManager = default!;

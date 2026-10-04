@@ -1,9 +1,11 @@
-﻿using Content.Shared.Eui;
+using Content.Shared.Eui;
 using Robust.Shared.Network;
 using Robust.Shared.Serialization;
 
 namespace Content.Shared.Administration
 {
+    // _Duty: права передаются строками: либо имя старого флага (BAN), либо id узла дерева прав (players.ban).
+    // Так панель и сервер не зависят от битовой маски, а новые узлы добавляются без правки протокола.
     [Serializable, NetSerializable]
     public sealed class PermissionsEuiState : EuiStateBase
     {
@@ -12,6 +14,9 @@ namespace Content.Shared.Administration
         public AdminData[] Admins = Array.Empty<AdminData>();
         public Dictionary<int, AdminRankData> AdminRanks = new();
 
+        /// <summary>Что может выдавать сам редактор: его старые флаги, выданные напрямую, и узлы вместе со вложенными.</summary>
+        public string[] EditorGrants = Array.Empty<string>();
+
         [Serializable, NetSerializable]
         public struct AdminData
         {
@@ -19,8 +24,8 @@ namespace Content.Shared.Administration
             public string? UserName;
             public string? Title;
             public bool Suspended;
-            public AdminFlags PosFlags;
-            public AdminFlags NegFlags;
+            public string[] Pos;
+            public string[] Neg;
             public int? RankId;
         }
 
@@ -28,7 +33,7 @@ namespace Content.Shared.Administration
         public struct AdminRankData
         {
             public string Name;
-            public AdminFlags Flags;
+            public string[] Grants;
         }
     }
 
@@ -39,8 +44,8 @@ namespace Content.Shared.Administration
         {
             public string UserNameOrId = string.Empty;
             public string? Title;
-            public AdminFlags PosFlags;
-            public AdminFlags NegFlags;
+            public string[] Pos = Array.Empty<string>();
+            public string[] Neg = Array.Empty<string>();
             public int? RankId;
             public bool Suspended;
         }
@@ -56,8 +61,8 @@ namespace Content.Shared.Administration
         {
             public NetUserId UserId;
             public string? Title;
-            public AdminFlags PosFlags;
-            public AdminFlags NegFlags;
+            public string[] Pos = Array.Empty<string>();
+            public string[] Neg = Array.Empty<string>();
             public int? RankId;
             public bool Suspended;
         }
@@ -67,7 +72,7 @@ namespace Content.Shared.Administration
         public sealed class AddAdminRank : EuiMessageBase
         {
             public string Name = string.Empty;
-            public AdminFlags Flags;
+            public string[] Grants = Array.Empty<string>();
         }
 
         [Serializable, NetSerializable]
@@ -82,7 +87,7 @@ namespace Content.Shared.Administration
             public int Id;
 
             public string Name = string.Empty;
-            public AdminFlags Flags;
+            public string[] Grants = Array.Empty<string>();
         }
     }
 }

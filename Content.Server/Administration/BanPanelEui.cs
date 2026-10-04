@@ -129,13 +129,9 @@ public sealed class BanPanelEui : BaseEui
         {
             var dbData = await _dbManager.GetAdminDataForAsync(targetUid.Value);
 
-            if (dbData != null && dbData.AdminRank != null)
-            {
-                var targetPermissionsFlag = AdminFlagsHelper.NamesToFlags(dbData.AdminRank.Flags.Select(p => p.Flag));
-
-                if ((targetPermissionsFlag & AdminFlags.Permissions) == AdminFlags.Permissions)
-                    return;
-            }
+            // _Duty: защита считается по итоговым правам (личные плюс ранг), а не только по рангу
+            if (_admins.IsProtectedFromBan(dbData))
+                return;
         }
         // End-ADT-Tweak
 

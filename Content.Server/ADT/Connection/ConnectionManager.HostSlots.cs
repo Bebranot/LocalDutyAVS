@@ -19,25 +19,9 @@ public sealed partial class ConnectionManager
         return !HasHostFlag(adminData);
     }
 
-    private static bool HasHostFlag(Admin? adminData)
+    // _Duty: права из БД разбирает менеджер админов: в БД лежат и узлы дерева, прежний разбор падал на их id
+    private bool HasHostFlag(Admin? adminData)
     {
-        if (adminData == null || adminData.Suspended)
-            return false;
-
-        var flags = AdminFlags.None;
-
-        if (adminData.AdminRank != null)
-            flags = AdminFlagsHelper.NamesToFlags(adminData.AdminRank.Flags.Select(p => p.Flag));
-
-        foreach (var dbFlag in adminData.Flags)
-        {
-            var flag = AdminFlagsHelper.NameToFlag(dbFlag.Flag);
-            if (dbFlag.Negative)
-                flags &= ~flag;
-            else
-                flags |= flag;
-        }
-
-        return (flags & AdminFlags.Host) != 0;
+        return _adminManager.HasHostFlag(adminData);
     }
 }

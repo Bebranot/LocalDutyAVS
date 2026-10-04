@@ -98,11 +98,11 @@ public sealed class BanCommand : LocalizedCommands
 
         // ADT-Tweak-Start: Пользователя с флагом Permission не забанить
         var dbData = await _dbManager.GetAdminDataForAsync(targetUid);
-        if (dbData != null && dbData.AdminRank != null)
+        // _Duty: защита считается по итоговым правам (личные плюс ранг), а не только по рангу
+        if (_adminManager.IsProtectedFromBan(dbData))
         {
-            var targetPermissionsFlag = AdminFlagsHelper.NamesToFlags(dbData.AdminRank.Flags.Select(p => p.Flag));
-            if ((targetPermissionsFlag & AdminFlags.Permissions) == AdminFlags.Permissions)
-                return;
+            shell.WriteError(Loc.GetString("duty-ban-protected-admin"));
+            return;
         }
         // ADT-Tweak-End
 

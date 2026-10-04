@@ -252,6 +252,7 @@ namespace Content.Server.Administration.Managers
             _sawmill = _logManager.GetSawmill("admin");
 
             _netMgr.RegisterNetMessage<MsgUpdateAdminStatus>();
+            InitializePermissionTree(); // _Duty: дерево прав
 
             // Cache permissions for loaded console commands with the requisite attributes.
             foreach (var (cmdName, cmd) in _consoleHost.AvailableCommands)
@@ -332,8 +333,9 @@ namespace Content.Server.Administration.Managers
             {
                 msg.Admin = adminData.Data;
 
+                // _Duty: команды открывают узлы дерева прав и старые флаги, выданные напрямую
                 commands.AddRange(_commandPermissions.AdminCommands
-                    .Where(p => p.Value.Any(f => adminData.Data.HasFlag(f)))
+                    .Where(p => adminData.Data.Active && CommandAllowedForConsole(adminData.Data, p.Key, p.Value))
                     .Select(p => p.Key));
             }
 
@@ -440,6 +442,8 @@ namespace Content.Server.Administration.Managers
                 {
                     Title = Loc.GetString("admin-manager-admin-data-host-title"),
                     Flags = AdminFlagsHelper.Everything,
+                    DirectFlags = AdminFlagsHelper.Everything, // _Duty
+                    Nodes = new HashSet<string>(EnsureTree().AllIds()), // _Duty
                     Active = true,
                 };
 
@@ -461,31 +465,22 @@ namespace Content.Server.Administration.Managers
                     return null;
                 }
 
-                var flags = AdminFlags.None;
-
-                if (dbData.AdminRank != null)
-                {
-                    flags = AdminFlagsHelper.NamesToFlags(dbData.AdminRank.Flags.Select(p => p.Flag));
-                }
-
-                foreach (var dbFlag in dbData.Flags)
-                {
-                    var flag = AdminFlagsHelper.NameToFlag(dbFlag.Flag);
-                    if (dbFlag.Negative)
-                    {
-                        flags &= ~flag;
-                    }
-                    else
-                    {
-                        flags |= flag;
-                    }
-                }
+                // _Duty-start: права из строк БД — старые флаги и узлы дерева; неизвестное имя не роняет вход
+                ResolveGrants(
+                    dbData.AdminRank?.Flags.Select(p => p.Flag) ?? Enumerable.Empty<string>(),
+                    dbData.Flags.Select(f => (f.Flag, f.Negative)),
+                    out var directFlags,
+                    out var nodes,
+                    out var flags);
 
                 var data = new AdminData
                 {
                     Flags = flags,
+                    DirectFlags = directFlags,
+                    Nodes = nodes,
                     Active = !dbData.Deadminned,
                 };
+                // _Duty-end
 
                 if (dbData.Title != null  && _cfg.GetCVar(CCVars.AdminUseCustomNamesAdminRank))
                 {
@@ -553,15 +548,8 @@ namespace Content.Server.Administration.Managers
                 return false;
             }
 
-            foreach (var flagReq in flagsReq)
-            {
-                if (data.HasFlag(flagReq))
-                {
-                    return true;
-                }
-            }
-
-            return false;
+            // _Duty: узлы дерева прав либо старые флаги напрямую
+            return CommandAllowedForConsole(data, cmdName, flagsReq);
         }
 
         public bool CheckInvokable(CommandSpec command, ICommonSession? user, out IConError? error)
@@ -595,13 +583,11 @@ namespace Content.Server.Administration.Managers
                 return false;
             }
 
-            foreach (var flag in flags)
+            // _Duty: узлы дерева прав либо старые флаги напрямую
+            if (CommandAllowedForToolshed(data, name, flags))
             {
-                if (data.HasFlag(flag))
-                {
-                    error = null;
-                    return true;
-                }
+                error = null;
+                return true;
             }
 
             error = new NoPermissionError(command);

@@ -27,6 +27,29 @@ namespace Content.Shared.Administration
         /// </summary>
         public AdminFlags Flags;
 
+        // _Duty-start: дерево прав. Flags = старые флаги, выданные напрямую, плюс то, что включают узлы (для HasAdminFlag в системах).
+        /// <summary>
+        ///     Старые флаги, выданные напрямую. Только они (а не включённые узлами) открывают консольные команды по атрибутам.
+        ///     Заполняется на сервере, клиенту не передаётся.
+        /// </summary>
+        public AdminFlags DirectFlags;
+
+        /// <summary>
+        ///     Выданные узлы прав вместе со всеми вложенными (см. AdminPermissionPrototype).
+        /// </summary>
+        public HashSet<string> Nodes = new();
+
+        public bool HasNode(string node, bool includeDeAdmin = false)
+        {
+            return (includeDeAdmin || Active) && Nodes.Contains(node);
+        }
+
+        public bool HasDirectFlag(AdminFlags flag)
+        {
+            return Active && (DirectFlags & flag) == flag;
+        }
+        // _Duty-end
+
         /// <summary>
         ///     Checks whether this admin has an admin flag.
         /// </summary>
@@ -59,7 +82,8 @@ namespace Content.Shared.Administration
         /// </summary>
         public bool CanAdminMenu()
         {
-            return HasFlag(AdminFlags.Admin);
+            // _Duty: меню открывает и тот, у кого есть хотя бы один узел прав
+            return HasFlag(AdminFlags.Admin) || (Active && Nodes.Count > 0);
         }
 
         /// <summary>

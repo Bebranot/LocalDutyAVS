@@ -1,3 +1,4 @@
+using Content.Shared._Duty.Administration;
 using Content.Shared.Administration;
 using Content.Shared.Administration.Managers;
 using Robust.Shared.Player;
@@ -63,6 +64,24 @@ namespace Content.Server.Administration.Managers
         /// <param name="rankId">The database ID of the rank.</param>
         /// <seealso cref="ReloadAdmin"/>
         void ReloadAdminsWithRank(int rankId);
+
+        // _Duty: дерево прав (узлы, раскрытие, команды)
+        AdminPermissionTree PermissionTree { get; }
+
+        /// <summary>Итоговые права админа из записи БД (личные плюс ранг, запреты вычтены). Неизвестные имена пропускаются.</summary>
+        (AdminFlags Direct, HashSet<string> Nodes) ResolveDatabaseAdmin(Database.Admin dbAdmin);
+
+        /// <summary>Админ с правом выдавать права, владелец или Host: таких нельзя банить и кикать другим админам.</summary>
+        bool IsProtectedFromBan(Database.Admin? dbAdmin);
+
+        /// <summary>
+        /// Есть ли у <paramref name="target"/> права, которых нет у <paramref name="invoker"/> (учитывая деадмин).
+        /// Нужна, чтобы нельзя было выполнять чужими руками то, что тебе недоступно (вербы от имени админа выше рангом).
+        /// </summary>
+        bool IsOutranked(ICommonSession invoker, ICommonSession target);
+
+        /// <summary>Есть ли у админа из БД Host (для резервных слотов).</summary>
+        bool HasHostFlag(Database.Admin? dbAdmin);
 
         void Initialize();
 

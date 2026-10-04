@@ -245,7 +245,10 @@ internal sealed partial class ChatManager : IChatManager
 
     public void SendHookAdmin(string sender, string message)
     {
-        var clients = _adminManager.ActiveAdmins.Select(p => p.Channel);
+        // _Duty: сообщения из Discord видят только админы с правом админ-чата
+        var clients = _adminManager.ActiveAdmins
+            .Where(admin => _adminManager.HasAdminFlag(admin, AdminFlags.Adminchat))
+            .Select(p => p.Channel);
 
         var wrappedMessage = Loc.GetString("chat-manager-send-hook-admin-wrap-message", ("senderName", sender), ("message", FormattedMessage.EscapeText(message)));
         foreach (var client in clients)
@@ -420,7 +423,8 @@ internal sealed partial class ChatManager : IChatManager
 
     private async void SendAdminChat(ICommonSession player, string message)
     {
-        if (!_adminManager.IsAdmin(player))
+        // _Duty: писать в админ-чат может только тот, у кого есть право Adminchat (раньше хватало быть любым админом)
+        if (!_adminManager.HasAdminFlag(player, AdminFlags.Adminchat))
         {
             _adminLogger.Add(LogType.Chat, LogImpact.Extreme, $"{player:Player} attempted to send admin message but was not admin");
             return;

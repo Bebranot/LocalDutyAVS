@@ -1,7 +1,9 @@
 using System.Linq;
 using Content.Server.Administration;
+using Content.Server.Administration.Managers;
 using Content.Shared.Administration;
 using Content.Shared.Verbs;
+using Robust.Server.Player;
 using Robust.Shared.Console;
 
 namespace Content.Server.Verbs.Commands
@@ -10,6 +12,8 @@ namespace Content.Server.Verbs.Commands
     public sealed class InvokeVerbCommand : IConsoleCommand
     {
         [Dependency] private readonly IEntityManager _entManager = default!;
+        [Dependency] private readonly IPlayerManager _players = default!; // _Duty
+        [Dependency] private readonly IAdminManager _admins = default!; // _Duty
 
         public string Command => "invokeverb";
         public string Description => Loc.GetString("invoke-verb-command-description");
@@ -54,6 +58,15 @@ namespace Content.Server.Verbs.Commands
             if (playerEntity == null)
             {
                 shell.WriteError(Loc.GetString("invoke-verb-command-invalid-player-entity"));
+                return;
+            }
+
+            // _Duty: нельзя вызывать вербы (с forced) от имени админа, у которого прав больше, чем у тебя
+            if (shell.Player is { } invoker
+                && _players.TryGetSessionByEntity(playerEntity.Value, out var runnerSession)
+                && _admins.IsOutranked(invoker, runnerSession))
+            {
+                shell.WriteError(Loc.GetString("duty-verb-run-as-outranked"));
                 return;
             }
 

@@ -356,6 +356,17 @@ public sealed partial class ServerApi : IPostInjectInit
                 return;
             }
 
+            // _Duty: админов с правом выдавать права и Host через API банить нельзя, как и из консоли
+            if (_admin.IsProtectedFromBan(await _dbManager.GetAdminDataForAsync(located.UserId)))
+            {
+                await RespondError(
+                    context,
+                    ErrorCode.BadRequest,
+                    HttpStatusCode.Forbidden,
+                    "Player is a protected admin and cannot be banned.");
+                return;
+            }
+
             var bans = await _dbManager.GetBansAsync(userId: located.UserId,
                 address: null,
                 hwId: null,
@@ -907,9 +918,11 @@ public sealed partial class ServerApi : IPostInjectInit
 
         await RunOnMainThread(async () =>
         {
-            if (!uint.TryParse(body.Time, out uint minutes) || minutes < 0)
+            // _Duty: ответ на каждую ошибку, иначе вызывающий висит без ответа; проверка minutes < 0 у uint была мёртвой
+            if (!uint.TryParse(body.Time, out uint minutes))
             {
                 _sawmill.Warning($"ServerApi BAN: {body.Time} is not a valid amount of minutes!");
+                await RespondBadRequest(context, "Time is not a valid amount of minutes");
                 return;
             }
 
@@ -923,6 +936,14 @@ public sealed partial class ServerApi : IPostInjectInit
             if (locatedTarget == null)
             {
                 _sawmill.Warning($"ServerApi BAN: Unable to find a player with name {target}.");
+                await RespondError(context, ErrorCode.PlayerNotFound, HttpStatusCode.UnprocessableContent, "Player not found");
+                return;
+            }
+
+            // _Duty: защита админов, как в консольной команде ban
+            if (_admin.IsProtectedFromBan(await _dbManager.GetAdminDataForAsync(locatedTarget.UserId)))
+            {
+                await RespondError(context, ErrorCode.BadRequest, HttpStatusCode.Forbidden, "Player is a protected admin and cannot be banned.");
                 return;
             }
 
@@ -945,6 +966,7 @@ public sealed partial class ServerApi : IPostInjectInit
             catch (Exception ex)
             {
                 _sawmill.Error($"ServerApi BAN: Exception while banning {target}: {ex}");
+                await RespondError(context, ErrorCode.BadRequest, HttpStatusCode.InternalServerError, "Ban failed");
                 return;
             }
 

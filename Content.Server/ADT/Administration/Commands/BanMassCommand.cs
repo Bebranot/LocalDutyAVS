@@ -28,6 +28,7 @@ public sealed class BanMassCommand : LocalizedCommands
     [Dependency] private readonly ILogManager _logManager = default!;
     [Dependency] private readonly IDiscordBanInfoSender _discordBanInfoSender = default!;
     [Dependency] private readonly IServerDbManager _dbManager = default!;
+    [Dependency] private readonly IAdminManager _adminManager = default!; // _Duty
 
     public override string Command => "banmass";
 
@@ -80,11 +81,11 @@ public sealed class BanMassCommand : LocalizedCommands
             var targetHWid = located.LastHWId;
 
             var dbData = await _dbManager.GetAdminDataForAsync(targetUid);
-            if (dbData != null && dbData.AdminRank != null)
+            // _Duty: защита считается по итоговым правам (личные плюс ранг), а не только по рангу
+            if (_adminManager.IsProtectedFromBan(dbData))
             {
-                var targetPermissionsFlag = AdminFlagsHelper.NamesToFlags(dbData.AdminRank.Flags.Select(p => p.Flag));
-                if ((targetPermissionsFlag & AdminFlags.Permissions) == AdminFlags.Permissions) // Адмемов с правами Пермиссион не забанят
-                    continue;
+                shell.WriteError(Loc.GetString("duty-ban-protected-admin"));
+                continue;
             }
 
             //Start логи банов для диса

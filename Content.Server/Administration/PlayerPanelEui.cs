@@ -1,3 +1,4 @@
+using Content.Server._Duty.Administration;
 using System.Linq;
 using Content.Server.Administration.Logs;
 using Content.Server.Administration.Managers;
@@ -87,7 +88,7 @@ public sealed class PlayerPanelEui : BaseEui
         switch (msg)
         {
             case PlayerPanelFreezeMessage freezeMsg:
-                if (!_admins.IsAdmin(Player) ||
+                if (!_admins.Can(Player, "ents_verbs", AdminFlags.Admin) || // _Duty
                     !_entity.TrySystem<AdminFrozenSystem>(out var frozenSystem) ||
                     !_player.TryGetSessionById(_targetPlayer.UserId, out session) ||
                     session.AttachedEntity == null)
@@ -125,7 +126,8 @@ public sealed class PlayerPanelEui : BaseEui
                 break;
             case PlayerPanelDeleteMessage:
             case PlayerPanelRejuvenationMessage:
-                if (!_admins.HasAdminFlag(Player, AdminFlags.Debug) ||
+                // _Duty: удаление и лечение требуют своих узлов, Debug напрямую по-прежнему хватает
+                if (!_admins.Can(Player, msg is PlayerPanelDeleteMessage ? "ents_delete" : "fun_health", AdminFlags.Debug) ||
                     !_player.TryGetSessionById(_targetPlayer.UserId, out session) ||
                     session.AttachedEntity == null)
                     return;
@@ -145,7 +147,7 @@ public sealed class PlayerPanelEui : BaseEui
                 }
                 break;
             case PlayerPanelFollowMessage:
-                if (!_admins.HasAdminFlag(Player, AdminFlags.Admin) ||
+                if (!_admins.Can(Player, "ents_teleport", AdminFlags.Admin) || // _Duty
                     !_player.TryGetSessionById(_targetPlayer.UserId, out session) ||
                     session.AttachedEntity == null ||
                     Player.AttachedEntity is null ||

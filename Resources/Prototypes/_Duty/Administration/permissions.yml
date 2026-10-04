@@ -1,0 +1,955 @@
+# Дерево админ-прав (узлы и подфлаги). Id хранится в БД как есть, переименовывать нельзя.
+# Названия и описания: Resources/Locale/ru-RU/_Duty/Administration/permissions.ftl (duty-perm-<id>).
+# Области без команд — просто группы: выдача области включает все узлы внутри.
+
+- type: adminPermission
+  id: players
+  order: 10
+
+- type: adminPermission
+  id: players_panel
+  group: players
+  danger: View
+  legacy: [Admin]
+  commands:
+  - playerpanel
+  - playersdashboard
+
+- type: adminPermission
+  id: players_notes_view
+  group: players
+  order: 10
+  danger: View
+  legacy: [ViewNotes]
+  commands:
+  - adminnotes
+
+- type: adminPermission
+  id: players_notes_edit
+  group: players
+  order: 20
+  legacy: [ViewNotes, EditNotes]
+
+- type: adminPermission
+  id: players_banlist
+  group: players
+  order: 30
+  danger: View
+  commands:
+  - banlist
+  - rolebanlist
+  - ban_exemption_get
+  - jobwhitelistget
+
+- type: adminPermission
+  id: players_kick
+  group: players
+  order: 40
+  legacy: [Moderator]
+  commands:
+  - kick
+  - ghostkick
+  - respawn
+
+- type: adminPermission
+  id: players_ban
+  group: players
+  order: 50
+  legacy: [Ban]
+  commands:
+  - ban
+  - banpanel
+  - roleban
+  - departmentban
+  - blacklistadd
+  - blacklistremove
+  - ban_exemption_update
+
+- type: adminPermission
+  id: players_pardon
+  group: players
+  order: 60
+  legacy: [Ban]
+  commands:
+  - pardon
+  - roleunban
+
+- type: adminPermission
+  id: players_massban
+  group: players
+  order: 70
+  danger: Danger
+  legacy: [MassBan]
+  commands:
+  - banmass
+
+- type: adminPermission
+  id: players_whitelist
+  group: players
+  order: 80
+  commands:
+  - whitelistadd
+  - whitelistremove
+  - jobwhitelistadd
+  - jobwhitelistremove
+  - kicknonwhitelisted
+  - grant_connect_bypass
+
+- type: adminPermission
+  id: chat
+  order: 20
+
+- type: adminPermission
+  id: chat_ahelp
+  group: chat
+  legacy: [Adminhelp]
+
+- type: adminPermission
+  id: chat_ahelp_view
+  group: chat
+  order: 10
+  danger: View
+  legacy: [AhelpView]
+
+- type: adminPermission
+  id: chat_asay
+  group: chat
+  order: 20
+  legacy: [Adminchat]
+  commands:
+  - asay
+
+- type: adminPermission
+  id: chat_color
+  group: chat
+  order: 30
+  legacy: [NameColor]
+  commands:
+  - setadminooc
+
+- type: adminPermission
+  id: chat_announce
+  group: chat
+  order: 40
+  legacy: [Moderator]
+  commands:
+  - announce
+  - announceui
+  - dsay
+  - set-motd
+  - massmsg
+
+- type: adminPermission
+  id: chat_ooc
+  group: chat
+  order: 50
+  commands:
+  - setooc
+  - setlooc
+
+- type: adminPermission
+  id: round
+  order: 30
+
+- type: adminPermission
+  id: round_control
+  group: round
+  legacy: [Round]
+  commands:
+  - startround
+  - endround
+  - restartround
+  - restartroundnow
+  - delaystart
+  - golobby
+  - readyall
+  - delayroundend
+  - toggledisallowlatejoin
+  - adjstationjob
+
+- type: adminPermission
+  id: round_map
+  group: round
+  order: 10
+  legacy: [Round]
+  commands:
+  - forcemap
+  - forcepreset
+  - setgamepreset
+  - loadgamemap
+  - listgamemaps
+
+- type: adminPermission
+  id: round_shuttle
+  group: round
+  order: 20
+  commands:
+  - callshuttle
+  - recallshuttle
+  - dockemergencyshuttle
+  - launchemergencyshuttle
+  - setalertlevel
+  - sendstationgoal
+
+- type: adminPermission
+  id: round_vote
+  group: round
+  order: 30
+  legacy: [Moderator]
+  commands:
+  - customvote
+  - cancelvote
+
+- type: adminPermission
+  id: server
+  order: 40
+
+- type: adminPermission
+  id: server_bunker
+  group: server
+  legacy: [Server]
+  commands:
+  - panicbunker
+  - panicbunker_count_deadminned_admins
+  - panicbunker_disable_with_admins
+  - panicbunker_enable_without_admins
+  - panicbunker_min_account_age
+  - panicbunker_min_overall_minutes
+  - panicbunker_show_reason
+
+- type: adminPermission
+  id: server_persist
+  group: server
+  order: 10
+  commands:
+  - persistencesave
+  - deletebook
+  - listbooks
+
+- type: adminPermission
+  id: server_stop
+  group: server
+  order: 20
+  danger: Danger
+  legacy: [Server]
+  commands:
+  - restart
+  - shutdown
+
+- type: adminPermission
+  id: ents
+  order: 50
+
+- type: adminPermission
+  id: ents_view
+  group: ents
+  danger: View
+  legacy: [Admin]
+  commands:
+  - vv
+  - vvread
+  - mindinfo
+  - isafk
+  - listroles
+  - crewmanifest
+  - showghosts
+  - showradiation
+  - entcount
+  - listverbs
+  - lsgrid
+  - lsmap
+
+- type: adminPermission
+  id: ents_teleport
+  group: ents
+  order: 10
+  legacy: [Admin]
+  commands:
+  - tp
+  - tpto
+  - follow
+  - warp
+  - camera
+
+- type: adminPermission
+  id: ents_verbs
+  group: ents
+  order: 20
+  legacy: [Admin]
+  commands:
+  - invokeverb
+
+- type: adminPermission
+  id: ents_spawn
+  group: ents
+  order: 30
+  legacy: [Spawn]
+  commands:
+  - spawn
+  - cspawn
+  - spawnentitylist
+
+- type: adminPermission
+  id: ents_delete
+  group: ents
+  order: 40
+  danger: Danger
+  commands:
+  - delete
+  - erase
+  - deletecomponent
+
+- type: adminPermission
+  id: ents_vv
+  group: ents
+  order: 50
+  danger: Danger
+  legacy: [VarEdit]
+  commands:
+  - vv
+  - vvread
+  - vvwrite
+  - vvinvoke
+  - addcomp
+  - addcompc
+  - rmcomp
+  - rmcompc
+  - spin
+  - rename
+  - throwscoreboard
+
+- type: adminPermission
+  id: ents_toolshed_read
+  group: ents
+  order: 60
+  danger: View
+  toolshed:
+  - '!='
+  - '%'
+  - '%/'
+  - '&'
+  - '&~'
+  - '*'
+  - '*/'
+  - '+'
+  - '+/'
+  - '-'
+  - '-/'
+  - '/'
+  - '//'
+  - '<'
+  - '<='
+  - '=='
+  - '=>'
+  - '>'
+  - '>='
+  - '?'
+  - '??'
+  - '^'
+  - '^~'
+  - abs
+  - acos
+  - acospi
+  - actor
+  - allcomps
+  - any
+  - append
+  - asin
+  - asinpi
+  - atan
+  - atanpi
+  - average
+  - bibytecount
+  - bin
+  - bitor
+  - bitornot
+  - cbrt
+  - cd
+  - ceil
+  - checkedto
+  - contains
+  - cos
+  - cospi
+  - count
+  - countleadzeros
+  - counttrailingzeros
+  - de
+  - depsilon
+  - dpi
+  - dtau
+  - entities
+  - entitysystemupdateorder
+  - exponentbytecount
+  - exponentshortestbitcount
+  - extremes
+  - fe
+  - fepsilon
+  - first
+  - floor
+  - fpi
+  - ftau
+  - he
+  - hepsilon
+  - hpi
+  - htau
+  - hypot
+  - iota
+  - iscanonical
+  - iscomplex
+  - isempty
+  - iseven
+  - isfinite
+  - isimaginary
+  - isinfinite
+  - isinteger
+  - isnan
+  - isnegative
+  - isnull
+  - isodd
+  - ispositive
+  - isreal
+  - issubnormal
+  - iszero
+  - join
+  - ls
+  - map
+  - mappos
+  - max
+  - min
+  - named
+  - nearby
+  - neg
+  - 'or?'
+  - paused
+  - physics
+  - pick
+  - player
+  - pos
+  - pow
+  - prototyped
+  - reduce
+  - rep
+  - rng
+  - root
+  - round
+  - round2frac
+  - saturateto
+  - search
+  - select
+  - self
+  - shortestbitlength
+  - significandbitcount
+  - significandbytecount
+  - sin
+  - sinpi
+  - sort
+  - sortby
+  - sortdown
+  - sortdownby
+  - sortmapby
+  - sortmapdownby
+  - splat
+  - sqrt
+  - stepnext
+  - stepprev
+  - stopwatch
+  - sum
+  - take
+  - tan
+  - tanpi
+  - tee
+  - to
+  - trunc
+  - truncto
+  - types
+  - unique
+  - where
+  - with
+  - '~'
+
+- type: adminPermission
+  id: ents_toolshed_write
+  group: ents
+  order: 70
+  danger: Danger
+  toolshed:
+  - comp
+  - delete
+  - emplace
+  - do
+  - iterate
+  - replace
+  - spawn
+  - tp
+  - mind
+
+- type: adminPermission
+  id: roles
+  order: 60
+
+- type: adminPermission
+  id: roles_ghost
+  group: roles
+  commands:
+  - aghost
+  - forceghost
+
+- type: adminPermission
+  id: roles_mind
+  group: roles
+  order: 10
+  legacy: [Fun]
+  commands:
+  - setmind
+  - setmind_swap
+  - controlmob
+  - makesentient
+  - makeghostrole
+  - makeghostroleraffled
+  - osay
+  - setoutfit
+
+- type: adminPermission
+  id: roles_antag
+  group: roles
+  order: 20
+  legacy: [Fun]
+  commands:
+  - addrole
+  - rmrole
+  - addobjective
+  - rmobjective
+  - adduplink
+  - changeantagbonus
+  - checkantagbonus
+
+- type: adminPermission
+  id: roles_ert
+  group: roles
+  order: 30
+  commands:
+  - ertcall5min
+  - ertcallnow
+  - sendert
+
+- type: adminPermission
+  id: roles_laws
+  group: roles
+  order: 40
+  legacy: [Moderator]
+  commands:
+  - lslawset_get
+
+- type: adminPermission
+  id: roles_language
+  group: roles
+  order: 50
+  commands:
+  - languageadd
+  - languagelist
+  - languageremove
+  - languageselect
+  - languageslist
+
+- type: adminPermission
+  id: fun
+  order: 70
+
+- type: adminPermission
+  id: fun_health
+  group: fun
+  legacy: [Fun]
+  commands:
+  - damage
+  - godmode
+  - rmbodypart
+  - rmmechanism
+  - dutybleedout
+  - dutybreakbone
+  - dutyconcussion
+  - dutydislocate
+  - hungry
+  - thirsty
+  - setnutrit
+
+- type: adminPermission
+  id: fun_effects
+  group: fun
+  order: 10
+  legacy: [Fun]
+  commands:
+  - explosionui
+  - electrocute
+  - owoify
+  - rotateeyes
+  - upgradeaction
+  - addpolymorphaction
+  - addhand
+
+- type: adminPermission
+  id: fun_sound
+  group: fun
+  order: 20
+  commands:
+  - playglobalsound
+  - playlocalsound
+  - tippy
+  - tip
+
+- type: adminPermission
+  id: fun_events
+  group: fun
+  order: 30
+  commands:
+  - weatheradd
+  - weatherremove
+  - weatherset
+  - setweatherstage
+  - nukearm
+  - nukecodes
+  - dutycodealpha
+  - startsingularityengine
+  - ftldisk
+
+- type: adminPermission
+  id: fun_items
+  group: fun
+  order: 40
+  commands:
+  - addreagent
+  - addstorage
+  - rmstorage
+  - setsolutioncapacity
+  - setsolutiontemperature
+  - setsolutionthermalenergy
+  - linkbluespacelocker
+  - clearbluespacelockerlinks
+  - linkbodies
+  - unlinkbodies
+
+- type: adminPermission
+  id: fun_npc
+  group: fun
+  order: 50
+  commands:
+  - addnpc
+  - npc
+  - npcdomain
+
+- type: adminPermission
+  id: fun_fax
+  group: fun
+  order: 60
+  legacy: [Fun]
+  commands:
+  - faxui
+
+- type: adminPermission
+  id: map
+  order: 80
+
+- type: adminPermission
+  id: map_edit
+  group: map
+  legacy: [Mapping]
+  commands:
+  - mapping
+  - adddecal
+  - editdecal
+  - rmdecal
+  - tilereplace
+  - tilewalls
+  - variantize
+  - fixrotations
+  - removeextracomponents
+  - convertToDungeonRoom
+  - dungeonRoomToMap
+  - dock
+  - planet
+  - setambientlight
+  - gridtc
+  - togglespritenetsync
+  - tilepry
+  - unlocknode
+
+- type: adminPermission
+  id: map_io
+  group: map
+  order: 10
+  danger: Danger
+  commands:
+  - export
+  - loadmap
+  - savemap
+  - loadgrid
+  - savegrid
+  - rmgrid
+  - rmmap
+  - addmap
+  - mapinit
+  - pausemap
+  - unpausemap
+  - tpgrid
+  - querymappaused
+
+- type: adminPermission
+  id: atmos
+  order: 90
+
+- type: adminPermission
+  id: atmos_view
+  group: atmos
+  danger: View
+  commands:
+  - showatmos
+  - listgases
+  - powerstat
+  - power_validate
+  - showfluids
+  - tubeconnections
+
+- type: adminPermission
+  id: atmos_edit
+  group: atmos
+  order: 10
+  commands:
+  - addatmos
+  - addgas
+  - fillgas
+  - deletegas
+  - removegas
+  - settemp
+  - setatmostemp
+  - setmapatmos
+  - pauseatmos
+  - substepatmos
+
+- type: adminPermission
+  id: logs
+  order: 100
+
+- type: adminPermission
+  id: logs_view
+  group: logs
+  danger: View
+  legacy: [Logs]
+  commands:
+  - adminlogs
+  - lsobjectives
+
+- type: adminPermission
+  id: logs_pii
+  group: logs
+  order: 10
+  legacy: [Pii]
+  commands:
+  - listplayers
+  - echo-chat-panel
+
+- type: adminPermission
+  id: logs_discord
+  group: logs
+  order: 20
+  commands:
+  - get_discord_id
+  - resolve_discord_name
+
+- type: adminPermission
+  id: perms
+  order: 110
+
+- type: adminPermission
+  id: perms_edit
+  group: perms
+  danger: Danger
+  legacy: [Permissions]
+  commands:
+  - permissions
+
+- type: adminPermission
+  id: perms_toggle
+  group: perms
+  order: 10
+  danger: Danger
+  commands:
+  - admin_toggle
+  - kick_hide
+
+- type: adminPermission
+  id: perms_stealth
+  group: perms
+  order: 20
+  legacy: [Stealth]
+  commands:
+  - stealthmin
+
+- type: adminPermission
+  id: perms_playtime_view
+  group: perms
+  order: 30
+  danger: View
+  commands:
+  - playtime-panel
+  - playtime_getoverall
+  - playtime_getoverall_as
+  - playtime_getrole
+  - playtime_getrole_as
+  - playtime_save
+  - playtime_save_as
+
+- type: adminPermission
+  id: perms_playtime_edit
+  group: perms
+  order: 40
+  danger: Danger
+  commands:
+  - playtime_addoverall
+  - playtime_addoverall_as
+  - playtime_addrole
+  - playtime_addrole_as
+  - playtime_flush
+  - playtime_flush_as
+
+- type: adminPermission
+  id: debug
+  order: 120
+
+- type: adminPermission
+  id: debug_tools
+  group: debug
+  legacy: [Debug]
+  commands:
+  - addaction
+  - addinternalresource
+  - addview
+  - chunkinfo
+  - cldbglyr
+  - clearalert
+  - dirty
+  - dmetamem
+  - dumpreagentguidetext
+  - entfo
+  - guidump
+  - hwid
+  - inrangeunoccluded
+  - launchauth
+  - ldrsc
+  - lightbb
+  - loc
+  - lsmonitor
+  - mem
+  - merge_grids
+  - monitorinfo
+  - net_entityreport
+  - netaudit
+  - physics
+  - print_pvs_ack
+  - pvs_override_info
+  - removeview
+  - replay_recording_stats
+  - rldloc
+  - rldrsc
+  - rldshader
+  - rmaction
+  - scene
+  - sendgarbage
+  - setbatterypercent
+  - setinputcontext
+  - sggcell
+  - showalert
+  - showanchored
+  - showangvel
+  - showaudio
+  - showchunkbb
+  - showgridnodes
+  - showislands
+  - showplayervelocity
+  - showpos
+  - showray
+  - showrot
+  - showspritebb
+  - showtime
+  - showvalues
+  - showvel
+  - stripall
+  - szr_stats
+  - tilelookup
+  - togglefov
+  - togglehardfov
+  - togglelight
+  - togglelightbuf
+  - toggleshadows
+  - uitest
+  - watch
+  - zoom_tweak
+
+- type: adminPermission
+  id: host
+  order: 130
+
+- type: adminPermission
+  id: host_upload
+  group: host
+  danger: Danger
+  commands:
+  - uploadfile
+  - uploadfolder
+  - loadprototype
+
+- type: adminPermission
+  id: host_cvar
+  group: host
+  order: 10
+  danger: Danger
+  commands:
+  - cvar
+  - saveconfig
+
+- type: adminPermission
+  id: host_script
+  group: host
+  order: 20
+  danger: Danger
+  legacy: [Host]
+  commands:
+  - scsi
+  - csi
+  - sudo
+
+- type: adminPermission
+  id: host_system
+  group: host
+  order: 30
+  danger: Danger
+  commands:
+  - gc
+  - gcf
+  - gc_mode
+  - testlog
+  - lsasm
+  - resave
+  - resaveadt
+  - adminlogbulk
+  - sponsorpanel
+  - replay_recording_start
+  - replay_recording_stop
+  - transfer_test
+  - getcomponentregistration
+
+- type: adminPermission
+  id: host_toolshed
+  group: host
+  order: 40
+  danger: Danger
+  toolshed:
+  - methods
+  - ioc
+
+- type: adminPermission
+  id: ents_misc
+  group: ents
+  order: 80
+  legacy: [Admin]
+  commands:
+  - salvageruler
+  - showrules

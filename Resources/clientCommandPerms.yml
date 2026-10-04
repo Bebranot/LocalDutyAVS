@@ -88,7 +88,8 @@
     - showwallmounts
     - showaccessreaders
 
-- Flags: QUERY
+# _Duty: загрузка файлов и прототипов на сервер — уровень Host (раньше под QUERY, который про запросы)
+- Flags: HOST
   Commands:
     - uploadfile
     - loadprototype

@@ -1,4 +1,6 @@
 using System.Diagnostics.CodeAnalysis;
+using Content.Client._Duty.Administration;
+using Content.Client.Administration.Managers;
 using Content.Client.Guidebook.Richtext;
 using Robust.Client.Console;
 using Robust.Client.UserInterface;
@@ -22,13 +24,41 @@ namespace Content.Client.Administration.UI.CustomControls
                    IoCManager.Resolve<IClientConGroupController>().CanCommand(Command.Split(' ')[0]);
         }
 
+        // _Duty-start: кнопка перепроверяет права при их смене, а не только при первом показе; подсказка называет команду и право
+        public bool IsAllowed => CanPress();
+
+        /// <summary>Нажать кнопку программно (для результатов поиска в меню F7).</summary>
+        public void Activate()
+        {
+            if (CanPress())
+                Execute(null!);
+        }
+
         protected override void EnteredTree()
         {
-            if (!CanPress())
+            Visible = CanPress();
+            IoCManager.Resolve<IClientAdminManager>().AdminStatusUpdated += OnStatusUpdated;
+
+            if (ToolTip == null && !string.IsNullOrEmpty(Command))
             {
-                Visible = false;
+                var name = Command.Split(' ')[0];
+                var nodes = AdminNodeLookup.NodeNames(name);
+                ToolTip = string.IsNullOrEmpty(nodes)
+                    ? Loc.GetString("admin-menu-button-tooltip", ("command", name))
+                    : Loc.GetString("admin-menu-button-tooltip-node", ("command", name), ("nodes", nodes));
             }
         }
+
+        protected override void ExitedTree()
+        {
+            IoCManager.Resolve<IClientAdminManager>().AdminStatusUpdated -= OnStatusUpdated;
+        }
+
+        private void OnStatusUpdated()
+        {
+            Visible = CanPress();
+        }
+        // _Duty-end
 
         protected virtual void Execute(ButtonEventArgs obj)
         {

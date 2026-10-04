@@ -29,11 +29,20 @@ namespace Content.Shared.Administration
                 var flags = (AdminFlags) buffer.ReadUInt32();
                 var title = buffer.ReadString();
 
+                // _Duty: узлы дерева прав
+                var nodeCount = buffer.ReadVariableInt32();
+                var nodes = new HashSet<string>(nodeCount);
+                for (var i = 0; i < nodeCount; i++)
+                {
+                    nodes.Add(buffer.ReadString());
+                }
+
                 Admin = new AdminData
                 {
                     Active = active,
                     Title = title,
                     Flags = flags,
+                    Nodes = nodes,
                 };
             }
 
@@ -56,6 +65,13 @@ namespace Content.Shared.Administration
             buffer.WritePadBits();
             buffer.Write((uint) Admin.Flags);
             buffer.Write(Admin.Title);
+
+            // _Duty: узлы дерева прав
+            buffer.WriteVariableInt32(Admin.Nodes.Count);
+            foreach (var node in Admin.Nodes)
+            {
+                buffer.Write(node);
+            }
         }
 
         public override NetDeliveryMethod DeliveryMethod => NetDeliveryMethod.ReliableOrdered;

@@ -52,6 +52,15 @@ public sealed class SiliconLawEui : BaseEui
         //     return; ADT Custom ai law
 
         var player = _entityManager.GetEntity(message.Target);
+
+        // _Duty: цель берём только ту, что была открыта вместе с окном. Раньше NetEntity приходил от клиента без сверки,
+        // и любой игрок с платой ИИ мог переписать законы любого ИИ или киборга на карте.
+        if (_target == EntityUid.Invalid || player != _target)
+        {
+            _sawmill.Warning("Player {0} tried to change laws of an entity other than the opened one.", Player.UserId);
+            return;
+        }
+
         if (_entityManager.TryGetComponent<SiliconLawProviderComponent>(player, out var playerProviderComp))
             _siliconLawSystem.SetLaws(message.Laws, player, playerProviderComp.LawUploadSound);
     }

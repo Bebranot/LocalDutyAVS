@@ -7,14 +7,21 @@
     xmlns:playerTab="clr-namespace:Content.Client.Administration.UI.Tabs.PlayerTab"
     xmlns:objectsTab="clr-namespace:Content.Client.Administration.UI.Tabs.ObjectsTab"
     xmlns:panic="clr-namespace:Content.Client.Administration.UI.Tabs.PanicBunkerTab">
-    <TabContainer Name="MasterTabContainer">
-        <adminTab:AdminTab />
-        <adminbusTab:AdminbusTab />
-        <atmosTab:AtmosTab />
-        <tabs:RoundTab />
-        <tabs:ServerTab />
-        <panic:PanicBunkerTab Name="PanicBunkerControl" Access="Public" />
-        <playerTab:PlayerTab Name="PlayerTabControl" Access="Public" />
-        <objectsTab:ObjectsTab Name="ObjectsTabControl" Access="Public" />
-    </TabContainer>
+    <!-- _Duty: окно F7 с поиском по командам; результаты поиска подменяют вкладки -->
+    <BoxContainer Orientation="Vertical" SeparationOverride="4">
+        <LineEdit Name="SearchBar" HorizontalExpand="True" PlaceHolder="{Loc admin-menu-search-placeholder}" />
+        <TabContainer Name="MasterTabContainer" VerticalExpand="True">
+            <adminTab:AdminTab />
+            <adminbusTab:AdminbusTab />
+            <atmosTab:AtmosTab />
+            <tabs:RoundTab />
+            <tabs:ServerTab />
+            <panic:PanicBunkerTab Name="PanicBunkerControl" Access="Public" />
+            <playerTab:PlayerTab Name="PlayerTabControl" Access="Public" />
+            <objectsTab:ObjectsTab Name="ObjectsTabControl" Access="Public" />
+        </TabContainer>
+        <ScrollContainer Name="SearchScroll" VerticalExpand="True" HScrollEnabled="False" Visible="False">
+            <BoxContainer Name="SearchResults" Orientation="Vertical" SeparationOverride="2" HorizontalExpand="True" />
+        </ScrollContainer>
+    </BoxContainer>
 </DefaultWindow>

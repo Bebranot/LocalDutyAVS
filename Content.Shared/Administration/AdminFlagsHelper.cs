@@ -89,6 +89,12 @@ namespace Content.Shared.Administration
             return NameFlagsMap[name];
         }
 
+        // _Duty: безопасный разбор имени без исключения (в БД теперь лежат и id узлов прав)
+        public static bool TryNameToFlag(string name, out AdminFlags flag)
+        {
+            return NameFlagsMap.TryGetValue(name, out flag);
+        }
+
         /// <summary>
         ///     Converts a bitfield of admin flags to an array of all the flag names set.
         /// </summary>

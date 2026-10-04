@@ -1,3 +1,4 @@
+using Content.Server._Duty.Administration;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Numerics;
@@ -61,7 +62,8 @@ public sealed partial class AdminVerbSystem
 
         var player = actor.PlayerSession;
 
-        if (!_adminManager.HasAdminFlag(player, AdminFlags.Admin))
+        // _Duty: трюки открывает узел ents.verbs (или прежний флаг Admin напрямую), а не любое право
+        if (!_adminManager.Can(player, "ents_verbs", AdminFlags.Admin))
             return;
 
         if (TryComp<DoorBoltComponent>(args.Target, out var bolts))

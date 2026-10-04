@@ -1,3 +1,4 @@
+using Content.Server._Duty.Administration;
 using Content.Server.Administration.Logs;
 using Content.Server.Administration.Managers;
 using Content.Server.Administration.UI;
@@ -99,6 +100,15 @@ namespace Content.Server.Administration.Systems
 
             if (_adminManager.IsAdmin(player))
             {
+                // _Duty-start: каждый верб требует своё право, а не просто «быть админом»
+                var canVerbs = _adminManager.Can(player, "ents_verbs", AdminFlags.Admin);
+                var canSpawn = _adminManager.Can(player, "ents_spawn", AdminFlags.Admin);
+                var canErase = _adminManager.Can(player, "ents_delete", AdminFlags.Admin);
+                var canRespawn = _adminManager.Can(player, "players_kick", AdminFlags.Admin);
+                var canPanel = _adminManager.Can(player, "players_panel", AdminFlags.Admin);
+                var canView = _adminManager.Can(player, "ents_view", AdminFlags.Admin);
+                // _Duty-end
+
                 Verb mark = new();
                 mark.Text = Loc.GetString("toolshed-verb-mark");
                 mark.Message = Loc.GetString("toolshed-verb-mark-description");
@@ -134,9 +144,11 @@ namespace Content.Server.Administration.Systems
                         });
                     };
                     prayerVerb.Impact = LogImpact.Low;
-                    args.Verbs.Add(prayerVerb);
+                    if (canVerbs) // _Duty
+                        args.Verbs.Add(prayerVerb);
 
                     // Spawn - Like respawn but on the spot.
+                    if (canSpawn) // _Duty
                     args.Verbs.Add(new Verb()
                     {
                         Text = Loc.GetString("admin-player-actions-spawn"),
@@ -164,6 +176,7 @@ namespace Content.Server.Administration.Systems
                     });
 
                     // Clone - Spawn but without the mind transfer, also spawns at the user's coordinates not the target's
+                    if (canSpawn) // _Duty
                     args.Verbs.Add(new Verb()
                     {
                         Text = Loc.GetString("admin-player-actions-clone"),
@@ -187,6 +200,7 @@ namespace Content.Server.Administration.Systems
                     });
 
                     // PlayerPanel
+                    if (canPanel) // _Duty
                     args.Verbs.Add(new Verb
                     {
                         Text = Loc.GetString("admin-player-actions-player-panel"),
@@ -199,6 +213,7 @@ namespace Content.Server.Administration.Systems
                 if (_mindSystem.TryGetMind(args.Target, out var mindId, out var mindComp) && mindComp.UserId != null)
                 {
                     // Erase
+                    if (canErase) // _Duty
                     args.Verbs.Add(new Verb
                     {
                         Text = Loc.GetString("admin-verbs-erase"),
@@ -215,6 +230,7 @@ namespace Content.Server.Administration.Systems
                     });
 
                     // Respawn
+                    if (canRespawn) // _Duty
                     args.Verbs.Add(new Verb
                     {
                         Text = Loc.GetString("admin-player-actions-respawn"),
@@ -228,6 +244,7 @@ namespace Content.Server.Administration.Systems
                     });
 
                     // Inspect mind
+                    if (canView) // _Duty
                     args.Verbs.Add(new Verb
                     {
                         Text = Loc.GetString("inspect-mind-verb-get-data-text"),
@@ -241,7 +258,7 @@ namespace Content.Server.Administration.Systems
                 var frozen = TryComp<AdminFrozenComponent>(args.Target, out var frozenComp);
                 var frozenAndMuted = frozenComp?.Muted ?? false;
 
-                if (!frozen)
+                if (!frozen && canVerbs) // _Duty
                 {
                     args.Verbs.Add(new Verb
                     {
@@ -257,7 +274,7 @@ namespace Content.Server.Administration.Systems
                     });
                 }
 
-                if (!frozenAndMuted)
+                if (!frozenAndMuted && canVerbs) // _Duty
                 {
                     // allow you to additionally mute someone when they are already frozen
                     args.Verbs.Add(new Verb
@@ -274,7 +291,7 @@ namespace Content.Server.Administration.Systems
                     });
                 }
 
-                if (frozen)
+                if (frozen && canVerbs) // _Duty
                 {
                     args.Verbs.Add(new Verb
                     {

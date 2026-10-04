@@ -115,7 +115,8 @@ public sealed class AdminSystem : EntitySystem
 
         var updateEv = new FullPlayerListEvent() { PlayersInfo = _playerList.Values.ToList() };
 
-        foreach (var admin in _adminManager.ActiveAdmins)
+        // _Duty: полный список игроков (роли, антаги) — только тем, у кого есть Admin; право без Admin (ahelp и т.п.) его не видит
+        foreach (var admin in _adminManager.ActiveAdmins.Where(CanSeePlayerList))
         {
             RaiseNetworkEvent(updateEv, admin.Channel);
         }
@@ -135,7 +136,7 @@ public sealed class AdminSystem : EntitySystem
             PlayerInfo = _playerList[player.UserId]
         };
 
-        foreach (var admin in _adminManager.ActiveAdmins)
+        foreach (var admin in _adminManager.ActiveAdmins.Where(CanSeePlayerList)) // _Duty
         {
             RaiseNetworkEvent(playerInfoChangedEvent, admin.Channel);
         }
@@ -167,7 +168,7 @@ public sealed class AdminSystem : EntitySystem
     {
         UpdatePanicBunker();
 
-        if (!obj.IsAdmin)
+        if (!obj.IsAdmin || (obj.Flags!.Value & AdminFlags.Admin) == 0) // _Duty: список только при праве Admin
         {
             RaiseNetworkEvent(new FullPlayerListEvent(), obj.Player.Channel);
             return;
@@ -207,6 +208,11 @@ public sealed class AdminSystem : EntitySystem
     {
         UpdatePlayerList(e.Session);
         UpdatePanicBunker();
+    }
+
+    private bool CanSeePlayerList(ICommonSession session)
+    {
+        return _adminManager.HasAdminFlag(session, AdminFlags.Admin);
     }
 
     private void SendFullPlayerList(ICommonSession playerSession)
