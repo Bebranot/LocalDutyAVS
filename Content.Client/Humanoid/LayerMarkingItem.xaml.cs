@@ -69,6 +69,9 @@ public sealed partial class LayerMarkingItem : BoxContainer, ISearchableControl
 
         _markingsModel.MarkingsReset += UpdateSelection;
         _markingsModel.MarkingsChanged += MarkingsChanged;
+
+        // _Duty: пока карточка была вне дерева, события сброса/выбора до неё не доходили.
+        UpdateSelection();
     }
 
     protected override void ExitedTree()
@@ -188,7 +191,12 @@ public sealed partial class LayerMarkingItem : BoxContainer, ISearchableControl
 
     public bool CheckMatchesSearch(string query)
     {
-        return _loc.TryGetString($"marking-{_markingPrototype.ID}", out var name) && name.Contains(query, StringComparison.OrdinalIgnoreCase); // ADT-Tweak
+        // _Duty: ищем и по отображаемому названию (в т.ч. без ключа локали), и по id маркинга.
+        if (string.IsNullOrWhiteSpace(query))
+            return true;
+
+        return SelectButton.Text?.Contains(query, StringComparison.CurrentCultureIgnoreCase) == true
+               || _markingPrototype.ID.Contains(query, StringComparison.OrdinalIgnoreCase);
     }
 
     public void SetHiddenState(bool state, string query)

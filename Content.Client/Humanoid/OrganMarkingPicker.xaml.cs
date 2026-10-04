@@ -10,6 +10,8 @@ using Robust.Shared.Prototypes;
 
 namespace Content.Client.Humanoid;
 
+// _Duty-start: переработка пикера (переиспользование контролов, секция «Выбрано»)
+
 [GenerateTypedNameReferences]
 public sealed partial class OrganMarkingPicker : Control
 {
@@ -22,6 +24,7 @@ public sealed partial class OrganMarkingPicker : Control
     private readonly HashSet<HumanoidVisualLayers> _layers;
     private readonly ProtoId<MarkingsGroupPrototype> _group;
     private readonly ProtoId<OrganCategoryPrototype> _organ;
+    private readonly Dictionary<HumanoidVisualLayers, LayerMarkingPicker> _layerPickers = new(); // _Duty
 
     public OrganMarkingPicker(MarkingsViewModel markingsModel, ProtoId<OrganCategoryPrototype> organ, HashSet<HumanoidVisualLayers> layers, ProtoId<MarkingsGroupPrototype> group)
     {
@@ -29,47 +32,39 @@ public sealed partial class OrganMarkingPicker : Control
         IoCManager.InjectDependencies(this);
 
         _markingsModel = markingsModel;
-        _layers = layers;
+        _layers = new HashSet<HumanoidVisualLayers>(layers); // _Duty: копия, чтобы Matches не зависел от внешних правок
         _group = group;
         _organ = organ;
 
         _sprite = _entity.System<SpriteSystem>();
 
-        UpdateMarkings();
-    }
-
-    protected override void EnteredTree()
-    {
-        base.EnteredTree();
-
-        _markingsModel.OrganProfileDataChanged += OnOrganProfileDataChanged;
-        _markingsModel.EnforcementsChanged += UpdateMarkings;
-    }
-
-    protected override void ExitedTree()
-    {
-        base.ExitedTree();
-
-        _markingsModel.OrganProfileDataChanged -= OnOrganProfileDataChanged;
-        _markingsModel.EnforcementsChanged -= UpdateMarkings;
+        Refresh();
     }
 
     public bool Empty => LayerTabs.ChildCount == 0;
 
-    private void OnOrganProfileDataChanged(bool refresh)
+    /// <summary>
+    /// Совпадают ли слои и группа с теми, для которых создан этот пикер (иначе его надо пересоздать).
+    /// </summary>
+    public bool Matches(HashSet<HumanoidVisualLayers> layers, ProtoId<MarkingsGroupPrototype> group)
     {
-        if (refresh)
-            UpdateMarkings();
+        return _group == group && _layers.SetEquals(layers);
     }
 
-    private void UpdateMarkings()
+    /// <summary>
+    /// Обновляет набор доступных маркингов на месте: пикеры слоёв переиспользуются,
+    /// поэтому текст поиска, скролл и выбранная вкладка не теряются.
+    /// </summary>
+    public void Refresh()
     {
+        // _Duty: раньше здесь был RemoveAllChildren + пересоздание всех слоёв.
         if (!_markingsModel.OrganProfileData.TryGetValue(_organ, out var organProfileData))
             return;
 
-        LayerTabs.RemoveAllChildren();
-        var i = 0;
-        foreach (var layer in _layers)
+        var desired = new List<(HumanoidVisualLayers Layer, LayerMarkingPicker Control)>();
+
+        // OrderBy: порядок слоёв стабильный, а не зависит от порядка внутри HashSet.
+        foreach (var layer in _layers.OrderBy(it => (int) it))
         {
             var allMarkings =
                 _markingsModel.EnforceGroupAndSexRestrictions ? _marking.MarkingsByLayerAndGroupAndSex(layer, _group, organProfileData.Sex) : _marking.MarkingsByLayer(layer);
@@ -77,15 +72,51 @@ public sealed partial class OrganMarkingPicker : Control
             if (allMarkings.Count == 0)
                 continue;
 
-            var control = new LayerMarkingPicker(_markingsModel, _organ, layer, allMarkings);
-            LayerTabs.AddChild(control);
-            if (Loc.TryGetString($"markings-layer-{layer}-{_group.Id}", out var layerTitle))
-                LayerTabs.SetTabTitle(i, layerTitle);
+            if (_layerPickers.TryGetValue(layer, out var picker))
+                picker.SetMarkings(allMarkings);
             else
-                LayerTabs.SetTabTitle(i, Loc.GetString($"markings-layer-{layer}"));
-            i++;
+                _layerPickers[layer] = picker = new LayerMarkingPicker(_markingsModel, _organ, layer, allMarkings);
+
+            desired.Add((layer, picker));
         }
 
-        LayerTabs.TabsVisible = i > 1;
+        var current = LayerTabs.Children.OfType<LayerMarkingPicker>().ToList();
+        var unchanged = current.Count == desired.Count;
+        for (var j = 0; unchanged && j < current.Count; j++)
+        {
+            unchanged = ReferenceEquals(current[j], desired[j].Control);
+        }
+
+        if (!unchanged)
+        {
+            var currentTab = LayerTabs.CurrentTab;
+            var previouslySelected = currentTab >= 0 && currentTab < current.Count ? current[currentTab] : null;
+
+            LayerTabs.RemoveAllChildren();
+            foreach (var (_, control) in desired)
+            {
+                LayerTabs.AddChild(control);
+            }
+
+            if (desired.Count > 0)
+            {
+                var restored = desired.FindIndex(it => ReferenceEquals(it.Control, previouslySelected));
+                LayerTabs.CurrentTab = restored >= 0 ? restored : 0;
+            }
+        }
+
+        for (var i = 0; i < desired.Count; i++)
+        {
+            var layer = desired[i].Layer;
+            if (Loc.TryGetString($"markings-layer-{layer}-{_group.Id}", out var layerTitle))
+                LayerTabs.SetTabTitle(i, layerTitle);
+            else if (Loc.TryGetString($"markings-layer-{layer}", out var baseTitle))
+                LayerTabs.SetTabTitle(i, baseTitle);
+            else
+                LayerTabs.SetTabTitle(i, layer.ToString());
+        }
+
+        LayerTabs.TabsVisible = desired.Count > 1;
     }
 }
+// _Duty-end

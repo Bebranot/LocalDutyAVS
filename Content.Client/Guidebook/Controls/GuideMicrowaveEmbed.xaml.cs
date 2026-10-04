@@ -88,8 +88,8 @@ public sealed partial class GuideMicrowaveEmbed : PanelContainer, IDocumentTag, 
         RepresentedPrototype = entity;
 
         IconContainer.AddChild(new GuideEntityEmbed(recipe.Result, false, false));
-        ResultName.SetMarkup(entity.Name);
-        ResultDescription.SetMarkup(entity.Description);
+        ResultName.SetMarkupPermissive(entity.Name); // _Duty: не падать на кривой разметке
+        ResultDescription.SetMarkupPermissive(entity.Description); // _Duty: не падать на кривой разметке
     }
 
     private void GenerateSolidIngredients(FoodRecipePrototype recipe)

@@ -55,7 +55,7 @@ public sealed class ChalkboardSystem : EntitySystem
         if (ent.Comp.MaxDescriptionLength > 0 && content.Length > ent.Comp.MaxDescriptionLength)
             content = content[..ent.Comp.MaxDescriptionLength] + "…";
 
-        content = FormattedMessage.EscapeText(content);
+        // _Duty: описание показывается как обычный текст, экранирование давало видимые обратные слэши.
 
         _metaData.SetEntityDescription(ent, $"{baseDesc}\n\n{content}", meta);
     }

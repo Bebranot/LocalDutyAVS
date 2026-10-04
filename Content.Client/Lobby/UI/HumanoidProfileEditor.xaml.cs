@@ -720,7 +720,7 @@ namespace Content.Client.Lobby.UI
         private void SetVoice(string newVoice)
         {
             Profile = Profile?.WithVoice(newVoice);
-            IsDirty = true;
+            SetDirty(); // _Duty: раньше всегда помечало «изменено», даже при возврате к сохранённому голосу
         }
         // ADT-Tweak-End
         // ADT Barks start

@@ -12,6 +12,6 @@ public sealed partial class RecipeTooltip : Control
     {
         RobustXamlLoader.Load(this);
 
-        RecipeTooltipLabel.SetMarkup(tooltip);
+        RecipeTooltipLabel.SetMarkupPermissive(tooltip); // _Duty: не падать на кривой разметке
     }
 }

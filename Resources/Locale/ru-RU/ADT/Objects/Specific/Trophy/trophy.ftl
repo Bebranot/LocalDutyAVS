@@ -1,12 +1,12 @@
-adt-kinetic-trophy-legion-skull = [color=#FFD700][b]Улучшение:[/b][/color] [color=#e480ff]череп легионера[/color]
-adt-kinetic-trophy-magma-wing = [color=#FFD700][b]Улучшение:[/b][/color] [color=#ff4500]крыло магмокрыла[/color]
-adt-kinetic-trophy-poison-fang = [color=#FFD700][b]Улучшение:[/b][/color] [color=#32cd32]ядовитый клык[/color]
-adt-kinetic-trophy-frost-gland = [color=#FFD700][b]Улучшение:[/b][/color] [color=#00ffff]ледяная железа[/color]
-adt-kinetic-trophy-blood-drunk-miner = [color=#FFD700][b]Улучшение:[/b][/color] [color=#ff0000]глаз кровавого шахтёра[/color]
-adt-kinetic-trophy-ash-drake-spike = [color=#FFD700][b]Улучшение:[/b][/color] [color=#ff8c00]шип пепельного дракона[/color]
-adt-kinetic-trophy-goliath-tentacle = [color=#FFD700][b]Улучшение:[/b][/color] [color=#a0522d]щупальце голиафа[/color]
-adt-kinetic-trophy-ancient-goliath-tentacle = [color=#FFD700][b]Улучшение:[/b][/color] [color=#ffb700][i]древнее щупальце голиафа[/i][/color]
-adt-kinetic-trophy-demon-claws = [color=#FFD700][b]Улучшение:[/b][/color] [color=#8b0000]демонические когти[/color]
+adt-kinetic-trophy-legion-skull = [color=#FFD700][bold]Улучшение:[/bold][/color] [color=#e480ff]череп легионера[/color]
+adt-kinetic-trophy-magma-wing = [color=#FFD700][bold]Улучшение:[/bold][/color] [color=#ff4500]крыло магмокрыла[/color]
+adt-kinetic-trophy-poison-fang = [color=#FFD700][bold]Улучшение:[/bold][/color] [color=#32cd32]ядовитый клык[/color]
+adt-kinetic-trophy-frost-gland = [color=#FFD700][bold]Улучшение:[/bold][/color] [color=#00ffff]ледяная железа[/color]
+adt-kinetic-trophy-blood-drunk-miner = [color=#FFD700][bold]Улучшение:[/bold][/color] [color=#ff0000]глаз кровавого шахтёра[/color]
+adt-kinetic-trophy-ash-drake-spike = [color=#FFD700][bold]Улучшение:[/bold][/color] [color=#ff8c00]шип пепельного дракона[/color]
+adt-kinetic-trophy-goliath-tentacle = [color=#FFD700][bold]Улучшение:[/bold][/color] [color=#a0522d]щупальце голиафа[/color]
+adt-kinetic-trophy-ancient-goliath-tentacle = [color=#FFD700][bold]Улучшение:[/bold][/color] [color=#ffb700][i]древнее щупальце голиафа[/i][/color]
+adt-kinetic-trophy-demon-claws = [color=#FFD700][bold]Улучшение:[/bold][/color] [color=#8b0000]демонические когти[/color]
 
 ent-ADTKineticTrophyLegionSkull = череп легиона
     .desc = Мёртвый и безжизненный череп легиона. При прикреплении к протокинетику уменьшает время перезарядки на 0.3 секунды.

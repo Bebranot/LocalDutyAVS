@@ -7,6 +7,7 @@ using Robust.Client.UserInterface.Controls;
 using Robust.Client.UserInterface.CustomControls;
 using Robust.Client.UserInterface.XAML;
 using Robust.Shared.Prototypes;
+using Robust.Shared.Utility;
 
 namespace Content.Client.Construction.UI
 {
@@ -312,7 +313,7 @@ namespace Content.Client.Construction.UI
             BuildButton.Disabled = false;
             BuildButton.Text = Loc.GetString(isItem ? "construction-menu-place-ghost" : "construction-menu-craft");
             TargetName.SetMessage(name);
-            TargetDesc.SetMessage(description);
+            TargetDesc.SetMessage(FormattedMessage.FromMarkupPermissive(description)); // _Duty: описания с [color]
             TargetTexture.SetPrototype(targetPrototype?.ID);
             FavoriteButton.Visible = true;
             FavoriteButton.Text = Loc.GetString(canAddToFavorites

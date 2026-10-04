@@ -54,7 +54,7 @@ public sealed partial class LoadoutContainer : BoxContainer
             Sprite.SetEntity(_entity);
 
             var spriteTooltip = new Tooltip();
-            spriteTooltip.SetMessage(FormattedMessage.FromUnformatted(_entManager.GetComponent<MetaDataComponent>(_entity.Value).EntityDescription));
+            spriteTooltip.SetMessage(FormattedMessage.FromMarkupPermissive(_entManager.GetComponent<MetaDataComponent>(_entity.Value).EntityDescription) /* _Duty: описания с [color] */);
 
             TooltipSupplier = _ => spriteTooltip;
         }

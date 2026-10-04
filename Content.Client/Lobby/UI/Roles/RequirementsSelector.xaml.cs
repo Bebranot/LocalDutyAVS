@@ -93,7 +93,13 @@ public sealed partial class RequirementsSelector : BoxContainer
 
         TitleLabel.Text = title;
         TitleLabel.MinSize = new Vector2(titleSize, 0f);
-        TitleLabel.ToolTip = description;
+        // _Duty: описания ролей могут содержать [color] — обычный ToolTip-строкой показал бы сырые теги.
+        if (!string.IsNullOrWhiteSpace(description))
+        {
+            var descriptionTooltip = new Tooltip();
+            descriptionTooltip.SetMessage(FormattedMessage.FromMarkupPermissive(description));
+            TitleLabel.TooltipSupplier = _ => descriptionTooltip;
+        }
 
         if (icon != null)
         {

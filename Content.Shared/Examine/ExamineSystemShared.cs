@@ -274,7 +274,13 @@ namespace Content.Shared.Examine
             //Add an entity description if one is declared
             if (!string.IsNullOrEmpty(metadata.EntityDescription))
             {
-                message.AddText(metadata.EntityDescription);
+                // _Duty-start: описание из прототипа может содержать [color=…] — разбираем как разметку.
+                // Описания, заданные игроками (мел, лодаут), остаются обычным текстом, чтобы не пускать в них теги.
+                if (metadata.EntityPrototype != null && metadata.EntityDescription == metadata.EntityPrototype.Description)
+                    message.AddMarkupPermissive(metadata.EntityDescription);
+                else
+                    message.AddText(metadata.EntityDescription);
+                // _Duty-end
                 hasDescription = true;
             }
 

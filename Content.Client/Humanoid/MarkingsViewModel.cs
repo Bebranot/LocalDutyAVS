@@ -72,8 +72,22 @@ public sealed class MarkingsViewModel
         get => _organProfileData;
         set
         {
+            // _Duty: сервер/редактор присваивают сюда новый словарь на каждое состояние; без сравнения
+            // пикер пересоздавался целиком и терял поиск, вкладки и скролл.
+            var oldData = _organProfileData;
             _organProfileData = value.ShallowClone();
-            OrganProfileDataChanged?.Invoke(true);
+
+            if (oldData.Count == _organProfileData.Count
+                && oldData.All(kvp => _organProfileData.TryGetValue(kvp.Key, out var n) && kvp.Value.Equals(n)))
+            {
+                return;
+            }
+
+            // Набор доступных маркингов зависит только от набора органов и пола; цвета перерисовки списка не требуют.
+            var refresh = oldData.Count != _organProfileData.Count
+                          || oldData.Any(kvp => !_organProfileData.TryGetValue(kvp.Key, out var n) || n.Sex != kvp.Value.Sex);
+
+            OrganProfileDataChanged?.Invoke(refresh);
         }
     }
 
@@ -83,11 +97,18 @@ public sealed class MarkingsViewModel
     /// <param name="sex">The new sex</param>
     public void SetOrganSexes(Sex sex)
     {
-        foreach (var (organ, data) in _organProfileData)
+        var changed = false;
+        foreach (var (organ, data) in _organProfileData.ToList())
         {
+            if (data.Sex == sex)
+                continue;
+
             _organProfileData[organ] = data with { Sex = sex };
+            changed = true;
         }
-        OrganProfileDataChanged?.Invoke(true);
+
+        if (changed) // _Duty: повторная установка того же пола больше не перестраивает пикер
+            OrganProfileDataChanged?.Invoke(true);
     }
 
     /// <summary>
@@ -167,7 +188,7 @@ public sealed class MarkingsViewModel
         get => _organData;
         set
         {
-            if (_organData == value)
+            if (_organData == value || OrganDataEquals(_organData, value)) // _Duty: сравнение по содержимому
                 return;
 
             _organData = value;
@@ -180,6 +201,22 @@ public sealed class MarkingsViewModel
     /// Raised whenever the organ data within the view model is changed.
     /// </summary>
     public event Action? OrganDataChanged;
+
+    private static bool OrganDataEquals( // _Duty: переработка пикера
+        Dictionary<ProtoId<OrganCategoryPrototype>, OrganMarkingData> a,
+        Dictionary<ProtoId<OrganCategoryPrototype>, OrganMarkingData> b)
+    {
+        if (a.Count != b.Count)
+            return false;
+
+        foreach (var (key, av) in a)
+        {
+            if (!b.TryGetValue(key, out var bv) || av.Group != bv.Group || !av.Layers.SetEquals(bv.Layers))
+                return false;
+        }
+
+        return true;
+    }
 
     private readonly Dictionary<ProtoId<MarkingPrototype>, List<Color>> _previousColors = new();
 
@@ -474,6 +511,9 @@ public sealed class MarkingsViewModel
             return;
 
         var currentIndex = layerMarkings.FindIndex(marking => marking.MarkingId == markingId);
+        if (currentIndex == -1) // _Duty: маркинг уже мог быть снят
+            return;
+
         var currentMarking = layerMarkings[currentIndex];
 
         if (position == CandidatePosition.Before)
