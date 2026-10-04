@@ -102,9 +102,9 @@ namespace Content.Server.Administration.Systems
             {
                 // _Duty-start: каждый верб требует своё право, а не просто «быть админом»
                 var canVerbs = _adminManager.Can(player, "ents_verbs", AdminFlags.Admin);
-                var canSpawn = _adminManager.Can(player, "ents_spawn", AdminFlags.Admin);
+                var canSpawn = _adminManager.Can(player, "ents_spawn", AdminFlags.Admin | AdminFlags.Spawn);
                 var canErase = _adminManager.Can(player, "ents_delete", AdminFlags.Admin);
-                var canRespawn = _adminManager.Can(player, "players_kick", AdminFlags.Admin);
+                var canRespawn = _adminManager.Can(player, "players_kick", AdminFlags.Admin | AdminFlags.Moderator);
                 var canPanel = _adminManager.Can(player, "players_panel", AdminFlags.Admin);
                 var canView = _adminManager.Can(player, "ents_view", AdminFlags.Admin);
                 // _Duty-end

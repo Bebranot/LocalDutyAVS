@@ -437,9 +437,14 @@ public sealed class PermissionTreeEditor : BoxContainer
                 continue;
 
             if (pressed)
+            {
                 _selected.Add(leaf.Id);
+                _blocked.Remove(leaf.Id); // право и запрет одного и того же одновременно сервер отвергает
+            }
             else
+            {
                 _selected.Remove(leaf.Id);
+            }
         }
 
         Refresh();
@@ -454,9 +459,14 @@ public sealed class PermissionTreeEditor : BoxContainer
         foreach (var leaf in Leaves(entry, false))
         {
             if (pressed)
+            {
                 _blocked.Add(leaf.Id);
+                _selected.Remove(leaf.Id); // запрещённое не может быть и выданным лично
+            }
             else
+            {
                 _blocked.Remove(leaf.Id);
+            }
         }
 
         Refresh();
@@ -585,11 +595,9 @@ public sealed class PermissionTreeEditor : BoxContainer
         _blocked.Clear();
         _inherited = ExpandToLeaves(inherited);
 
+        // личные права, дублирующие ранг, сохраняем: при смене ранга они не должны пропадать
         foreach (var id in ExpandToLeaves(pos))
-        {
-            if (!_inherited.Contains(id))
-                _selected.Add(id);
-        }
+            _selected.Add(id);
 
         foreach (var id in ExpandToLeaves(neg))
             _blocked.Add(id);
@@ -601,7 +609,6 @@ public sealed class PermissionTreeEditor : BoxContainer
     public void SetInherited(IEnumerable<string> inherited)
     {
         _inherited = ExpandToLeaves(inherited);
-        _selected.ExceptWith(_inherited);
         Refresh();
     }
 

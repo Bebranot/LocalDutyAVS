@@ -551,7 +551,7 @@ public sealed partial class ChatUIController : UIController
         }
 
         // Only ghosts and admins can send / see deadchat.
-        if (_admin.HasFlag(AdminFlags.Admin) || _ghost is {IsGhost: true})
+        if (_admin.HasFlag(AdminFlags.Admin) || _admin.HasFlag(AdminFlags.Moderator) || _ghost is {IsGhost: true}) // _Duty: dsay открывает Moderator
         {
             FilterableChannels |= ChatChannel.Dead;
             CanSendChannels |= ChatSelectChannel.Dead;

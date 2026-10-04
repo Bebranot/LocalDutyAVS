@@ -45,6 +45,10 @@ public sealed class AdminPermissionTreeTests
                     Assert.That(loc.TryGetString(node.NameLoc, out _), $"Нет названия узла прав '{node.ID}' ({node.NameLoc})");
                     Assert.That(loc.TryGetString(node.DescLoc, out _), $"Нет описания узла прав '{node.ID}' ({node.DescLoc})");
 
+                    // id узла не должен совпадать с именем старого флага без учёта регистра: оба хранятся в БД строками
+                    Assert.That(Enum.TryParse<AdminFlags>(node.ID, true, out _), Is.False,
+                        $"Id узла прав '{node.ID}' совпадает с именем старого флага");
+
                     foreach (var l in node.Legacy)
                     {
                         Assert.That(Enum.TryParse<AdminFlags>(l, true, out _), $"Узел '{node.ID}': неизвестный старый флаг '{l}'");

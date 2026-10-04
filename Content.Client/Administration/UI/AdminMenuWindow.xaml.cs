@@ -74,11 +74,11 @@ public sealed partial class AdminMenuWindow : DefaultWindow
         }
 
         // если открытая вкладка скрылась, переходим на первую видимую
-        if (!MasterTabContainer.GetChild(MasterTabContainer.CurrentTab).Visible)
+        if (!MasterTabContainer.GetTabVisible(MasterTabContainer.CurrentTab))
         {
             for (var i = 0; i < MasterTabContainer.ChildCount; i++)
             {
-                if (MasterTabContainer.GetChild(i).Visible)
+                if (MasterTabContainer.GetTabVisible(i))
                 {
                     MasterTabContainer.CurrentTab = i;
                     break;

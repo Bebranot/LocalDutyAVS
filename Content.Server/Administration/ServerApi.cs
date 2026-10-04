@@ -953,6 +953,7 @@ public sealed partial class ServerApi : IPostInjectInit
             if (_bans == null)
             {
                 _sawmill.Error("ServerApi BAN: _bans (BanManager) is NULL! Cannot process ban.");
+                await RespondError(context, ErrorCode.BadRequest, HttpStatusCode.InternalServerError, "Ban manager is unavailable");
                 return;
             }
 

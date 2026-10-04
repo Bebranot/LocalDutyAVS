@@ -123,6 +123,10 @@ namespace Content.Server.Administration.UI
         {
             base.HandleMessage(msg);
 
+            // _Duty: base мог закрыть окно по CloseEuiMessage, повторно закрывать нельзя
+            if (IsShutDown)
+                return;
+
             // _Duty: право правки могли отозвать, пока окно было открыто
             if (!CanEdit())
             {
@@ -522,9 +526,15 @@ namespace Content.Server.Administration.UI
             foreach (var item in raw)
             {
                 var name = item.Trim();
-                if (AdminFlagsHelper.TryNameToFlag(name.ToUpperInvariant(), out _))
+                // Сначала узел как есть: id областей (debug, server, host, fun, logs, round) совпадают с именами
+                // старых флагов без учёта регистра, и без этого область превращалась бы в старый флаг.
+                if (tree.Exists(name))
+                {
+                    // узел
+                }
+                else if (AdminFlagsHelper.TryNameToFlag(name.ToUpperInvariant(), out _))
                     name = name.ToUpperInvariant();
-                else if (!tree.Exists(name))
+                else
                 {
                     _sawmill.Warning($"{Player} прислал неизвестное право '{item}'");
                     result = Array.Empty<string>();

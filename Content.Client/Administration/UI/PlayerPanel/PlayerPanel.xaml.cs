@@ -130,7 +130,9 @@ public sealed partial class PlayerPanel : FancyWindow
         WhitelistToggle.Disabled =
             !(_adminManager.CanCommand("whitelistadd") && _adminManager.CanCommand("whitelistremove"));
         LogsButton.Disabled = !_adminManager.CanCommand("adminlogs");
-        RejuvenateButton.Disabled = !_adminManager.HasFlag(AdminFlags.Debug);
-        DeleteButton.Disabled = !_adminManager.HasFlag(AdminFlags.Debug);
+        // _Duty: лечение и удаление открывают узлы fun_health и ents_delete, как и на сервере
+        var data = _adminManager.GetAdminData();
+        RejuvenateButton.Disabled = !(_adminManager.HasFlag(AdminFlags.Debug) || (data?.HasNode("fun_health") ?? false));
+        DeleteButton.Disabled = !(_adminManager.HasFlag(AdminFlags.Debug) || (data?.HasNode("ents_delete") ?? false));
     }
 }

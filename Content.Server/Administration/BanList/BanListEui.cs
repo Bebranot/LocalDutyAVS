@@ -1,4 +1,5 @@
-﻿using System.Collections.Immutable;
+﻿using Content.Server._Duty.Administration;
+using System.Collections.Immutable;
 using System.Linq;
 using System.Threading.Tasks;
 using Content.Server.Administration.Managers;
@@ -49,7 +50,7 @@ public sealed class BanListEui : BaseEui
 
     private void OnPermsChanged(AdminPermsChangedEventArgs args)
     {
-        if (args.Player == Player && !_admins.HasAdminFlag(Player, AdminFlags.Ban))
+        if (args.Player == Player && !_admins.Can(Player, "players_banlist", AdminFlags.Ban) && !_admins.HasAdminFlag(Player, AdminFlags.Ban)) // _Duty: узел списка банов
         {
             Close();
         }

@@ -34,9 +34,12 @@ namespace Content.Client.Administration.UI.CustomControls
                 Execute(null!);
         }
 
+        // Скрыто именно из-за прав (а не по Visible="False" в XAML): только это возвращаем при смене прав
+        private bool _hiddenByPermissions;
+
         protected override void EnteredTree()
         {
-            Visible = CanPress();
+            ApplyPermissions();
             IoCManager.Resolve<IClientAdminManager>().AdminStatusUpdated += OnStatusUpdated;
 
             if (ToolTip == null && !string.IsNullOrEmpty(Command))
@@ -56,7 +59,21 @@ namespace Content.Client.Administration.UI.CustomControls
 
         private void OnStatusUpdated()
         {
-            Visible = CanPress();
+            ApplyPermissions();
+        }
+
+        private void ApplyPermissions()
+        {
+            if (!CanPress())
+            {
+                Visible = false;
+                _hiddenByPermissions = true;
+            }
+            else if (_hiddenByPermissions)
+            {
+                Visible = true;
+                _hiddenByPermissions = false;
+            }
         }
         // _Duty-end
 

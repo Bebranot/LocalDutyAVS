@@ -32,11 +32,19 @@ public sealed partial class AdminManager
         };
     }
 
+    private readonly object _treeLock = new();
+
     private AdminPermissionTree EnsureTree()
     {
-        if (_tree != null)
-            return _tree;
+        // Зовётся и из async-продолжений (баны через API, резервные слоты), поэтому под замком
+        lock (_treeLock)
+        {
+            return _tree ??= BuildTree();
+        }
+    }
 
+    private AdminPermissionTree BuildTree()
+    {
         var tree = new AdminPermissionTree(_proto);
         foreach (var error in tree.Errors)
         {
@@ -70,7 +78,6 @@ public sealed partial class AdminManager
 
         _nodeCommands = console.ToDictionary(p => p.Key, p => p.Value.ToArray());
         _nodeToolshed = toolshed.ToDictionary(p => p.Key, p => p.Value.ToArray());
-        _tree = tree;
         return tree;
     }
 
@@ -108,6 +115,10 @@ public sealed partial class AdminManager
         directFlags = posFlags & ~negFlags;
         nodes = tree.Expand(posNodes);
         nodes.ExceptWith(tree.Expand(negNodes));
+
+        // Host из БД (флаг HOST) — владелец: у него есть все узлы, как у входа через консоль
+        if ((directFlags & AdminFlags.Host) != 0)
+            nodes = new HashSet<string>(tree.AllIds());
         effectiveFlags = directFlags | tree.LegacyFor(nodes);
     }
 
@@ -147,10 +158,50 @@ public sealed partial class AdminManager
         if (invokerData == null)
             return true;
 
+        // Host не может быть «ниже» кого-либо
+        if ((invokerData.DirectFlags & AdminFlags.Host) != 0)
+            return false;
+
         if ((targetData.DirectFlags & ~invokerData.DirectFlags) != 0)
             return true;
 
-        return !targetData.Nodes.IsSubsetOf(invokerData.Nodes);
+        // Узел цели покрыт, если он есть у invoker либо открыт его старыми флагами (флаги и узлы — две модели одних прав)
+        var tree = EnsureTree();
+        foreach (var nodeId in targetData.Nodes)
+        {
+            if (invokerData.Nodes.Contains(nodeId))
+                continue;
+
+            if (!tree.TryGet(nodeId, out var node) || !NodeCoveredByFlags(node, invokerData.DirectFlags))
+                return true;
+        }
+
+        return false;
+    }
+
+    /// <summary>Открывают ли старые флаги всё, что открывает узел: его флаги в legacy либо каждую его команду.</summary>
+    private bool NodeCoveredByFlags(AdminPermissionPrototype node, AdminFlags direct)
+    {
+        var legacy = node.LegacyFlags;
+        if (legacy != AdminFlags.None && (direct & legacy) == legacy)
+            return true;
+
+        if (node.Commands.Count == 0 && node.Toolshed.Count == 0)
+            return false;
+
+        foreach (var cmd in node.Commands)
+        {
+            if (!_commandPermissions.AdminCommands.TryGetValue(cmd, out var req) || !req.Any(f => (direct & f) == f))
+                return false;
+        }
+
+        foreach (var cmd in node.Toolshed)
+        {
+            if (!_toolshedCommandPermissions.AdminCommands.TryGetValue(cmd, out var req) || !req.Any(f => (direct & f) == f))
+                return false;
+        }
+
+        return true;
     }
 
     public bool HasHostFlag(Database.Admin? dbAdmin)

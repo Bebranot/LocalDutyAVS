@@ -168,7 +168,7 @@ public sealed class AdminSystem : EntitySystem
     {
         UpdatePanicBunker();
 
-        if (!obj.IsAdmin || (obj.Flags!.Value & AdminFlags.Admin) == 0) // _Duty: список только при праве Admin
+        if (!obj.IsAdmin || !CanSeePlayerList(obj.Player)) // _Duty: список только тем, кому он нужен
         {
             RaiseNetworkEvent(new FullPlayerListEvent(), obj.Player.Channel);
             return;
@@ -212,7 +212,13 @@ public sealed class AdminSystem : EntitySystem
 
     private bool CanSeePlayerList(ICommonSession session)
     {
-        return _adminManager.HasAdminFlag(session, AdminFlags.Admin);
+        // _Duty: список нужен тем, кто работает с игроками: Admin, баны, модерация, ahelp или узлы просмотра игроков
+        var data = _adminManager.GetAdminData(session);
+        if (data == null)
+            return false;
+
+        const AdminFlags mask = AdminFlags.Admin | AdminFlags.Ban | AdminFlags.Moderator | AdminFlags.Adminhelp | AdminFlags.AhelpView;
+        return (data.Flags & mask) != 0 || data.HasNode("players_panel") || data.HasNode("ents_view");
     }
 
     private void SendFullPlayerList(ICommonSession playerSession)

@@ -10,7 +10,6 @@
   id: players_panel
   group: players
   danger: View
-  legacy: [Admin]
   commands:
   - playerpanel
   - playersdashboard
@@ -148,12 +147,12 @@
   - setlooc
 
 - type: adminPermission
-  id: round
+  id: round_all
   order: 30
 
 - type: adminPermission
   id: round_control
-  group: round
+  group: round_all
   legacy: [Round]
   commands:
   - startround
@@ -169,7 +168,7 @@
 
 - type: adminPermission
   id: round_map
-  group: round
+  group: round_all
   order: 10
   legacy: [Round]
   commands:
@@ -181,7 +180,7 @@
 
 - type: adminPermission
   id: round_shuttle
-  group: round
+  group: round_all
   order: 20
   commands:
   - callshuttle
@@ -193,7 +192,7 @@
 
 - type: adminPermission
   id: round_vote
-  group: round
+  group: round_all
   order: 30
   legacy: [Moderator]
   commands:
@@ -201,12 +200,12 @@
   - cancelvote
 
 - type: adminPermission
-  id: server
+  id: server_all
   order: 40
 
 - type: adminPermission
   id: server_bunker
-  group: server
+  group: server_all
   legacy: [Server]
   commands:
   - panicbunker
@@ -219,7 +218,7 @@
 
 - type: adminPermission
   id: server_persist
-  group: server
+  group: server_all
   order: 10
   commands:
   - persistencesave
@@ -228,7 +227,7 @@
 
 - type: adminPermission
   id: server_stop
-  group: server
+  group: server_all
   order: 20
   danger: Danger
   legacy: [Server]
@@ -244,10 +243,7 @@
   id: ents_view
   group: ents
   danger: View
-  legacy: [Admin]
   commands:
-  - vv
-  - vvread
   - mindinfo
   - isafk
   - listroles
@@ -552,12 +548,12 @@
   - languageslist
 
 - type: adminPermission
-  id: fun
+  id: fun_all
   order: 70
 
 - type: adminPermission
   id: fun_health
-  group: fun
+  group: fun_all
   legacy: [Fun]
   commands:
   - damage
@@ -574,7 +570,7 @@
 
 - type: adminPermission
   id: fun_effects
-  group: fun
+  group: fun_all
   order: 10
   legacy: [Fun]
   commands:
@@ -588,7 +584,7 @@
 
 - type: adminPermission
   id: fun_sound
-  group: fun
+  group: fun_all
   order: 20
   commands:
   - playglobalsound
@@ -598,7 +594,7 @@
 
 - type: adminPermission
   id: fun_events
-  group: fun
+  group: fun_all
   order: 30
   commands:
   - weatheradd
@@ -613,7 +609,7 @@
 
 - type: adminPermission
   id: fun_items
-  group: fun
+  group: fun_all
   order: 40
   commands:
   - addreagent
@@ -629,7 +625,7 @@
 
 - type: adminPermission
   id: fun_npc
-  group: fun
+  group: fun_all
   order: 50
   commands:
   - addnpc
@@ -638,20 +634,20 @@
 
 - type: adminPermission
   id: fun_fax
-  group: fun
+  group: fun_all
   order: 60
   legacy: [Fun]
   commands:
   - faxui
 
 - type: adminPermission
-  id: map
+  id: map_all
   order: 80
 
 - type: adminPermission
   id: map_edit
-  group: map
-  legacy: [Mapping]
+  group: map_all
+  legacy: [Mapping, Spawn]
   commands:
   - mapping
   - adddecal
@@ -674,7 +670,7 @@
 
 - type: adminPermission
   id: map_io
-  group: map
+  group: map_all
   order: 10
   danger: Danger
   commands:
@@ -725,12 +721,12 @@
   - substepatmos
 
 - type: adminPermission
-  id: logs
+  id: logs_all
   order: 100
 
 - type: adminPermission
   id: logs_view
-  group: logs
+  group: logs_all
   danger: View
   legacy: [Logs]
   commands:
@@ -739,7 +735,7 @@
 
 - type: adminPermission
   id: logs_pii
-  group: logs
+  group: logs_all
   order: 10
   legacy: [Pii]
   commands:
@@ -748,7 +744,7 @@
 
 - type: adminPermission
   id: logs_discord
-  group: logs
+  group: logs_all
   order: 20
   commands:
   - get_discord_id
@@ -811,12 +807,12 @@
   - playtime_flush_as
 
 - type: adminPermission
-  id: debug
+  id: debug_all
   order: 120
 
 - type: adminPermission
   id: debug_tools
-  group: debug
+  group: debug_all
   legacy: [Debug]
   commands:
   - addaction
@@ -884,12 +880,12 @@
   - zoom_tweak
 
 - type: adminPermission
-  id: host
+  id: host_all
   order: 130
 
 - type: adminPermission
   id: host_upload
-  group: host
+  group: host_all
   danger: Danger
   commands:
   - uploadfile
@@ -898,7 +894,7 @@
 
 - type: adminPermission
   id: host_cvar
-  group: host
+  group: host_all
   order: 10
   danger: Danger
   commands:
@@ -907,7 +903,7 @@
 
 - type: adminPermission
   id: host_script
-  group: host
+  group: host_all
   order: 20
   danger: Danger
   legacy: [Host]
@@ -918,7 +914,7 @@
 
 - type: adminPermission
   id: host_system
-  group: host
+  group: host_all
   order: 30
   danger: Danger
   commands:
@@ -938,7 +934,7 @@
 
 - type: adminPermission
   id: host_toolshed
-  group: host
+  group: host_all
   order: 40
   danger: Danger
   toolshed:

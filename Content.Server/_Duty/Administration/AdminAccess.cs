@@ -9,7 +9,7 @@ using Robust.Shared.Player;
 namespace Content.Server._Duty.Administration;
 
 /// <summary>
-/// Серверная проверка «узел дерева прав либо прежний флаг, выданный напрямую».
+/// Серверная проверка «узел дерева прав либо любой из прежних флагов, выданных напрямую».
 /// Заменяет голое <c>IsAdmin</c>/<c>HasAdminFlag(Admin)</c>, которое давало доступ любому, у кого есть хоть какое-то право.
 /// </summary>
 public static class AdminAccess
@@ -17,6 +17,7 @@ public static class AdminAccess
     public static bool Can(this IAdminManager admins, ICommonSession session, string node, AdminFlags legacy)
     {
         var data = admins.GetAdminData(session);
-        return data != null && (data.HasNode(node) || data.HasDirectFlag(legacy));
+        // legacy — «любой из этих флагов»: можно передать Admin | Spawn, если команда раньше открывалась любым из них
+        return data != null && data.Active && (data.HasNode(node) || (data.DirectFlags & legacy) != 0);
     }
 }

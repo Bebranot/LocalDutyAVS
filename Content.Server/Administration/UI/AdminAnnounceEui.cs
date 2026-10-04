@@ -1,3 +1,4 @@
+using Content.Server._Duty.Administration;
 using Content.Server.Administration.Managers;
 using Content.Server.Chat;
 using Content.Server.Chat.Managers;
@@ -37,7 +38,7 @@ namespace Content.Server.Administration.UI
             switch (msg)
             {
                 case AdminAnnounceEuiMsg.DoAnnounce doAnnounce:
-                    if (!_adminManager.HasAdminFlag(Player, AdminFlags.Admin))
+                    if (!_adminManager.Can(Player, "chat_announce", AdminFlags.Admin | AdminFlags.Moderator)) // _Duty: узел chat_announce открывает и отправку
                     {
                         Close();
                         break;
