@@ -14,3 +14,7 @@
     - Structural
   - type: StaminaDamageOnCollide
     damage: 60
+  - type: DutyBallistics # _Duty: бронепробитие/травмы калибра
+    armorPenetration: 0.6
+    arteryBonus: 0.03
+    fractureChance: 0.03

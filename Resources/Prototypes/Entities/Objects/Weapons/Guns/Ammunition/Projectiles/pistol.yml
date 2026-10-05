@@ -8,6 +8,8 @@
     damage:
       types:
         Piercing: 14 # ADT-Tweak 16 -> 14
+  - type: DutyBallistics # _Duty: бронепробитие/травмы калибра
+    armorPenetration: 0.1
 
 - type: entity
   parent: BaseBulletPractice
@@ -45,3 +47,5 @@
       types:
         Radiation: 6
         Piercing: 8 # ADT-Tweak 10 -> 8
+  - type: DutyBallistics # _Duty: бронепробитие/травмы калибра (урановый сердечник)
+    armorPenetration: 0.4

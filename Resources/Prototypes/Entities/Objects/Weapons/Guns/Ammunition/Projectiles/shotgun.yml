@@ -18,6 +18,8 @@
         Blunt: 25 # 0 -> 25
         Structural: 25 # 0 -> 25
         # ADT-Tweak-End
+  - type: DutyBallistics # _Duty: бронепробитие/травмы калибра (тупой урон пули и так ломает кости)
+    armorPenetration: 0.1
 
 
 - type: entity
@@ -55,6 +57,8 @@
       types:
         Piercing: 10
         Structural: 15
+  - type: DutyBallistics # _Duty: бронепробитие/травмы калибра (картечь плохо пробивает броню, без бонусов травм — 6 роллов за выстрел)
+    armorPenetration: -0.2
 
 - type: entity
   parent: PelletShotgun

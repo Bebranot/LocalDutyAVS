@@ -7,7 +7,11 @@
   - type: Projectile
     damage:
       types:
-        Piercing: 42 # ADT tweak 35 > 42
+        Piercing: 28 # ADT tweak 35 > 42 # _Duty: 42 -> 28, пистолетный патрон не должен бить сильнее винтовочного
+  - type: DutyBallistics # _Duty: бронепробитие/травмы калибра
+    armorPenetration: 0.1
+    arteryBonus: 0.01
+    fractureChance: 0.015
 
 - type: entity
   parent: BaseBulletPractice
@@ -29,7 +33,7 @@
   - type: Projectile
     damage:
       types:
-        Piercing: 39 #ADT tweak
+        Piercing: 26 #ADT tweak # _Duty: 39 -> 26 вслед за обычным
         # Blunt: 3 ADT tweak
         # Heat: 32 ADT tweak
         Heat: 9
@@ -43,8 +47,12 @@
   - type: Projectile
     damage:
       types:
-        Piercing: 34 # 25% decrease # ADT tweak 26 > 34
-    ignoreResistances: true
+        Piercing: 25 # 25% decrease # ADT tweak 26 > 34 # _Duty: 34 -> 25
+    # ignoreResistances: true # _Duty: полный игнор брони заменён бронепробитием 50%
+  - type: DutyBallistics # _Duty: бронепробитие/травмы калибра
+    armorPenetration: 0.5
+    arteryBonus: 0.01
+    fractureChance: 0.015
 
 - type: entity
   parent: BaseBulletUranium
@@ -55,5 +63,9 @@
   - type: Projectile
     damage:
       types:
-        Radiation: 18 # ADT tweak 15 > 18
-        Piercing: 24 # ADT tweak 20 > 24
+        Radiation: 12 # ADT tweak 15 > 18 # _Duty: 18 -> 12, пропорционально новой базе
+        Piercing: 16 # ADT tweak 20 > 24 # _Duty: 24 -> 16, пропорционально новой базе
+  - type: DutyBallistics # _Duty: бронепробитие/травмы калибра (урановый сердечник)
+    armorPenetration: 0.4
+    arteryBonus: 0.01
+    fractureChance: 0.015

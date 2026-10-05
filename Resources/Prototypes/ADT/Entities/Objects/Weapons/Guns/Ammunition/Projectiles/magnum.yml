@@ -36,7 +36,9 @@
   - type: Projectile
     damage:
       types:
-        Piercing: 35
+        Piercing: 24 # _Duty: 35 -> 24, слабее .45 magnum
+  - type: DutyBallistics # _Duty: бронепробитие/травмы калибра
+    armorPenetration: 0.1
 
 - type: entity
   id: ADTBulletMagnumLesserPractice
@@ -58,7 +60,7 @@
   - type: Projectile
     damage:
       types:
-        Piercing: 32
+        Piercing: 22 # _Duty: 32 -> 22 вслед за обычным
 
 - type: entity
   id: ADTBulletMagnumLesserAP
@@ -69,8 +71,10 @@
   - type: Projectile
     damage:
       types:
-        Piercing: 26 # 20% decrease
-    ignoreResistances: true
+        Piercing: 22 # 20% decrease # _Duty: 26 -> 22
+    # ignoreResistances: true # _Duty: полный игнор брони заменён бронепробитием 40%
+  - type: DutyBallistics # _Duty: бронепробитие/травмы калибра
+    armorPenetration: 0.4
 
 - type: entity
   id: ADTBulletMagnumLesserUranium
@@ -83,6 +87,8 @@
       types:
         Radiation: 15
         Piercing: 20
+  - type: DutyBallistics # _Duty: бронепробитие/травмы калибра (урановый сердечник)
+    armorPenetration: 0.4
 
 #HW
 - type: entity

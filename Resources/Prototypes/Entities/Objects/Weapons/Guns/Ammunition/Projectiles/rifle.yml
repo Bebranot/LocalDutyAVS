@@ -8,6 +8,8 @@
     damage:
       types:
         Piercing: 17
+  - type: DutyBallistics # _Duty: бронепробитие/травмы калибра
+    armorPenetration: 0.15
 
 - type: entity
   parent: BaseBulletPractice
@@ -45,4 +47,6 @@
       types:
         Radiation: 7
         Piercing: 8
+  - type: DutyBallistics # _Duty: бронепробитие/травмы калибра (урановый сердечник)
+    armorPenetration: 0.45
 
