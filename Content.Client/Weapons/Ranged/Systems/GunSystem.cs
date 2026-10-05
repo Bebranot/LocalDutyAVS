@@ -1,4 +1,5 @@
 using System.Numerics;
+using Content.Client._Duty.Recoil; // _Duty
 using Content.Client.Animations;
 using Content.Client.Gameplay;
 using Content.Client.Items;
@@ -44,7 +45,7 @@ public sealed partial class GunSystem : SharedGunSystem
     [Dependency] private readonly IPlayerManager _player = default!;
     [Dependency] private readonly IStateManager _state = default!;
     [Dependency] private readonly IConfigurationManager _cfg = default!;
-    [Dependency] private readonly SharedCameraRecoilSystem _recoil = default!;
+    [Dependency] private readonly DutyGunRecoilSystem _dutyRecoil = default!; // _Duty: отдача камеры
     [Dependency] private readonly SharedMapSystem _maps = default!;
     [Dependency] private readonly SharedTransformSystem _xform = default!;
     [Dependency] private readonly SpriteSystem _sprite = default!;
@@ -236,7 +237,7 @@ public sealed partial class GunSystem : SharedGunSystem
         {
             if (throwItems)
             {
-                Recoil(user, direction, gun.Comp.CameraRecoilScalarModified);
+                Recoil(user, direction, gun.Comp.CameraRecoilScalarModified, gun, ent, shootable, true); // _Duty: калибр/метание в отдаче
                 if (IsClientSide(ent!.Value))
                     Del(ent.Value);
                 else
@@ -255,12 +256,12 @@ public sealed partial class GunSystem : SharedGunSystem
                         if (TryComp<MechComponent>(user, out var cmech))    // ADT Mechs
                         {
                             Audio.PlayPredicted(gun.Comp.SoundGunshotModified, gun, cmech.PilotSlot.ContainedEntity);
-                            Recoil(cmech.PilotSlot.ContainedEntity, direction, gun.Comp.CameraRecoilScalarModified);
+                            Recoil(cmech.PilotSlot.ContainedEntity, direction, gun.Comp.CameraRecoilScalarModified, gun, ent, shootable); // _Duty: калибр в отдаче
                         }
                         else
                         {
                             Audio.PlayPredicted(gun.Comp.SoundGunshotModified, gun, user);
-                            Recoil(user, direction, gun.Comp.CameraRecoilScalarModified);
+                            Recoil(user, direction, gun.Comp.CameraRecoilScalarModified, gun, ent, shootable); // _Duty: калибр в отдаче
                         }
                         // TODO: Can't predict entity deletions.
                         //if (cartridge.DeleteOnSpawn)
@@ -281,12 +282,12 @@ public sealed partial class GunSystem : SharedGunSystem
                     if (TryComp<MechComponent>(user, out var mech)) // ADT Mechs
                     {
                         Audio.PlayPredicted(gun.Comp.SoundGunshotModified, gun, mech.PilotSlot.ContainedEntity);
-                        Recoil(mech.PilotSlot.ContainedEntity, direction, gun.Comp.CameraRecoilScalarModified);
+                        Recoil(mech.PilotSlot.ContainedEntity, direction, gun.Comp.CameraRecoilScalarModified, gun, ent, shootable); // _Duty: калибр в отдаче
                     }
                     else
                     {
                         Audio.PlayPredicted(gun.Comp.SoundGunshotModified, gun, user);
-                        Recoil(user, direction, gun.Comp.CameraRecoilScalarModified);
+                        Recoil(user, direction, gun.Comp.CameraRecoilScalarModified, gun, ent, shootable); // _Duty: калибр в отдаче
                     }
                     if (IsClientSide(ent!.Value))
                         Del(ent.Value);
@@ -294,17 +295,16 @@ public sealed partial class GunSystem : SharedGunSystem
                         RemoveShootable(ent.Value);
                     break;
                 case HitscanAmmoComponent:
-                    Audio.PlayPredicted(gun.Comp.SoundGunshotModified, gun, user);
-                    Recoil(user, direction, gun.Comp.CameraRecoilScalarModified);
+                    // _Duty: убран дубль звука и отдачи до ветки мех/не-мех — лазер стрелял звуком и толкал дважды
                     if (TryComp<MechComponent>(user, out var hmech)) // ADT-tweak
                     {
                         Audio.PlayPredicted(gun.Comp.SoundGunshotModified, gun, hmech.PilotSlot.ContainedEntity);
-                        Recoil(hmech.PilotSlot.ContainedEntity, direction, gun.Comp.CameraRecoilScalarModified);
+                        Recoil(hmech.PilotSlot.ContainedEntity, direction, gun.Comp.CameraRecoilScalarModified, gun, ent, shootable); // _Duty: калибр в отдаче
                     }
                     else
                     {
                         Audio.PlayPredicted(gun.Comp.SoundGunshotModified, gun, user);
-                        Recoil(user, direction, gun.Comp.CameraRecoilScalarModified);
+                        Recoil(user, direction, gun.Comp.CameraRecoilScalarModified, gun, ent, shootable); // _Duty: калибр в отдаче
                     }
                     break;
                 // ADT-Tweak-start
@@ -319,13 +319,15 @@ public sealed partial class GunSystem : SharedGunSystem
         }
     }
 
-    private void Recoil(EntityUid? user, Vector2 recoil, float recoilScalar)
+    // _Duty-start: отдача камеры от калибра, ствола, хвата и одежды (DutyGunRecoilSystem) вместо линейного сдвига
+    private void Recoil(EntityUid? user, Vector2 recoil, float recoilScalar, EntityUid gun, EntityUid? ammo, IShootable? shootable, bool thrown = false)
     {
         if (!Timing.IsFirstTimePredicted || user == null || recoil == Vector2.Zero || recoilScalar == 0)
             return;
 
-        _recoil.KickCamera(user.Value, recoil.Normalized() * 0.5f * recoilScalar);
+        _dutyRecoil.Kick(user.Value, gun, recoil, recoilScalar, ammo, shootable, thrown);
     }
+    // _Duty-end
 
     protected override void Popup(string message, EntityUid? uid, EntityUid? user)
     {

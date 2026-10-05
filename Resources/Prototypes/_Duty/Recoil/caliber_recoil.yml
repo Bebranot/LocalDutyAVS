@@ -1,0 +1,137 @@
+# Мощность отдачи по калибру (Content.Shared/_Duty/Recoil/SharedDutyRecoilSystem.cs).
+#
+# power — относительный импульс отдачи (пуля + пороховые газы), 7.62x39 = 1.0, сжатый степенью 0.75,
+# чтобы крупные калибры не давали кратного рывка. Масса/эргономика ствола сюда НЕ входят — это
+# cameraRecoilScalar оружия (см. Stalker/Weapons/bases.yml). Итоговый рывок камеры:
+#   0.45 тайла × power × cameraRecoilScalar × одежда × хват × duty.recoil_camera_scale (потолок 1.0).
+# Он же слегка меняет нарастание разброса в очереди: ×(0.75 + 0.3 × power), в пределах [0.85; 1.4].
+#
+# Патрон без тега из этой таблицы получает мощность по урону пули: sqrt(урон × дробины / 20) в [0.3; 1.8].
+# Если у патрона несколько тегов из таблицы — берётся меньшая мощность.
+
+# ── Сталкерские калибры ──────────────────────────────────────────────────────
+- type: dutyCaliberRecoil
+  id: DutyCaliber918
+  tag: STCartridge918          # 9x18 ПМ — 6 г × 315 м/с
+  power: 0.42
+
+- type: dutyCaliberRecoil
+  id: DutyCaliber919
+  tag: STCartridge919          # 9x19 Para
+  power: 0.52
+
+- type: dutyCaliberRecoil
+  id: DutyCaliber725
+  tag: STCartridge725          # 7.62x25 ТТ — лёгкая быстрая пуля
+  power: 0.52
+
+- type: dutyCaliberRecoil
+  id: DutyCaliber921
+  tag: STCartridge921          # 9x21 «Гюрза»
+  power: 0.6
+
+- type: dutyCaliberRecoil
+  id: DutyCaliber45ACP
+  tag: Cartridge45ACP          # .45 ACP — тяжёлая медленная пуля, «толкает»
+  power: 0.68
+
+- type: dutyCaliberRecoil
+  id: DutyCaliber545
+  tag: STCartridge545          # 5.45x39 — славится мягкой отдачей
+  power: 0.7
+
+- type: dutyCaliberRecoil
+  id: DutyCaliber556
+  tag: STCartridge556          # 5.56x45
+  power: 0.78
+
+- type: dutyCaliberRecoil
+  id: DutyCaliber939
+  tag: STCartridge939          # 9x39 — тяжёлая дозвуковая
+  power: 0.85
+
+- type: dutyCaliberRecoil
+  id: DutyCaliber739
+  tag: STCartridge739          # 7.62x39 — эталон шкалы
+  power: 1.0
+
+- type: dutyCaliberRecoil
+  id: DutyCaliber44Magnum
+  tag: CartridgeRemingtonMagnum # .44 Magnum
+  power: 1.1
+
+- type: dutyCaliberRecoil
+  id: DutyCaliber751
+  tag: STCartridge751          # 7.62x51 NATO
+  power: 1.3
+
+- type: dutyCaliberRecoil
+  id: DutyCaliber754
+  tag: STCartridge754          # 7.62x54R
+  power: 1.35
+
+- type: dutyCaliberRecoil
+  id: DutyCaliber1255
+  tag: STCartridge1255         # 12.7x55 — тяжёлая дозвуковая (АШ-12, ВССК)
+  power: 1.45
+
+- type: dutyCaliberRecoil
+  id: DutyCaliber13x108
+  tag: STCartridge13x108       # 12.7x108 — крупнокалиберная, верх шкалы
+  power: 2.2
+
+# ── Ванильные калибры станции ────────────────────────────────────────────────
+- type: dutyCaliberRecoil
+  id: DutyCaliberCap
+  tag: CartridgeCap            # пистоны игрушечного пистолета
+  power: 0.15
+
+- type: dutyCaliberRecoil
+  id: DutyCaliberPistol
+  tag: CartridgePistol         # .35 — пистолеты/ПП
+  power: 0.5
+
+- type: dutyCaliberRecoil
+  id: DutyCaliberHeavyRifle
+  tag: CartridgeHeavyRifle     # .10 миниган — мелкий калибр, но очередь трясёт за счёт темпа
+  power: 0.6
+
+- type: dutyCaliberRecoil
+  id: DutyCaliberCaselessRifle
+  tag: CartridgeCaselessRifle  # .25 безгильзовый
+  power: 0.7
+
+- type: dutyCaliberRecoil
+  id: DutyCaliberRifle
+  tag: CartridgeRifle          # .20 — точные винтовки
+  power: 0.78
+
+- type: dutyCaliberRecoil
+  id: DutyCaliberShotgunLight
+  tag: ShellShotgunLight       # травматика/сигнальные — подмножество дроби
+  power: 0.8
+
+- type: dutyCaliberRecoil
+  id: DutyCaliberRocket
+  tag: CartridgeRocket         # безоткатная схема — толкает меньше, чем кажется
+  power: 0.9
+
+- type: dutyCaliberRecoil
+  id: DutyCaliberLightRifle
+  tag: CartridgeLightRifle     # .30 — автоматы
+  power: 0.95
+
+- type: dutyCaliberRecoil
+  id: DutyCaliberMagnum
+  tag: CartridgeMagnum         # .45 magnum — револьверы
+  power: 1.0
+
+- type: dutyCaliberRecoil
+  id: DutyCaliberShotgun
+  tag: ShellShotgun            # 12 калибр — тяжёлый навеской заряд
+  power: 1.5
+
+- type: dutyCaliberRecoil
+  id: DutyCaliberAntiMateriel
+  tag: CartridgeAntiMateriel   # .60 антиматериальная
+  power: 2.2

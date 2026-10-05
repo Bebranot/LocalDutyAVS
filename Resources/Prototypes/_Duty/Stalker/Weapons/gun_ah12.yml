@@ -23,7 +23,7 @@
     angleIncrease: 2
     angleDecay: 5
     fireRate: 7.5
-    cameraRecoilScalar: 1.6 # тяжёлый 12.7x55 в полноавтомате — punchier штатного АК, но не как снайперка
+    cameraRecoilScalar: 1.0 # АШ-12: тяжесть 12.7x55 уже в калибре; компоновка буллпап — без надбавки
     selectedMode: FullAuto
     availableModes:
     - Burst

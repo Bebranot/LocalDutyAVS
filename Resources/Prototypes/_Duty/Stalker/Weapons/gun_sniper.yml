@@ -105,7 +105,7 @@
     angleDecay: 60
     angleIncrease: 2
     fireRate: 1
-    cameraRecoilScalar: 2 # магазинная снайперка — тяжелее автомата (STBaseWeaponRifle), но легче болтовки
+    cameraRecoilScalar: 1.1 # магазинная снайперка: тяжелее автомата, но длинный ствол раскачивает — калибр отдельно (caliber_recoil.yml)
   - type: ItemSlots
     slots:
       gun_magazine:
@@ -221,7 +221,7 @@
     angleDecay: 25
     angleIncrease: 8
     fireRate: 0.6
-    cameraRecoilScalar: 2
+    cameraRecoilScalar: 1.1
 
 # ── ВПО-129 "Vepr" (магазин, 7.62x54) ────────────────────────────────────────
 - type: entity
@@ -245,7 +245,7 @@
     angleDecay: 65
     angleIncrease: 2
     fireRate: 0.65
-    cameraRecoilScalar: 2
+    cameraRecoilScalar: 1.1
   - type: ItemSlots
     slots:
       gun_magazine:
@@ -337,7 +337,7 @@
     angleIncrease: 2
     angleDecay: 20
     fireRate: 6
-    cameraRecoilScalar: 1.4 # ВСС — дозвуковой глушёный патрон, отдача мягче остальных "снайперок"
+    cameraRecoilScalar: 0.9 # ВСС — интегрированный глушитель гасит часть импульса газов; 9x39 сам по себе мягкий
   - type: ItemSlots
     slots:
       gun_magazine:
@@ -404,7 +404,7 @@
     angleDecay: 60
     angleIncrease: 2
     fireRate: 0.4
-    cameraRecoilScalar: 2.8 # крупнокалиберная (12.7x108) — самый тяжёлый кик в игре
+    cameraRecoilScalar: 1.0 # ОСВ-96: 12.7x108 уже даёт верх шкалы, тяжёлый ствол с ДТК — без надбавки
   - type: ItemSlots
     slots:
       gun_magazine:

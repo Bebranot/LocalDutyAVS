@@ -17,7 +17,7 @@
                 <CheckBox Name="EnableLanguageFonts" Text="{Loc 'ui-options-language-fonts'}"
                           ToolTip="{Loc 'ui-options-language-fonts-tooltip'}" />
                 <!-- ADT Settings end -->
-                <ui:OptionSlider Name="ScreenShakeIntensitySlider" Title="{Loc 'ui-options-screen-shake-intensity'}" />
+                <!-- _Duty: ползунок тряски экрана убран — отдача одинакова для всех (CVar больше не читается) -->
                 <ui:OptionSlider Name="ChatWindowOpacitySlider" Title="{Loc 'ui-options-chat-window-opacity'}" />
                 <ui:OptionSlider Name="SpeechBubbleTextOpacitySlider" Title="{Loc 'ui-options-speech-bubble-text-opacity'}"
                                  ToolTip="{Loc 'ui-options-speech-bubble-text-opacity-tooltip'}" />

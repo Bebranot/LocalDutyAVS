@@ -5,11 +5,9 @@
 using System.Numerics;
 using Content.Shared._Duty.Aiming.Events;
 using Content.Shared.Camera;
-using Content.Shared.CCVar;
 using Robust.Client.Graphics;
 using Robust.Client.Input;
 using Robust.Client.Player;
-using Robust.Shared.Configuration;
 using Robust.Shared.Map;
 using Robust.Shared.Random;
 using Robust.Shared.Timing;
@@ -26,7 +24,6 @@ namespace Content.Client._Duty.Aiming;
 /// </remarks>
 public sealed partial class AimFlinchSystem : EntitySystem
 {
-    [Dependency] private IConfigurationManager _cfg = default!;
     [Dependency] private IEyeManager _eyeManager = default!;
     [Dependency] private IGameTiming _timing = default!;
     [Dependency] private IInputManager _inputManager = default!;
@@ -48,12 +45,6 @@ public sealed partial class AimFlinchSystem : EntitySystem
     /// <summary>Доля случайного бокового увода — чтобы попадания не выглядели одинаково.</summary>
     private const float SideJitter = 0.35f;
 
-    /// <summary>При «уменьшении движения» рывок остаётся, но слабее.</summary>
-    private const float ReducedMotionScale = 0.4f;
-
-    private float _intensity;
-    private bool _reducedMotion;
-
     public override void Initialize()
     {
         base.Initialize();
@@ -61,13 +52,13 @@ public sealed partial class AimFlinchSystem : EntitySystem
         SubscribeNetworkEvent<AimFlinchEvent>(OnAimFlinch);
         SubscribeLocalEvent<AimFlinchComponent, GetEyeOffsetEvent>(OnGetEyeOffset);
 
-        Subs.CVar(_cfg, CCVars.ScreenShakeIntensity, value => _intensity = value, true);
-        Subs.CVar(_cfg, CCVars.ReducedMotion, value => _reducedMotion = value, true);
+        // Ни ползунок тряски (его больше нет), ни «уменьшение движения» рывок не ослабляют:
+        // это боевая обратная связь, одинаковая для всех, а не косметика, которую можно выключить.
     }
 
     private void OnAimFlinch(AimFlinchEvent ev)
     {
-        if (_intensity <= 0f || _player.LocalEntity is not { } user)
+        if (_player.LocalEntity is not { } user)
             return;
 
         var mouse = _eyeManager.PixelToMap(_inputManager.MouseScreenPosition);
@@ -84,9 +75,7 @@ public sealed partial class AimFlinchSystem : EntitySystem
 
         var side = new Vector2(-away.Y, away.X) * _random.NextFloat(-SideJitter, SideJitter);
 
-        var strength = Math.Min(BaseKick + ev.Damage * KickPerDamage, MaxKick) * _intensity;
-        if (_reducedMotion)
-            strength *= ReducedMotionScale;
+        var strength = Math.Min(BaseKick + ev.Damage * KickPerDamage, MaxKick);
 
         var flinch = EnsureComp<AimFlinchComponent>(user);
         flinch.From = flinch.Current;

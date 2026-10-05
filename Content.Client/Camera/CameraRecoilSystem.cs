@@ -7,21 +7,13 @@ namespace Content.Client.Camera;
 
 public sealed class CameraRecoilSystem : SharedCameraRecoilSystem
 {
-    [Dependency] private readonly IConfigurationManager _configManager = default!;
-
-    private float _intensity;
+    // _Duty: ползунок «Тряска экрана» убран — CVar больше не читаем, иначе у тех, кто выставил 0
+    // (в настройках раньше или консолью), тряска от взрывов/попаданий так и осталась бы выключенной.
 
     public override void Initialize()
     {
         base.Initialize();
         SubscribeNetworkEvent<CameraKickEvent>(OnCameraKick);
-
-        Subs.CVar(_configManager, CCVars.ScreenShakeIntensity, OnCvarChanged, true);
-    }
-
-    private void OnCvarChanged(float value)
-    {
-        _intensity = value;
     }
 
     private void OnCameraKick(CameraKickEvent ev)
@@ -31,13 +23,8 @@ public sealed class CameraRecoilSystem : SharedCameraRecoilSystem
 
     public override void KickCamera(EntityUid uid, Vector2 recoil, CameraRecoilComponent? component = null)
     {
-        if (_intensity == 0)
-            return;
-
         if (!Resolve(uid, ref component, false))
             return;
-
-        recoil *= _intensity;
 
         // Use really bad math to "dampen" kicks when we're already kicked.
         var existing = component.CurrentKick.Length();

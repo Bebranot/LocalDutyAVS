@@ -367,4 +367,23 @@ public sealed class DutyCCVars
     /// </summary>
     public static readonly CVarDef<float> BallisticsTraumaScale =
         CVarDef.Create("duty.ballistics_trauma_scale", 1f, CVar.SERVERONLY);
+
+    // ── Отдача и разброс ─────────────────────────────────────────────────────
+
+    /// <summary>
+    /// Общий множитель отдачи камеры у стрелка. Серверный и реплицируемый: игрок его не меняет —
+    /// отдача одинакова для всех (ползунок тряски из настроек убран намеренно). Подкручивать на живом
+    /// сервере, если в игре окажется слабо/сильно.
+    /// </summary>
+    public static readonly CVarDef<float> RecoilCameraScale =
+        CVarDef.Create("duty.recoil_camera_scale", 1f, CVar.SERVER | CVar.REPLICATED);
+
+    /// <summary>
+    /// Общий множитель разброса всего огнестрела (MinAngle/MaxAngle/AngleIncrease после всех
+    /// модификаторов). Разброс задан у каждого ствола свой, поэтому крутим его множителем, а не
+    /// правкой сотен прототипов. 0.6 оказалось слишком точно («стрельба в точку»), поэтому 1.2.
+    /// Реплицируется — клиентский оверлей разброса совпадает с сервером.
+    /// </summary>
+    public static readonly CVarDef<float> GunSpreadMultiplier =
+        CVarDef.Create("duty.gun_spread_multiplier", 1.2f, CVar.SERVER | CVar.REPLICATED);
 }
