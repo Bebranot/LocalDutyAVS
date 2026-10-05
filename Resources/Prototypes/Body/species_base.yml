@@ -171,6 +171,7 @@
       enum.TourniquetChoiceUiKey.Key: # _Duty: выбор, что перетягивать жгутом
         type: TourniquetChoiceBoundUserInterface
   - type: TraumaTarget # _Duty: существо может получать тяжёлые травмы
+  - type: DutyBallisticTarget # _Duty: к существу применяются бронепробитие пуль и травмы от калибра
   - type: Puller
   - type: GrabIntent
   - type: Grabbable

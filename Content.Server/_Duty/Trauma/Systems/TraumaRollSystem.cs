@@ -3,6 +3,7 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
 using System.Linq;
+using Content.Shared._Duty.Ballistics;
 using Content.Shared._Duty.Trauma;
 using Content.Shared._Duty.Trauma.Components;
 using Content.Shared._Duty.Trauma.Events;
@@ -37,6 +38,7 @@ public sealed partial class TraumaRollSystem : EntitySystem
     [Dependency] private DamageableSystem _damageable = default!;
     [Dependency] private MobStateSystem _mobState = default!;
     [Dependency] private MobThresholdSystem _mobThreshold = default!;
+    [Dependency] private DutyBallisticsSystem _ballistics = default!;
 
     private static readonly ProtoId<DamageTypePrototype> Blunt = "Blunt";
     private static readonly ProtoId<DamageTypePrototype> Slash = "Slash";
@@ -94,6 +96,10 @@ public sealed partial class TraumaRollSystem : EntitySystem
 
     private void OnDamageDealt(Entity<TraumaTargetComponent> ent, ref DamageDealtEvent args)
     {
+        // Контекст пули одноразовый — забираем его до любых ранних выходов, чтобы он не дожил
+        // до следующего (не пулевого) удара в этом же тике.
+        var hasBallistic = _ballistics.TryConsumeTrauma(ent, out var ballistic);
+
         // Урон «сам себе» (медицинские процедуры, провал шинирования и т.п.) травму не вызывает —
         // иначе лечение могло бы каскадом ломать новые кости. Падения (origin == null) роллятся.
         if (args.Origin == ent.Owner)
@@ -110,19 +116,28 @@ public sealed partial class TraumaRollSystem : EntitySystem
         var blunt = GetPositiveDamage(args.Damage, Blunt);
         var sharp = GetPositiveDamage(args.Damage, Slash) + GetPositiveDamage(args.Damage, Piercing);
 
+        // Бонусы калибра — только если пуля пробила с заметным уроном: остановленная бронёй
+        // пуля не должна ни рвать артерию сверх обычного, ни ломать кость.
+        var penetrated = hasBallistic && blunt + sharp >= ballistic.MinTraumaDamage;
+
         // Тупой урон → перелом ИЛИ вывих (конкурируют за один удар).
-        if (blunt >= MinTraumaDamage)
-            TryRollBluntTrauma(ent, blunt);
+        var bluntRolled = blunt >= MinTraumaDamage && TryRollBluntTrauma(ent, blunt);
 
         // Режущий/колющий урон → артериальное кровотечение (без зоны).
         if (sharp >= MinTraumaDamage)
-            TryRollArterialBleed(ent, sharp);
+            TryRollArterialBleed(ent, sharp, penetrated ? ballistic.ArteryBonus : 0f);
+
+        // Перелом от крупного калибра — отдельный ролл: пуля почти не несёт тупого урона, и
+        // blunt-ветка её не видит. Если blunt-ветка в этом ударе уже дала травму — второй не даём.
+        if (penetrated && !bluntRolled && ballistic.FractureChance > 0f)
+            TryRollBallisticFracture(ent, ballistic.FractureChance);
     }
 
-    private void TryRollBluntTrauma(Entity<TraumaTargetComponent> ent, float blunt)
+    /// <returns>true, если выпала травма (вывих или перелом).</returns>
+    private bool TryRollBluntTrauma(Entity<TraumaTargetComponent> ent, float blunt)
     {
         if (!TryPickZone(ent.Comp, out var zone))
-            return;
+            return false;
 
         // Вывих: только суставные зоны, относительно слабый удар и только по ещё не травмированной
         // зоне. По уже сломанной/вывихнутой зоне тупой удар идёт на перелом (эскалацию), а не на вывих.
@@ -135,22 +150,39 @@ public sealed partial class TraumaRollSystem : EntitySystem
             if (_random.Prob(dislocationChance))
             {
                 RaiseTrauma(ent, TraumaType.Dislocation, zone);
-                return;
+                return true;
             }
         }
 
         var fractureChance = GetFractureChance(ent, blunt);
-        if (_random.Prob(fractureChance))
-            RaiseTrauma(ent, TraumaType.Fracture, zone);
+        if (!_random.Prob(fractureChance))
+            return false;
+
+        RaiseTrauma(ent, TraumaType.Fracture, zone);
+        return true;
     }
 
-    private void TryRollArterialBleed(Entity<TraumaTargetComponent> ent, float sharp)
+    private void TryRollArterialBleed(Entity<TraumaTargetComponent> ent, float sharp, float bonus)
     {
         // Шанс = урон² / scale — см. ArterialChanceScale: квадрат вместо random(1..5)*линейности,
         // чтобы броня резала шанс непропорционально сильнее урона, а сам ролл не был лотереей.
-        var chance = Math.Clamp(sharp * sharp / ArterialChanceScale, 0f, MaxTraumaChance);
+        // bonus — плоская прибавка калибра (DutyBallisticsComponent.ArteryBonus), под тем же капом.
+        var chance = Math.Clamp(sharp * sharp / ArterialChanceScale + bonus, 0f, MaxTraumaChance);
         if (_random.Prob(chance))
             RaiseTrauma(ent, TraumaType.ArterialBleed, null);
+    }
+
+    /// <summary>
+    /// Перелом от попадания крупного калибра: плоский шанс из прототипа пули, без HP-множителя —
+    /// калибр ломает кость одинаково и здоровому, и раненому. Зона — по тем же весам, что у blunt.
+    /// </summary>
+    private void TryRollBallisticFracture(Entity<TraumaTargetComponent> ent, float chance)
+    {
+        if (!_random.Prob(Math.Clamp(chance, 0f, MaxTraumaChance)))
+            return;
+
+        if (TryPickZone(ent.Comp, out var zone))
+            RaiseTrauma(ent, TraumaType.Fracture, zone);
     }
 
     /// <summary>

@@ -350,4 +350,21 @@ public sealed class DutyCCVars
     /// </summary>
     public static readonly CVarDef<string> LogLevels =
         CVarDef.Create("duty.log_levels", "statushost=Warning", CVar.ARCHIVE | CVar.SERVERONLY);
+
+    // ── Баллистика (бронепробитие пуль и травмы от калибра) ───────────────────
+
+    /// <summary>
+    /// Множитель бронепробития всех пуль (DutyBallisticsComponent.ArmorPenetration). 0 — пробитие
+    /// выключено, броня работает как в ванилле. Нужен, чтобы подкрутить баланс на живом сервере
+    /// без правки прототипов и рестарта.
+    /// </summary>
+    public static readonly CVarDef<float> BallisticsPenetrationScale =
+        CVarDef.Create("duty.ballistics_penetration_scale", 1f, CVar.SERVERONLY);
+
+    /// <summary>
+    /// Множитель баллистических бонусов травм (прибавка к шансу артерии и шанс перелома от пули).
+    /// 0 — пули травмируют только по общим формулам TraumaRollSystem.
+    /// </summary>
+    public static readonly CVarDef<float> BallisticsTraumaScale =
+        CVarDef.Create("duty.ballistics_trauma_scale", 1f, CVar.SERVERONLY);
 }
