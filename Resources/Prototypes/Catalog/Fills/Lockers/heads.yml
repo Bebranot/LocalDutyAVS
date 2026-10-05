@@ -436,10 +436,8 @@
     - id: ADTtelescopicBaton
     - id: ADTSecurityBudgetCard
     - id: DutyGunM16
-    - id: MagazineLightRifle
-    - id: MagazineLightRifle
-    - id: MagazineLightRifle
-    - id: MagazineLightRifle
+    - id: Magazine556x30 # _Duty: М16 переведена на 5.56x45 (было MagazineLightRifle)
+      amount: 4
     - id: ADTSecurityBudgetPinPaper
     - id: ADTHandheldShuttleConsoleSecurity
     - id: ClothingOuterWinterHoS

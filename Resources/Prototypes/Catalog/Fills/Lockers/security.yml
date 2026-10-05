@@ -64,10 +64,8 @@
     - id: ADTBookPCDsec
     # duty nizhe
     - id: DutyGunSVD
-    - id: ADTMagazineHristovAdvanced
-    - id: ADTMagazineHristovAdvanced
-    - id: ADTMagazineHristovAdvanced
-    - id: ADTMagazineHristovAdvanced
+    - id: 754Mag10 # _Duty: СВД переведена на 7.62x54R (было ADTMagazineHristovAdvanced)
+      amount: 4
     - id: ADTClothingNeckShockCollar
       amount: 2
     - id: RemoteSignaller
@@ -304,6 +302,8 @@
       amount: 12
     - id: DutyGunPM
       amount: 2
+    - id: BasePMMag # _Duty: запасные магазины ПМ (9x18)
+      amount: 4
     # duty nizhe: сталкерские кейсы (пистолеты + револьверы) — весь ассортимент (18 из 18), редкая примесь
     - id: WeaponPistolStalkerAPSCase
       prob: 0.2
@@ -362,7 +362,7 @@
       amount: 4
     - id: DutyGunAK105
       amount: 2
-    - id: MagazineLightRifle
+    - id: Magazine545x30 # _Duty: АК-105 переведён на 5.45x39 (было MagazineLightRifle)
       amount: 4
     # duty nizhe: сталкерские винтовочные кейсы — весь ассортимент (36 из 36), редкая примесь
     - id: STWeaponRifleAK103Case
