@@ -551,11 +551,13 @@ public sealed partial class ChatUIController : UIController
         }
 
         // Only ghosts and admins can send / see deadchat.
-        if (_admin.HasFlag(AdminFlags.Admin) || _admin.HasFlag(AdminFlags.Moderator) || _ghost is {IsGhost: true}) // _Duty: dsay открывает Moderator
-        {
+        // _Duty: читать мёртвых может админ, а писать туда — только тот, кому доступна dsay (иначе сообщение молча терялось)
+        var canDsay = _admin.CanCommand("dsay");
+        if (_admin.HasFlag(AdminFlags.Admin) || canDsay || _ghost is {IsGhost: true})
             FilterableChannels |= ChatChannel.Dead;
+
+        if (canDsay || _ghost is {IsGhost: true})
             CanSendChannels |= ChatSelectChannel.Dead;
-        }
 
         // only admins can see / filter asay
         if (_admin.HasFlag(AdminFlags.Adminchat))

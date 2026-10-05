@@ -1,3 +1,4 @@
+using Content.Shared._Duty.Administration;
 using Content.Client.Administration.Managers;
 using Content.Client.UserInterface.Controls;
 using Content.Shared.Administration;
@@ -130,11 +131,12 @@ public sealed partial class PlayerPanel : FancyWindow
         WhitelistToggle.Disabled =
             !(_adminManager.CanCommand("whitelistadd") && _adminManager.CanCommand("whitelistremove"));
         LogsButton.Disabled = !_adminManager.CanCommand("adminlogs");
-        // _Duty: как на сервере — узел fun_health/ents_delete либо Debug, выданный напрямую. Клиент не видит, выдан ли
+        // _Duty-start: как на сервере — узел fun_health/ents_delete либо Debug, выданный напрямую. Клиент не видит, выдан ли
         // флаг напрямую, поэтому Debug засчитываем только админу без узлов (старая модель прав).
         var data = _adminManager.GetAdminData();
         var legacyDebug = data is { Nodes.Count: 0 } && _adminManager.HasFlag(AdminFlags.Debug);
-        RejuvenateButton.Disabled = !(legacyDebug || (data?.HasNode("fun_health") ?? false));
-        DeleteButton.Disabled = !(legacyDebug || (data?.HasNode("ents_delete") ?? false));
+        RejuvenateButton.Disabled = !(legacyDebug || (data?.HasNode(AdminNodes.FunHealth) ?? false));
+        DeleteButton.Disabled = !(legacyDebug || (data?.HasNode(AdminNodes.EntsDelete) ?? false));
+        // _Duty-end
     }
 }

@@ -1,3 +1,4 @@
+using Content.Shared._Duty.Administration;
 using Content.Server._Duty.Administration;
 using Content.Server.Administration.Managers;
 using Content.Server.EUI;
@@ -66,7 +67,7 @@ public sealed partial class AdminCameraEui : BaseEui
         switch (msg)
         {
             case AdminCameraFollowMessage:
-                if (!_admin.Can(Player, "ents_teleport", AdminFlags.Admin) || Player.AttachedEntity == null) // _Duty
+                if (!_admin.Can(Player, AdminNodes.EntsTeleport, AdminFlags.Admin) || Player.AttachedEntity == null) // _Duty
                     return;
                 _follower.StartFollowingEntity(Player.AttachedEntity.Value, _target);
                 break;

@@ -1,3 +1,4 @@
+using Content.Shared._Duty.Administration;
 using System.Linq;
 using Content.Server.Administration.Managers;
 using Content.Server.Chat.Managers;
@@ -115,7 +116,7 @@ public sealed class AdminSystem : EntitySystem
 
         var updateEv = new FullPlayerListEvent() { PlayersInfo = _playerList.Values.ToList() };
 
-        // _Duty: полный список игроков (роли, антаги) — только тем, у кого есть Admin; право без Admin (ahelp и т.п.) его не видит
+        // _Duty: полный список игроков (роли, антаги) — только тем, кто работает с игроками (см. CanSeePlayerList)
         foreach (var admin in _adminManager.ActiveAdmins.Where(CanSeePlayerList))
         {
             RaiseNetworkEvent(updateEv, admin.Channel);
@@ -210,6 +211,7 @@ public sealed class AdminSystem : EntitySystem
         UpdatePanicBunker();
     }
 
+    // _Duty-start: кому отправлять полный список игроков
     private bool CanSeePlayerList(ICommonSession session)
     {
         // _Duty: список нужен тем, кто работает с игроками: Admin, баны, модерация, ahelp или узлы просмотра игроков
@@ -217,9 +219,14 @@ public sealed class AdminSystem : EntitySystem
         if (data == null)
             return false;
 
-        const AdminFlags mask = AdminFlags.Admin | AdminFlags.Ban | AdminFlags.Moderator | AdminFlags.Adminhelp | AdminFlags.AhelpView;
-        return (data.Flags & mask) != 0 || data.HasNode("players_panel") || data.HasNode("ents_view");
+        const AdminFlags mask = AdminFlags.Admin | AdminFlags.Ban | AdminFlags.Moderator | AdminFlags.Adminhelp
+                                | AdminFlags.AhelpView | AdminFlags.Logs | AdminFlags.ViewNotes;
+        return (data.Flags & mask) != 0
+               || data.HasNode(AdminNodes.PlayersPanel)
+               || data.HasNode(AdminNodes.PlayersBanlist)
+               || data.HasNode(AdminNodes.EntsView);
     }
+    // _Duty-end
 
     private void SendFullPlayerList(ICommonSession playerSession)
     {
@@ -362,7 +369,10 @@ public sealed class AdminSystem : EntitySystem
         var hasAdmins = false;
         foreach (var admin in _adminManager.AllAdmins)
         {
-            if (_adminManager.HasAdminFlag(admin, AdminFlags.Admin, includeDeAdmin: PanicBunker.CountDeadminnedAdmins))
+            // _Duty: админом на сервере считается и тот, у кого права выданы узлами (без флага Admin)
+            var includeDeAdmin = PanicBunker.CountDeadminnedAdmins;
+            if (_adminManager.HasAdminFlag(admin, AdminFlags.Admin, includeDeAdmin)
+                || _adminManager.GetAdminData(admin, includeDeAdmin) is { Nodes.Count: > 0 })
             {
                 hasAdmins = true;
                 break;

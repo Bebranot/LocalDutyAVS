@@ -1,3 +1,4 @@
+using Content.Shared._Duty.Administration;
 using Content.Server._Duty.Administration;
 using Content.Server.GameTicking;
 using Content.Shared.Actions;
@@ -36,7 +37,7 @@ public sealed partial class AdminVerbSystem
 
         var player = actor.PlayerSession;
 
-        if (!_adminManager.Can(player, "ents_spawn", AdminFlags.Admin)) // _Duty: вербы создают сущности
+        if (!_adminManager.Can(player, AdminNodes.EntsSpawn, AdminFlags.Admin)) // _Duty: вербы создают сущности
             return;
 
         if (_adminManager.IsAdmin(player))

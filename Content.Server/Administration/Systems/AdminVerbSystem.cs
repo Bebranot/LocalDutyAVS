@@ -1,3 +1,4 @@
+using Content.Shared._Duty.Administration;
 using Content.Server._Duty.Administration;
 using Content.Server.Administration.Logs;
 using Content.Server.Administration.Managers;
@@ -101,12 +102,11 @@ namespace Content.Server.Administration.Systems
             if (_adminManager.IsAdmin(player))
             {
                 // _Duty-start: каждый верб требует своё право, а не просто «быть админом»
-                var canVerbs = _adminManager.Can(player, "ents_verbs", AdminFlags.Admin);
-                var canSpawn = _adminManager.Can(player, "ents_spawn", AdminFlags.Admin | AdminFlags.Spawn);
-                var canErase = _adminManager.Can(player, "ents_delete", AdminFlags.Admin);
-                var canRespawn = _adminManager.Can(player, "players_kick", AdminFlags.Admin | AdminFlags.Moderator);
-                var canPanel = _adminManager.Can(player, "players_panel", AdminFlags.Admin);
-                var canView = _adminManager.Can(player, "ents_view", AdminFlags.Admin);
+                var canVerbs = _adminManager.Can(player, AdminNodes.EntsVerbs, AdminFlags.Admin);
+                var canSpawn = _adminManager.Can(player, AdminNodes.EntsSpawn, AdminFlags.Admin | AdminFlags.Spawn);
+                var canErase = _adminManager.Can(player, AdminNodes.EntsDelete, AdminFlags.Admin);
+                var canRespawn = _adminManager.Can(player, AdminNodes.PlayersKick, AdminFlags.Admin | AdminFlags.Moderator);
+                var canPanel = _adminManager.Can(player, AdminNodes.PlayersPanel, AdminFlags.Admin);
                 // _Duty-end
 
                 Verb mark = new();
@@ -244,7 +244,7 @@ namespace Content.Server.Administration.Systems
                     });
 
                     // Inspect mind
-                    if (canView) // _Duty
+                    if (_groupController.CanCommand(player, "vv")) // _Duty: верб открывает vv, без права на него он бесполезен
                     args.Verbs.Add(new Verb
                     {
                         Text = Loc.GetString("inspect-mind-verb-get-data-text"),
@@ -397,7 +397,7 @@ namespace Content.Server.Administration.Systems
 
                 }
 
-                if (lawBoundComponent != null && target != null && _adminManager.Can(player, "roles_laws", AdminFlags.Moderator)) // _Duty: узел законов ИИ
+                if (lawBoundComponent != null && target != null && _adminManager.Can(player, AdminNodes.RolesLaws, AdminFlags.Moderator)) // _Duty: узел законов ИИ
                 {
                     args.Verbs.Add(new Verb()
                     {
@@ -418,7 +418,7 @@ namespace Content.Server.Administration.Systems
                 }
 
                 // open camera
-                if (_adminManager.Can(player, "ents_teleport", AdminFlags.Admin)) // _Duty: камера — часть узла перемещения
+                if (_adminManager.Can(player, AdminNodes.EntsTeleport, AdminFlags.Admin)) // _Duty: камера — часть узла перемещения
                 args.Verbs.Add(new Verb()
                 {
                     Priority = 10,

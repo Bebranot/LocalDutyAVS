@@ -1,3 +1,4 @@
+using Content.Shared._Duty.Administration;
 using Content.Server._Duty.Administration;
 using Content.Server.Administration.Managers;
 using Content.Server.EUI;
@@ -39,7 +40,7 @@ namespace Content.Server.Administration.UI
         {
             // Close UI if user loses +FUN.
             // _Duty: или узел «Разум и персонаж», где лежит setoutfit
-            if (obj.Player == Player && !UserAdminFlagCheck(AdminFlags.Fun) && !_adminManager.Can(Player, "roles_mind", AdminFlags.Fun))
+            if (obj.Player == Player && !UserAdminFlagCheck(AdminFlags.Fun) && !_adminManager.Can(Player, AdminNodes.RolesMind, AdminFlags.Fun))
             {
                 Close();
             }

@@ -169,9 +169,9 @@ public sealed partial class AdminManager
 
         var (direct, nodes) = ResolveDatabaseAdmin(dbAdmin);
         return (direct & (AdminFlags.Permissions | AdminFlags.Host)) != 0
-               || nodes.Contains("perms_edit")
-               || nodes.Contains("perms_toggle")
-               || nodes.Contains("host_script");
+               || nodes.Contains(AdminNodes.PermsEdit)
+               || nodes.Contains(AdminNodes.PermsToggle)
+               || nodes.Contains(AdminNodes.HostScript);
     }
 
     public bool IsOutranked(ICommonSession invoker, ICommonSession target)
@@ -267,15 +267,18 @@ public sealed partial class AdminManager
         return false;
     }
 
+    // Горячий путь (сотни команд на каждое обновление статуса): замок берём, только если дерево ещё не построено
     private bool CommandAllowedForConsole(AdminData data, string cmdName, AdminFlags[] flagsReq)
     {
-        EnsureTree();
+        if (_tree == null)
+            EnsureTree();
         return CommandAllowed(data, cmdName, flagsReq, _nodeCommands);
     }
 
     private bool CommandAllowedForToolshed(AdminData data, string cmdName, AdminFlags[] flagsReq)
     {
-        EnsureTree();
+        if (_tree == null)
+            EnsureTree();
         return CommandAllowed(data, cmdName, flagsReq, _nodeToolshed);
     }
 }

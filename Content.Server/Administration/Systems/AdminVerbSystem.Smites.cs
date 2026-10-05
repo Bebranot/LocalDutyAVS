@@ -1,3 +1,4 @@
+using Content.Shared._Duty.Administration;
 using Content.Server._Duty.Administration;
 using System.Linq;
 using System.Numerics;
@@ -114,7 +115,7 @@ public sealed partial class AdminVerbSystem
         var player = actor.PlayerSession;
 
         // _Duty: смайты открывает узел эффектов (или Fun напрямую), а не любой узел, включающий Fun
-        if (!_adminManager.Can(player, "fun_effects", AdminFlags.Fun))
+        if (!_adminManager.Can(player, AdminNodes.FunEffects, AdminFlags.Fun))
             return;
 
         // 1984.

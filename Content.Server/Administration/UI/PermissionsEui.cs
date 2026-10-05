@@ -1,3 +1,4 @@
+using Content.Shared._Duty.Administration;
 using System.Linq;
 using System.Threading.Tasks;
 using Content.Server.Administration.Logs;
@@ -21,7 +22,7 @@ namespace Content.Server.Administration.UI
     public sealed class PermissionsEui : BaseEui
     {
         /// <summary>Узел, дающий право открывать панель выдачи прав (вместе со старым флагом Permissions).</summary>
-        public const string EditNode = "perms_edit";
+        public const string EditNode = AdminNodes.PermsEdit;
 
         private const int MaxTitleLength = 64;
         private const int MaxRankNameLength = 64;

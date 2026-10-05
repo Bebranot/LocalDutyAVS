@@ -40,6 +40,13 @@ public sealed class AdminPermissionTreeTests
                 Assert.That(tree.Errors, Is.Empty, string.Join("; ", tree.Errors));
                 Assert.That(admin.PermissionTreeProblems, Is.Empty, string.Join("; ", admin.PermissionTreeProblems));
 
+                // узлы, на которые ссылается код, должны существовать: иначе проверка в коде молча закрывает доступ
+                foreach (var field in typeof(AdminNodes).GetFields(System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static))
+                {
+                    var id = (string) field.GetValue(null)!;
+                    Assert.That(tree.Exists(id), $"AdminNodes.{field.Name} = '{id}': такого узла нет в дереве прав");
+                }
+
                 foreach (var node in tree.All)
                 {
                     Assert.That(loc.TryGetString(node.NameLoc, out _), $"Нет названия узла прав '{node.ID}' ({node.NameLoc})");

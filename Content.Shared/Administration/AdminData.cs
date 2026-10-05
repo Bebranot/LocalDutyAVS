@@ -1,4 +1,6 @@
-﻿
+﻿using Content.Shared._Duty.Administration;
+
+
 namespace Content.Shared.Administration
 {
     /// <summary>
@@ -75,7 +77,7 @@ namespace Content.Shared.Administration
         public bool CanScript()
         {
             // _Duty: скрипты открывает и узел host_script, без выдачи Host целиком
-            return HasFlag(AdminFlags.Host) || HasNode("host_script");
+            return HasFlag(AdminFlags.Host) || HasNode(AdminNodes.HostScript);
         }
 
         /// <summary>
@@ -98,7 +100,7 @@ namespace Content.Shared.Administration
         public bool CanAdminReloadPrototypes()
         {
             // _Duty: перезагрузка прототипов идёт вместе с их загрузкой (узел host_upload)
-            return HasFlag(AdminFlags.Host) || HasNode("host_upload");
+            return HasFlag(AdminFlags.Host) || HasNode(AdminNodes.HostUpload);
         }
     }
 }

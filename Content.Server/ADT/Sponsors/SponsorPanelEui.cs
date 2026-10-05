@@ -1,3 +1,4 @@
+using Content.Shared._Duty.Administration;
 using Content.Server._Duty.Administration;
 using System.Linq;
 using System.Threading.Tasks;
@@ -230,7 +231,7 @@ public sealed class SponsorPanelEui : BaseEui
 
     private bool HasPermission()
     {
-        return _admins.Can(Player, "host_system", AdminFlags.Host) || _admins.HasAdminFlag(Player, AdminFlags.Host); // _Duty: узел host_system
+        return _admins.Can(Player, AdminNodes.HostSystem, AdminFlags.Host) || _admins.HasAdminFlag(Player, AdminFlags.Host); // _Duty: узел host_system
     }
 
     private string ActorName()

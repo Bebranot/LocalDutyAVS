@@ -1,3 +1,4 @@
+using Content.Shared._Duty.Administration;
 using Content.Server._Duty.Administration;
 using Content.Shared.Administration;
 using Content.Shared.ADT.Administration;
@@ -35,7 +36,7 @@ public sealed partial class AdminVerbSystem
 
         var player = actor.PlayerSession;
 
-        if (!_adminManager.Can(player, "ents_spawn", AdminFlags.Admin)) // _Duty: вербы создают карты и сущности
+        if (!_adminManager.Can(player, AdminNodes.EntsSpawn, AdminFlags.Admin)) // _Duty: вербы создают карты и сущности
             return;
 
         var arenas = _prototypeManager.EnumeratePrototypes<AdminArenaVerbPrototype>().ToList().OrderBy(x => x.Name);

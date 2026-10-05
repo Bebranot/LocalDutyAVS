@@ -67,7 +67,7 @@ internal sealed class ChatManager : IChatManager
                 if (_systems.GetEntitySystemOrNull<GhostSystem>() is {IsGhost: true})
                     goto case ChatSelectChannel.Local;
 
-                if (_adminMgr.HasFlag(AdminFlags.Admin) || _adminMgr.HasFlag(AdminFlags.Moderator)) // _Duty: dsay открывает Moderator
+                if (_adminMgr.CanCommand("dsay")) // _Duty: проверяем саму команду, а не флаги
                     _consoleHost.ExecuteCommand($"dsay \"{CommandParsing.Escape(str)}\"");
                 else
                     _sawmill.Warning("Tried to speak on deadchat without being ghost or admin.");

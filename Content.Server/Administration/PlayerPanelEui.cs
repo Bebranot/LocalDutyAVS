@@ -1,3 +1,4 @@
+using Content.Shared._Duty.Administration;
 using Content.Server._Duty.Administration;
 using System.Linq;
 using Content.Server.Administration.Logs;
@@ -88,7 +89,7 @@ public sealed class PlayerPanelEui : BaseEui
         switch (msg)
         {
             case PlayerPanelFreezeMessage freezeMsg:
-                if (!_admins.Can(Player, "ents_verbs", AdminFlags.Admin) || // _Duty
+                if (!_admins.Can(Player, AdminNodes.EntsVerbs, AdminFlags.Admin) || // _Duty
                     !_entity.TrySystem<AdminFrozenSystem>(out var frozenSystem) ||
                     !_player.TryGetSessionById(_targetPlayer.UserId, out session) ||
                     session.AttachedEntity == null)
@@ -127,7 +128,7 @@ public sealed class PlayerPanelEui : BaseEui
             case PlayerPanelDeleteMessage:
             case PlayerPanelRejuvenationMessage:
                 // _Duty: удаление и лечение требуют своих узлов, Debug напрямую по-прежнему хватает
-                if (!_admins.Can(Player, msg is PlayerPanelDeleteMessage ? "ents_delete" : "fun_health", AdminFlags.Debug) ||
+                if (!_admins.Can(Player, msg is PlayerPanelDeleteMessage ? AdminNodes.EntsDelete : AdminNodes.FunHealth, AdminFlags.Debug) ||
                     !_player.TryGetSessionById(_targetPlayer.UserId, out session) ||
                     session.AttachedEntity == null)
                     return;
@@ -147,7 +148,7 @@ public sealed class PlayerPanelEui : BaseEui
                 }
                 break;
             case PlayerPanelFollowMessage:
-                if (!_admins.Can(Player, "ents_teleport", AdminFlags.Admin) || // _Duty
+                if (!_admins.Can(Player, AdminNodes.EntsTeleport, AdminFlags.Admin) || // _Duty
                     !_player.TryGetSessionById(_targetPlayer.UserId, out session) ||
                     session.AttachedEntity == null ||
                     Player.AttachedEntity is null ||
@@ -184,7 +185,7 @@ public sealed class PlayerPanelEui : BaseEui
         _sharedConnections = _player.Sessions.Count(s => s.Channel.RemoteEndPoint.Address.Equals(_targetPlayer.LastAddress) && s.UserId != _targetPlayer.UserId);
 
     // Apparently the Bans flag is also used for whitelists
-    if (_admins.HasAdminFlag(Player, AdminFlags.Ban) || _admins.HasAdminNode(Player, "players_banlist")) // _Duty: счётчик банов видит и узел списка банов
+    if (_admins.HasAdminFlag(Player, AdminFlags.Ban) || _admins.HasAdminNode(Player, AdminNodes.PlayersBanlist)) // _Duty: счётчик банов видит и узел списка банов
         {
             _whitelisted = await _db.GetWhitelistStatusAsync(_targetPlayer.UserId);
             // This won't get associated ip or hwid bans but they were not placed on this account anyways
