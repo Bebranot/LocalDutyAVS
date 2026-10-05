@@ -21,6 +21,9 @@ duty-perm-ui-hint = Наведите курсор на право: здесь п
 duty-perm-ui-from-rank = из ранга
 duty-perm-ui-summary = Выбрано прав: { $chosen } из { $total }. Личных запретов: { $blocked }.
 duty-perm-ui-none = нет прав
+duty-perm-ui-saving = Сохраняю…
+duty-perm-ui-suspended = { $name } (отстранён)
+duty-perm-ui-confirm-remove = Точно удалить?
 
 duty-perm-legacy = Устаревшие флаги
 duty-perm-legacy-area-desc = Грубые флаги старой системы. Нужны только для команд и проверок, которые ещё не разнесены по узлам выше. Выдавайте их в последнюю очередь: один флаг открывает много команд сразу.
@@ -48,7 +51,7 @@ duty-perm-legacy-logs = LOGS
 duty-perm-legacy-round = ROUND
     .desc = Управление раундом.
 duty-perm-legacy-query = QUERY
-    .desc = Загрузка файлов и прототипов, запросы Toolshed.
+    .desc = Запросы и выборки Toolshed (поиск сущностей, сортировка). Загрузка файлов теперь требует HOST.
 duty-perm-legacy-adminhelp = ADMINHELP
     .desc = Ответы игрокам в админ-помощи.
 duty-perm-legacy-viewnotes = VIEWNOTES
@@ -81,8 +84,29 @@ duty-admin-toggle-outranked = У этого админа прав больше, 
 duty-admin-toggle-bad-action = Второй аргумент должен быть deadmin или readmin.
 
 admin-menu-search-placeholder = Поиск по командам, кнопкам и правам
+duty-admin-menu-adminbus-tab = Спавн и загрузка
+duty-admin-menu-panic-bunker-tab = Паник-бункер
+duty-admin-tab-group-players = Игроки и наказания
+duty-admin-tab-group-chat = Общение и объявления
+duty-admin-tab-group-tools = Инструменты
 admin-menu-search-result = { $text }  ·  { $command }  ·  { $tab }
 admin-menu-search-empty = Ничего не найдено среди доступных вам команд.
 admin-menu-button-tooltip = Команда: { $command }
 admin-menu-button-tooltip-node = Команда: { $command }
     Право: { $nodes }
+
+# Итог действий в панели выдачи прав (приходит с сервера)
+duty-perm-result-admin-saved = Права админа { $name } сохранены.
+duty-perm-result-admin-removed = { $name } больше не админ.
+duty-perm-result-rank-saved = Ранг «{ $name }» сохранён.
+duty-perm-result-rank-removed = Ранг «{ $name }» удалён.
+duty-perm-result-no-access = Нельзя: у этого админа или ранга есть права, которых нет у вас.
+duty-perm-result-unknown-player = Игрок «{ $name }» не найден. Он должен хотя бы раз зайти на сервер.
+duty-perm-result-already-admin = { $name } уже админ: откройте его через «Редактировать».
+duty-perm-result-rank-too-high = Ранг «{ $name }» содержит права, которых нет у вас.
+duty-perm-result-not-found = Запись не найдена: её уже изменили или удалили.
+duty-perm-result-conflict = Одно и то же право и выдано, и запрещено. Снимите одно из двух.
+duty-perm-result-unknown-grant = В запросе неизвестное право. Переоткройте панель.
+duty-perm-result-bad-name = Название ранга пустое или длиннее { $max } символов.
+duty-perm-result-bad-title = Титул длиннее { $max } символов.
+duty-perm-result-error = Ошибка базы данных, подробности в логе сервера.

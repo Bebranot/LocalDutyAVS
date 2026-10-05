@@ -74,7 +74,8 @@ namespace Content.Shared.Administration
         /// </summary>
         public bool CanScript()
         {
-            return HasFlag(AdminFlags.Host);
+            // _Duty: скрипты открывает и узел host_script, без выдачи Host целиком
+            return HasFlag(AdminFlags.Host) || HasNode("host_script");
         }
 
         /// <summary>
@@ -96,7 +97,8 @@ namespace Content.Shared.Administration
 
         public bool CanAdminReloadPrototypes()
         {
-            return HasFlag(AdminFlags.Host);
+            // _Duty: перезагрузка прототипов идёт вместе с их загрузкой (узел host_upload)
+            return HasFlag(AdminFlags.Host) || HasNode("host_upload");
         }
     }
 }

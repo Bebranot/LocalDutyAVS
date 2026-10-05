@@ -137,6 +137,8 @@
   - dsay
   - set-motd
   - massmsg
+  toolshed:
+  - msg
 
 - type: adminPermission
   id: chat_ooc
@@ -145,6 +147,14 @@
   commands:
   - setooc
   - setlooc
+
+- type: adminPermission
+  id: chat_moderate
+  group: chat
+  order: 60
+  toolshed:
+  - deletechatmessage
+  - nukechatmessages
 
 - type: adminPermission
   id: round_all
@@ -165,6 +175,8 @@
   - delayroundend
   - toggledisallowlatejoin
   - adjstationjob
+  toolshed:
+  - jobs
 
 - type: adminPermission
   id: round_map
@@ -177,6 +189,8 @@
   - setgamepreset
   - loadgamemap
   - listgamemaps
+  toolshed:
+  - dynamicrule
 
 - type: adminPermission
   id: round_shuttle
@@ -259,7 +273,6 @@
   id: ents_teleport
   group: ents
   order: 10
-  legacy: [Admin]
   commands:
   - tp
   - tpto
@@ -274,6 +287,8 @@
   legacy: [Admin]
   commands:
   - invokeverb
+  toolshed:
+  - runverbas
 
 - type: adminPermission
   id: ents_spawn
@@ -284,6 +299,8 @@
   - spawn
   - cspawn
   - spawnentitylist
+  toolshed:
+  - clone
 
 - type: adminPermission
   id: ents_delete
@@ -313,6 +330,10 @@
   - spin
   - rename
   - throwscoreboard
+  toolshed:
+  - scale
+  - tag
+  - visualize
 
 - type: adminPermission
   id: ents_toolshed_read
@@ -478,6 +499,7 @@
   - spawn
   - tp
   - mind
+  - inventory
 
 - type: adminPermission
   id: roles
@@ -494,7 +516,6 @@
   id: roles_mind
   group: roles
   order: 10
-  legacy: [Fun]
   commands:
   - setmind
   - setmind_swap
@@ -509,7 +530,6 @@
   id: roles_antag
   group: roles
   order: 20
-  legacy: [Fun]
   commands:
   - addrole
   - rmrole
@@ -535,6 +555,8 @@
   legacy: [Moderator]
   commands:
   - lslawset_get
+  toolshed:
+  - laws
 
 - type: adminPermission
   id: roles_language
@@ -554,7 +576,6 @@
 - type: adminPermission
   id: fun_health
   group: fun_all
-  legacy: [Fun]
   commands:
   - damage
   - godmode
@@ -567,6 +588,9 @@
   - hungry
   - thirsty
   - setnutrit
+  toolshed:
+  - rejuvenate
+  - statuseffect
 
 - type: adminPermission
   id: fun_effects
@@ -581,6 +605,9 @@
   - upgradeaction
   - addpolymorphaction
   - addhand
+  toolshed:
+  - polymorph
+  - unpolymorph
 
 - type: adminPermission
   id: fun_sound
@@ -606,6 +633,9 @@
   - dutycodealpha
   - startsingularityengine
   - ftldisk
+  toolshed:
+  - stationevent
+  - xenoartifact
 
 - type: adminPermission
   id: fun_items
@@ -622,6 +652,9 @@
   - clearbluespacelockerlinks
   - linkbodies
   - unlinkbodies
+  toolshed:
+  - solution
+  - storage
 
 - type: adminPermission
   id: fun_npc
@@ -636,7 +669,6 @@
   id: fun_fax
   group: fun_all
   order: 60
-  legacy: [Fun]
   commands:
   - faxui
 
@@ -667,6 +699,9 @@
   - togglespritenetsync
   - tilepry
   - unlocknode
+  toolshed:
+  - addaccesslog
+  - areas
 
 - type: adminPermission
   id: map_io
@@ -878,6 +913,10 @@
   - uitest
   - watch
   - zoom_tweak
+  toolshed:
+  - acmd
+  - feedback
+  - jobboard
 
 - type: adminPermission
   id: host_all
@@ -906,7 +945,6 @@
   group: host_all
   order: 20
   danger: Danger
-  legacy: [Host]
   commands:
   - scsi
   - csi
@@ -949,3 +987,7 @@
   commands:
   - salvageruler
   - showrules
+  toolshed:
+  - admins
+  - bank
+  - stations

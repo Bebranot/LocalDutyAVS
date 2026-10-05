@@ -4,7 +4,8 @@ using Robust.Shared.Serialization;
 
 namespace Content.Shared.Administration
 {
-    // _Duty: права передаются строками: либо имя старого флага (BAN), либо id узла дерева прав (players.ban).
+    // _Duty-start: файл целиком переписан под дерево админ-прав (права — строки: старый флаг или id узла)
+    // _Duty: права передаются строками: либо имя старого флага (BAN), либо id узла дерева прав (players_ban).
     // Так панель и сервер не зависят от битовой маски, а новые узлы добавляются без правки протокола.
     [Serializable, NetSerializable]
     public sealed class PermissionsEuiState : EuiStateBase
@@ -89,5 +90,14 @@ namespace Content.Shared.Administration
             public string Name = string.Empty;
             public string[] Grants = Array.Empty<string>();
         }
+
+        /// <summary>Итог действия с сервера: показывается в панели, чтобы отказ не выглядел как «ничего не произошло».</summary>
+        [Serializable, NetSerializable]
+        public sealed class OperationResult : EuiMessageBase
+        {
+            public bool Success;
+            public string Message = string.Empty;
+        }
     }
+// _Duty-end
 }

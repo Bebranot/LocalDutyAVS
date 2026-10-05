@@ -397,7 +397,7 @@ namespace Content.Server.Administration.Systems
 
                 }
 
-                if (lawBoundComponent != null && target != null && _adminManager.HasAdminFlag(player, AdminFlags.Moderator))
+                if (lawBoundComponent != null && target != null && _adminManager.Can(player, "roles_laws", AdminFlags.Moderator)) // _Duty: узел законов ИИ
                 {
                     args.Verbs.Add(new Verb()
                     {
@@ -418,6 +418,7 @@ namespace Content.Server.Administration.Systems
                 }
 
                 // open camera
+                if (_adminManager.Can(player, "ents_teleport", AdminFlags.Admin)) // _Duty: камера — часть узла перемещения
                 args.Verbs.Add(new Verb()
                 {
                     Priority = 10,

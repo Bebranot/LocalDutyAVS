@@ -35,8 +35,7 @@ namespace Content.Client.Administration.UI.Tabs.AdminbusTab
             SpawnTilesButton.OnPressed += SpawnTilesButtonOnOnPressed;
             SpawnDecalsButton.OnPressed += SpawnDecalsButtonOnPressed;
             LoadGamePrototypeButton.OnPressed += LoadGamePrototypeButtonOnPressed;
-            LoadGamePrototypeButton.Disabled = !adminManager.CanCommand("loadprototype");
-            LoadBlueprintsButton.Disabled = !adminManager.CanCommand("loadgrid");
+            OnStatusUpdate(); // _Duty: права применяем одним методом и при открытии, и при смене прав
         }
 
         private void OnStatusUpdate()
@@ -44,6 +43,14 @@ namespace Content.Client.Administration.UI.Tabs.AdminbusTab
             var adminManager = IoCManager.Resolve<IClientAdminManager>();
             LoadGamePrototypeButton.Disabled = !adminManager.CanCommand("loadprototype");
             LoadBlueprintsButton.Disabled = !adminManager.CanCommand("loadgrid");
+
+            // _Duty-start: кнопки спавна видны только с правом спавна, загрузка прототипа — только с её командой
+            var canPlace = adminManager.CanAdminPlace();
+            SpawnEntitiesButton.Visible = canPlace;
+            SpawnTilesButton.Visible = canPlace;
+            SpawnDecalsButton.Visible = canPlace;
+            LoadGamePrototypeButton.Visible = adminManager.CanCommand("loadprototype");
+            // _Duty-end
         }
 
         private void LoadGamePrototypeButtonOnPressed(BaseButton.ButtonEventArgs obj)

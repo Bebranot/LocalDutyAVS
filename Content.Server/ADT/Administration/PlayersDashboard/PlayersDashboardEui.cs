@@ -22,6 +22,7 @@ public sealed partial class PlayersDashboardEui : BaseEui
     [Dependency] private readonly IPlayerManager _playerManager = default!;
     [Dependency] private readonly JoinQueueManager _joinQueue = default!;
     [Dependency] private readonly IAdminManager _adminManager = default!;
+    [Dependency] private readonly Robust.Server.Console.IConGroupController _conGroup = default!; // _Duty
 
     private readonly MindSystem _mind;
     private readonly CancellationTokenSource _refreshToken = new();
@@ -37,7 +38,22 @@ public sealed partial class PlayersDashboardEui : BaseEui
         base.Opened();
 
         StateDirty();
-        Timer.SpawnRepeating(RefreshTime, StateDirty, _refreshToken.Token);
+        Timer.SpawnRepeating(RefreshTime, Refresh, _refreshToken.Token); // _Duty: обновление с проверкой прав
+    }
+
+    // _Duty: окно с данными игроков закрывается, если права на него отозвали
+    private void Refresh()
+    {
+        if (IsShutDown)
+            return;
+
+        if (!_conGroup.CanCommand(Player, "playersdashboard"))
+        {
+            Close();
+            return;
+        }
+
+        StateDirty();
     }
 
     public override void Closed()

@@ -21,14 +21,37 @@ public sealed partial class AdminManager
     private Dictionary<string, string[]> _nodeCommands = new();
     private Dictionary<string, string[]> _nodeToolshed = new();
 
+    // Ошибки структуры и ссылки на несуществующие команды: пишутся в лог и проверяются тестом
+    private List<string> _treeProblems = new();
+
     public AdminPermissionTree PermissionTree => EnsureTree();
+
+    public IReadOnlyList<string> PermissionTreeProblems
+    {
+        get
+        {
+            EnsureTree();
+            return _treeProblems;
+        }
+    }
 
     private void InitializePermissionTree()
     {
         _proto.PrototypesReloaded += args =>
         {
-            if (args.WasModified<AdminPermissionPrototype>())
+            if (!args.WasModified<AdminPermissionPrototype>())
+                return;
+
+            lock (_treeLock)
+            {
                 _tree = null;
+            }
+
+            // узлы и команды вошедших админов посчитаны по старому дереву
+            foreach (var session in _admins.Keys.ToArray())
+            {
+                ReloadAdmin(session);
+            }
         };
     }
 
@@ -46,10 +69,7 @@ public sealed partial class AdminManager
     private AdminPermissionTree BuildTree()
     {
         var tree = new AdminPermissionTree(_proto);
-        foreach (var error in tree.Errors)
-        {
-            _sawmill.Error(error);
-        }
+        var problems = new List<string>(tree.Errors);
 
         var console = new Dictionary<string, List<string>>();
         var toolshed = new Dictionary<string, List<string>>();
@@ -62,7 +82,7 @@ public sealed partial class AdminManager
                 l.Add(node.ID);
 
                 if (!_commandPermissions.AdminCommands.ContainsKey(cmd) && !_commandPermissions.AnyCommands.Contains(cmd))
-                    _sawmill.Warning($"Узел права '{node.ID}' ссылается на неизвестную консольную команду '{cmd}'");
+                    problems.Add($"Узел права '{node.ID}' ссылается на неизвестную консольную команду '{cmd}'");
             }
 
             foreach (var cmd in node.Toolshed)
@@ -72,12 +92,19 @@ public sealed partial class AdminManager
                 l.Add(node.ID);
 
                 if (!_toolshedCommandPermissions.AdminCommands.ContainsKey(cmd) && !_toolshedCommandPermissions.AnyCommands.Contains(cmd))
-                    _sawmill.Warning($"Узел права '{node.ID}' ссылается на неизвестную toolshed-команду '{cmd}'");
+                    problems.Add($"Узел права '{node.ID}' ссылается на неизвестную toolshed-команду '{cmd}'");
             }
         }
 
         _nodeCommands = console.ToDictionary(p => p.Key, p => p.Value.ToArray());
         _nodeToolshed = toolshed.ToDictionary(p => p.Key, p => p.Value.ToArray());
+
+        foreach (var problem in problems)
+        {
+            _sawmill.Error(problem);
+        }
+
+        _treeProblems = problems;
         return tree;
     }
 
@@ -119,7 +146,9 @@ public sealed partial class AdminManager
         // Host из БД (флаг HOST) — владелец: у него есть все узлы, как у входа через консоль
         if ((directFlags & AdminFlags.Host) != 0)
             nodes = new HashSet<string>(tree.AllIds());
-        effectiveFlags = directFlags | tree.LegacyFor(nodes);
+
+        // Личный запрет старого флага снимает его и там, где его включил бы узел
+        effectiveFlags = (directFlags | tree.LegacyFor(nodes)) & ~negFlags;
     }
 
     public (AdminFlags Direct, HashSet<string> Nodes) ResolveDatabaseAdmin(Database.Admin dbAdmin)
@@ -170,6 +199,10 @@ public sealed partial class AdminManager
         foreach (var nodeId in targetData.Nodes)
         {
             if (invokerData.Nodes.Contains(nodeId))
+                continue;
+
+            // область означает «всё внутри», а всё внутри и так лежит в Nodes и проверяется по отдельности
+            if (tree.ChildrenOf(nodeId).Count > 0)
                 continue;
 
             if (!tree.TryGet(nodeId, out var node) || !NodeCoveredByFlags(node, invokerData.DirectFlags))

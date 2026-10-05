@@ -43,6 +43,13 @@ public sealed class ExportCommand : LocalizedCommands
             return;
         }
 
+        // _Duty: без аргумента команда падала с IndexOutOfRange в async void
+        if (args.Length != 1)
+        {
+            shell.WriteError(Loc.GetString("shell-need-exactly-one-argument"));
+            return;
+        }
+
         var resPath = new ResPath(args[0]).ToRootedPath();
         TextReader? reader;
         if (resPath.Extension != "yml")

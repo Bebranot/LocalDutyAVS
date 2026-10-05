@@ -38,7 +38,7 @@ public sealed class AdminPermissionTreeTests
             Assert.Multiple(() =>
             {
                 Assert.That(tree.Errors, Is.Empty, string.Join("; ", tree.Errors));
-                Assert.That(admin.PermissionTree.Errors, Is.Empty);
+                Assert.That(admin.PermissionTreeProblems, Is.Empty, string.Join("; ", admin.PermissionTreeProblems));
 
                 foreach (var node in tree.All)
                 {

@@ -62,7 +62,7 @@ public sealed partial class AdminVerbSystem
 
         var player = actor.PlayerSession;
 
-        // _Duty: трюки открывает узел ents.verbs (или прежний флаг Admin напрямую), а не любое право
+        // _Duty: трюки открывает узел ents_verbs (или прежний флаг Admin напрямую), а не любое право
         if (!_adminManager.Can(player, "ents_verbs", AdminFlags.Admin))
             return;
 

@@ -56,4 +56,14 @@ public static class AdminNodeLookup
     {
         return string.Join(", ", NodesFor(command).Select(n => Loc.GetString(n.NameLoc)));
     }
+
+    /// <summary>Подсказка кнопки меню F7: какая команда выполняется и каким правом она открывается.</summary>
+    public static string Tooltip(string command)
+    {
+        var name = command.Split(' ')[0];
+        var nodes = NodeNames(name);
+        return string.IsNullOrEmpty(nodes)
+            ? Loc.GetString("admin-menu-button-tooltip", ("command", name))
+            : Loc.GetString("admin-menu-button-tooltip-node", ("command", name), ("nodes", nodes));
+    }
 }

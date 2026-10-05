@@ -80,8 +80,6 @@ public sealed class PermissionTreeEditor : BoxContainer
     private readonly Label _summary;
     private bool _refreshing;
 
-    public event Action? Changed;
-
     public PermissionTreeEditor(AdminPermissionTree tree, IReadOnlySet<string> editorGrants, EditorMode mode)
     {
         _tree = tree;
@@ -154,8 +152,35 @@ public sealed class PermissionTreeEditor : BoxContainer
             },
         });
 
-        _summary = new Label { StyleClasses = { "LabelSubText" }, ClipText = true };
-        AddChild(_summary);
+        _summary = new Label { StyleClasses = { "LabelSubText" }, ClipText = true, HorizontalExpand = true };
+
+        // Легенда: без неё цветные точки у прав ничего не говорят
+        var footer = new BoxContainer
+        {
+            Orientation = LayoutOrientation.Horizontal,
+            SeparationOverride = 10,
+            Children = { _summary },
+        };
+        foreach (var danger in new[] { AdminPermissionDanger.View, AdminPermissionDanger.Action, AdminPermissionDanger.Danger })
+        {
+            footer.AddChild(new BoxContainer
+            {
+                Orientation = LayoutOrientation.Horizontal,
+                SeparationOverride = 4,
+                Children =
+                {
+                    new PanelContainer
+                    {
+                        MinSize = new Vector2(8, 8),
+                        VerticalAlignment = VAlignment.Center,
+                        PanelOverride = new StyleBoxFlat { BackgroundColor = DangerColor(danger) },
+                    },
+                    new Label { Text = DangerText(danger), StyleClasses = { "LabelSubText" } },
+                },
+            });
+        }
+
+        AddChild(footer);
 
         BuildEntries();
         ShowInfo(null);
@@ -263,8 +288,6 @@ public sealed class PermissionTreeEditor : BoxContainer
         entry.Check.OnMouseEntered += _ => ShowInfo(entry);
         entry.Check.TooltipDelay = 0.25f;
         entry.Check.TooltipSupplier = _ => BuildTooltip(entry);
-        if (!entry.Legacy || !entry.IsLeaf)
-            entry.Check.ToolTip = entry.Desc; // запасной вариант, если поставщик подсказки не сработает
 
         entry.Counter = new Label { StyleClasses = { "LabelSubText" } };
 
@@ -460,7 +483,6 @@ public sealed class PermissionTreeEditor : BoxContainer
         }
 
         Refresh();
-        Changed?.Invoke();
     }
 
     private void OnBlockToggled(Entry entry, bool pressed)
@@ -482,7 +504,6 @@ public sealed class PermissionTreeEditor : BoxContainer
         }
 
         Refresh();
-        Changed?.Invoke();
     }
 
     private void SelectViewOnly()
@@ -494,7 +515,6 @@ public sealed class PermissionTreeEditor : BoxContainer
         }
 
         Refresh();
-        Changed?.Invoke();
     }
 
     private void ClearSelection()
@@ -502,7 +522,6 @@ public sealed class PermissionTreeEditor : BoxContainer
         _selected.Clear();
         _blocked.Clear();
         Refresh();
-        Changed?.Invoke();
     }
 
     private void SetAllFolded(bool folded)
@@ -528,7 +547,8 @@ public sealed class PermissionTreeEditor : BoxContainer
             var leaves = Leaves(e, true);
             var all = Leaves(e, false);
 
-            var on = leaves.Count(l => _selected.Contains(l.Id) || _inherited.Contains(l.Id));
+            // запрещённое лично не считается выданным, даже если приходит из ранга
+            var on = leaves.Count(l => (_selected.Contains(l.Id) || _inherited.Contains(l.Id)) && !_blocked.Contains(l.Id));
             var free = leaves.Count(l => !_inherited.Contains(l.Id));
 
             e.Check.Pressed = leaves.Count > 0 && on == leaves.Count;
@@ -551,7 +571,7 @@ public sealed class PermissionTreeEditor : BoxContainer
         _refreshing = false;
 
         var total = _byId.Values.Count(e => e.IsLeaf);
-        var chosen = _byId.Values.Count(e => e.IsLeaf && (_selected.Contains(e.Id) || _inherited.Contains(e.Id)));
+        var chosen = _byId.Values.Count(e => e.IsLeaf && (_selected.Contains(e.Id) || _inherited.Contains(e.Id)) && !_blocked.Contains(e.Id));
         _summary.Text = Loc.GetString("duty-perm-ui-summary", ("chosen", chosen), ("total", total), ("blocked", _blocked.Count));
     }
 

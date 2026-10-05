@@ -1,3 +1,4 @@
+using Content.Server._Duty.Administration;
 using Content.Server.ADT.Blob.GameTicking;
 using Content.Server.ADT.Shadowling;
 using Content.Server.Antag;
@@ -49,7 +50,8 @@ public sealed partial class AdminVerbSystem
 
         var player = actor.PlayerSession;
 
-        if (!_adminManager.HasAdminFlag(player, AdminFlags.Fun))
+        // _Duty: вербы антагонистов открывает узел антагонистов (или Fun напрямую)
+        if (!_adminManager.Can(player, "roles_antag", AdminFlags.Fun))
             return;
 
         if (!HasComp<MindContainerComponent>(args.Target) || !TryComp<ActorComponent>(args.Target, out var targetActor))

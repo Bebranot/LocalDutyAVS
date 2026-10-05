@@ -184,7 +184,7 @@ public sealed class PlayerPanelEui : BaseEui
         _sharedConnections = _player.Sessions.Count(s => s.Channel.RemoteEndPoint.Address.Equals(_targetPlayer.LastAddress) && s.UserId != _targetPlayer.UserId);
 
     // Apparently the Bans flag is also used for whitelists
-    if (_admins.HasAdminFlag(Player, AdminFlags.Ban))
+    if (_admins.HasAdminFlag(Player, AdminFlags.Ban) || _admins.HasAdminNode(Player, "players_banlist")) // _Duty: счётчик банов видит и узел списка банов
         {
             _whitelisted = await _db.GetWhitelistStatusAsync(_targetPlayer.UserId);
             // This won't get associated ip or hwid bans but they were not placed on this account anyways

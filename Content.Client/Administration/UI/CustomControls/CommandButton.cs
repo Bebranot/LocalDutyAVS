@@ -39,21 +39,17 @@ namespace Content.Client.Administration.UI.CustomControls
 
         protected override void EnteredTree()
         {
+            base.EnteredTree();
             ApplyPermissions();
             IoCManager.Resolve<IClientAdminManager>().AdminStatusUpdated += OnStatusUpdated;
 
             if (ToolTip == null && !string.IsNullOrEmpty(Command))
-            {
-                var name = Command.Split(' ')[0];
-                var nodes = AdminNodeLookup.NodeNames(name);
-                ToolTip = string.IsNullOrEmpty(nodes)
-                    ? Loc.GetString("admin-menu-button-tooltip", ("command", name))
-                    : Loc.GetString("admin-menu-button-tooltip-node", ("command", name), ("nodes", nodes));
-            }
+                ToolTip = AdminNodeLookup.Tooltip(Command);
         }
 
         protected override void ExitedTree()
         {
+            base.ExitedTree();
             IoCManager.Resolve<IClientAdminManager>().AdminStatusUpdated -= OnStatusUpdated;
         }
 

@@ -68,6 +68,9 @@ namespace Content.Server.Administration.Managers
         // _Duty: дерево прав (узлы, раскрытие, команды)
         AdminPermissionTree PermissionTree { get; }
 
+        /// <summary>Ошибки дерева прав и ссылки узлов на несуществующие команды (должно быть пусто).</summary>
+        IReadOnlyList<string> PermissionTreeProblems { get; }
+
         /// <summary>Итоговые права админа из записи БД (личные плюс ранг, запреты вычтены). Неизвестные имена пропускаются.</summary>
         (AdminFlags Direct, HashSet<string> Nodes) ResolveDatabaseAdmin(Database.Admin dbAdmin);
 

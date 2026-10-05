@@ -130,9 +130,11 @@ public sealed partial class PlayerPanel : FancyWindow
         WhitelistToggle.Disabled =
             !(_adminManager.CanCommand("whitelistadd") && _adminManager.CanCommand("whitelistremove"));
         LogsButton.Disabled = !_adminManager.CanCommand("adminlogs");
-        // _Duty: лечение и удаление открывают узлы fun_health и ents_delete, как и на сервере
+        // _Duty: как на сервере — узел fun_health/ents_delete либо Debug, выданный напрямую. Клиент не видит, выдан ли
+        // флаг напрямую, поэтому Debug засчитываем только админу без узлов (старая модель прав).
         var data = _adminManager.GetAdminData();
-        RejuvenateButton.Disabled = !(_adminManager.HasFlag(AdminFlags.Debug) || (data?.HasNode("fun_health") ?? false));
-        DeleteButton.Disabled = !(_adminManager.HasFlag(AdminFlags.Debug) || (data?.HasNode("ents_delete") ?? false));
+        var legacyDebug = data is { Nodes.Count: 0 } && _adminManager.HasFlag(AdminFlags.Debug);
+        RejuvenateButton.Disabled = !(legacyDebug || (data?.HasNode("fun_health") ?? false));
+        DeleteButton.Disabled = !(legacyDebug || (data?.HasNode("ents_delete") ?? false));
     }
 }

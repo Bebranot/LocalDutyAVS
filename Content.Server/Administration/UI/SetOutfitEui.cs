@@ -1,3 +1,4 @@
+using Content.Server._Duty.Administration;
 using Content.Server.Administration.Managers;
 using Content.Server.EUI;
 using Content.Shared.Administration;
@@ -37,7 +38,8 @@ namespace Content.Server.Administration.UI
         private void AdminManagerOnPermsChanged(AdminPermsChangedEventArgs obj)
         {
             // Close UI if user loses +FUN.
-            if (obj.Player == Player && !UserAdminFlagCheck(AdminFlags.Fun))
+            // _Duty: или узел «Разум и персонаж», где лежит setoutfit
+            if (obj.Player == Player && !UserAdminFlagCheck(AdminFlags.Fun) && !_adminManager.Can(Player, "roles_mind", AdminFlags.Fun))
             {
                 Close();
             }
