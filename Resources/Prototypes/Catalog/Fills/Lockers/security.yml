@@ -73,21 +73,8 @@
     - id: ADTSecShuttleConsoleCircuitboard
     - id: BoxTapeRecorder
     # ADT-Tweak-End
-    # duty nizhe: сталкерские снайперские кейсы — весь ассортимент (7 из 7), редкая примесь
-    - id: STWeaponSniperMosinCase
-      prob: 0.3
-    - id: STWeaponSniperSKSCase
-      prob: 0.3
+    # duty nizhe: из сталкерских винтовочных кейсов у вардена — только один, с СВД
     - id: STWeaponSniperSVDSCase
-      prob: 0.3
-    - id: STWeaponSniperSVUCase
-      prob: 0.3
-    - id: STWeaponSniperVeprCase
-      prob: 0.3
-    - id: STWeaponSniperVSSCase
-      prob: 0.3
-    - id: STWeaponSniperOSV96Case
-      prob: 0.3
     - id: PlushieLizardJobWarden
       prob: 0.02
 
@@ -364,79 +351,46 @@
       amount: 2
     - id: Magazine545x30 # _Duty: АК-105 переведён на 5.45x39 (было MagazineLightRifle)
       amount: 4
-    # duty nizhe: сталкерские винтовочные кейсы — весь ассортимент (36 из 36), редкая примесь
-    - id: STWeaponRifleAK103Case
-      prob: 0.12
-    - id: STWeaponRifleAK203Case
-      prob: 0.12
-    - id: STWeaponRifleSaiga739Case
-      prob: 0.12
-    - id: STWeaponRifleAKMCase
-      prob: 0.12
-    - id: STWeaponRifleAKS74Case
-      prob: 0.12
-    - id: STWeaponRifleAK74MCase
-      prob: 0.12
-    - id: STWeaponRifleSaiga545Case
-      prob: 0.12
-    - id: STWeaponRifleA545Case
-      prob: 0.12
-    - id: STWeaponRifleFALCase
-      prob: 0.12
-    - id: STWeaponRifleM14Case
-      prob: 0.12
-    - id: STWeaponRifleGalatzCase
-      prob: 0.12
-    - id: STWeaponRifleSCARHCase
-      prob: 0.12
-    - id: STWeaponRifleSCARHShortCase
-      prob: 0.12
-    - id: STWeaponRifleARX160Case
-      prob: 0.12
-    - id: STWeaponRifleASVALCase
-      prob: 0.12
-    - id: STWeaponRifleSIG550Case
-      prob: 0.12
-    - id: STWeaponRifleSIG739Case
-      prob: 0.12
-    - id: STMetroWeaponRifleVSVCase
-      prob: 0.12
-    - id: STWeaponRifleOC14Case
-      prob: 0.12
-    - id: STWeaponRifleOC14939Case
-      prob: 0.12
-    - id: STWeaponRifleStalkerAK104Case
-      prob: 0.12
-    - id: STWeaponRifleStalkerAK12Case
-      prob: 0.12
-    - id: STWeaponRifleStalkerAK15Case
-      prob: 0.12
-    - id: STWeaponRifleStalkerRPK16Case
-      prob: 0.12
-    - id: STWeaponRifleM16Case
-      prob: 0.12
-    - id: STWeaponRifleM4Case
-      prob: 0.12
-    - id: STWeaponRifleHK416Case
-      prob: 0.12
-    - id: STWeaponRifleLR300v1Case
-      prob: 0.12
-    - id: STWeaponRifleSCARLCase
-      prob: 0.12
-    - id: STWeaponRifleG36Case
-      prob: 0.12
-    - id: STWeaponRifleAUGCase
-      prob: 0.12
-    - id: STWeaponRifleGalilCase
-      prob: 0.12
-    - id: STWeaponRifleL85Case
-      prob: 0.12
-    - id: STWeaponRifleF2000Case
-      prob: 0.12
-    - id: STWeaponRifleStalkerAbakanCase
-      prob: 0.12
-    - id: STWeaponRifleStalkerAek971Case
-      prob: 0.12
+    # duty nizhe: два случайных сталкерских винтовочных кейса из всего ассортимента (36)
+    - !type:GroupSelector
+      rolls: 2
+      children:
+      - id: STWeaponRifleAK103Case
+      - id: STWeaponRifleAK203Case
+      - id: STWeaponRifleSaiga739Case
+      - id: STWeaponRifleAKMCase
+      - id: STWeaponRifleAKS74Case
+      - id: STWeaponRifleAK74MCase
+      - id: STWeaponRifleSaiga545Case
+      - id: STWeaponRifleA545Case
+      - id: STWeaponRifleFALCase
+      - id: STWeaponRifleM14Case
+      - id: STWeaponRifleGalatzCase
+      - id: STWeaponRifleSCARHCase
+      - id: STWeaponRifleSCARHShortCase
+      - id: STWeaponRifleARX160Case
+      - id: STWeaponRifleASVALCase
+      - id: STWeaponRifleSIG550Case
+      - id: STWeaponRifleSIG739Case
+      - id: STMetroWeaponRifleVSVCase
+      - id: STWeaponRifleOC14Case
+      - id: STWeaponRifleOC14939Case
+      - id: STWeaponRifleStalkerAK104Case
+      - id: STWeaponRifleStalkerAK12Case
+      - id: STWeaponRifleStalkerAK15Case
+      - id: STWeaponRifleStalkerRPK16Case
+      - id: STWeaponRifleM16Case
+      - id: STWeaponRifleM4Case
+      - id: STWeaponRifleHK416Case
+      - id: STWeaponRifleLR300v1Case
+      - id: STWeaponRifleSCARLCase
+      - id: STWeaponRifleG36Case
+      - id: STWeaponRifleAUGCase
+      - id: STWeaponRifleGalilCase
+      - id: STWeaponRifleL85Case
+      - id: STWeaponRifleF2000Case
+      - id: STWeaponRifleStalkerAbakanCase
+      - id: STWeaponRifleStalkerAek971Case
 
 - type: entity
   parent: [GunSafeBaseSecure, BaseSecurityContraband]
