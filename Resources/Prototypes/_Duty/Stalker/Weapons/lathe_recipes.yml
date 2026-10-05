@@ -352,6 +352,22 @@
     Steel: 300
     Lead: 600
 
+- type: latheRecipe
+  parent: BaseAmmoBoxRecipe
+  id: STAmmoBox44
+  result: STAmmoBox44
+  materials:
+    Steel: 300
+    Lead: 600
+
+- type: latheRecipe
+  parent: BaseAmmoBoxRecipe
+  id: STAmmoBox1255
+  result: STAmmoBox1255
+  materials:
+    Steel: 300
+    Lead: 600
+
 # ── Пак для SecurityTechFab ─────────────────────────────────────────────────
 - type: latheRecipePack
   id: StalkerAmmoStatic
@@ -401,3 +417,282 @@
   - STAmmoBox939
   - STAmmoBox13x108
   - STAmmoBox45ACP
+  - STAmmoBox44
+  - STAmmoBox1255
+
+# ── Бронебойные и экспансивные коробки (открываются технологиями) ─────────────
+# БП дороже: сердечник — пластали вместо части свинца. Экспансивные — по цене обычных,
+# их «цена» — технология и то, что против брони они хуже обычных.
+- type: latheRecipe
+  parent: BaseAmmoBoxRecipe
+  id: STAmmoBox918AP
+  result: STAmmoBox918AP
+  materials:
+    Steel: 300
+    Lead: 450
+    Plasteel: 150
+
+- type: latheRecipe
+  parent: BaseAmmoBoxRecipe
+  id: STAmmoBox918HP
+  result: STAmmoBox918HP
+  materials:
+    Steel: 300
+    Lead: 600
+
+- type: latheRecipe
+  parent: BaseAmmoBoxRecipe
+  id: STAmmoBox919AP
+  result: STAmmoBox919AP
+  materials:
+    Steel: 300
+    Lead: 450
+    Plasteel: 150
+
+- type: latheRecipe
+  parent: BaseAmmoBoxRecipe
+  id: STAmmoBox919HP
+  result: STAmmoBox919HP
+  materials:
+    Steel: 300
+    Lead: 600
+
+- type: latheRecipe
+  parent: BaseAmmoBoxRecipe
+  id: STAmmoBox725AP
+  result: STAmmoBox725AP
+  materials:
+    Steel: 300
+    Lead: 450
+    Plasteel: 150
+
+- type: latheRecipe
+  parent: BaseAmmoBoxRecipe
+  id: STAmmoBox725HP
+  result: STAmmoBox725HP
+  materials:
+    Steel: 300
+    Lead: 600
+
+- type: latheRecipe
+  parent: BaseAmmoBoxRecipe
+  id: STAmmoBox921AP
+  result: STAmmoBox921AP
+  materials:
+    Steel: 300
+    Lead: 450
+    Plasteel: 150
+
+- type: latheRecipe
+  parent: BaseAmmoBoxRecipe
+  id: STAmmoBox921HP
+  result: STAmmoBox921HP
+  materials:
+    Steel: 300
+    Lead: 600
+
+- type: latheRecipe
+  parent: BaseAmmoBoxRecipe
+  id: STAmmoBox45ACPAP
+  result: STAmmoBox45ACPAP
+  materials:
+    Steel: 300
+    Lead: 450
+    Plasteel: 150
+
+- type: latheRecipe
+  parent: BaseAmmoBoxRecipe
+  id: STAmmoBox45ACPHP
+  result: STAmmoBox45ACPHP
+  materials:
+    Steel: 300
+    Lead: 600
+
+- type: latheRecipe
+  parent: BaseAmmoBoxRecipe
+  id: STAmmoBox545AP
+  result: STAmmoBox545AP
+  materials:
+    Steel: 300
+    Lead: 450
+    Plasteel: 150
+
+- type: latheRecipe
+  parent: BaseAmmoBoxRecipe
+  id: STAmmoBox545HP
+  result: STAmmoBox545HP
+  materials:
+    Steel: 300
+    Lead: 600
+
+- type: latheRecipe
+  parent: BaseAmmoBoxRecipe
+  id: STAmmoBox556AP
+  result: STAmmoBox556AP
+  materials:
+    Steel: 300
+    Lead: 450
+    Plasteel: 150
+
+- type: latheRecipe
+  parent: BaseAmmoBoxRecipe
+  id: STAmmoBox556HP
+  result: STAmmoBox556HP
+  materials:
+    Steel: 300
+    Lead: 600
+
+- type: latheRecipe
+  parent: BaseAmmoBoxRecipe
+  id: STAmmoBox739AP
+  result: STAmmoBox739AP
+  materials:
+    Steel: 300
+    Lead: 450
+    Plasteel: 150
+
+- type: latheRecipe
+  parent: BaseAmmoBoxRecipe
+  id: STAmmoBox739HP
+  result: STAmmoBox739HP
+  materials:
+    Steel: 300
+    Lead: 600
+
+- type: latheRecipe
+  parent: BaseAmmoBoxRecipe
+  id: STAmmoBox939AP
+  result: STAmmoBox939AP
+  materials:
+    Steel: 300
+    Lead: 450
+    Plasteel: 150
+
+- type: latheRecipe
+  parent: BaseAmmoBoxRecipe
+  id: STAmmoBox939HP
+  result: STAmmoBox939HP
+  materials:
+    Steel: 300
+    Lead: 600
+
+- type: latheRecipe
+  parent: BaseAmmoBoxRecipe
+  id: STAmmoBox751AP
+  result: STAmmoBox751AP
+  materials:
+    Steel: 300
+    Lead: 450
+    Plasteel: 150
+
+- type: latheRecipe
+  parent: BaseAmmoBoxRecipe
+  id: STAmmoBox751HP
+  result: STAmmoBox751HP
+  materials:
+    Steel: 300
+    Lead: 600
+
+- type: latheRecipe
+  parent: BaseAmmoBoxRecipe
+  id: STAmmoBox754AP
+  result: STAmmoBox754AP
+  materials:
+    Steel: 300
+    Lead: 450
+    Plasteel: 150
+
+- type: latheRecipe
+  parent: BaseAmmoBoxRecipe
+  id: STAmmoBox754HP
+  result: STAmmoBox754HP
+  materials:
+    Steel: 300
+    Lead: 600
+
+- type: latheRecipe
+  parent: BaseAmmoBoxRecipe
+  id: STAmmoBox44AP
+  result: STAmmoBox44AP
+  materials:
+    Steel: 300
+    Lead: 450
+    Plasteel: 150
+
+- type: latheRecipe
+  parent: BaseAmmoBoxRecipe
+  id: STAmmoBox44HP
+  result: STAmmoBox44HP
+  materials:
+    Steel: 300
+    Lead: 600
+
+- type: latheRecipe
+  parent: BaseAmmoBoxRecipe
+  id: STAmmoBox1255AP
+  result: STAmmoBox1255AP
+  materials:
+    Steel: 300
+    Lead: 450
+    Plasteel: 150
+
+- type: latheRecipe
+  parent: BaseAmmoBoxRecipe
+  id: STAmmoBox1255HP
+  result: STAmmoBox1255HP
+  materials:
+    Steel: 300
+    Lead: 600
+
+- type: latheRecipe
+  parent: BaseAmmoBoxRecipe
+  id: STAmmoBox13x108AP
+  result: STAmmoBox13x108AP
+  materials:
+    Steel: 300
+    Lead: 450
+    Plasteel: 150
+
+- type: latheRecipe
+  parent: BaseAmmoBoxRecipe
+  id: STAmmoBox13x108HP
+  result: STAmmoBox13x108HP
+  materials:
+    Steel: 300
+    Lead: 600
+
+- type: latheRecipePack
+  id: DutyAmmoArmorPiercingPack
+  recipes:
+  - STAmmoBox918AP
+  - STAmmoBox919AP
+  - STAmmoBox725AP
+  - STAmmoBox921AP
+  - STAmmoBox45ACPAP
+  - STAmmoBox545AP
+  - STAmmoBox556AP
+  - STAmmoBox739AP
+  - STAmmoBox939AP
+  - STAmmoBox751AP
+  - STAmmoBox754AP
+  - STAmmoBox44AP
+  - STAmmoBox1255AP
+  - STAmmoBox13x108AP
+
+- type: latheRecipePack
+  id: DutyAmmoExpansivePack
+  recipes:
+  - STAmmoBox918HP
+  - STAmmoBox919HP
+  - STAmmoBox725HP
+  - STAmmoBox921HP
+  - STAmmoBox45ACPHP
+  - STAmmoBox545HP
+  - STAmmoBox556HP
+  - STAmmoBox739HP
+  - STAmmoBox939HP
+  - STAmmoBox751HP
+  - STAmmoBox754HP
+  - STAmmoBox44HP
+  - STAmmoBox1255HP
+  - STAmmoBox13x108HP

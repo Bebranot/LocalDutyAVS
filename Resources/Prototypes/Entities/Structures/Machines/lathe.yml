@@ -536,6 +536,8 @@
     # _Duty-start
     - DutySecImplantsPack
     - BraceletSecurity # браслеты СБ из технологии Bracelets не печатались нигде
+    - DutyAmmoExpansivePack # экспансивные коробки сталкерских калибров (технология DutyAmmoExpansiveTech)
+    - DutyAmmoArmorPiercingPack # бронебойные коробки (технология DutyAmmoArmorPiercingTech)
     # _Duty-end
   - type: EmagLatheRecipes
     emagStaticPacks:

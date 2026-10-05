@@ -1,11 +1,11 @@
-# Коробки патронов россыпью (сталкерские калибры) — используют готовые, но ранее нигде не
-# подключённые спрайты из портированного _Stalker/AmmoBoxes.rsi. По одной общей коробке на
-# калибр (без деления по типу пули — арт для этого есть только у 9x39, разводить неоднородность
-# ради одного калибра не стали). Работают как BallisticAmmoProvider (аналог ванильных
-# MagazineBoxPistol/BoxLethalshot) — оттуда патрон достаётся по одному прямо в оружие/магазин.
-# АШ-12 (12.7x55) в списке нет: среди готового арта нет коробки, которую можно уверенно
-# отнести к этому калибру ("1270"-кластер по виду — деревянный ящик дробовых патронов
-# незнакомого калибра, не наш STCartridge1255), лучше пропустить, чем повесить неверную иконку.
+# Коробки патронов россыпью (сталкерские калибры) — спрайты из портированного _Stalker/AmmoBoxes.rsi.
+# Работают как BallisticAmmoProvider (аналог ванильных MagazineBoxPistol/BoxLethalshot) — оттуда патрон
+# достаётся по одному прямо в оружие/магазин.
+# На каждый калибр три коробки: обычная (печатается сразу) и бронебойная/экспансивная (открываются
+# технологиями, см. Resources/Prototypes/_Duty/Research/security_ammo.yml). Бронебойные и экспансивные
+# отличаются наложенной полосой из того же атласа: красная (antiarmor) и жёлтая (exp).
+# .44 Magnum и 12.7x55 своих коробок в атласе не имеют: .44 — зелёная пистолетная коробка «45(2)»,
+# 12.7x55 — военный цинк «cink» (не «1270»: это ящик дробовых патронов).
 
 - type: entity
   parent: BaseItem
@@ -262,7 +262,7 @@
     whitelist:
       tags:
       - STCartridge939
-    proto: STCartridge9x39PSO
+    proto: STCartridge9x39SP5
     capacity: 60
   - type: Item
     size: Small
@@ -330,3 +330,450 @@
     tags:
     - AmmoBox
     - StalkerAmmoBox
+
+# ── Новые коробки, бронебойные и экспансивные ──────────────────────────────
+- type: entity
+  parent: STAmmoBox918
+  id: STAmmoBox918AP
+  name: коробка бронебойных патронов (9x18)
+  suffix: "Stalker, Коробка патронов, 9x18, AP"
+  description: Коробка бронебойных патронов калибра 9x18. Вместимость — 60 штук.
+  components:
+  - type: BallisticAmmoProvider
+    proto: STCartridge918PBM
+  - type: Sprite
+    layers:
+    - state: "918"
+    - state: antiarmor
+
+- type: entity
+  parent: STAmmoBox918
+  id: STAmmoBox918HP
+  name: коробка экспансивных патронов (9x18)
+  suffix: "Stalker, Коробка патронов, 9x18, HP"
+  description: Коробка экспансивных патронов калибра 9x18. Вместимость — 60 штук.
+  components:
+  - type: BallisticAmmoProvider
+    proto: STCartridge918SP7
+  - type: Sprite
+    layers:
+    - state: "918"
+    - state: exp
+
+- type: entity
+  parent: STAmmoBox919
+  id: STAmmoBox919AP
+  name: коробка бронебойных патронов (9x19)
+  suffix: "Stalker, Коробка патронов, 9x19, AP"
+  description: Коробка бронебойных патронов калибра 9x19. Вместимость — 60 штук.
+  components:
+  - type: BallisticAmmoProvider
+    proto: STCartridge919PBM
+  - type: Sprite
+    layers:
+    - state: "919"
+    - state: antiarmor
+
+- type: entity
+  parent: STAmmoBox919
+  id: STAmmoBox919HP
+  name: коробка экспансивных патронов (9x19)
+  suffix: "Stalker, Коробка патронов, 9x19, HP"
+  description: Коробка экспансивных патронов калибра 9x19. Вместимость — 60 штук.
+  components:
+  - type: BallisticAmmoProvider
+    proto: STCartridge919RIP
+  - type: Sprite
+    layers:
+    - state: "919"
+    - state: exp
+
+- type: entity
+  parent: STAmmoBox725
+  id: STAmmoBox725AP
+  name: коробка бронебойных патронов (7.62x25)
+  suffix: "Stalker, Коробка патронов, 7.62x25, AP"
+  description: Коробка бронебойных патронов калибра 7.62x25. Вместимость — 60 штук.
+  components:
+  - type: BallisticAmmoProvider
+    proto: STCartridge725PSTGJ
+  - type: Sprite
+    layers:
+    - state: "76225"
+    - state: antiarmor
+
+- type: entity
+  parent: STAmmoBox725
+  id: STAmmoBox725HP
+  name: коробка экспансивных патронов (7.62x25)
+  suffix: "Stalker, Коробка патронов, 7.62x25, HP"
+  description: Коробка экспансивных патронов калибра 7.62x25. Вместимость — 60 штук.
+  components:
+  - type: BallisticAmmoProvider
+    proto: STCartridge725LRNPC
+  - type: Sprite
+    layers:
+    - state: "76225"
+    - state: exp
+
+- type: entity
+  parent: STAmmoBox921
+  id: STAmmoBox921AP
+  name: коробка бронебойных патронов (9x21)
+  suffix: "Stalker, Коробка патронов, 9x21, AP"
+  description: Коробка бронебойных патронов калибра 9x21. Вместимость — 60 штук.
+  components:
+  - type: BallisticAmmoProvider
+    proto: STCartridge9217N42
+  - type: Sprite
+    layers:
+    - state: "921"
+    - state: antiarmor
+
+- type: entity
+  parent: STAmmoBox921
+  id: STAmmoBox921HP
+  name: коробка экспансивных патронов (9x21)
+  suffix: "Stalker, Коробка патронов, 9x21, HP"
+  description: Коробка экспансивных патронов калибра 9x21. Вместимость — 60 штук.
+  components:
+  - type: BallisticAmmoProvider
+    proto: STCartridge921PEGJ
+  - type: Sprite
+    layers:
+    - state: "921"
+    - state: exp
+
+- type: entity
+  parent: STAmmoBox45ACP
+  id: STAmmoBox45ACPAP
+  name: коробка бронебойных патронов (.45 ACP)
+  suffix: "Stalker, Коробка патронов, .45 ACP, AP"
+  description: Коробка бронебойных патронов калибра .45 ACP. Вместимость — 60 штук.
+  components:
+  - type: BallisticAmmoProvider
+    proto: Cartridge45ACPAP
+  - type: Sprite
+    layers:
+    - state: "45(1)"
+    - state: antiarmor
+
+- type: entity
+  parent: STAmmoBox45ACP
+  id: STAmmoBox45ACPHP
+  name: коробка экспансивных патронов (.45 ACP)
+  suffix: "Stalker, Коробка патронов, .45 ACP, HP"
+  description: Коробка экспансивных патронов калибра .45 ACP. Вместимость — 60 штук.
+  components:
+  - type: BallisticAmmoProvider
+    proto: Cartridge45ACPHydroshock
+  - type: Sprite
+    layers:
+    - state: "45(1)"
+    - state: exp
+
+- type: entity
+  parent: STAmmoBox545
+  id: STAmmoBox545AP
+  name: коробка бронебойных патронов (5.45x39)
+  suffix: "Stalker, Коробка патронов, 5.45x39, AP"
+  description: Коробка бронебойных патронов калибра 5.45x39. Вместимость — 60 штук.
+  components:
+  - type: BallisticAmmoProvider
+    proto: STCartridge545BP
+  - type: Sprite
+    layers:
+    - state: "545"
+    - state: antiarmor
+
+- type: entity
+  parent: STAmmoBox545
+  id: STAmmoBox545HP
+  name: коробка экспансивных патронов (5.45x39)
+  suffix: "Stalker, Коробка патронов, 5.45x39, HP"
+  description: Коробка экспансивных патронов калибра 5.45x39. Вместимость — 60 штук.
+  components:
+  - type: BallisticAmmoProvider
+    proto: STCartridge545HP
+  - type: Sprite
+    layers:
+    - state: "545"
+    - state: exp
+
+- type: entity
+  parent: STAmmoBox556
+  id: STAmmoBox556AP
+  name: коробка бронебойных патронов (5.56x45)
+  suffix: "Stalker, Коробка патронов, 5.56x45, AP"
+  description: Коробка бронебойных патронов калибра 5.56x45. Вместимость — 60 штук.
+  components:
+  - type: BallisticAmmoProvider
+    proto: Cartridge556M995
+  - type: Sprite
+    layers:
+    - state: "556"
+    - state: antiarmor
+
+- type: entity
+  parent: STAmmoBox556
+  id: STAmmoBox556HP
+  name: коробка экспансивных патронов (5.56x45)
+  suffix: "Stalker, Коробка патронов, 5.56x45, HP"
+  description: Коробка экспансивных патронов калибра 5.56x45. Вместимость — 60 штук.
+  components:
+  - type: BallisticAmmoProvider
+    proto: Cartridge556Warmag
+  - type: Sprite
+    layers:
+    - state: "556"
+    - state: exp
+
+- type: entity
+  parent: STAmmoBox739
+  id: STAmmoBox739AP
+  name: коробка бронебойных патронов (7.62x39)
+  suffix: "Stalker, Коробка патронов, 7.62x39, AP"
+  description: Коробка бронебойных патронов калибра 7.62x39. Вместимость — 60 штук.
+  components:
+  - type: BallisticAmmoProvider
+    proto: STCartridge739BP
+  - type: Sprite
+    layers:
+    - state: "76239"
+    - state: antiarmor
+
+- type: entity
+  parent: STAmmoBox739
+  id: STAmmoBox739HP
+  name: коробка экспансивных патронов (7.62x39)
+  suffix: "Stalker, Коробка патронов, 7.62x39, HP"
+  description: Коробка экспансивных патронов калибра 7.62x39. Вместимость — 60 штук.
+  components:
+  - type: BallisticAmmoProvider
+    proto: STCartridge739HP
+  - type: Sprite
+    layers:
+    - state: "76239"
+    - state: exp
+
+- type: entity
+  parent: STAmmoBox939
+  id: STAmmoBox939AP
+  name: коробка бронебойных патронов (9x39)
+  suffix: "Stalker, Коробка патронов, 9x39, AP"
+  description: Коробка бронебойных патронов калибра 9x39. Вместимость — 60 штук.
+  components:
+  - type: BallisticAmmoProvider
+    proto: STCartridge9x39SP6
+  - type: Sprite
+    layers:
+    - state: "939"
+    - state: antiarmor
+
+- type: entity
+  parent: STAmmoBox939
+  id: STAmmoBox939HP
+  name: коробка экспансивных патронов (9x39)
+  suffix: "Stalker, Коробка патронов, 9x39, HP"
+  description: Коробка экспансивных патронов калибра 9x39. Вместимость — 60 штук.
+  components:
+  - type: BallisticAmmoProvider
+    proto: STCartridge9x39PSO
+  - type: Sprite
+    layers:
+    - state: "939"
+    - state: exp
+
+- type: entity
+  parent: STAmmoBox751
+  id: STAmmoBox751AP
+  name: коробка бронебойных патронов (7.62x51)
+  suffix: "Stalker, Коробка патронов, 7.62x51, AP"
+  description: Коробка бронебойных патронов калибра 7.62x51. Вместимость — 60 штук.
+  components:
+  - type: BallisticAmmoProvider
+    proto: Cartridge751M993
+  - type: Sprite
+    layers:
+    - state: "76251"
+    - state: antiarmor
+
+- type: entity
+  parent: STAmmoBox751
+  id: STAmmoBox751HP
+  name: коробка экспансивных патронов (7.62x51)
+  suffix: "Stalker, Коробка патронов, 7.62x51, HP"
+  description: Коробка экспансивных патронов калибра 7.62x51. Вместимость — 60 штук.
+  components:
+  - type: BallisticAmmoProvider
+    proto: Cartridge751Noiser
+  - type: Sprite
+    layers:
+    - state: "76251"
+    - state: exp
+
+- type: entity
+  parent: STAmmoBox754
+  id: STAmmoBox754AP
+  name: коробка бронебойных патронов (7.62x54R)
+  suffix: "Stalker, Коробка патронов, 7.62x54R, AP"
+  description: Коробка бронебойных патронов калибра 7.62x54R. Вместимость — 60 штук.
+  components:
+  - type: BallisticAmmoProvider
+    proto: STCartridge754SNB
+  - type: Sprite
+    layers:
+    - state: "76254"
+    - state: antiarmor
+
+- type: entity
+  parent: STAmmoBox754
+  id: STAmmoBox754HP
+  name: коробка экспансивных патронов (7.62x54R)
+  suffix: "Stalker, Коробка патронов, 7.62x54R, HP"
+  description: Коробка экспансивных патронов калибра 7.62x54R. Вместимость — 60 штук.
+  components:
+  - type: BallisticAmmoProvider
+    proto: STCartridge754HPBT
+  - type: Sprite
+    layers:
+    - state: "76254"
+    - state: exp
+
+- type: entity
+  parent: BaseItem
+  id: STAmmoBox44
+  name: коробка патронов (.44 Remington Magnum)
+  suffix: "Stalker, Коробка патронов, .44 Remington Magnum"
+  description: Коробка патронов калибра .44 Remington Magnum. Вместимость — 60 штук.
+  components:
+  - type: BallisticAmmoProvider
+    mayTransfer: true
+    whitelist:
+      tags:
+      - CartridgeRemingtonMagnum
+    proto: CartridgeRemingtonMagnum
+    capacity: 60
+  - type: Item
+    size: Small
+  - type: ContainerContainer
+    containers:
+      ballistic-ammo: !type:Container
+  - type: Sprite
+    sprite: _Stalker/Objects/Weapons/Guns/Ammunition/AmmoBoxes.rsi
+    state: "45(2)"
+  - type: Tag
+    tags:
+    - AmmoBox
+    - StalkerAmmoBox
+
+- type: entity
+  parent: STAmmoBox44
+  id: STAmmoBox44AP
+  name: коробка бронебойных патронов (.44 Remington Magnum)
+  suffix: "Stalker, Коробка патронов, .44 Remington Magnum, AP"
+  description: Коробка бронебойных патронов калибра .44 Remington Magnum. Вместимость — 60 штук.
+  components:
+  - type: BallisticAmmoProvider
+    proto: CartridgeRemingtonMagnumAP
+  - type: Sprite
+    layers:
+    - state: "45(2)"
+    - state: antiarmor
+
+- type: entity
+  parent: STAmmoBox44
+  id: STAmmoBox44HP
+  name: коробка экспансивных патронов (.44 Remington Magnum)
+  suffix: "Stalker, Коробка патронов, .44 Remington Magnum, HP"
+  description: Коробка экспансивных патронов калибра .44 Remington Magnum. Вместимость — 60 штук.
+  components:
+  - type: BallisticAmmoProvider
+    proto: CartridgeRemingtonMagnumHP
+  - type: Sprite
+    layers:
+    - state: "45(2)"
+    - state: exp
+
+- type: entity
+  parent: BaseItem
+  id: STAmmoBox1255
+  name: коробка патронов (12.7x55)
+  suffix: "Stalker, Коробка патронов, 12.7x55"
+  description: Коробка патронов калибра 12.7x55. Вместимость — 60 штук.
+  components:
+  - type: BallisticAmmoProvider
+    mayTransfer: true
+    whitelist:
+      tags:
+      - STCartridge1255
+    proto: STCartridge1255PS12A
+    capacity: 60
+  - type: Item
+    size: Small
+  - type: ContainerContainer
+    containers:
+      ballistic-ammo: !type:Container
+  - type: Sprite
+    sprite: _Stalker/Objects/Weapons/Guns/Ammunition/AmmoBoxes.rsi
+    state: "cink"
+  - type: Tag
+    tags:
+    - AmmoBox
+    - StalkerAmmoBox
+
+- type: entity
+  parent: STAmmoBox1255
+  id: STAmmoBox1255AP
+  name: коробка бронебойных патронов (12.7x55)
+  suffix: "Stalker, Коробка патронов, 12.7x55, AP"
+  description: Коробка бронебойных патронов калибра 12.7x55. Вместимость — 60 штук.
+  components:
+  - type: BallisticAmmoProvider
+    proto: STCartridge1255BP
+  - type: Sprite
+    layers:
+    - state: "cink"
+    - state: antiarmor
+
+- type: entity
+  parent: STAmmoBox1255
+  id: STAmmoBox1255HP
+  name: коробка экспансивных патронов (12.7x55)
+  suffix: "Stalker, Коробка патронов, 12.7x55, HP"
+  description: Коробка экспансивных патронов калибра 12.7x55. Вместимость — 60 штук.
+  components:
+  - type: BallisticAmmoProvider
+    proto: STCartridge1255HP
+  - type: Sprite
+    layers:
+    - state: "cink"
+    - state: exp
+
+- type: entity
+  parent: STAmmoBox13x108
+  id: STAmmoBox13x108AP
+  name: коробка бронебойных патронов (12.7x108)
+  suffix: "Stalker, Коробка патронов, 12.7x108, AP"
+  description: Коробка бронебойных патронов калибра 12.7x108. Вместимость — 60 штук.
+  components:
+  - type: BallisticAmmoProvider
+    proto: STCartridge13x108PC
+  - type: Sprite
+    layers:
+    - state: "13108"
+    - state: antiarmor
+
+- type: entity
+  parent: STAmmoBox13x108
+  id: STAmmoBox13x108HP
+  name: коробка экспансивных патронов (12.7x108)
+  suffix: "Stalker, Коробка патронов, 12.7x108, HP"
+  description: Коробка экспансивных патронов калибра 12.7x108. Вместимость — 60 штук.
+  components:
+  - type: BallisticAmmoProvider
+    proto: STCartridge13x108HPBT
+  - type: Sprite
+    layers:
+    - state: "13108"
+    - state: exp

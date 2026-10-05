@@ -1,0 +1,69 @@
+# SPDX-FileCopyrightText: 2026 LocalDuty
+# SPDX-License-Identifier: MIT
+
+# Специальные боеприпасы для сталкерских калибров. Обычные коробки печатаются в SecurityTechFab сразу
+# (StalkerAmmoStatic), экспансивные и бронебойные — только после этих технологий (паки
+# DutyAmmoExpansivePack / DutyAmmoArmorPiercingPack в dynamicPacks SecurityTechFab).
+# Экспансивные открываются раньше: против брони они хуже обычных, их ниша — бездоспешные цели.
+# Бронебойные — следующий шаг и дороже: это прямой ответ на бронежилеты.
+# Позиции 3,0 и 4,0 в сетке Arsenal свободны (рядом ThermalWeaponry 5,0).
+
+- type: technology
+  id: DutyAmmoExpansiveTech
+  name: research-technology-duty-ammo-expansive
+  icon:
+    sprite: _Stalker/Objects/Weapons/Guns/Ammunition/AmmoBoxes.rsi
+    state: "545"
+  discipline: Arsenal
+  tier: 1
+  cost: 7500
+  position: 3,0
+  technologyPrerequisites:
+  - DraconicMunitions
+  requiredTech:
+  - DraconicMunitions
+  recipeUnlocks:
+  - STAmmoBox918HP
+  - STAmmoBox919HP
+  - STAmmoBox725HP
+  - STAmmoBox921HP
+  - STAmmoBox45ACPHP
+  - STAmmoBox545HP
+  - STAmmoBox556HP
+  - STAmmoBox739HP
+  - STAmmoBox939HP
+  - STAmmoBox751HP
+  - STAmmoBox754HP
+  - STAmmoBox44HP
+  - STAmmoBox1255HP
+  - STAmmoBox13x108HP
+
+- type: technology
+  id: DutyAmmoArmorPiercingTech
+  name: research-technology-duty-ammo-armor-piercing
+  icon:
+    sprite: _Stalker/Objects/Weapons/Guns/Ammunition/AmmoBoxes.rsi
+    state: "76254"
+  discipline: Arsenal
+  tier: 2
+  cost: 15000
+  position: 4,0
+  technologyPrerequisites:
+  - DutyAmmoExpansiveTech
+  requiredTech:
+  - DutyAmmoExpansiveTech
+  recipeUnlocks:
+  - STAmmoBox918AP
+  - STAmmoBox919AP
+  - STAmmoBox725AP
+  - STAmmoBox921AP
+  - STAmmoBox45ACPAP
+  - STAmmoBox545AP
+  - STAmmoBox556AP
+  - STAmmoBox739AP
+  - STAmmoBox939AP
+  - STAmmoBox751AP
+  - STAmmoBox754AP
+  - STAmmoBox44AP
+  - STAmmoBox1255AP
+  - STAmmoBox13x108AP
