@@ -1,12 +1,13 @@
 # Боеприпасы 7.62x39 — порт из STALKER-14, приведено к ванильной механике.
-# Стрипнуто: STWeight, STBulkBuyable, projectileClass (нет в нашем Projectile),
+# Стрипнуто: STWeight, STBulkBuyable, projectileClass (своя баллистика — DutyBallistics),
 # тип урона Mutant (нет у нас) и косметика "резинок" (ItemMapper/item_slot).
 
 # ── Снаряды ──────────────────────────────────────────────────────────────────
+# Три роли на калибр (см. bases.yml): обычный / бронебойный (БП) / экспансивный.
 - type: entity
   id: Bullet739FMJ
   name: bullet (7.62x39)
-  parent: BaseBullet
+  parent: STBaseMRBullet
   categories: [ HideSpawnMenu ]
   components:
   - type: TimedDespawn
@@ -14,33 +15,46 @@
   - type: Projectile
     damage:
       types:
-        Piercing: 21
+        Piercing: 20
   - type: StaminaDamageOnCollide
     damage: 4
-
-- type: entity
-  id: Bullet739PC
-  name: bullet (7.62x39)
-  parent: Bullet739FMJ
-  categories: [ HideSpawnMenu ]
-  components:
-  - type: Projectile
-    damage:
-      types:
-        Piercing: 22
+  - type: DutyBallistics
+    armorPenetration: 0.15
+    arteryBonus: 0.01
+    fractureChance: 0.01
 
 - type: entity
   id: Bullet739BP
-  name: bullet (7.62x39)
+  name: bullet (7.62x39 AP)
   parent: Bullet739FMJ
   categories: [ HideSpawnMenu ]
   components:
   - type: Projectile
     damage:
       types:
-        Piercing: 23
+        Piercing: 18
+  - type: DutyBallistics
+    armorPenetration: 0.45
+    arteryBonus: 0.01
+    fractureChance: 0.01
 
-# ── Патроны (гильза + снаряд) ────────────────────────────────────────────────
+- type: entity
+  id: Bullet739HP
+  name: bullet (7.62x39 HP)
+  parent: Bullet739FMJ
+  categories: [ HideSpawnMenu ]
+  components:
+  - type: Projectile
+    damage:
+      types:
+        Piercing: 15
+        Slash: 6
+        Blunt: 2
+  - type: DutyBallistics
+    armorPenetration: -0.2
+    arteryBonus: 0.03
+
+# ── Патроны ──────────────────────────────────────────────────────────────────
 - type: entity
   id: BaseSTCartridge739
   name: cartridge (7.62x39 rifle)
@@ -64,7 +78,7 @@
 
 - type: entity
   id: STCartridge739FMJ
-  name: cartridge (7.62x39) FMJ
+  name: cartridge (7.62x39)
   suffix: "Stalker, STWeapon, Огнестрел"
   parent: BaseSTCartridge739
   components:
@@ -72,22 +86,37 @@
     proto: Bullet739FMJ
 
 - type: entity
-  id: STCartridge739PC
-  name: cartridge (7.62x39) PS
-  suffix: "Stalker, STWeapon, Огнестрел"
-  parent: BaseSTCartridge739
-  components:
-  - type: CartridgeAmmo
-    proto: Bullet739PC
-
-- type: entity
   id: STCartridge739BP
-  name: cartridge (7.62x39) BP
+  name: cartridge (7.62x39 AP)
   suffix: "Stalker, STWeapon, Огнестрел"
   parent: BaseSTCartridge739
   components:
   - type: CartridgeAmmo
     proto: Bullet739BP
+  - type: Sprite
+    layers:
+    - state: base
+      map: ["enum.AmmoVisualLayers.Base"]
+    - state: tip
+      map: ["enum.AmmoVisualLayers.Tip"]
+      color: "#2b2b2b"
+
+- type: entity
+  id: STCartridge739HP
+  name: cartridge (7.62x39 HP)
+  suffix: "Stalker, STWeapon, Огнестрел"
+  parent: BaseSTCartridge739
+  components:
+  - type: CartridgeAmmo
+    proto: Bullet739HP
+  - type: Sprite
+    layers:
+    - state: base
+      map: ["enum.AmmoVisualLayers.Base"]
+    - state: tip
+      map: ["enum.AmmoVisualLayers.Tip"]
+      color: "#4f86c6"
+
 
 # ── Магазины ─────────────────────────────────────────────────────────────────
 - type: entity

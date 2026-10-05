@@ -55,7 +55,7 @@
           - STWeaponModuleRifleScopeRu
       gun_chamber:
         name: Chamber
-        startingItem: STCartridge1255BP
+        startingItem: STCartridge1255PS12A
         priority: 1
         whitelist:
           tags:

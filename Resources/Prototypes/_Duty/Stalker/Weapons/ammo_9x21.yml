@@ -1,59 +1,52 @@
 # Боеприпасы 9x21 — порт из STALKER-14. Mutant→Piercing.
 
 # ── Снаряды ──────────────────────────────────────────────────────────────────
+# Три роли на калибр (см. bases.yml): обычный / бронебойный (БП) / экспансивный.
 - type: entity
   id: Bullet921PGJ
-  name: bullet (9x21 auto)
+  name: bullet (9x21)
   parent: STBasePistolBullet
   categories: [ HideSpawnMenu ]
   components:
   - type: TimedDespawn
     lifetime: 2
   - type: Projectile
-    projectileClass: 2
     damage:
       types:
-        Piercing: 16
+        Piercing: 15
   - type: StaminaDamageOnCollide
-    damage: 4
-
-- type: entity
-  id: Bullet921PEGJ
-  name: bullet (9х21 auto)
-  parent: Bullet921PGJ
-  categories: [ HideSpawnMenu ]
-  components:
-  - type: Projectile
-    projectileClass: 0
-    damage:
-      types:
-        Piercing: 14
-        Blunt: 3
-        Slash: 3
-
-- type: entity
-  id: Bullet921BTGJ
-  name: bullet (9х21 auto)
-  parent: Bullet921PGJ
-  categories: [ HideSpawnMenu ]
-  components:
-  - type: Projectile
-    projectileClass: 3
-    damage:
-      types:
-        Piercing: 17
+    damage: 2
+  - type: DutyBallistics
+    armorPenetration: 0.25
 
 - type: entity
   id: Bullet9217N42
-  name: bullet (9х21 auto)
+  name: bullet (9x21 AP)
   parent: Bullet921PGJ
   categories: [ HideSpawnMenu ]
   components:
   - type: Projectile
-    projectileClass: 4
     damage:
       types:
-        Piercing: 18
+        Piercing: 14
+  - type: DutyBallistics
+    armorPenetration: 0.55
+
+- type: entity
+  id: Bullet921PEGJ
+  name: bullet (9x21 HP)
+  parent: Bullet921PGJ
+  categories: [ HideSpawnMenu ]
+  components:
+  - type: Projectile
+    damage:
+      types:
+        Piercing: 11
+        Slash: 4
+        Blunt: 2
+  - type: DutyBallistics
+    armorPenetration: -0.1
+    arteryBonus: 0.02
 
 # ── Патроны ──────────────────────────────────────────────────────────────────
 - type: entity
@@ -79,7 +72,7 @@
 
 - type: entity
   id: STCartridge921PGJ
-  name: cartridge 9x21 P
+  name: cartridge (9x21)
   suffix: "Stalker, STWeapon, Огнестрел"
   parent: STCartridge921
   components:
@@ -87,31 +80,37 @@
     proto: Bullet921PGJ
 
 - type: entity
-  id: STCartridge921PEGJ
-  name: cartridge 9x21 PE
-  suffix: "Stalker, STWeapon, Огнестрел"
-  parent: STCartridge921
-  components:
-  - type: CartridgeAmmo
-    proto: Bullet921PEGJ
-
-- type: entity
-  id: STCartridge921BTGJ
-  name: cartridge 9x21 BT
-  suffix: "Stalker, STWeapon, Огнестрел"
-  parent: STCartridge921
-  components:
-  - type: CartridgeAmmo
-    proto: Bullet921BTGJ
-
-- type: entity
   id: STCartridge9217N42
-  name: cartridge 9x21 7N42
+  name: cartridge (9x21 AP)
   suffix: "Stalker, STWeapon, Огнестрел"
   parent: STCartridge921
   components:
   - type: CartridgeAmmo
     proto: Bullet9217N42
+  - type: Sprite
+    layers:
+    - state: base
+      map: ["enum.AmmoVisualLayers.Base"]
+    - state: tip
+      map: ["enum.AmmoVisualLayers.Tip"]
+      color: "#2b2b2b"
+
+- type: entity
+  id: STCartridge921PEGJ
+  name: cartridge (9x21 HP)
+  suffix: "Stalker, STWeapon, Огнестрел"
+  parent: STCartridge921
+  components:
+  - type: CartridgeAmmo
+    proto: Bullet921PEGJ
+  - type: Sprite
+    layers:
+    - state: base
+      map: ["enum.AmmoVisualLayers.Base"]
+    - state: tip
+      map: ["enum.AmmoVisualLayers.Tip"]
+      color: "#4f86c6"
+
 
 # ── Магазины ─────────────────────────────────────────────────────────────────
 - type: entity

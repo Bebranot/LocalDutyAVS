@@ -1,59 +1,52 @@
 # Боеприпасы 7.62x25 (TT) — порт из STALKER-14. Mutant→Piercing.
 
 # ── Снаряды ──────────────────────────────────────────────────────────────────
+# Три роли на калибр (см. bases.yml): обычный / бронебойный (БП) / экспансивный.
 - type: entity
   id: Bullet725PGL
-  name: bullet (7.62х25)
+  name: bullet (7.62x25)
   parent: STBasePistolBullet
   categories: [ HideSpawnMenu ]
   components:
   - type: TimedDespawn
     lifetime: 2
   - type: Projectile
-    projectileClass: 1
     damage:
       types:
         Piercing: 14
   - type: StaminaDamageOnCollide
     damage: 1
-
-- type: entity
-  id: Bullet725PTGJ
-  name: bullet (7.62х25)
-  parent: Bullet725PGL
-  categories: [ HideSpawnMenu ]
-  components:
-  - type: Projectile
-    projectileClass: 2
-    damage:
-      types:
-        Piercing: 15
-
-- type: entity
-  id: Bullet725LRNPC
-  name: bullet (7.62х25)
-  parent: Bullet725PGL
-  categories: [ HideSpawnMenu ]
-  components:
-  - type: Projectile
-    projectileClass: 0
-    damage:
-      types:
-        Piercing: 10
-        Blunt: 3
-        Slash: 3
+  - type: DutyBallistics
+    armorPenetration: 0.2
 
 - type: entity
   id: Bullet725PSTGJ
-  name: bullet (7.62х25)
+  name: bullet (7.62x25 AP)
   parent: Bullet725PGL
   categories: [ HideSpawnMenu ]
   components:
   - type: Projectile
-    projectileClass: 3
     damage:
       types:
-        Piercing: 15
+        Piercing: 13
+  - type: DutyBallistics
+    armorPenetration: 0.5
+
+- type: entity
+  id: Bullet725LRNPC
+  name: bullet (7.62x25 HP)
+  parent: Bullet725PGL
+  categories: [ HideSpawnMenu ]
+  components:
+  - type: Projectile
+    damage:
+      types:
+        Piercing: 10
+        Slash: 4
+        Blunt: 1
+  - type: DutyBallistics
+    armorPenetration: -0.15
+    arteryBonus: 0.02
 
 # ── Патроны ──────────────────────────────────────────────────────────────────
 - type: entity
@@ -79,7 +72,7 @@
 
 - type: entity
   id: STCartridge725PGL
-  name: cartridge 7.62x25 P
+  name: cartridge (7.62x25)
   suffix: "Stalker, STWeapon, Огнестрел"
   parent: BaseSTCartridge725
   components:
@@ -87,31 +80,37 @@
     proto: Bullet725PGL
 
 - type: entity
-  id: STCartridge725PTGJ
-  name: cartridge 7.62x25 PT
-  suffix: "Stalker, STWeapon, Огнестрел"
-  parent: BaseSTCartridge725
-  components:
-  - type: CartridgeAmmo
-    proto: Bullet725PTGJ
-
-- type: entity
-  id: STCartridge725LRNPC
-  name: cartridge 7.62x25 LRN
-  suffix: "Stalker, STWeapon, Огнестрел"
-  parent: BaseSTCartridge725
-  components:
-  - type: CartridgeAmmo
-    proto: Bullet725LRNPC
-
-- type: entity
   id: STCartridge725PSTGJ
-  name: cartridge 7.62x25 PST
+  name: cartridge (7.62x25 AP)
   suffix: "Stalker, STWeapon, Огнестрел"
   parent: BaseSTCartridge725
   components:
   - type: CartridgeAmmo
     proto: Bullet725PSTGJ
+  - type: Sprite
+    layers:
+    - state: base
+      map: ["enum.AmmoVisualLayers.Base"]
+    - state: tip
+      map: ["enum.AmmoVisualLayers.Tip"]
+      color: "#2b2b2b"
+
+- type: entity
+  id: STCartridge725LRNPC
+  name: cartridge (7.62x25 HP)
+  suffix: "Stalker, STWeapon, Огнестрел"
+  parent: BaseSTCartridge725
+  components:
+  - type: CartridgeAmmo
+    proto: Bullet725LRNPC
+  - type: Sprite
+    layers:
+    - state: base
+      map: ["enum.AmmoVisualLayers.Base"]
+    - state: tip
+      map: ["enum.AmmoVisualLayers.Tip"]
+      color: "#4f86c6"
+
 
 # ── Магазины ─────────────────────────────────────────────────────────────────
 - type: entity

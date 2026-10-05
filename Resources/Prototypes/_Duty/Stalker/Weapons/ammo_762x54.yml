@@ -1,69 +1,56 @@
 # Боеприпасы 7.62x54R — порт из STALKER-14. Mutant→Piercing.
 
 # ── Снаряды ──────────────────────────────────────────────────────────────────
+# Три роли на калибр (см. bases.yml): обычный / бронебойный (БП) / экспансивный.
 - type: entity
-  parent: STBaseHRBullet
   id: Bullet754FMJ
-  name: bullet (7.62x54)
+  name: bullet (7.62x54R)
+  parent: STBaseHRBullet
   categories: [ HideSpawnMenu ]
   components:
+  - type: TimedDespawn
+    lifetime: 10
   - type: Projectile
-    projectileClass: 3
     damage:
       types:
-        Piercing: 25
+        Piercing: 30
   - type: StaminaDamageOnCollide
-    damage: 10
+    damage: 6
+  - type: DutyBallistics
+    armorPenetration: 0.3
+    arteryBonus: 0.02
+    fractureChance: 0.015
 
 - type: entity
+  id: Bullet754SNB
+  name: bullet (7.62x54R AP)
   parent: Bullet754FMJ
-  id: Bullet754HPBT
-  name: bullet (7.62x54)
   categories: [ HideSpawnMenu ]
   components:
   - type: Projectile
-    projectileClass: 0
-    damage:
-      types:
-        Piercing: 22
-        Blunt: 4
-        Slash: 4
-
-- type: entity
-  parent: Bullet754FMJ
-  id: Bullet754PC
-  name: bullet (7.62x54)
-  categories: [ HideSpawnMenu ]
-  components:
-  - type: Projectile
-    projectileClass: 4
-    damage:
-      types:
-        Piercing: 26
-
-- type: entity
-  parent: Bullet754FMJ
-  id: Bullet754BT
-  name: bullet (7.62x54)
-  categories: [ HideSpawnMenu ]
-  components:
-  - type: Projectile
-    projectileClass: 5
     damage:
       types:
         Piercing: 27
+  - type: DutyBallistics
+    armorPenetration: 0.6
+    arteryBonus: 0.02
+    fractureChance: 0.015
 
 - type: entity
+  id: Bullet754HPBT
+  name: bullet (7.62x54R HP)
   parent: Bullet754FMJ
-  id: Bullet754SAPB
-  name: bullet (7.62x54)
   categories: [ HideSpawnMenu ]
   components:
   - type: Projectile
-    projectileClass: 6
     damage:
       types:
-        Piercing: 28
+        Piercing: 22
+        Slash: 9
+        Blunt: 3
+  - type: DutyBallistics
+    armorPenetration: -0.05
+    arteryBonus: 0.04
 
 # ── Патроны ──────────────────────────────────────────────────────────────────
 - type: entity
@@ -89,7 +76,7 @@
 
 - type: entity
   id: STCartridge754FMJ
-  name: cartridge 7.62x54 FMJ
+  name: cartridge (7.62x54R)
   suffix: "Stalker, STWeapon, Огнестрел"
   parent: BaseSTCartridge754
   components:
@@ -97,40 +84,37 @@
     proto: Bullet754FMJ
 
 - type: entity
-  id: STCartridge754PC
-  name: cartridge 7.62x54 PS
+  id: STCartridge754SNB
+  name: cartridge (7.62x54R AP)
   suffix: "Stalker, STWeapon, Огнестрел"
   parent: BaseSTCartridge754
   components:
   - type: CartridgeAmmo
-    proto: Bullet754PC
+    proto: Bullet754SNB
+  - type: Sprite
+    layers:
+    - state: base
+      map: ["enum.AmmoVisualLayers.Base"]
+    - state: tip
+      map: ["enum.AmmoVisualLayers.Tip"]
+      color: "#2b2b2b"
 
 - type: entity
   id: STCartridge754HPBT
-  name: cartridge 7.62x54 HP BT
+  name: cartridge (7.62x54R HP)
   suffix: "Stalker, STWeapon, Огнестрел"
   parent: BaseSTCartridge754
   components:
   - type: CartridgeAmmo
     proto: Bullet754HPBT
+  - type: Sprite
+    layers:
+    - state: base
+      map: ["enum.AmmoVisualLayers.Base"]
+    - state: tip
+      map: ["enum.AmmoVisualLayers.Tip"]
+      color: "#4f86c6"
 
-- type: entity
-  id: STCartridge754BT
-  name: cartridge 7.62x54 BT
-  suffix: "Stalker, STWeapon, Огнестрел"
-  parent: BaseSTCartridge754
-  components:
-  - type: CartridgeAmmo
-    proto: Bullet754BT
-
-- type: entity
-  id: STCartridge754SNB
-  name: cartridge 7.62x54 SNB
-  suffix: "Stalker, STWeapon, Огнестрел"
-  parent: BaseSTCartridge754
-  components:
-  - type: CartridgeAmmo
-    proto: Bullet754SAPB
 
 # ── Магазины ─────────────────────────────────────────────────────────────────
 - type: entity

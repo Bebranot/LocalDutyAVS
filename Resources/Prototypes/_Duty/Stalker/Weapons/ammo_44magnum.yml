@@ -1,35 +1,56 @@
 # Боеприпасы .44 Remington Magnum (Mateba) — порт из STALKER-14.
 
 # ── Снаряды ──────────────────────────────────────────────────────────────────
+# Три роли на калибр (см. bases.yml): обычный / бронебойный (БП) / экспансивный.
 - type: entity
-  parent: STBaseLRBullet
   id: BulletRemingtonMagnum
-  name: bullet (.44 remington magnum)
-  suffix: "Stalker, STWeapon, Огнестрел"
+  name: bullet (.44 Remington Magnum)
+  parent: STBasePistolBullet
   categories: [ HideSpawnMenu ]
   components:
+  - type: TimedDespawn
+    lifetime: 4
   - type: Projectile
-    projectileClass: 2
     damage:
       types:
-        Piercing: 36
+        Piercing: 24
   - type: StaminaDamageOnCollide
-    damage: 10
+    damage: 8
+  - type: DutyBallistics
+    armorPenetration: 0.1
+    arteryBonus: 0.01
+    fractureChance: 0.015
 
 - type: entity
-  parent: BulletRemingtonMagnum
   id: BulletRemingtonMagnumAP
-  name: bullet (.44 remington magnum armor-piercing)
-  suffix: "Stalker, STWeapon, Огнестрел"
+  name: bullet (.44 Remington Magnum AP)
+  parent: BulletRemingtonMagnum
   categories: [ HideSpawnMenu ]
   components:
   - type: Projectile
-    projectileClass: 3
     damage:
       types:
-        Piercing: 40
-  - type: StaminaDamageOnCollide
-    damage: 15
+        Piercing: 22
+  - type: DutyBallistics
+    armorPenetration: 0.4
+    arteryBonus: 0.01
+    fractureChance: 0.015
+
+- type: entity
+  id: BulletRemingtonMagnumHP
+  name: bullet (.44 Remington Magnum HP)
+  parent: BulletRemingtonMagnum
+  categories: [ HideSpawnMenu ]
+  components:
+  - type: Projectile
+    damage:
+      types:
+        Piercing: 18
+        Slash: 7
+        Blunt: 2
+  - type: DutyBallistics
+    armorPenetration: -0.25
+    arteryBonus: 0.03
 
 # ── Патроны ──────────────────────────────────────────────────────────────────
 - type: entity
@@ -54,22 +75,46 @@
     state: "base"
 
 - type: entity
-  parent: BaseCartridgeRemingtonMagnum
   id: CartridgeRemingtonMagnum
-  name: cartridge .44 remington magnum
+  name: cartridge (.44 Remington Magnum)
   suffix: "Stalker, STWeapon, Огнестрел"
+  parent: BaseCartridgeRemingtonMagnum
   components:
   - type: CartridgeAmmo
     proto: BulletRemingtonMagnum
 
 - type: entity
-  parent: BaseCartridgeRemingtonMagnum
   id: CartridgeRemingtonMagnumAP
-  name: cartridge .44 remington magnum AP
+  name: cartridge (.44 Remington Magnum AP)
   suffix: "Stalker, STWeapon, Огнестрел"
+  parent: BaseCartridgeRemingtonMagnum
   components:
   - type: CartridgeAmmo
     proto: BulletRemingtonMagnumAP
+  - type: Sprite
+    layers:
+    - state: base
+      map: ["enum.AmmoVisualLayers.Base"]
+    - state: tip
+      map: ["enum.AmmoVisualLayers.Tip"]
+      color: "#2b2b2b"
+
+- type: entity
+  id: CartridgeRemingtonMagnumHP
+  name: cartridge (.44 Remington Magnum HP)
+  suffix: "Stalker, STWeapon, Огнестрел"
+  parent: BaseCartridgeRemingtonMagnum
+  components:
+  - type: CartridgeAmmo
+    proto: BulletRemingtonMagnumHP
+  - type: Sprite
+    layers:
+    - state: base
+      map: ["enum.AmmoVisualLayers.Base"]
+    - state: tip
+      map: ["enum.AmmoVisualLayers.Tip"]
+      color: "#4f86c6"
+
 
 # ── Спидлоадеры ──────────────────────────────────────────────────────────────
 - type: entity
