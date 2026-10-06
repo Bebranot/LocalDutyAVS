@@ -6,7 +6,7 @@ using Content.Shared.Inventory.Events;
 using Content.Shared.Item;
 using Content.Shared.Movement.Events;
 using Content.Shared.Throwing;
-using Content.Shared.Weapons.Ranged.Systems;
+using Content.Shared.Weapons.Ranged.Events;
 using Robust.Shared.Network;
 using Robust.Shared.Timing;
 
@@ -43,7 +43,7 @@ public sealed partial class BlockPunishStunSystem : EntitySystem
         SubscribeLocalEvent<BlockPunishStunComponent, PickupAttemptEvent>(OnCancelAttempt);
         SubscribeLocalEvent<BlockPunishStunComponent, IsEquippingAttemptEvent>(OnEquipAttempt);
         SubscribeLocalEvent<BlockPunishStunComponent, IsUnequippingAttemptEvent>(OnUnequipAttempt);
-        SubscribeLocalEvent<AttemptShootEvent>(OnShootAttempt);
+        SubscribeLocalEvent<BlockPunishStunComponent, ShotAttemptedEvent>(OnShotAttempted);
     }
 
     public override void Update(float frameTime)
@@ -132,18 +132,9 @@ public sealed partial class BlockPunishStunSystem : EntitySystem
         args.Cancel();
     }
 
-    /// <summary>
-    /// AttemptShootEvent летит directed на само оружие, поэтому подписка широковещательная —
-    /// фильтруем по <see cref="AttemptShootEvent.User"/> вручную.
-    /// </summary>
-    private void OnShootAttempt(ref AttemptShootEvent args)
+    /// <summary>Ловим на стрелке: ShotAttemptedEvent ганы поднимают и на нём.</summary>
+    private void OnShotAttempted(EntityUid uid, BlockPunishStunComponent component, ref ShotAttemptedEvent args)
     {
-        if (args.Cancelled)
-            return;
-
-        if (!HasComp<BlockPunishStunComponent>(args.User))
-            return;
-
-        args.Cancelled = true;
+        args.Cancel();
     }
 }
