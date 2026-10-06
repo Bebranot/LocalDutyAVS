@@ -65,7 +65,12 @@ public sealed class DutyLatheRecipeRow : DutyLatheFlatButton
     private readonly List<Label> _costLabels = new();
     private bool _initialized;
 
-    public DutyLatheRecipeRow(LatheRecipePrototype recipe, string name, string description, Control icon)
+    /// <summary>Иконка уже поставлена. Меню подгружает их по частям, см. <see cref="SetIcon"/>.</summary>
+    public bool HasIcon { get; private set; }
+
+    private readonly BoxContainer _iconHolder;
+
+    public DutyLatheRecipeRow(LatheRecipePrototype recipe, string name, string description)
     {
         Recipe = recipe;
         RecipeName = name;
@@ -79,13 +84,12 @@ public sealed class DutyLatheRecipeRow : DutyLatheFlatButton
             SeparationOverride = 8,
         };
 
-        var iconHolder = new BoxContainer
+        _iconHolder = new BoxContainer
         {
             SetSize = new Vector2(32, 32),
             VerticalAlignment = VAlignment.Center,
         };
-        iconHolder.AddChild(icon);
-        box.AddChild(iconHolder);
+        box.AddChild(_iconHolder);
 
         var text = new BoxContainer
         {
@@ -115,6 +119,17 @@ public sealed class DutyLatheRecipeRow : DutyLatheFlatButton
         box.AddChild(_time);
 
         AddChild(box);
+    }
+
+    /// <summary>
+    /// Поставить иконку. Иконка-сущность (EntityPrototypeView) спавнит клиентскую сущность, и сотня таких разом
+    /// давала заметный фриз при открытии окна, поэтому меню раздаёт их порциями по кадрам.
+    /// </summary>
+    public void SetIcon(Control icon)
+    {
+        _iconHolder.RemoveAllChildren();
+        _iconHolder.AddChild(icon);
+        HasIcon = true;
     }
 
     /// <summary>
