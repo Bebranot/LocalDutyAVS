@@ -8,6 +8,7 @@ using Content.Shared.CCVar;
 using Content.Shared.Database;
 using Content.Shared.GameTicking;
 using Content.Shared.Ghost;
+using Content.Shared.Interaction;
 using Content.Shared.Mobs.Systems;
 using Content.Shared.Popups;
 using Robust.Shared.Configuration;
@@ -15,6 +16,7 @@ using Robust.Server.GameObjects;
 using Robust.Shared.Player;
 using Robust.Shared.Prototypes;
 using Robust.Shared.Utility;
+using Content.Shared.IdentityManagement;
 
 namespace Content.Server._Duty.SpawnMenu;
 
@@ -32,6 +34,7 @@ public sealed partial class DutySpawnMenuSystem : EntitySystem
     [Dependency] private IAdminLogManager _adminLog = default!;
     [Dependency] private EntityLookupSystem _lookup = default!;
     [Dependency] private MobStateSystem _mobState = default!;
+    [Dependency] private SharedInteractionSystem _interaction = default!;
 
     /// <summary>
     /// Сколько чего уже выдано за раунд: сикей (в нижнем регистре) → прототип → количество.
@@ -67,6 +70,14 @@ public sealed partial class DutySpawnMenuSystem : EntitySystem
         if (session.AttachedEntity is not { Valid: true } player)
             return;
 
+        // Выдача — «себе», значит выдающий должен быть живым участником раунда. Иначе призрак,
+        // который летает сквозь стены, подкладывал бы предметы в любую пустую комнату для других.
+        if (HasComp<GhostComponent>(player) || !_mobState.IsAlive(player))
+        {
+            _popup.PopupCursor(Loc.GetString("duty-spawn-menu-not-alive"), session, PopupType.MediumCaution);
+            return;
+        }
+
         var allowed = GetAllowedItems(session.Name);
 
         if (!allowed.TryGetValue(ev.Proto, out var item))
@@ -100,10 +111,18 @@ public sealed partial class DutySpawnMenuSystem : EntitySystem
             return;
         }
 
+        // Одной дистанции мало: без прямой видимости предмет можно было выдать сквозь стену в
+        // запертое помещение по соседству.
+        if (!_interaction.InRangeUnobstructed(player, _xform.ToMapCoordinates(coordinates), range + 0.5f))
+        {
+            _popup.PopupCursor(Loc.GetString("duty-spawn-menu-obstructed"), session, PopupType.MediumCaution);
+            return;
+        }
+
         if (GetWitness(player) is { } witness)
         {
             _popup.PopupCursor(
-                Loc.GetString("duty-spawn-menu-witness", ("name", Name(witness))),
+                Loc.GetString("duty-spawn-menu-witness", ("name", Identity.Entity(witness, EntityManager))),
                 session,
                 PopupType.MediumCaution);
             return;
