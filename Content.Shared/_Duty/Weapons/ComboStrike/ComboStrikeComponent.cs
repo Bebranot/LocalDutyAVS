@@ -20,6 +20,16 @@ public sealed partial class ComboStrikeComponent : Component
     [DataField]
     public EntityUid? LastTarget = null;
 
+    /// <summary>
+    /// Сколько секунд может пройти между ударами серии. Без окна два удара сейчас и третий через
+    /// десять минут засчитывались как комбо.
+    /// </summary>
+    [DataField]
+    public float ComboWindow = 3f;
+
+    [ViewVariables]
+    public TimeSpan LastHitTime;
+
     // ── Бонусный урон ────────────────────────────────────────────────────────
 
     /// <summary>

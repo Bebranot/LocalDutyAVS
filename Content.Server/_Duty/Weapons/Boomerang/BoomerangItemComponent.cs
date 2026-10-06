@@ -22,6 +22,13 @@ public sealed partial class BoomerangItemComponent : Component
     [DataField("spinStrength")]
     public float SpinStrength = 720f;
 
+    /// <summary>
+    /// Сколько секунд бумеранг пытается вернуться. Застрял за стеной или бросивший убежал — по
+    /// истечении падает на пол, а не ползёт к хозяину вечно с зацикленным звуком.
+    /// </summary>
+    [DataField("returnTimeout")]
+    public float ReturnTimeout = 3f;
+
     /// <summary>Зацикленный звук во время полёта.</summary>
     [DataField("flightSound")]
     public SoundSpecifier? FlightSound = null;
@@ -32,5 +39,6 @@ public sealed partial class BoomerangItemComponent : Component
     public TimeSpan ReturnAt = TimeSpan.Zero;
     public bool WaitingForReturn = false;
     public bool IsReturning = false;
+    public TimeSpan ReturnGiveUpAt = TimeSpan.Zero;
     public EntityUid? FlightSoundEntity = null;
 }

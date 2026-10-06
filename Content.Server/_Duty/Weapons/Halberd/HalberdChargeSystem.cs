@@ -10,6 +10,8 @@ using Content.Shared.Damage.Systems;
 using Content.Shared.FixedPoint;
 using Content.Shared.Hands;
 using Content.Shared.Hands.EntitySystems;
+using Content.Shared.Mobs.Components;
+using Content.Shared.Mobs.Systems;
 using Content.Shared.Movement.Systems;
 using Content.Shared.Physics;
 using Content.Shared.Popups;
@@ -47,6 +49,7 @@ public sealed partial class HalberdChargeSystem : EntitySystem
     [Dependency] private IRobustRandom _random = default!;
     [Dependency] private SharedAudioSystem _audio = default!;
     [Dependency] private MovementModStatusSystem _movementMod = default!;
+    [Dependency] private MobStateSystem _mobState = default!;
 
     private readonly HashSet<EntityUid> _chargeIntersecting = new();
 
@@ -230,7 +233,7 @@ public sealed partial class HalberdChargeSystem : EntitySystem
 
         // Направление к курсору
         var userPos = _transform.GetWorldPosition(user);
-        var targetPos = args.Target.ToMapPos(EntityManager, _transform);
+        var targetPos = _transform.ToMapCoordinates(args.Target).Position;
         var direction = targetPos - userPos;
 
         if (direction.LengthSquared() < 0.001f)
@@ -318,18 +321,24 @@ public sealed partial class HalberdChargeSystem : EntitySystem
             if (!targetPhysics.Hard)
                 continue;
 
-            // Стена — статичный объект с DamageableComponent (лужи/декали его не имеют)
-            if (targetPhysics.BodyType == BodyType.Static && HasComp<DamageableComponent>(target))
+            // Моб. Раньше «целью» считалось любое Hard-тело с Damageable — и рывок упирался в
+            // бутылку или куртку на полу, всаживая в неё весь урон. Трупы пробегаем насквозь.
+            if (HasComp<MobStateComponent>(target))
             {
-                StopCharge(halberdUid, comp, ChargeEndReason.Wall);
+                if (_mobState.IsDead(target))
+                    continue;
+
+                HitEntity(halberdUid, comp, target);
+                StopCharge(halberdUid, comp, ChargeEndReason.HitEntity);
                 return;
             }
 
-            // Моб — динамическое Hard тело с DamageableComponent
-            if (HasComp<DamageableComponent>(target))
+            // Стена — всё, что остановило бы идущего человека: стены (в том числе неразрушимые, у
+            // которых нет Damageable и сквозь которые рывок раньше пролетал), окна, двери, столы,
+            // машины, шкафы. У предметов на полу слоя коллизии нет, они сюда не попадают.
+            if ((targetPhysics.CollisionLayer & (int) CollisionGroup.MobMask) != 0)
             {
-                HitEntity(halberdUid, comp, target);
-                StopCharge(halberdUid, comp, ChargeEndReason.HitEntity);
+                StopCharge(halberdUid, comp, ChargeEndReason.Wall);
                 return;
             }
         }
