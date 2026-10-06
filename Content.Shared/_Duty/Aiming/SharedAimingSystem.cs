@@ -316,6 +316,16 @@ public sealed partial class SharedAimingSystem : EntitySystem
         if (ent.Comp.IsProne)
             return;
 
+        // Запрет — только на добровольное «лечь» (ToggleKnockdown и подкат зовут нокдаун с
+        // AutoStand = false). Раньше отменялся любой нокдаун, и прицеливающийся стоя не падал от
+        // толчка, взрыва и прочего нефорсированного — фактически иммунитет. Внешний нокдаун
+        // теперь сбивает прицел и проходит как обычно.
+        if (args.AutoStand)
+        {
+            StopAiming(ent);
+            return;
+        }
+
         args.Cancelled = true;
         _popup.PopupClient(Loc.GetString("aiming-cant-change-stance"), ent, ent);
     }
