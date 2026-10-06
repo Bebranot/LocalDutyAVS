@@ -1,0 +1,182 @@
+<!--
+SPDX-FileCopyrightText: 2025 LocalDuty <https://github.com/Bebranot/LocalDuty_Reserve>
+SPDX-License-Identifier: AGPL-3.0-or-later
+-->
+<!-- Размер окна задаётся в коде (запоминается в duty.lathe_ui_*). Все меняющиеся тексты — ClipText,
+     а колонки — RectClipContent: длинное название не должно раздвигать окно, размер меняется только руками. -->
+<controls:FancyWindow
+    xmlns="https://spacestation14.io"
+    xmlns:gfx="clr-namespace:Robust.Client.Graphics;assembly=Robust.Client"
+    xmlns:ui="clr-namespace:Content.Client.Materials.UI"
+    xmlns:controls="clr-namespace:Content.Client.UserInterface.Controls"
+    Title="{Loc 'lathe-menu-title'}"
+    MinSize="860 520">
+    <BoxContainer Orientation="Vertical" VerticalExpand="True" HorizontalExpand="True">
+        <!-- Шапка: полоса цвета отдела и значки возможностей станка -->
+        <PanelContainer Name="AccentStripe" MinHeight="2" />
+        <BoxContainer Orientation="Horizontal" Margin="6 4 6 4" SeparationOverride="6">
+            <BoxContainer Name="BadgeContainer"
+                          Orientation="Horizontal"
+                          HorizontalExpand="True"
+                          SeparationOverride="4"
+                          RectClipContent="True"
+                          VerticalAlignment="Center" />
+            <Button Name="ServerListButton"
+                    Text="{Loc 'lathe-menu-server-list'}"
+                    StyleClasses="ButtonSquare" />
+        </BoxContainer>
+
+        <BoxContainer Orientation="Horizontal" VerticalExpand="True" HorizontalExpand="True">
+            <!-- Категории -->
+            <PanelContainer SetWidth="170" VerticalExpand="True" RectClipContent="True">
+                <PanelContainer.PanelOverride>
+                    <gfx:StyleBoxFlat BackgroundColor="#16161A" />
+                </PanelContainer.PanelOverride>
+                <ScrollContainer VerticalExpand="True" HScrollEnabled="False">
+                    <BoxContainer Name="CategoryList" Orientation="Vertical" HorizontalExpand="True" Margin="0 4 0 4" />
+                </ScrollContainer>
+            </PanelContainer>
+
+            <!-- Центр: поиск, список, выбранный рецепт -->
+            <BoxContainer Orientation="Vertical" HorizontalExpand="True" VerticalExpand="True" RectClipContent="True">
+                <BoxContainer Orientation="Horizontal" Margin="6 6 6 4" SeparationOverride="8">
+                    <LineEdit Name="SearchBar"
+                              HorizontalExpand="True"
+                              PlaceHolder="{Loc 'duty-lathe-search-placeholder'}" />
+                    <CheckBox Name="OnlyAvailableCheck" Text="{Loc 'duty-lathe-only-available'}" />
+                </BoxContainer>
+                <PanelContainer VerticalExpand="True">
+                    <PanelContainer.PanelOverride>
+                        <gfx:StyleBoxFlat BackgroundColor="#141417" />
+                    </PanelContainer.PanelOverride>
+                    <ScrollContainer VerticalExpand="True" HScrollEnabled="False">
+                        <BoxContainer Name="RecipeList" Orientation="Vertical" HorizontalExpand="True" />
+                    </ScrollContainer>
+                    <Label Name="NoResultsLabel"
+                           Text="{Loc 'duty-lathe-no-results'}"
+                           FontColorOverride="#9A9AAB"
+                           HorizontalAlignment="Center"
+                           VerticalAlignment="Center"
+                           Visible="False" />
+                </PanelContainer>
+
+                <!-- Выбранный рецепт -->
+                <PanelContainer>
+                    <PanelContainer.PanelOverride>
+                        <gfx:StyleBoxFlat BackgroundColor="#1A1A20" />
+                    </PanelContainer.PanelOverride>
+                    <BoxContainer Orientation="Vertical" Margin="8" SeparationOverride="6">
+                        <Label Name="DetailHint"
+                               Text="{Loc 'duty-lathe-select-hint'}"
+                               FontColorOverride="#9A9AAB"
+                               ClipText="True" />
+                        <BoxContainer Name="DetailBody" Orientation="Horizontal" SeparationOverride="10" Visible="False">
+                            <BoxContainer Name="DetailIcon" SetSize="64 64" VerticalAlignment="Top" />
+                            <BoxContainer Orientation="Vertical" HorizontalExpand="True" SeparationOverride="2">
+                                <Label Name="DetailName" StyleClasses="LabelHeading" ClipText="True" MouseFilter="Pass" />
+                                <!-- Описание бывает длинным: ограничиваем высоту, чтобы оно не съедало список -->
+                                <Control MaxHeight="54" RectClipContent="True">
+                                    <RichTextLabel Name="DetailDescription" />
+                                </Control>
+                                <RichTextLabel Name="DetailCost" />
+                            </BoxContainer>
+                        </BoxContainer>
+                        <BoxContainer Orientation="Horizontal" SeparationOverride="4">
+                            <Button Name="AmountMinus" Text="−" StyleClasses="OpenRight" MinWidth="28" />
+                            <LineEdit Name="AmountLineEdit" MinWidth="60" />
+                            <Button Name="AmountPlus" Text="+" StyleClasses="OpenLeft" MinWidth="28" />
+                            <Control MinWidth="6" />
+                            <Button Name="Amount1" Text="1" StyleClasses="OpenRight" MinWidth="34" />
+                            <Button Name="Amount5" Text="5" StyleClasses="OpenBoth" MinWidth="34" />
+                            <Button Name="Amount10" Text="10" StyleClasses="OpenBoth" MinWidth="34" />
+                            <Button Name="Amount30" Text="30" StyleClasses="OpenLeft" MinWidth="34" />
+                            <Label Name="DetailTime"
+                                   HorizontalExpand="True"
+                                   Align="Right"
+                                   ClipText="True"
+                                   FontColorOverride="#9A9AAB"
+                                   Margin="8 0 8 0" />
+                            <Button Name="QueueButton"
+                                    Text="{Loc 'duty-lathe-to-queue'}"
+                                    StyleClasses="positive"
+                                    MinWidth="130" />
+                        </BoxContainer>
+                    </BoxContainer>
+                </PanelContainer>
+            </BoxContainer>
+
+            <!-- Справа: очередь и материалы -->
+            <BoxContainer Orientation="Vertical"
+                          SetWidth="310"
+                          VerticalExpand="True"
+                          Margin="8 6 8 6"
+                          SeparationOverride="4"
+                          RectClipContent="True">
+                <Label Text="{Loc 'duty-lathe-queue-title'}" StyleClasses="LabelHeading" />
+
+                <!-- Текущая деталь -->
+                <PanelContainer Name="CurrentPanel" Visible="False">
+                    <PanelContainer.PanelOverride>
+                        <gfx:StyleBoxFlat BackgroundColor="#1F2A22" BorderColor="#3D6B47" BorderThickness="1" />
+                    </PanelContainer.PanelOverride>
+                    <BoxContainer Orientation="Vertical" Margin="6" SeparationOverride="4">
+                        <BoxContainer Orientation="Horizontal" SeparationOverride="6">
+                            <BoxContainer Name="CurrentIcon" SetSize="32 32" VerticalAlignment="Center" />
+                            <BoxContainer Orientation="Vertical" HorizontalExpand="True" VerticalAlignment="Center">
+                                <Label Name="CurrentName" ClipText="True" MouseFilter="Pass" />
+                                <Label Name="CurrentStatus" ClipText="True" FontColorOverride="#9A9AAB" />
+                            </BoxContainer>
+                            <Button Name="DeleteFabricating"
+                                    Text="✖"
+                                    StyleClasses="negative"
+                                    VerticalAlignment="Center"
+                                    ToolTip="{Loc 'lathe-menu-delete-fabricating-tooltip'}" />
+                        </BoxContainer>
+                        <ProgressBar Name="CurrentProgress" MinValue="0" MaxValue="1" Value="0" MinHeight="6">
+                            <ProgressBar.BackgroundStyleBoxOverride>
+                                <gfx:StyleBoxFlat BackgroundColor="#0E1410" />
+                            </ProgressBar.BackgroundStyleBoxOverride>
+                            <ProgressBar.ForegroundStyleBoxOverride>
+                                <gfx:StyleBoxFlat BackgroundColor="#6FCF87" />
+                            </ProgressBar.ForegroundStyleBoxOverride>
+                        </ProgressBar>
+                    </BoxContainer>
+                </PanelContainer>
+
+                <Label Name="PowerWarningLabel"
+                       Text="{Loc 'duty-lathe-waiting-power'}"
+                       FontColorOverride="#FF7A7A"
+                       ClipText="True"
+                       Visible="False" />
+                <Label Name="QueueEmptyLabel"
+                       Text="{Loc 'duty-lathe-queue-empty'}"
+                       FontColorOverride="#9A9AAB"
+                       HorizontalAlignment="Center"
+                       Margin="0 8 0 8" />
+
+                <ScrollContainer VerticalExpand="True" HScrollEnabled="False" SizeFlagsStretchRatio="3">
+                    <BoxContainer Name="QueueList" Orientation="Vertical" HorizontalExpand="True" />
+                </ScrollContainer>
+
+                <BoxContainer Orientation="Horizontal" SeparationOverride="6">
+                    <Label Name="QueueTotalLabel"
+                           HorizontalExpand="True"
+                           ClipText="True"
+                           FontColorOverride="#9A9AAB"
+                           VerticalAlignment="Center" />
+                    <Button Name="ClearQueueButton"
+                            Text="{Loc 'duty-lathe-queue-clear'}"
+                            ToolTip="{Loc 'duty-lathe-queue-clear-tooltip'}" />
+                </BoxContainer>
+
+                <Label Text="{Loc 'lathe-menu-materials-title'}" StyleClasses="LabelHeading" Margin="0 6 0 0" />
+                <PanelContainer VerticalExpand="True" SizeFlagsStretchRatio="2">
+                    <PanelContainer.PanelOverride>
+                        <gfx:StyleBoxFlat BackgroundColor="#141417" />
+                    </PanelContainer.PanelOverride>
+                    <ui:MaterialStorageControl Name="MaterialsList" />
+                </PanelContainer>
+            </BoxContainer>
+        </BoxContainer>
+    </BoxContainer>
+</controls:FancyWindow>
