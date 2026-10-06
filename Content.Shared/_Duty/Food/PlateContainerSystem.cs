@@ -122,7 +122,9 @@ public sealed partial class PlateContainerSystem : EntitySystem
 
         ent.Comp.LastPopupUser = user;
         ent.Comp.NextPopupTime = now + PopupCooldown;
-        _popup.PopupEntity(Loc.GetString(GetPopup(result)), ent.Owner, user);
+        // AfterInteractUsing предсказывается: PopupEntity показал бы отказ дважды — предсказанием
+        // у клиента и ещё раз пакетом с сервера. PopupClient показывает только предсказавший клиент.
+        _popup.PopupClient(Loc.GetString(GetPopup(result)), ent.Owner, user);
     }
 
     private void OnGetAlternativeVerbs(
