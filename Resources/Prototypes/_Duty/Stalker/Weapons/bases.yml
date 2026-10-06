@@ -1,6 +1,7 @@
 # Базы портированного из STALKER-14 оружия — привязаны к нашим ванильным базам.
 # Дают слои спрайта/визуал магазина, чтобы семейства стволов копировались почти вербатим.
-# Кастомные компоненты (STWeight/STWeaponDamageFalloff/STWeaponAccuracy) — пустышки (см. StalkerStubComponents.cs).
+# Кастомные компоненты STWeight/STWeaponDamageFalloff — пустышки (см. StalkerStubComponents.cs);
+# STWeaponAccuracy рабочий: делит разброс ствола на точность (STWeaponAccuracySystem).
 #
 # cameraRecoilScalar — «обращение» ствола в отдаче камеры: масса, хват, компоновка. Мощность патрона сюда
 # НЕ входит — она задаётся калибром (Resources/Prototypes/_Duty/Recoil/caliber_recoil.yml), иначе калибр

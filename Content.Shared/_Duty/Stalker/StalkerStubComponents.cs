@@ -33,20 +33,6 @@ public sealed partial class STWeaponDamageFalloffComponent : Component
     public float FalloffMultiplier = 1f;
 }
 
-/// <summary>Множитель точности оружия (STALKER). Пустышка.</summary>
-[RegisterComponent]
-public sealed partial class STWeaponAccuracyComponent : Component
-{
-    [DataField]
-    public float AccuracyMultiplier = 1f;
-
-    [DataField]
-    public float AccuracyMultiplierUnwielded = 1f;
-
-    [DataField]
-    public float ModifiedAccuracyMultiplier = 1f;
-}
-
 /// <summary>Оптовая покупка в магазине (STALKER). Пустышка.</summary>
 [RegisterComponent]
 public sealed partial class STBulkBuyableComponent : Component
