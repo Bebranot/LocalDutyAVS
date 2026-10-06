@@ -109,7 +109,10 @@ public sealed partial class ConcussionOverlay : Overlay
         if (t < BlastHold)
             return _blastPeak;
 
-        return _blastPeak * (1f - (t - BlastHold) / BlastFade);
+        // Smoothstep, а не прямая: зрение возвращается сначала медленно, потом быстрее и мягко
+        // доходит до нуля — без заметного «щелчка» в начале и в конце затухания.
+        var u = (t - BlastHold) / BlastFade;
+        return _blastPeak * (1f - u * u * (3f - 2f * u));
     }
 
     private float BaselineAlpha()

@@ -68,7 +68,8 @@ public sealed partial class FireAgonySystem : EntitySystem
             ? MathF.Min(target, _strength + step)
             : MathF.Max(target, _strength - step);
 
-        _overlay.Strength = _strength;
+        // Сглаживаем края: линейный фейд даёт заметный «рывок» в момент старта и остановки.
+        _overlay.Strength = _strength * _strength * (3f - 2f * _strength);
 
         // Непрерывный крик: старт при входе в сцену (персонаж падает), фейд-аут на выходе.
         if (active && !_wasActive)
