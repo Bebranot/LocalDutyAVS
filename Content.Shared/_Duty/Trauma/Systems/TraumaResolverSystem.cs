@@ -15,6 +15,7 @@ using Content.Shared.Popups;
 using Content.Shared.Random.Helpers;
 using Content.Shared.Standing;
 using Content.Shared.Stunnable;
+using Content.Shared.Weapons.Melee;
 using Content.Shared.Weapons.Melee.Events;
 using Robust.Shared.Network;
 using Robust.Shared.Random;
@@ -44,6 +45,12 @@ public sealed partial class TraumaResolverSystem : EntitySystem
 
     // ── Тюнинг (Phase 6). ──────────────────────────────────────────────────────
     private static readonly TimeSpan EffectInterval = TimeSpan.FromSeconds(1);
+
+    /// <summary>
+    /// Попап боли в сломанной ноге — не чаще этого. Урон при ходьбе по-прежнему каждую секунду,
+    /// но одна и та же строка каждую секунду превращала экран в ленту одинаковых надписей.
+    /// </summary>
+    private static readonly TimeSpan LegPainPopupInterval = TimeSpan.FromSeconds(4);
     private const float MoveThreshold = 0.1f;
 
     /// <summary>Вес каждого штрафа кроме самого тяжёлого (диминишинг при стакинге травм).</summary>
@@ -111,9 +118,10 @@ public sealed partial class TraumaResolverSystem : EntitySystem
         // чтобы не тянуть Content.Server из Content.Shared (см. коммент события).
         SubscribeLocalEvent<FractureComponent, BloodCoughIntervalModifierEvent>(OnBloodCoughModifier);
 
-        // GetMeleeDamageEvent поднимается на ОРУЖИИ, а не на атакующем (см. User в событии) —
-        // без фильтра по компоненту, чтобы поймать его вне зависимости от того, чем бьют.
-        SubscribeLocalEvent<GetMeleeDamageEvent>(OnGetMeleeDamage);
+        // GetMeleeDamageEvent поднимается directed на ОРУЖИИ (при ударе без оружия — на самом
+        // атакующем, у него тоже MeleeWeapon), без broadcast: широковещательная подписка его не
+        // получает, и штраф сломанной руки раньше не работал вовсе.
+        SubscribeLocalEvent<MeleeWeaponComponent, GetMeleeDamageEvent>(OnGetMeleeDamage);
     }
 
     /// <summary>
@@ -121,7 +129,7 @@ public sealed partial class TraumaResolverSystem : EntitySystem
     /// отдельно в <see cref="OnAttackAttempt"/>). Стакинг тут намеренно линейный, а не диминишинг:
     /// две сломанные руки = -30% урона, обе половины страдают независимо.
     /// </summary>
-    private void OnGetMeleeDamage(ref GetMeleeDamageEvent args)
+    private void OnGetMeleeDamage(Entity<MeleeWeaponComponent> ent, ref GetMeleeDamageEvent args)
     {
         if (!TryComp<FractureComponent>(args.User, out var fracture))
             return;
@@ -299,7 +307,13 @@ public sealed partial class TraumaResolverSystem : EntitySystem
         {
             var dmg = legTier >= FractureTier.Open ? LegMoveDamageOpen : LegMoveDamageFull;
             DealBlunt(uid, dmg);
-            _popup.PopupEntity(Loc.GetString("trauma-fracture-leg-pain"), uid, uid, PopupType.SmallCaution);
+
+            var now = _timing.CurTime;
+            if (now >= comp.NextLegPainPopup)
+            {
+                comp.NextLegPainPopup = now + LegPainPopupInterval;
+                _popup.PopupEntity(Loc.GetString("trauma-fracture-leg-pain"), uid, uid, PopupType.SmallCaution);
+            }
 
             if (legTier >= FractureTier.Open && _random.Prob(LegFallChanceOpen))
                 _stun.TryKnockdown((uid, null), TimeSpan.FromSeconds(2), refresh: true, drop: false);

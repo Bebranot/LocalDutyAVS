@@ -69,4 +69,8 @@ public sealed partial class FractureComponent : Component
     /// <summary>Серверное: время следующего тика функциональных эффектов.</summary>
     [ViewVariables]
     public TimeSpan NextEffectTick;
+
+    /// <summary>Серверное: раньше этого времени попап «боль в ноге» не повторяем — урон тикает чаще.</summary>
+    [ViewVariables]
+    public TimeSpan NextLegPainPopup;
 }

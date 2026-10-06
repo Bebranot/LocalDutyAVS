@@ -67,6 +67,7 @@ trauma-fracture-tier-open = открытый перелом
 
 # Функциональные эффекты
 trauma-fracture-leg-pain = Острая боль пронзает сломанную ногу!
+trauma-fracture-healed = { $zone }: кость срослась, боль наконец отступает.
 
 # Крик боли в момент перелома/эскалации (видно всем рядом)
 trauma-fracture-pain-new-1 = Раздаётся треск ломающейся кости, и { $zone } пронзает дикая боль!
@@ -92,6 +93,7 @@ trauma-head-tier-severe = тяжёлое
 trauma-head-received = В голове звенит, мир плывёт перед глазами.
 trauma-head-symptom = Подступает тошнота, голова раскалывается.
 trauma-head-blackout = В глазах темнеет, вы теряете сознание!
+trauma-head-recovered = Звон в голове стихает, мысли снова ясные.
 
 # Вывих
 trauma-examine-dislocation = [color=orange]{ $zone }: вывих — сустав неестественно вывернут.[/color]

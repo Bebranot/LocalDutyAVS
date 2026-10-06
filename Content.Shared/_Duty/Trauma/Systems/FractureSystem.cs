@@ -119,6 +119,12 @@ public sealed partial class FractureSystem : EntitySystem
                 if (state.Tier <= FractureTier.Crack)
                 {
                     comp.Zones.Remove(zone);
+
+                    // Без этого перелом проходил молча: узнать, что кость срослась, можно было только
+                    // осмотром или по исчезнувшему штрафу скорости.
+                    _popup.PopupEntity(
+                        Loc.GetString("trauma-fracture-healed", ("zone", Loc.GetString(TraumaLoc.ZoneKey(zone)))),
+                        uid, uid, PopupType.Medium);
                 }
                 else
                 {

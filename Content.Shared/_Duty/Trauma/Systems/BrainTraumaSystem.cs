@@ -101,6 +101,7 @@ public sealed partial class BrainTraumaSystem : EntitySystem
         {
             RemComp<HeadTraumaComponent>(uid);
             _movementSpeed.RefreshMovementSpeedModifiers(uid);
+            _popup.PopupEntity(Loc.GetString("trauma-head-recovered"), uid, uid, PopupType.Medium);
         }
     }
 
