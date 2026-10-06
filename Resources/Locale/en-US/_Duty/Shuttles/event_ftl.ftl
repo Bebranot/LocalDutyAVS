@@ -21,3 +21,14 @@ cmd-dutyftl-no-spot = No free space for the shuttle near { $anchor }.
 cmd-dutyftl-start-failed = The jump failed to start — see the server log.
 cmd-dutyftl-override = Warning: normal FTL is blocked for this shuttle ({ $reason }) — the command overrides it.
 cmd-dutyftl-started = { $grid } is jumping to { $anchor }: spot ({ $x }, { $y }), { $distance } m from its centre, { $time } s in hyperspace.
+
+# CentComm shuttle console
+duty-centcomm-console-section = CentComm link
+duty-centcomm-console-jump-centcomm = FTL to CentComm
+duty-centcomm-console-jump-station = FTL to station
+duty-centcomm-console-jump-confirm = Confirm jump
+duty-centcomm-console-no-power = The console is unpowered.
+duty-centcomm-console-access-denied = Access denied.
+duty-centcomm-console-no-shuttle = The console is not linked to a shuttle.
+duty-centcomm-console-started-centcomm = Course set: CentComm.
+duty-centcomm-console-started-station = Course set: station.

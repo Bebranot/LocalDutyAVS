@@ -1,0 +1,25 @@
+# SPDX-FileCopyrightText: 2026 LocalDuty <https://github.com/Bebranot/LocalDuty_Reserve>
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+# Консоль шаттла ЦК: обычная консоль + кнопка прыжка «на ЦК / на станцию» во вкладке БСС.
+# Для маппинга. Ограничить доступ — добавить консоли AccessReader (кнопка его проверяет).
+- type: entity
+  parent: ComputerShuttle
+  id: DutyComputerShuttleCentcomm
+  name: centcomm shuttle console
+  description: Used to pilot a CentComm shuttle. Can jump between CentComm and the station without a coordinates disk.
+  components:
+  - type: DutyCentcommShuttleConsole
+  - type: Computer
+    board: DutyShuttleConsoleCentcommCircuitboard
+
+# Своя плата, чтобы после разборки и сборки консоль осталась консолью ЦК, а не превратилась в обычную.
+- type: entity
+  parent: ShuttleConsoleCircuitboard
+  id: DutyShuttleConsoleCentcommCircuitboard
+  name: centcomm shuttle console board
+  description: A computer printed circuit board for a CentComm shuttle console.
+  components:
+  - type: ComputerBoard
+    prototype: DutyComputerShuttleCentcomm

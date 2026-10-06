@@ -5,6 +5,7 @@
 using System.Linq;
 using Content.IntegrationTests.Fixtures;
 using Content.Server._Duty.Shuttles;
+using Content.Shared._Duty.Shuttles;
 using Content.Server.GameTicking;
 using Content.Server.Shuttles.Components;
 using Content.Server.Shuttles.Systems;
@@ -65,6 +66,12 @@ public sealed class DutyEventFtlTests : GameTest
 
         var flight = shuttleSys.DefaultStartupTime + eventFtl.MinTravelTime + 2f;
 
+        // Консоль шаттла ЦК на борту: направление кнопки должно переключаться по прилёту.
+        EntityUid console = default;
+        await server.WaitPost(() => console = entMan.SpawnEntity("DutyComputerShuttleCentcomm", testMap.GridCoords));
+        await pair.RunTicksSync(5);
+        Assert.That(entMan.GetComponent<DutyCentcommShuttleConsoleComponent>(console).AtCentcomm, Is.False);
+
         // Станцию и ЦК отправлять нельзя.
         await server.WaitAssertion(() =>
         {
@@ -91,6 +98,7 @@ public sealed class DutyEventFtlTests : GameTest
         await server.WaitAssertion(() =>
         {
             Assert.That(server.Transform(shuttle).MapUid, Is.EqualTo(centcommMap));
+            Assert.That(entMan.GetComponent<DutyCentcommShuttleConsoleComponent>(console).AtCentcomm, Is.True);
             Assert.That(entMan.Deleted(bystander), Is.False, "шаттл раздавил того, кто был в точке выхода");
             AssertClear(entMan, xformSys, shuttle, centcomm);
             Assert.That(ShuttleBox(entMan, xformSys, shuttle).Contains(xformSys.GetWorldPosition(bystander)), Is.False);
@@ -114,6 +122,7 @@ public sealed class DutyEventFtlTests : GameTest
         await server.WaitAssertion(() =>
         {
             Assert.That(server.Transform(shuttle).MapUid, Is.EqualTo(stationMap));
+            Assert.That(entMan.GetComponent<DutyCentcommShuttleConsoleComponent>(console).AtCentcomm, Is.False);
             AssertClear(entMan, xformSys, shuttle, station);
         });
 

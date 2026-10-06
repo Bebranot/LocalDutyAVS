@@ -216,6 +216,24 @@ public sealed partial class DutyEventFtlSystem : EntitySystem
         return true;
     }
 
+    /// <summary>
+    /// Сущность сейчас на карте ЦК (любого из ЦК, если их несколько).
+    /// </summary>
+    public bool IsOnCentcomm(EntityUid uid)
+    {
+        if (Transform(uid).MapUid is not { } map)
+            return false;
+
+        var query = EntityQueryEnumerator<StationCentcommComponent>();
+        while (query.MoveNext(out var centcomm))
+        {
+            if (centcomm.MapEntity == map)
+                return true;
+        }
+
+        return false;
+    }
+
     private EntityUid? FindCentcommGrid(EntityUid? owner)
     {
         if (TryComp<StationCentcommComponent>(owner, out var own) && IsValidCentcomm(own))

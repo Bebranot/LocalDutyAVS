@@ -21,3 +21,14 @@ cmd-dutyftl-no-spot = Рядом с { $anchor } не нашлось свобод
 cmd-dutyftl-start-failed = Прыжок не запустился — подробности в логе сервера.
 cmd-dutyftl-override = Внимание: обычный прыжок этому шаттлу запрещён ({ $reason }) — команда игнорирует запрет.
 cmd-dutyftl-started = { $grid } уходит в прыжок к { $anchor }: точка ({ $x }, { $y }), { $distance } м от центра, { $time } с в гиперпространстве.
+
+# Консоль шаттла ЦК
+duty-centcomm-console-section = Связь с ЦК
+duty-centcomm-console-jump-centcomm = БСС на ЦК
+duty-centcomm-console-jump-station = БСС на станцию
+duty-centcomm-console-jump-confirm = Подтвердить прыжок
+duty-centcomm-console-no-power = Консоль обесточена.
+duty-centcomm-console-access-denied = Доступ запрещён.
+duty-centcomm-console-no-shuttle = Консоль не подключена к шаттлу.
+duty-centcomm-console-started-centcomm = Курс проложен: ЦК.
+duty-centcomm-console-started-station = Курс проложен: станция.
