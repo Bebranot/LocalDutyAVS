@@ -24,6 +24,7 @@ using Robust.Shared.Console;
 using Robust.Shared.Player;
 using Robust.Shared.Random;
 using Robust.Shared.Timing;
+using Content.Shared.IdentityManagement;
 
 namespace Content.Server._Duty.Lazarus;
 
@@ -407,7 +408,7 @@ public sealed partial class LazarusSystem : EntitySystem
         _popup.PopupEntity(Loc.GetString("duty-lazarus-popup-self"), uid, uid, PopupType.LargeCaution);
 
         // Окружающие видят, как боец снова приходит в себя.
-        _popup.PopupEntity(Loc.GetString("duty-lazarus-popup-others", ("target", Name(uid))), uid,
+        _popup.PopupEntity(Loc.GetString("duty-lazarus-popup-others", ("target", Identity.Entity(uid, EntityManager))), uid,
             Filter.PvsExcept(uid), true, PopupType.MediumCaution);
     }
 

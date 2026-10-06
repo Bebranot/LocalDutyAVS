@@ -4,6 +4,7 @@ using Content.Shared.Alert;
 using Content.Shared.Camera;
 using Content.Shared.Hands;
 using Content.Shared.Hands.EntitySystems;
+using Content.Shared.IdentityManagement;
 using Content.Shared.Popups;
 using Content.Shared.Weapons.Melee;
 using Robust.Shared.Audio;
@@ -22,17 +23,17 @@ namespace Content.Server._Duty.ShieldBash;
 /// или при потере последнего щита. Предсказываемая часть баффа (резист, скорость) — в
 /// <see cref="SharedShieldBashSystem"/>.
 /// </summary>
-public sealed class ShieldBashSystem : EntitySystem
+public sealed partial class ShieldBashSystem : EntitySystem
 {
-    [Dependency] private readonly SharedActionsSystem _actions = default!;
-    [Dependency] private readonly SharedHandsSystem _hands = default!;
-    [Dependency] private readonly SharedPopupSystem _popup = default!;
-    [Dependency] private readonly SharedAudioSystem _audio = default!;
-    [Dependency] private readonly SharedCameraRecoilSystem _recoil = default!;
-    [Dependency] private readonly AlertsSystem _alerts = default!;
-    [Dependency] private readonly IGameTiming _timing = default!;
-    [Dependency] private readonly IRobustRandom _random = default!;
-    [Dependency] private readonly SharedShieldBashSystem _shieldBash = default!;
+    [Dependency] private SharedActionsSystem _actions = default!;
+    [Dependency] private SharedHandsSystem _hands = default!;
+    [Dependency] private SharedPopupSystem _popup = default!;
+    [Dependency] private SharedAudioSystem _audio = default!;
+    [Dependency] private SharedCameraRecoilSystem _recoil = default!;
+    [Dependency] private AlertsSystem _alerts = default!;
+    [Dependency] private IGameTiming _timing = default!;
+    [Dependency] private IRobustRandom _random = default!;
+    [Dependency] private SharedShieldBashSystem _shieldBash = default!;
 
     private const float KickStrength = 0.4f;
 
@@ -259,7 +260,7 @@ public sealed class ShieldBashSystem : EntitySystem
             });
         }
         _popup.PopupEntity(Loc.GetString("shield-bash-popup-self"), user, user, PopupType.MediumCaution);
-        _popup.PopupEntity(Loc.GetString("shield-bash-popup-others", ("user", Name(user))), user,
+        _popup.PopupEntity(Loc.GetString("shield-bash-popup-others", ("user", Identity.Entity(user, EntityManager))), user,
             Filter.PvsExcept(user), true, PopupType.SmallCaution);
         _recoil.KickCamera(user, _random.NextAngle().ToVec() * KickStrength);
     }
