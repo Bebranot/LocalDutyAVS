@@ -386,4 +386,16 @@ public sealed class DutyCCVars
     /// </summary>
     public static readonly CVarDef<float> GunSpreadMultiplier =
         CVarDef.Create("duty.gun_spread_multiplier", 1.2f, CVar.SERVER | CVar.REPLICATED);
+
+    // ── Меню станков (автолат, техфабы) ──────────────────────────────────────
+
+    /// <summary>
+    /// Размер окна станка, который игрок выставил руками. Запоминается при закрытии окна,
+    /// общий для всех станков — у них одно меню.
+    /// </summary>
+    public static readonly CVarDef<float> LatheUiWidth =
+        CVarDef.Create("duty.lathe_ui_width", 1100f, CVar.ARCHIVE | CVar.CLIENTONLY);
+
+    public static readonly CVarDef<float> LatheUiHeight =
+        CVarDef.Create("duty.lathe_ui_height", 680f, CVar.ARCHIVE | CVar.CLIENTONLY);
 }

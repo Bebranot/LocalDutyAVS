@@ -346,6 +346,18 @@ namespace Content.Server.Lathe
                 BeakerInserted = component.ReagentCostSlotId is { } slotId && _itemSlots.GetItemOrNull(uid, slotId) != null,
                 // ADT-Tweak-End
             };
+
+            // _Duty-start: прогресс текущей детали и каналы объявлений для нового меню станка
+            if (component.CurrentRecipe != null && TryComp<LatheProducingComponent>(uid, out var producingComp))
+            {
+                state.ProductionStart = producingComp.StartTime;
+                state.ProductionLength = producingComp.ProductionLength;
+            }
+
+            if (TryComp<LatheAnnouncingComponent>(uid, out var announcing))
+                state.AnnounceChannels = new(announcing.Channels);
+            // _Duty-end
+
             _uiSys.SetUiState(uid, LatheUiKey.Key, state);
         }
 

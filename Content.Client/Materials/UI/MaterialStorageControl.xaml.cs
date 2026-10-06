@@ -51,8 +51,13 @@ public sealed partial class MaterialStorageControl : ScrollContainer
         var canEject = materialStorage.CanEjectStoredMaterials;
         var mats = _materialStorage.GetStoredMaterials((_owner.Value, materialStorage));
 
-        if (_currentMaterials.Equals(mats))
+        // _Duty-start: Equals у словаря ссылочный — список материалов пересобирался каждый кадр; сравниваем содержимое
+        SiloLinkedLabel.Visible = _entityManager.TryGetComponent<OreSiloClientComponent>(_owner.Value, out var siloClient) && siloClient.Silo != null;
+
+        if (_currentMaterials.Count == mats.Count
+            && mats.All(kv => _currentMaterials.TryGetValue(kv.Key, out var old) && old == kv.Value))
             return;
+        // _Duty-end
 
         var missing = new List<string>();
         var extra = new List<string>();
