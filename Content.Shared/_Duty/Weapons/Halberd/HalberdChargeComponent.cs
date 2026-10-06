@@ -1,3 +1,4 @@
+using System.Numerics;
 using Robust.Shared.Audio;
 using Robust.Shared.GameStates;
 using Robust.Shared.Prototypes;
@@ -5,7 +6,9 @@ using Robust.Shared.Prototypes;
 namespace Content.Shared._Duty.Weapons.Halberd;
 
 /// <summary>
-/// Компонент рывка алебарды. Вешается на алебарду.
+/// Компонент рывка алебарды. Вешается на алебарду. Здесь только параметры способности и серверная
+/// служебка — состояние идущего рывка живёт на самом бегущем (<see cref="HalberdChargingComponent"/>),
+/// потому что предсказывается именно его тело.
 /// </summary>
 [RegisterComponent, NetworkedComponent]
 public sealed partial class HalberdChargeComponent : Component
@@ -36,17 +39,9 @@ public sealed partial class HalberdChargeComponent : Component
     [DataField]
     public float ChargeDamage = 125f;
 
-    /// <summary>Кулдаун способности.</summary>
-    [DataField]
-    public TimeSpan Cooldown = TimeSpan.FromSeconds(25);
-
     /// <summary>Резист ко всем типам урона во время рывка (0.0 - 1.0).</summary>
     [DataField]
     public float ChargeResistance = 0.65f;
-
-    /// <summary>Стан при попадании в сущность (секунды).</summary>
-    [DataField]
-    public float KnockdownOnHitEntity = 5f;
 
     /// <summary>Стан при попадании в стену (секунды).</summary>
     [DataField]
@@ -64,53 +59,106 @@ public sealed partial class HalberdChargeComponent : Component
     [DataField]
     public float HitSlowdownSpeedModifier = 0.5f;
 
+    /// <summary>Радиус, в котором рывок цепляет моба перед собой (тайлы).</summary>
+    [DataField]
+    public float HitRadius = 0.65f;
+
+    /// <summary>
+    /// Упор в препятствие: за тик тело сместилось меньше этой доли от заданного два тика подряд.
+    /// Скольжение вдоль стены теряет лишь долю скорости и упором не считается — только лобовой удар.
+    /// </summary>
+    [DataField]
+    public float StallFraction = 0.35f;
+
     /// <summary>Звук рывка — зацикленный, играет всё время чарджа, останавливается вручную. Заглушка — звук шагов поставит пользователь позже.</summary>
     [DataField]
     public SoundSpecifier ChargeLoopSound = new SoundPathSpecifier("/Audio/_Duty/Weapons/Halberd/HalberdCharge.ogg", AudioParams.Default.WithLoop(true));
 
-    // ── Состояние рывка (рантайм) ─────────────────────────────
+    [DataField]
+    public SoundSpecifier HitSound = new SoundPathSpecifier("/Audio/Weapons/slash.ogg");
 
-    public bool IsCharging = false;
-    public EntityUid? ChargeUser = null;
-    public System.Numerics.Vector2 ChargeDirection = System.Numerics.Vector2.Zero;
-    public System.Numerics.Vector2 ChargeStartPos = System.Numerics.Vector2.Zero;
+    [DataField]
+    public SoundSpecifier WallSound = new SoundPathSpecifier("/Audio/Effects/metal_slam1.ogg");
 
-    /// <summary>Активный зацикленный звук рывка — нужно остановить вручную при StopCharge.</summary>
-    public EntityUid? ChargeAudioStream = null;
+    // ── Серверная служебка ────────────────────────────────────
+
+    /// <summary>Активный зацикленный звук рывка — нужно остановить вручную по окончании.</summary>
+    [ViewVariables]
+    public EntityUid? ChargeAudioStream;
 
     /// <summary>
-    /// Кто держит алебарду wielded прямо сейчас (шире, чем <see cref="ChargeUser"/> — тот
-    /// только на время самого рывка). Нужно на ComponentShutdown: снять
-    /// <see cref="HalberdWieldedComponent"/> с юзера, если алебарду удалили/уничтожили, не
-    /// дожидаясь обычного ItemUnwieldedEvent.
+    /// Кто держит алебарду wielded прямо сейчас. Нужно на ComponentShutdown: алебарду могли
+    /// удалить или уничтожить, минуя обычный unwield, — тогда рывок и маркер снимаются отсюда.
     /// </summary>
-    public EntityUid? WieldedBy = null;
+    [ViewVariables]
+    public EntityUid? WieldedBy;
 }
 
 /// <summary>
-/// Временный компонент-маркер, вешается на пользователя во время рывка.
-/// Используется для применения резиста к урону.
+/// Идущий рывок — висит на бегущем от старта до конца рывка. Пока он есть, ввод движения
+/// заблокирован, а скорость тела ведёт <see cref="HalberdChargeController"/>. Сетевой, с дельтами:
+/// клиент предсказывает свой рывок и должен откатываться к тем же значениям, что у сервера.
 /// </summary>
-[RegisterComponent]
-public sealed partial class HalberdChargeResistComponent : Component
+[RegisterComponent, NetworkedComponent, AutoGenerateComponentState(fieldDeltas: true), AutoGenerateComponentPause]
+public sealed partial class HalberdChargingComponent : Component
 {
-    /// <summary>Доля урона которая блокируется (0.65 = 65% резист).</summary>
-    public float Resistance = 0.65f;
+    [AutoNetworkedField]
+    public EntityUid Halberd;
 
-    /// <summary>CanCollide до рывка (восстанавливается по окончании).</summary>
-    public bool HadCanCollide;
+    /// <summary>Единичный вектор в мировых координатах, фиксируется на старте.</summary>
+    [AutoNetworkedField]
+    public Vector2 Direction;
 
-    public bool CanCollideBefore;
+    /// <summary>Мировая точка старта — от неё меряется пройденное вдоль направления.</summary>
+    [AutoNetworkedField]
+    public Vector2 Origin;
+
+    [AutoNetworkedField]
+    public float Distance;
+
+    [AutoNetworkedField]
+    public float Speed;
+
+    /// <summary>Доля урона, которую рывок гасит.</summary>
+    [AutoNetworkedField]
+    public float Resistance;
+
+    [AutoNetworkedField]
+    public Vector2 LastPosition;
+
+    /// <summary>Скорость, заданная в прошлом тике: по ней ждём смещения и ловим упор.</summary>
+    [AutoNetworkedField]
+    public float LastSpeed;
+
+    [AutoNetworkedField]
+    public int StallTicks;
+
+    /// <summary>Страховка: позже этого рывок заканчивается в любом случае.</summary>
+    [AutoNetworkedField, AutoPausedField]
+    public TimeSpan Deadline;
 }
 
 /// <summary>
-/// Компонент-маркер: вешается на пользователя, пока он держит wielded-алебарду (не только во
-/// время рывка). Даёт directed-подписку на события дропа/стана/дизарма НА ЮЗЕРЕ — эти события
-/// движок всегда шлёт на того, с кем это происходит, а не на предмет в его руках.
+/// Маркер на пользователе, пока он держит wielded-алебарду (не только во время рывка). Даёт
+/// directed-подписку на события дропа/стана/дизарма НА ЮЗЕРЕ — эти события движок всегда шлёт на
+/// того, с кем это происходит, а не на предмет в его руках. Сетевой: дроп при нокдауне клиент
+/// предсказывает и должен знать, что алебарду ронять нельзя.
 /// </summary>
-[RegisterComponent]
+[RegisterComponent, NetworkedComponent, AutoGenerateComponentState]
 public sealed partial class HalberdWieldedComponent : Component
 {
     /// <summary>Какую именно алебарду держит юзер — нужно для TryDrop при дизарме.</summary>
+    [AutoNetworkedField]
     public EntityUid Halberd;
+}
+
+public enum HalberdChargeEndReason : byte
+{
+    HitEntity,
+    Wall,
+    Miss,
+    KnockedDown,
+
+    /// <summary>Рывок сорвался без последствий: смерть/крит, потеря алебарды, невесомость.</summary>
+    Aborted,
 }

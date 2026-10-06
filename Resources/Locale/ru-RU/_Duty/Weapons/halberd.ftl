@@ -2,6 +2,7 @@
 
 halberd-charge-need-wield = Возьмите алебарду двумя руками!
 halberd-charge-need-stand = Вы не можете атаковать лёжа!
+halberd-charge-no-footing = Не от чего оттолкнуться!
 
 halberd-charge-cry-start = АААААА!!!
 halberd-charge-cry-hit = НААА!!!
