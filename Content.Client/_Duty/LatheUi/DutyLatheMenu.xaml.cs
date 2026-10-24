@@ -52,6 +52,9 @@ public sealed partial class DutyLatheMenu : FancyWindow
     /// </summary>
     private const float AvailabilityRefreshInterval = 0.5f;
 
+    /// <summary>Сколько иконок рецептов создавать за кадр: каждая спавнит клиентскую сущность.</summary>
+    private const int IconsPerFrame = 24;
+
     [Dependency] private readonly IEntityManager _entMan = default!;
     [Dependency] private readonly IPrototypeManager _proto = default!;
     [Dependency] private readonly IGameTiming _timing = default!;
@@ -95,6 +98,7 @@ public sealed partial class DutyLatheMenu : FancyWindow
     private readonly Dictionary<string, int> _materialAmounts = new();
     private Solution? _beakerSolution;
     private float _availabilityAccumulator;
+    private bool _iconsPending;
 
     private float _materialMultiplier = float.NaN;
     private float _timeMultiplier = float.NaN;
@@ -275,13 +279,14 @@ public sealed partial class DutyLatheMenu : FancyWindow
 
     private DutyLatheRecipeRow CreateRow(LatheRecipePrototype recipe, LatheComponent? lathe)
     {
+        // Иконку не создаём сразу — её поставит LoadPendingIcons в ближайших кадрах.
         var row = new DutyLatheRecipeRow(recipe,
             _lathe.GetRecipeName(recipe),
-            _lathe.GetRecipeDescription(recipe),
-            CreateIcon(recipe, 32))
+            _lathe.GetRecipeDescription(recipe))
         {
             Accent = _accent,
         };
+        _iconsPending = true;
         row.SetCosts(BuildCosts(recipe, lathe), EstimateSeconds(recipe, lathe));
         row.OnPressed += _ => OnRowPressed(row);
         return row;
@@ -996,6 +1001,7 @@ public sealed partial class DutyLatheMenu : FancyWindow
     {
         base.FrameUpdate(args);
 
+        LoadPendingIcons();
         UpdateTimers();
 
         _availabilityAccumulator += args.DeltaSeconds;
@@ -1008,6 +1014,32 @@ public sealed partial class DutyLatheMenu : FancyWindow
 
         if (_selected != null)
             UpdateDetail();
+    }
+
+    /// <summary>
+    /// Раздать иконки строкам порциями: сначала видимым (что игрок видит сейчас), потом остальным.
+    /// Окно открывается сразу, а не после спавна сотни сущностей-иконок.
+    /// </summary>
+    private void LoadPendingIcons()
+    {
+        if (!_iconsPending)
+            return;
+
+        var budget = IconsPerFrame;
+        for (var pass = 0; pass < 2 && budget > 0; pass++)
+        {
+            foreach (var row in _sortedRows)
+            {
+                if (row.HasIcon || (pass == 0 && !row.Visible))
+                    continue;
+
+                row.SetIcon(CreateIcon(row.Recipe, 32));
+                if (--budget == 0)
+                    return;
+            }
+        }
+
+        _iconsPending = false;
     }
 
     /// <summary>

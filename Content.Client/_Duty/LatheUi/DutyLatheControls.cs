@@ -2,6 +2,7 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
+using System.Numerics;
 using Robust.Client.Graphics;
 using Robust.Client.UserInterface;
 using Robust.Client.UserInterface.Controls;
@@ -126,5 +127,35 @@ public sealed class DutyLatheBadge : PanelContainer
         _label.Text = text;
         _label.FontColorOverride = color;
         ToolTip = tooltip;
+    }
+}
+
+/// <summary>
+/// Колонка, которая не требует ширины у содержимого. BoxContainer меряет детей слева направо, и центральная
+/// колонка с длинным описанием (RichTextLabel) забирала всю ширину раньше, чем доходила очередь правой колонки, —
+/// та уезжала за край окна. Здесь желаемая ширина всегда 0, а текст переносится по ширине, которую колонка
+/// реально получила при прошлой раскладке.
+/// </summary>
+public sealed class DutyLatheNoGrowBox : BoxContainer
+{
+    private float _arrangedWidth;
+
+    protected override Vector2 MeasureOverride(Vector2 availableSize)
+    {
+        var width = _arrangedWidth > 0 ? MathF.Min(_arrangedWidth, availableSize.X) : availableSize.X;
+        var desired = base.MeasureOverride(new Vector2(width, availableSize.Y));
+        return new Vector2(0, desired.Y);
+    }
+
+    protected override Vector2 ArrangeOverride(Vector2 finalSize)
+    {
+        // Ширина поменялась (ресайз окна) — перемерить: высота перенесённого текста зависит от ширины.
+        if (MathF.Abs(finalSize.X - _arrangedWidth) > 0.5f)
+        {
+            _arrangedWidth = finalSize.X;
+            InvalidateMeasure();
+        }
+
+        return base.ArrangeOverride(finalSize);
     }
 }

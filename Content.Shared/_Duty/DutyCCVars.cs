@@ -391,11 +391,12 @@ public sealed class DutyCCVars
 
     /// <summary>
     /// Размер окна станка, который игрок выставил руками. Запоминается при закрытии окна,
-    /// общий для всех станков — у них одно меню.
+    /// общий для всех станков — у них одно меню. Имена сменены вместе с размером по умолчанию,
+    /// чтобы новый размер применился и у тех, кто уже растягивал окно.
     /// </summary>
     public static readonly CVarDef<float> LatheUiWidth =
-        CVarDef.Create("duty.lathe_ui_width", 1100f, CVar.ARCHIVE | CVar.CLIENTONLY);
+        CVarDef.Create("duty.lathe_window_width", 1280f, CVar.ARCHIVE | CVar.CLIENTONLY);
 
     public static readonly CVarDef<float> LatheUiHeight =
-        CVarDef.Create("duty.lathe_ui_height", 680f, CVar.ARCHIVE | CVar.CLIENTONLY);
+        CVarDef.Create("duty.lathe_window_height", 760f, CVar.ARCHIVE | CVar.CLIENTONLY);
 }

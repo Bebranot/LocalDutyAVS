@@ -2,13 +2,14 @@
 SPDX-FileCopyrightText: 2025 LocalDuty <https://github.com/Bebranot/LocalDuty_Reserve>
 SPDX-License-Identifier: AGPL-3.0-or-later
 -->
-<!-- Размер окна задаётся в коде (запоминается в duty.lathe_ui_*). Все меняющиеся тексты — ClipText,
+<!-- Размер окна задаётся в коде (запоминается в duty.lathe_window_*). Все меняющиеся тексты — ClipText,
      а колонки — RectClipContent: длинное название не должно раздвигать окно, размер меняется только руками. -->
 <controls:FancyWindow
     xmlns="https://spacestation14.io"
     xmlns:gfx="clr-namespace:Robust.Client.Graphics;assembly=Robust.Client"
     xmlns:ui="clr-namespace:Content.Client.Materials.UI"
     xmlns:controls="clr-namespace:Content.Client.UserInterface.Controls"
+    xmlns:duty="clr-namespace:Content.Client._Duty.LatheUi"
     Title="{Loc 'lathe-menu-title'}"
     MinSize="860 520">
     <BoxContainer Orientation="Vertical" VerticalExpand="True" HorizontalExpand="True">
@@ -37,8 +38,8 @@ SPDX-License-Identifier: AGPL-3.0-or-later
                 </ScrollContainer>
             </PanelContainer>
 
-            <!-- Центр: поиск, список, выбранный рецепт -->
-            <BoxContainer Orientation="Vertical" HorizontalExpand="True" VerticalExpand="True" RectClipContent="True">
+            <!-- Центр: поиск, список, выбранный рецепт. NoGrowBox — чтобы длинный текст не выталкивал правую колонку -->
+            <duty:DutyLatheNoGrowBox Orientation="Vertical" HorizontalExpand="True" VerticalExpand="True" RectClipContent="True">
                 <BoxContainer Orientation="Horizontal" Margin="6 6 6 4" SeparationOverride="8">
                     <LineEdit Name="SearchBar"
                               HorizontalExpand="True"
@@ -103,7 +104,7 @@ SPDX-License-Identifier: AGPL-3.0-or-later
                         </BoxContainer>
                     </BoxContainer>
                 </PanelContainer>
-            </BoxContainer>
+            </duty:DutyLatheNoGrowBox>
 
             <!-- Справа: очередь и материалы -->
             <BoxContainer Orientation="Vertical"
