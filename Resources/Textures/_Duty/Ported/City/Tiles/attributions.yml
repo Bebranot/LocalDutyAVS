@@ -1,0 +1,9 @@
+- files: [ "stalker_bar.png" ]
+  license: "CC-BY-SA-3.0"
+  copyright: "Stalker14 CLA"
+  source: "https://github.com/stalker14-project/stalker14"
+
+- files: [ "lino.png", "checker_dark.png", "cafeteria.png" ]
+  license: "CC-BY-SA-3.0"
+  copyright: "Space Station 14 contributors"
+  source: "https://github.com/space-wizards/space-station-14"
