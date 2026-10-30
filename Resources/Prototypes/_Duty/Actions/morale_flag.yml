@@ -9,11 +9,12 @@
   components:
   - type: Action
     useDelay: 120 # должно совпадать с MoraleFlagComponent.Cooldown
-    icon:
-      # Кнопка не умеет слоить спрайты — state "icon" это сведённый композит buff + icon2 (icon2 поверх).
-      sprite: _Duty/Actions/MoraleBuff.rsi
-      state: icon
     itemIconStyle: NoItem
     priority: -1
+  - type: Sprite
+    # Кнопка не умеет слоить спрайты — state "icon" это сведённый композит buff + icon2 (icon2 поверх).
+    sprite: _Duty/Actions/MoraleBuff.rsi
+    layers:
+    - state: icon
   - type: InstantAction
     event: !type:MoraleFlagActionEvent {}

@@ -118,7 +118,7 @@ public sealed partial class BlockPunishStunSystem : EntitySystem
 
     private void OnEquipAttempt(EntityUid uid, BlockPunishStunComponent component, IsEquippingAttemptEvent args)
     {
-        if (args.Equipee != uid)
+        if (args.EquipTarget != uid)
             return;
 
         args.Cancel();
@@ -126,7 +126,7 @@ public sealed partial class BlockPunishStunSystem : EntitySystem
 
     private void OnUnequipAttempt(EntityUid uid, BlockPunishStunComponent component, IsUnequippingAttemptEvent args)
     {
-        if (args.Unequipee != uid)
+        if (args.UnEquipTarget != uid)
             return;
 
         args.Cancel();

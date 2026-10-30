@@ -186,8 +186,7 @@ namespace Content.Client.Lobby.UI
 
             NameEdit.OnTextChanged += args => { SetName(args.Text); };
             NameEdit.IsValid = args => args.Length <= _maxNameLength;
-            NameRandomize.OnPressed += args => RandomizeName();
-            RandomizeEverythingButton.OnPressed += args => { RandomizeEverything(); };
+            RandomizeUnlockedButton.OnPressed += args => { RandomizeProfile(); };
             WarningLabel.SetMarkup($"[color=red]{Loc.GetString("humanoid-profile-editor-naming-rules-warning")}[/color]");
 
             #endregion Name
@@ -205,6 +204,16 @@ namespace Content.Client.Lobby.UI
             };
 
             #endregion Sex
+
+            #region Voice
+
+            VoiceButton.OnItemSelected += args =>
+            {
+                VoiceButton.SelectId(args.Id);
+                SetVoice(_voices[args.Id]);
+            };
+
+            #endregion
 
             #region Age
 
@@ -482,7 +491,7 @@ namespace Content.Client.Lobby.UI
 
             _ttsTab.OnVoiceSelected += voiceId =>
             {
-                SetVoice(voiceId);
+                SetTTSVoice(voiceId);
                 _ttsTab.SetSelectedVoice(voiceId);
             };
 
@@ -498,7 +507,7 @@ namespace Content.Client.Lobby.UI
                 return;
 
             _ttsTab.UpdateControls(Profile, Profile.Sex, Profile.Species); //ADT-tweak: добавлена раса
-            _ttsTab.SetSelectedVoice(Profile.Voice);
+            _ttsTab.SetSelectedVoice(Profile.TTSVoice);
         }
 
         #endregion
@@ -569,6 +578,7 @@ namespace Content.Client.Lobby.UI
             UpdateNameEdit();
             UpdateFlavorTextEdit();
             UpdateSexControls();
+            UpdateVoiceControls();
             UpdateGenderControls();
             UpdateSkinColor();
             UpdateSpawnPriorityControls();
@@ -742,7 +752,7 @@ namespace Content.Client.Lobby.UI
         }
 
         // ADT-Tweak-Start
-        private void SetVoice(string newVoice)
+        private void SetTTSVoice(string newVoice)
         {
             Profile = Profile?.WithVoice(newVoice);
             SetDirty(); // _Duty: раньше всегда помечало «изменено», даже при возврате к сохранённому голосу

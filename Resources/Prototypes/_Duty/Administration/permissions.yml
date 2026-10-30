@@ -144,9 +144,7 @@
   id: chat_ooc
   group: chat
   order: 50
-  commands:
-  - setooc
-  - setlooc
+  commands: []
 
 - type: adminPermission
   id: chat_moderate
@@ -298,7 +296,6 @@
   commands:
   - spawn
   - cspawn
-  - spawnentitylist
   toolshed:
   - clone
 
@@ -585,9 +582,8 @@
   - dutybreakbone
   - dutyconcussion
   - dutydislocate
-  - hungry
-  - thirsty
-  - setnutrit
+  - setsatiation
+  - unsatiate
   toolshed:
   - rejuvenate
   - statuseffect
@@ -698,7 +694,6 @@
   - gridtc
   - togglespritenetsync
   - tilepry
-  - unlocknode
   toolshed:
   - addaccesslog
   - areas

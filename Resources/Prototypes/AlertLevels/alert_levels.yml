@@ -1,134 +1,134 @@
-- type: alertLevels
-  id: stationAlerts
-  defaultLevel: green
-  levels:
-    green:
-      announcement: alert-level-green-announcement
-      sound: /Audio/_Duty/Announcement/code_green.ogg
-      color: Green
-      emergencyLightColor: LawnGreen
-      shuttleTime: 300
-    blue:
-      announcement: alert-level-blue-announcement
-      sound: /Audio/_Duty/Announcement/code_blue.ogg
-      color: DodgerBlue
-      forceEnableEmergencyLights: true
-      emergencyLightColor: DodgerBlue
-      shuttleTime: 600
-    violet:
-      announcement: alert-level-violet-announcement
-      sound: /Audio/_Duty/Announcement/code_violet.ogg
-      color: Violet
-      emergencyLightColor: Violet
-      forceEnableEmergencyLights: true
-      shuttleTime: 600
-    yellow:
-      announcement: alert-level-yellow-announcement
-      sound: /Audio/_Duty/Announcement/code_yellow.ogg
-      color: Yellow
-      emergencyLightColor: Goldenrod
-      forceEnableEmergencyLights: true
-      shuttleTime: 600
-    red:
-      announcement: alert-level-red-announcement
-      sound: !type:SoundCollectionSpecifier
-        collection: DutyCodeRed
-      color: Red
-      emergencyLightColor: Red
-      forceEnableEmergencyLights: true
-      shuttleTime: 600 #No reduction in time as we don't have swiping for red alert like in /tg/. Shuttle times are intended to create friction, so having a way to brainlessly bypass that would be dumb.
-    gamma:
-      announcement: alert-level-gamma-announcement
-      selectable: false
-      sound:
-        path: /Audio/_Duty/Announcement/code_gamma.ogg
-        params:
-          volume: -2
-      disableSelection: true
-      color: PaleVioletRed
-      emergencyLightColor: PaleVioletRed
-      forceEnableEmergencyLights: true
-    delta:
-      announcement: alert-level-delta-announcement
-      selectable: false
-      sound:
-        path: /Audio/_Duty/Announcement/code_delta.ogg
-        params:
-          volume: -1 # ADT-Tweak
-      disableSelection: true
-      color: DarkRed
-      emergencyLightColor: Orange
-      forceEnableEmergencyLights: true
-      shuttleTime: 1200
-    epsilon:
-      announcement: alert-level-epsilon-announcement
-      selectable: false
-      sound:
-        path: /Audio/_Duty/Announcement/code_epsilon.ogg
-        params:
-          volume: -2
-      disableSelection: true
-      color: DarkViolet
-      emergencyLightColor: DarkViolet
-      forceEnableEmergencyLights: true
-      shuttleTime: 1200
-    amber: #ADT start
-      announcement: alert-level-amber-announcement
-      sound:
-        path: /Audio/ADT/Misc/amber.ogg
-        params:
-          volume: -2
-      color: "#ffbf00"
-      emergencyLightColor: "#ffbf00"
-      forceEnableEmergencyLights: true
-      shuttleTime: 1200
-    altdelta:
-      announcement: alert-level-delta-announcement
-      selectable: false
-      sound:
-        path: /Audio/Misc/delta_alt.ogg
-        params:
-          volume: -1 # ADT-Tweak
-      disableSelection: true
-      color: DarkRed
-      emergencyLightColor: Orange
-      forceEnableEmergencyLights: true
-      shuttleTime: 1200
-    cascade:
-      announcement: alert-level-cascade-announcement
-      selectable: false
-      sound:
-        path: /Audio/ADT/Supermatter/thecascade.ogg
-        params:
-          volume: -2
-      disableSelection: true
-      color: PaleVioletRed
-      emergencyLightColor: PaleVioletRed
-      forceEnableEmergencyLights: true
-      shuttleTime: 1200
-    #ADT end
-    # _Duty: протокол «Альфа». Включается только вручную, командой dutycodealpha — автотриггера
-    # по объявлению войны нет намеренно.
-    # Выставляется только кодом (DutyCodeAlphaSystem), поэтому selectable: false + disableSelection.
-    # disableSelection не «залипает» навсегда: IsSelectable считается от ТЕКУЩЕГО уровня, так что
-    # после возврата на green консоль связи снова работает.
-    alpha:
-      announcement: alert-level-alpha-announcement
-      selectable: false
-      disableSelection: true
-      sound:
-        path: /Audio/ADT/Announcements/announce_syndi.ogg
-      color: "#8A0303"
-      emergencyLightColor: "#8A0303"
-      forceEnableEmergencyLights: true
-      shuttleTime: 1200
-    #ADT start
-    # kappa:
-    #   announcement: alert-level-kappa-announcement
-    #   selectable: false
-    #   sound: /Audio/ADT/Misc/kappa.ogg
-    #   color: Cyan
-    #   emergencyLightColor: "#00ffea"
-    #   shuttleTime: 600
-    #   disableSelection: true
-      #ADT end
+- type: alertLevel
+  id: Green
+  name: alert-level-green
+  announcement: alert-level-green-announcement
+  instructions: alert-level-green-instructions
+  sound: /Audio/_Duty/Announcement/code_green.ogg # _Duty
+  color: Green
+  emergencyLightColor: LawnGreen
+  shuttleTime: 600
+
+- type: alertLevel
+  id: Blue
+  name: alert-level-blue
+  announcement: alert-level-blue-announcement
+  instructions: alert-level-blue-instructions
+  sound: /Audio/_Duty/Announcement/code_blue.ogg # _Duty
+  color: DodgerBlue
+  emergencyLightColor: DodgerBlue
+  forceEnableEmergencyLights: true
+  shuttleTime: 600
+
+- type: alertLevel
+  id: Yellow
+  name: alert-level-yellow
+  announcement: alert-level-yellow-announcement
+  instructions: alert-level-yellow-instructions
+  sound: /Audio/_Duty/Announcement/code_yellow.ogg # _Duty
+  color: Yellow
+  emergencyLightColor: Goldenrod
+  forceEnableEmergencyLights: true
+  shuttleTime: 600
+
+- type: alertLevel
+  id: Red
+  name: alert-level-red
+  announcement: alert-level-red-announcement
+  instructions: alert-level-red-instructions
+  sound: /Audio/_Duty/Announcement/code_red.ogg # _Duty
+  color: Red
+  emergencyLightColor: Red
+  forceEnableEmergencyLights: true
+  shuttleTime: 600
+  # No reduction in time as we don't have swiping for red alert like in /tg/.
+  # Shuttle times are intended to create friction,
+  # so having a way to brainlessly bypass that would be dumb.
+
+- type: alertLevel
+  id: Violet
+  name: alert-level-violet
+  announcement: alert-level-violet-announcement
+  instructions: alert-level-violet-instructions
+  sound: /Audio/_Duty/Announcement/code_violet.ogg # _Duty
+  color: Violet
+  emergencyLightColor: Violet
+  forceEnableEmergencyLights: true
+  shuttleTime: 600
+
+- type: alertLevel
+  abstract: true
+  id: BaseDelta
+  name: alert-level-delta
+  instructions: alert-level-delta-instructions
+  selectable: false
+  disableSelection: true
+  forceEnableEmergencyLights: true
+  shuttleTime: 1200
+
+- type: alertLevel
+  parent: BaseDelta
+  id: DeltaNuke
+  announcement: alert-level-delta-nuke-announcement
+  sound:
+    path: /Audio/ADT/Announcements/Alert/delta.ogg # ADT-Tweak
+    params:
+      volume: -1 # ADT-Tweak
+  color: DarkRed
+  emergencyLightColor: Orange
+
+- type: alertLevel
+  id: Epsilon
+  name: alert-level-epsilon
+  announcement: alert-level-epsilon-announcement
+  instructions: alert-level-epsilon-instructions
+  selectable: false
+  sound:
+    path: /Audio/Misc/epsilon.ogg
+    params:
+      volume: -2
+  disableSelection: true
+  color: DarkViolet
+  emergencyLightColor: DarkViolet
+  forceEnableEmergencyLights: true
+  shuttleTime: 1200
+
+- type: alertLevel
+  id: Gamma
+  name: alert-level-gamma
+  announcement: alert-level-gamma-announcement
+  instructions: alert-level-gamma-instructions
+  selectable: false
+  sound:
+    path: /Audio/ADT/Announcements/Alert/gamma_alert.ogg # ADT-Tweak
+    params:
+      volume: -2
+  disableSelection: true
+  color: PaleVioletRed
+  emergencyLightColor: PaleVioletRed
+  forceEnableEmergencyLights: true
+
+# Placeholder for the comms console in case of failure.
+- type: alertLevel
+  parent: Green
+  id: Unknown
+  name: generic-unknown-title
+  announcement: alert-level-unknown-announcement
+  instructions: alert-level-unknown-instructions
+  selectable: false
+  color: Gray
+
+# _Duty: Код Альфа. Вызывается консолью ЦК, командой dutycodealpha или протоколом.
+# Система оповещения (DutyCodeAlphaSystem), selectable: false + disableSelection.
+- type: alertLevel
+  id: Alpha
+  name: alert-level-alpha
+  announcement: alert-level-alpha-announcement
+  instructions: alert-level-alpha-instructions
+  selectable: false
+  disableSelection: true
+  sound:
+    path: /Audio/ADT/Announcements/announce_syndi.ogg
+  color: "#8A0303"
+  emergencyLightColor: "#8A0303"
+  forceEnableEmergencyLights: true
+  shuttleTime: 1200

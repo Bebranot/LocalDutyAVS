@@ -12,11 +12,12 @@
   components:
   - type: Action
     useDelay: 90 # должно совпадать с ShieldBashComponent.Cooldown
-    icon:
-      sprite: Objects/Weapons/Melee/shields.rsi
-      state: riot-icon # ЗАГЛУШКА — переиспользуем спрайт щита, заменить на отдельную иконку удара
     itemIconStyle: NoItem
     priority: -1
+  - type: Sprite
+    sprite: Objects/Weapons/Melee/shields.rsi
+    layers:
+    - state: riot-icon # ЗАГЛУШКА — переиспользуем спрайт щита, заменить на отдельную иконку удара
   - type: InstantAction
     event: !type:ShieldBashActionEvent {}
 

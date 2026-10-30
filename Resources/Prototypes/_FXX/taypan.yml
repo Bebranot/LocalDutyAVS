@@ -794,7 +794,7 @@
     - Syndicateauto
     - SyndicateBorg
 
-- type: vendingMachineInventory
+- type: wizardsVendingMachineInventory
   id: TaypanClothingFXXInventory
   startingInventory:
     ClothingOuterCoatLab: 16
@@ -845,10 +845,6 @@
   components:
   - type: VendingMachine
     pack: TaypanClothingFXXInventory
-    offState: off
-    brokenState: broken
-    normalState: normal-unshaded
-    allForFree: true # ADT-Economy
   - type: DatasetVocalizer
     dataset: SyndieDrobeAds
   - type: SpeakOnUIClosed

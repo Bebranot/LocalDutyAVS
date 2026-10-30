@@ -181,7 +181,7 @@ public sealed partial class SharedAimingSystem : EntitySystem
     private void OnAimingShutdown(Entity<AimingComponent> ent, ref ComponentShutdown args)
     {
         _contentEye.ResetZoom(ent);
-        _movementSpeedModifier.RefreshMovementSpeedModifiers(ent);
+        _movementSpeedModifier.RefreshMovementSpeedModifiers(ent.Owner);
 
         if (Exists(ent.Comp.Gun))
         {

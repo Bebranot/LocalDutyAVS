@@ -12,12 +12,12 @@ namespace Content.Server.ADT.EntityEffects.Effects;
 
 public sealed partial class RandomTeleportNearbySystem : EntityEffectSystem<TransformComponent, RandomTeleportEvent>
 {
-    [Dependency] private readonly EntityLookupSystem _lookup = default!;
-    [Dependency] private readonly ExamineSystemShared _examine = default!;
-    [Dependency] private readonly InteractionSystem _interaction = default!;
-    [Dependency] private readonly SharedTransformSystem _transform = default!;
-    [Dependency] private readonly IRobustRandom _random = default!;
-    [Dependency] private readonly IMapManager _mapManager = default!;
+    [Dependency] private EntityLookupSystem _lookup = default!;
+    [Dependency] private ExamineSystemShared _examine = default!;
+    [Dependency] private SharedTransformSystem _transform = default!;
+    [Dependency] private IRobustRandom _random = default!;
+    [Dependency] private SharedMapSystem _mapManager = default!;
+    [Dependency] private InteractionSystem _interaction = default!;
 
     protected override void Effect(Entity<TransformComponent> entity, ref EntityEffectEvent<RandomTeleportEvent> args)
     {
@@ -73,7 +73,7 @@ public sealed partial class RandomTeleportNearbySystem : EntityEffectSystem<Tran
             }
             else
             {
-                var mapEntity = _mapManager.GetMapEntityId(mapId);
+                var mapEntity = _mapManager.GetMapOrInvalid(mapId);
                 _transform.SetCoordinates(target, targetXform, new EntityCoordinates(mapEntity, newPos));
             }
         }

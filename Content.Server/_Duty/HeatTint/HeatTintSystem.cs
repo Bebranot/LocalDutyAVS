@@ -19,16 +19,16 @@ public sealed partial class HeatTintSystem : SharedHeatTintSystem
         base.Initialize();
 
         SubscribeLocalEvent<HeatTintComponent, MapInitEvent>(OnMapInit);
-        SubscribeLocalEvent<HeatTintComponent, OnTemperatureChangeEvent>(OnTemperatureChanged);
+        SubscribeLocalEvent<HeatTintComponent, TemperatureChangedEvent>(OnTemperatureChanged);
     }
 
     private void OnMapInit(Entity<HeatTintComponent> ent, ref MapInitEvent args)
     {
         if (TryComp<TemperatureComponent>(ent, out var temp))
-            _appearance.SetData(ent, HeatTintVisuals.Temperature, temp.CurrentTemperature);
+            _appearance.SetData(ent, HeatTintVisuals.Temperature, temp.Temperature);
     }
 
-    private void OnTemperatureChanged(Entity<HeatTintComponent> ent, ref OnTemperatureChangeEvent args)
+    private void OnTemperatureChanged(Entity<HeatTintComponent> ent, ref TemperatureChangedEvent args)
     {
         _appearance.SetData(ent, HeatTintVisuals.Temperature, args.CurrentTemperature);
     }

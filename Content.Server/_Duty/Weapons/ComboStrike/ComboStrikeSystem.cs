@@ -1,3 +1,4 @@
+using System.Linq;
 using Content.Shared._Duty.Weapons.ComboStrike;
 using Content.Shared.Damage;
 using Content.Shared.Damage.Components;
@@ -32,7 +33,7 @@ public sealed partial class ComboStrikeSystem : EntitySystem
             return;
         }
 
-        var target = args.HitEntities[0];
+        var target = args.HitEntities.First();
         var now = _timing.CurTime;
 
         if (combo.LastTarget != target || now - combo.LastHitTime > TimeSpan.FromSeconds(combo.ComboWindow))

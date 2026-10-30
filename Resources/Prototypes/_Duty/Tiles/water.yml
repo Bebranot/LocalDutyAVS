@@ -30,7 +30,6 @@
   # У базовой воды регенерация смотрит в несуществующий раствор tank — здесь указываем pool,
   # чтобы вычерпанное действительно восполнялось.
   - type: SolutionRegeneration
-    solution: pool
     generated:
       reagents:
       - ReagentId: STToxicWater
@@ -145,7 +144,6 @@
         - ReagentId: Toxin
           Quantity: 9999999
   - type: SolutionRegeneration
-    solution: pool
     generated:
       reagents:
       - ReagentId: Toxin

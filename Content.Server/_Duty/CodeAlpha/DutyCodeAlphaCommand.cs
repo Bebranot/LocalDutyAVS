@@ -3,9 +3,9 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
 using Content.Server.Administration;
-using Content.Server.AlertLevel;
 using Content.Shared._Duty.CodeAlpha;
 using Content.Shared.Administration;
+using Content.Shared.AlertLevel;
 using Content.Shared.Station;
 using Robust.Shared.Console;
 

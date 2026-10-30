@@ -1,19 +1,19 @@
-using Content.Server.Botany.Components;
-using Content.Server.Botany.Systems;
-using Content.Server.Popups;
+using Content.Shared.Botany.Components;
+using Content.Shared.Botany.Events;
+using Content.Shared._Duty.Hydroponics;
 using Content.Shared.Popups;
 
 namespace Content.Server._Duty.Hydroponics;
 
 /// <summary>
 /// _Duty: горохострел — мутация гороха (см. mutationPrototypes у "pea" в
-/// Prototypes/Hydroponics/seeds.yml и Prototypes/_Duty/Entities/Objects/Specific/Hydroponics/pea_shooter.yml).
+/// Prototypes/Hydroponics/plants.yml и Prototypes/_Duty/Entities/Objects/Specific/Hydroponics/pea_shooter.yml).
 /// Пока растёт — с него собираются горошины вместо стручков (обычный харвест, отдельного кода не
 /// требует). А если грядку выкопать лопатой, из неё выпадает сам горохострел-пистолет.
 /// </summary>
 public sealed partial class DutyPeaShooterSystem : EntitySystem
 {
-    [Dependency] private PopupSystem _popup = default!;
+    [Dependency] private readonly SharedPopupSystem _popup = default!;
 
     /// <summary>PacketPrototype мутировавшего семени — так отличаем горохострел от обычного гороха,
     /// не трогая ванильный SeedData ради ещё одного маркерного поля.</summary>
@@ -25,12 +25,15 @@ public sealed partial class DutyPeaShooterSystem : EntitySystem
     {
         base.Initialize();
 
-        SubscribeLocalEvent<PlantHolderComponent, PlantHolderShovelledEvent>(OnShovelled);
+        SubscribeLocalEvent<PlantTrayComponent, DutyPlantShoveledEvent>(OnShovelled);
     }
 
-    private void OnShovelled(Entity<PlantHolderComponent> ent, ref PlantHolderShovelledEvent args)
+    private void OnShovelled(Entity<PlantTrayComponent> ent, ref DutyPlantShoveledEvent args)
     {
-        if (args.Seed.PacketPrototype != PeaShooterSeedPacket)
+        if (!TryComp<PlantDataComponent>(args.Plant, out var plantData))
+            return;
+
+        if (plantData.PacketPrototype != PeaShooterSeedPacket)
             return;
 
         Spawn(PeaShooterPrototype, Transform(ent).Coordinates);

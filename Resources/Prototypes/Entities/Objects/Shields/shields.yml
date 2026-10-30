@@ -1,4 +1,4 @@
-﻿- type: entity
+- type: entity
   name: base shield
   parent: BaseItem
   id: BaseShield
@@ -11,6 +11,8 @@
     - type: Item
       sprite: Objects/Weapons/Melee/shields.rsi
       size: Ginormous
+      shape:
+      - 0,0,4,5
       heldPrefix: riot
     - type: Blocking
       passiveBlockModifier:
@@ -26,43 +28,42 @@
           Piercing: 3.5 # ADT shieldnerf
           Heat: 3.5 # ADT shieldnerf
         flatReductions:
-          Blunt: 1
-          Slash: 1
-          Piercing: 1
-          Heat: 1
+          Blunt: 10
+          Slash: 10
+          Piercing: 10
+          Heat: 10
     - type: ShieldBash # _Duty: способность «Удар по щиту» — доступна на всех щитах, см. shield_bash.yml
     - type: Damageable
     - type: Injurable
       damageContainer: Shield
     - type: ExaminableDamage
       messages: ShieldMessages
-    - type: Destructible
-      thresholds:
-        - trigger:
-            !type:DamageTrigger
-            damage: 140
-          behaviors:
-            - !type:DoActsBehavior
-              acts: [ "Destruction" ]
-        - trigger:
-            !type:DamageTrigger
-            damage: 100 #This is probably enough damage before it breaks
-          behaviors:
-            - !type:DoActsBehavior
-              acts: [ "Destruction" ]
-            - !type:PlaySoundBehavior
-              sound:
-                collection: MetalBreak
-            - !type:SpawnEntitiesBehavior
-              spawn:
-                SheetSteel:
-                  min: 2
-                  max: 2
-                SheetGlass:
-                  min: 2
-                  max: 2
     - type: StaticPrice
       price: 100
+
+- type: entity
+  abstract: true
+  id: BaseShieldDestructible
+  components:
+  - type: Destructible
+    thresholds:
+    - trigger:
+        !type:DamageTrigger
+        damage: 125 #This is probably enough damage before it breaks
+      behaviors:
+      - !type:DoActsBehavior
+        acts: [ "Destruction" ]
+      - !type:PlaySoundBehavior
+        sound:
+          collection: MetalBreak
+      - !type:SpawnEntitiesBehavior
+        spawn:
+          SheetSteel:
+            min: 2
+            max: 2
+          SheetGlass:
+            min: 2
+            max: 2
 
 - type: entity
   name: base repairable shield
@@ -86,7 +87,7 @@
 
 - type: entity
   name: riot shield
-  parent: [ BaseRepairableShield, BaseSecurityContraband ]
+  parent: [ BaseRepairableShield, BaseShieldDestructible, BaseSecurityContraband ]
   id: RiotShield
   description: A large tower shield. Good for controlling crowds.
   components:
@@ -106,12 +107,14 @@
           Piercing: 3.5 # ADT shieldnerf
           Heat: 3.5 # ADT shieldnerf
         flatReductions:
-          Blunt: 1
-          Slash: 1
+          Blunt: 15
+          Slash: 15
+          Piercing: 5
+          Heat: 5
 
 - type: entity
   name: laser shield
-  parent: [ BaseRepairableShield, BaseSecurityContraband ]
+  parent: [ BaseRepairableShield, BaseShieldDestructible, BaseSecurityContraband ]
   id: RiotLaserShield
   description: A shield built for withstanding lasers, but not much else.
   components:
@@ -133,11 +136,14 @@
          Piercing: 2 # ADT shieldnerf
          Heat: 0.5
         flatReductions:
-          Heat: 1
+          Blunt: 5
+          Slash: 10
+          Piercing: 5
+          Heat: 20
 
 - type: entity
   name: ballistic shield
-  parent: [ BaseRepairableShield, BaseSecurityContraband ]
+  parent: [ BaseRepairableShield, BaseShieldDestructible, BaseSecurityContraband ]
   id: RiotBulletShield
   description: A shield built for protecting against ballistics, but not much else.
   components:
@@ -157,7 +163,10 @@
           Slash: 1.3 # ADT shieldnerf
           Piercing: 0.5
         flatReductions:
-          Piercing: 1
+          Blunt: 10
+          Slash: 5
+          Piercing: 20
+          Heat: 5
 
 #Craftable shields
 
@@ -185,9 +194,10 @@
           Piercing: 0.65 #ADT tweak 0.85 -> 0.65
           Heat: 1.5 #ADT tweak 2 -> 1.5
         flatReductions:
-          Blunt: 1
-          Slash: 1
-          Piercing: 1
+          Blunt: 5
+          Slash: 5
+          Piercing: 5
+          Heat: 5
     - type: Construction
       graph: WoodenBuckler
       node: woodenBuckler
@@ -237,19 +247,11 @@
       heldPrefix: cardshield
     - type: Blocking
       passiveBlockModifier:
-        coefficients:
-          Blunt: 1
-          Slash: 2
-          Piercing: 0.6
-          Heat: 3
-      activeBlockModifier:
-        coefficients:
-          Blunt: 0.9
-          Slash: 1.8
-          Piercing: 0.5
-          Heat: 2.5
         flatReductions:
-          Blunt: 0.5
+          Blunt: 1
+          Slash: 1
+          Piercing: 1
+          Heat: 1
     - type: Construction
       graph: CardShield
       node: cardShield
@@ -257,13 +259,7 @@
       thresholds:
       - trigger:
           !type:DamageTrigger
-          damage: 25
-        behaviors:
-        - !type:DoActsBehavior
-          acts: [ "Destruction" ]
-      - trigger:
-          !type:DamageTrigger
-          damage: 10 #Very very weak shield
+          damage: 25 #Very very weak shield
         behaviors:
         - !type:DoActsBehavior
           acts: [ "Destruction" ]
@@ -357,50 +353,34 @@
       heldPrefix: icon
     - type: Blocking
       passiveBlockModifier:
-        coefficients:
-          Blunt: 0.95
-          Slash: 0.95
-          Piercing: 0.95
-      activeBlockModifier:
-        coefficients:
-          Blunt: 0.85
-          Slash: 0.85
-          Piercing: 0.85
         flatReductions:
-          Blunt: 0.5
-          Slash: 0.5
-          Piercing: 0.5
+          Blunt: 5
+          Piercing: 1 # Scar told me to.
     - type: Construction
       graph: WebObjects
       node: shield
     - type: Destructible
       thresholds:
-        - trigger:
-            !type:DamageTrigger
-            damage: 40
-          behaviors:
-            - !type:DoActsBehavior
-              acts: [ "Destruction" ]
-        - trigger:
-            !type:DamageTrigger
-            damage: 20
-          behaviors:
-            - !type:DoActsBehavior
-              acts: [ "Destruction" ]
-            - !type:SpawnEntitiesBehavior
-              spawn:
-                MaterialWebSilk:
-                  min: 1
-                  max: 1
-            - !type:PlaySoundBehavior
-              sound:
-                collection: WoodDestroy
+      - trigger:
+          !type:DamageTrigger
+          damage: 50
+        behaviors:
+        - !type:DoActsBehavior
+          acts: [ "Destruction" ]
+        - !type:SpawnEntitiesBehavior
+          spawn:
+            MaterialWebSilk:
+              min: 1
+              max: 1
+        - !type:PlaySoundBehavior
+          sound:
+            collection: WoodDestroy
 
 #Magic/Cult Shields (give these to wizard for now)
 
 - type: entity
   name: clockwork shield
-  parent: BaseRepairableShield
+  parent: [ BaseRepairableShield, BaseShieldDestructible ]
   id: ClockworkShield
   description: Ratvar oyrffrf lbh jvgu uvf cebgrpgvba.
   components:
@@ -408,23 +388,6 @@
       state: ratvarian-icon
     - type: Item
       heldPrefix: ratvarian
-    - type: Blocking
-      passiveBlockModifier:
-        coefficients:
-          Blunt: 0.8
-          Slash: 0.8
-          Piercing: 0.8
-          Heat: 1.5
-      activeBlockModifier:
-        coefficients:
-          Blunt: 0.7
-          Slash: 0.7
-          Piercing: 0.7
-          Heat: 1.5
-        flatReductions:
-          Blunt: 1
-          Slash: 1
-          Piercing: 1
       #Have it break into brass when clock cult is in
 
 - type: entity
@@ -444,36 +407,30 @@
     - type: Blocking #Mirror shield reflects heat/laser, but is relatively weak to everything else.
       passiveBlockModifier:
         coefficients:
-          Blunt: 1.2
-          Slash: 1.2
-          Piercing: 1.2
-          Heat: .7
-      activeBlockModifier:
-        coefficients:
-          Blunt: 1.2
-          Slash: 1.2
-          Piercing: 1.2
-          Heat: .6
+          Heat: 0.5
         flatReductions:
-          Heat: 1
+          Blunt: 5
+          Slash: 10
+          Piercing: 5
+          Heat: 25
       blockSound: !type:SoundPathSpecifier
         path: /Audio/Effects/glass_step.ogg
     - type: Destructible
       thresholds:
-        - trigger:
-            !type:DamageTrigger
-            damage: 40
-          behaviors:
-            - !type:DoActsBehavior
-              acts: [ "Destruction" ]
-            - !type:PlaySoundBehavior
-              sound:
-                collection: GlassBreak
-            - !type:SpawnEntitiesBehavior
-              spawn:
-                SheetGlass:
-                  min: 5
-                  max: 5
+      - trigger:
+          !type:DamageTrigger
+          damage: 50
+        behaviors:
+        - !type:DoActsBehavior
+          acts: [ "Destruction" ]
+        - !type:PlaySoundBehavior
+          sound:
+            collection: GlassBreak
+        - !type:SpawnEntitiesBehavior
+          spawn:
+            SheetGlass:
+              min: 5
+              max: 5
 
 - type: entity
   name: energy shield
@@ -481,6 +438,7 @@
   id: EnergyShield
   description: Exotic energy shield, when folded, can even fit in your pocket.
   components:
+    - type: ItemToggleExaminableStatus
     - type: ItemToggle
       soundActivate:
         path: /Audio/Weapons/ebladeon.ogg
@@ -491,6 +449,8 @@
         path: /Audio/Weapons/ebladehum.ogg
     - type: ItemToggleSize
       activatedSize: Huge
+      activatedShape:
+      - 0,0,3,3
     - type: ComponentToggler
       components:
       - type: DisarmMalus
@@ -545,8 +505,10 @@
           Piercing: 0.5
           Heat: 0.4
         flatReductions:
-          Heat: 1
-          Piercing: 1
+          Blunt: 5
+          Piercing: 10
+          Slash: 5
+          Heat: 25
     - type: Appearance
     - type: Damageable
     - type: Injurable
@@ -555,26 +517,20 @@
       messages: EnergyShieldMessages
     - type: Destructible
       thresholds:
-        - trigger:
-            !type:DamageTrigger
-            damage: 180
-          behaviors:
-            - !type:DoActsBehavior
-              acts: [ "Destruction" ]
-        - trigger:
-            !type:DamageTrigger
-            damage: 100
-          behaviors:
-            - !type:DoActsBehavior
-              acts: [ "Destruction" ]
-            - !type:PlaySoundBehavior
-              sound:
-                collection: GlassBreak
-            - !type:SpawnEntitiesBehavior
-              spawn:
-                BrokenEnergyShield:
-                  min: 1
-                  max: 1
+      - trigger:
+          !type:DamageTrigger
+          damage: 125
+        behaviors:
+        - !type:DoActsBehavior
+          acts: [ "Destruction" ]
+        - !type:PlaySoundBehavior
+          sound:
+            collection: GlassBreak
+        - !type:SpawnEntitiesBehavior
+          spawn:
+            BrokenEnergyShield:
+              min: 1
+              max: 1
     - type: StaticPrice
       price: 350
 
@@ -594,10 +550,13 @@
 
 - type: entity
   name: telescopic shield
-  parent: BaseRepairableShield
+  parent: [ BaseRepairableShield, BaseShieldDestructible ]
   id: TelescopicShield
   description: An advanced riot shield made of lightweight materials that collapses for easy storage.
   components:
+    - type: ItemToggleExaminableStatus
+      onText: item-toggle-examined-active
+      offText: item-toggle-examined-not-active
     - type: ItemToggle
       soundActivate:
         path: /Audio/Weapons/telescopicon.ogg
@@ -613,6 +572,8 @@
         malus: 0.6
     - type: ItemToggleSize
       activatedSize: Huge
+      activatedShape:
+      - 0,0,3,3
     - type: Sprite
       sprite: Objects/Weapons/Melee/teleriot_shield.rsi
       layers:
@@ -622,6 +583,8 @@
           map: [ "shield" ]
     - type: Item
       size: Small
+      shape:
+      - 0,0,1,1
       sprite: Objects/Weapons/Melee/teleriot_shield.rsi
       heldPrefix: teleriot
     - type: UseDelay
@@ -661,30 +624,5 @@
           Heat: 1
 #ADT-Tweak-End
     - type: Appearance
-    - type: Destructible
-      thresholds:
-        - trigger:
-            !type:DamageTrigger
-            damage: 100
-          behaviors:
-            - !type:DoActsBehavior
-              acts: [ "Destruction" ]
-        - trigger:
-            !type:DamageTrigger
-            damage: 70
-          behaviors:
-            - !type:DoActsBehavior
-              acts: [ "Destruction" ]
-            - !type:PlaySoundBehavior
-              sound:
-                collection: MetalGlassBreak
-            - !type:SpawnEntitiesBehavior
-              spawn:
-                SheetSteel:
-                  min: 1
-                  max: 1
-                SheetGlass:
-                  min: 2
-                  max: 2
     - type: StaticPrice
       price: 150

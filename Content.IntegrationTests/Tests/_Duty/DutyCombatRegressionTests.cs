@@ -136,7 +136,7 @@ public sealed class DutyCombatRegressionTests : GameTest
             var gun = SEntMan.GetComponent<GunComponent>(rifle);
             var accuracy = SEntMan.GetComponent<STWeaponAccuracyComponent>(rifle).AccuracyMultiplier;
 
-            Assert.That(_wieldable.TryWield(rifle, SEntMan.GetComponent<WieldableComponent>(rifle), human), Is.True);
+            Assert.That(_wieldable.TryWield((rifle, SEntMan.GetComponent<WieldableComponent>(rifle)), human), Is.True);
             var withAccuracy = gun.MaxAngleModified.Theta;
 
             // Тот же хват, но без компонента точности: у ствола есть и свои бонусы за хват, их

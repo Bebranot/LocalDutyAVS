@@ -1,4 +1,4 @@
-﻿using Content.Client.Audio;
+using Content.Client.Audio;
 using Content.Client.Gameplay;
 using Content.Client._Duty.Lazarus;
 using Content.Shared._Duty.AmbientMusic;
@@ -1371,7 +1371,7 @@ public sealed partial class DynamicAmbientMusicSystem : EntitySystem
     }
 
     private bool IsGhost(EntityUid player)
-        => HasComp<Content.Shared.Ghost.GhostComponent>(player);
+        => HasComp<Content.Shared.Ghost.Components.GhostComponent>(player);
 
     private float GetHpPercent(EntityUid player)
     {

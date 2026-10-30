@@ -110,7 +110,7 @@ public sealed class ClothingDirtTests : GameTest
             var inventory = SEntMan.System<InventorySystem>();
             Assert.That(inventory.TryEquip(human, jumpsuit, "jumpsuit", force: true), Is.True);
 
-            var blood = SEntMan.System<SharedBloodstreamSystem>();
+            var blood = SEntMan.System<BloodstreamSystem>();
             Assert.That(blood.TryBleedOut((human, SEntMan.GetComponent<BloodstreamComponent>(human)), FixedPoint2.New(2)), Is.True);
 
             Assert.That(SEntMan.GetComponent<ClothingDirtableComponent>(jumpsuit).DirtColor, Is.Not.Null,

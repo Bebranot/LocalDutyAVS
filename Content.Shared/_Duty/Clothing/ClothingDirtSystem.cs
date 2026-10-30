@@ -91,7 +91,7 @@ public sealed partial class ClothingDirtSystem : EntitySystem
         SubscribeLocalEvent<ClothingDirtableComponent, ExaminedEvent>(OnExamined);
         // SolutionChangedEvent поднимается на сущности самого раствора, а не на одежде — до
         // владельца доходит только релей SolutionContainerChangedEvent.
-        SubscribeLocalEvent<ClothingDirtableComponent, SolutionContainerChangedEvent>(OnSolutionChanged);
+        SubscribeLocalEvent<ClothingDirtableComponent, SolutionChangedEvent>(OnSolutionChanged);
         SubscribeLocalEvent<PrototypesReloadedEventArgs>(OnPrototypesReloaded);
     }
 
@@ -140,11 +140,11 @@ public sealed partial class ClothingDirtSystem : EntitySystem
         }
     }
 
-    private void OnSolutionChanged(Entity<ClothingDirtableComponent> ent, ref SolutionContainerChangedEvent args)
+    private void OnSolutionChanged(Entity<ClothingDirtableComponent> ent, ref SolutionChangedEvent args)
     {
-        if (!_net.IsServer || args.SolutionId != ent.Comp.Solution)
+        if (!_net.IsServer || args.Solution.Comp.Id != ent.Comp.Solution)
             return;
-        Refresh(ent, args.Solution);
+        Refresh(ent, args.Solution.Comp.Solution);
     }
 
     private void OnExamined(Entity<ClothingDirtableComponent> ent, ref ExaminedEvent args)
@@ -453,11 +453,13 @@ public sealed partial class ClothingDirtSystem : EntitySystem
             return true;
 
         solution = null;
-        if (!_net.IsServer ||
-            !_solutions.EnsureSolutionEntity(clothing, component.Solution, out solutionEnt, component.Capacity) ||
-            solutionEnt is not { } created)
+        solutionEnt = null;
+        if (!_net.IsServer)
             return false;
 
+        _solutions.EnsureSolution(clothing, component.Solution, out var created);
+        _solutions.SetCapacity(created, component.Capacity);
+        solutionEnt = created;
         solution = created.Comp.Solution;
         return true;
     }

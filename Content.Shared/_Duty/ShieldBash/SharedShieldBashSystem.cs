@@ -39,7 +39,7 @@ public sealed partial class SharedShieldBashSystem : EntitySystem
 
     private void OnBuffStartup(Entity<ShieldBashBuffComponent> ent, ref ComponentStartup args)
     {
-        _movement.RefreshMovementSpeedModifiers(ent);
+        _movement.RefreshMovementSpeedModifiers(ent.Owner);
 
         if (!_net.IsServer)
             return;
@@ -53,7 +53,7 @@ public sealed partial class SharedShieldBashSystem : EntitySystem
 
     private void OnBuffShutdown(Entity<ShieldBashBuffComponent> ent, ref ComponentShutdown args)
     {
-        _movement.RefreshMovementSpeedModifiers(ent);
+        _movement.RefreshMovementSpeedModifiers(ent.Owner);
 
         if (!_net.IsServer)
             return;

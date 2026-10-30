@@ -226,7 +226,9 @@ public sealed partial class TraitsTab : BoxContainer
 
     private static ProtoId<TraitCategoryPrototype> GetCategoryId(TraitPrototype trait)
     {
-        return trait.SponsorOnly ? new ProtoId<TraitCategoryPrototype>(SponsorTraitCategory) : trait.Category;
+        return trait.SponsorOnly
+            ? new ProtoId<TraitCategoryPrototype>(SponsorTraitCategory)
+            : trait.Category ?? TraitCategoryPrototype.Default;
     }
 
     private string NameOf(TraitPrototype trait)
@@ -444,16 +446,16 @@ public sealed partial class TraitsTab : BoxContainer
             return false;
         }
 
-        if (_prototype.TryIndex(trait.Category, out var category))
+        if (trait.Category is { } catId && _prototype.TryIndex(catId, out var category))
         {
-            var (count, points) = CategoryUsage(trait.Category);
+            var (count, points) = CategoryUsage(catId);
             if (category.MaxTraits is { } maxTraits && count >= maxTraits)
             {
                 reason = Loc.GetString("duty-traits-reject-category-count", ("category", Loc.GetString(category.Name)), ("max", maxTraits));
                 return false;
             }
 
-            if (category.MaxPoints is { } maxPoints && points + trait.Cost > maxPoints)
+            if (category.MaxTraitPoints is { } maxPoints && points + trait.Cost > maxPoints)
             {
                 reason = Loc.GetString("duty-traits-reject-category-points", ("category", Loc.GetString(category.Name)), ("max", maxPoints));
                 return false;
@@ -866,12 +868,12 @@ public sealed partial class TraitsTab : BoxContainer
 
         var meta = new FormattedMessage();
 
-        if (_prototype.TryIndex(trait.Category, out var category))
+        if (trait.Category is { } catId && _prototype.TryIndex(catId, out var category))
         {
             var limits = new List<string>();
             if (category.MaxTraits is { } maxTraits)
                 limits.Add(Loc.GetString("duty-traits-limit-traits", ("max", maxTraits)));
-            if (category.MaxPoints is { } maxPoints)
+            if (category.MaxTraitPoints is { } maxPoints)
                 limits.Add(Loc.GetString("duty-traits-limit-points", ("max", maxPoints)));
 
             meta.AddText(Loc.GetString("duty-traits-meta-category", ("category", Loc.GetString(category.Name))));

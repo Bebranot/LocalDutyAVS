@@ -8,11 +8,11 @@ namespace Content.Server.ADT.Minesweeper;
 
 public sealed partial class MinesweeperSystem : EntitySystem
 {
-    [Dependency] private readonly SharedAudioSystem _sharedAudioSystem = default!;
-    [Dependency] private readonly IEntityManager _entityManager = default!;
-    [Dependency] private readonly ExplosionSystem _explosionSystem = default!;
-    [Dependency] private readonly EmagSystem _emagSystem = default!;
-    [Dependency] private readonly IRobustRandom _random = default!;
+    [Dependency] private SharedAudioSystem _sharedAudioSystem = default!;
+    [Dependency] private IEntityManager _entityManager = default!;
+    [Dependency] private ExplosionSystem _explosionSystem = default!;
+    [Dependency] private EmagSystem _emagSystem = default!;
+    [Dependency] private IRobustRandom _random = default!;
 
     // _Duty: без ограничения Records (networked-поле) растёт бесконечно на КАЖДОМ
     // автомате за раунд — рекорд транслируется на все автоматы с MinesweeperComponent.

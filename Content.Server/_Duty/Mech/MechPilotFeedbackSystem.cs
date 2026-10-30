@@ -11,6 +11,8 @@ using Content.Shared._Duty.Mech;
 using Content.Shared.Chat;
 using Content.Shared.Eye.Blinding.Systems;
 using Content.Shared.Mech.Components;
+using Content.Shared.Vehicle.Components;
+using Content.Shared.Vehicle.Systems;
 
 namespace Content.Server._Duty.Mech;
 
@@ -18,6 +20,7 @@ public sealed partial class MechPilotFeedbackSystem : EntitySystem
 {
     [Dependency] private ChatSystem _chat = default!;
     [Dependency] private BlindableSystem _blindable = default!;
+    [Dependency] private VehicleSystem _vehicle = default!;
 
     public override void Initialize()
     {
@@ -41,7 +44,7 @@ public sealed partial class MechPilotFeedbackSystem : EntitySystem
 
     public void UpdatePilotVision(EntityUid mechUid, MechComponent? mech = null)
     {
-        if (!Resolve(mechUid, ref mech, false) || mech.PilotSlot.ContainedEntity is not { } pilot)
+        if (!Resolve(mechUid, ref mech, false) || _vehicle.GetOperatorOrNull(mechUid) is not { } pilot)
             return;
 
         if (mech.Energy <= 0)

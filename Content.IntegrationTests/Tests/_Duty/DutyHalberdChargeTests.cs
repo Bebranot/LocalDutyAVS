@@ -176,7 +176,7 @@ public sealed class DutyHalberdChargeTests : InteractionTest
             charge.ChargeDistance = TestDistance;
 
             var wieldable = SEntMan.GetComponent<WieldableComponent>(halberd);
-            Assert.That(SEntMan.System<SharedWieldableSystem>().TryWield(halberd, wieldable, SPlayer), Is.True,
+            Assert.That(SEntMan.System<SharedWieldableSystem>().TryWield((halberd, wieldable), SPlayer), Is.True,
                 "Не получилось взять алебарду в две руки.");
         });
         await RunTicks(5);

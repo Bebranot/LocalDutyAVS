@@ -108,6 +108,7 @@
   - type: Electrified
     enabled: false
     usesApcPower: true
+    onActivateInWorld: true
   - type: WiresPanel
   - type: WiresPanelSecurity
   - type: Wires
@@ -200,6 +201,8 @@
     - Airlocks
     - WirePanels
     - Networking
+  - type: StructureAligner
+  - type: StructureAlignerPylon
   placement:
     mode: SnapgridCenter
 

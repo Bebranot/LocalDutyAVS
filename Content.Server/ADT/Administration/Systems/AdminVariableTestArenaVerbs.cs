@@ -27,7 +27,7 @@ namespace Content.Server.Administration.Systems;
 
 public sealed partial class AdminVerbSystem
 {
-    [Dependency] private readonly AdminTestArenaVariableSystem _adminTestArenaVariableSystem = default!;
+    [Dependency] private AdminTestArenaVariableSystem _adminTestArenaVariableSystem = default!;
 
     private void AdminTestArenaVariableVerbs(GetVerbsEvent<Verb> args)
     {
@@ -39,7 +39,7 @@ public sealed partial class AdminVerbSystem
         if (!_adminManager.Can(player, AdminNodes.EntsSpawn, AdminFlags.Admin)) // _Duty: вербы создают карты и сущности
             return;
 
-        var arenas = _prototypeManager.EnumeratePrototypes<AdminArenaVerbPrototype>().ToList().OrderBy(x => x.Name);
+        var arenas = ProtoMan.EnumeratePrototypes<AdminArenaVerbPrototype>().ToList().OrderBy(x => x.Name);
 
         // Добавляем вербы для каждой арены из прототипа
         foreach (var arena in arenas)

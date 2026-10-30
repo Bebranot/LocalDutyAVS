@@ -19,7 +19,7 @@ namespace Content.Server.Administration.UI
     // _Duty-start: файл целиком переписан под дерево админ-прав (права — строки: старый флаг или id узла)
     // _Duty: права — строки: старый флаг (BAN) либо id узла дерева прав (players_ban).
     // Каждую правку проверяем ДО записи в БД: выдать можно только то, что есть у самого редактора.
-    public sealed class PermissionsEui : BaseEui
+    public sealed partial class PermissionsEui : BaseEui
     {
         /// <summary>Узел, дающий право открывать панель выдачи прав (вместе со старым флагом Permissions).</summary>
         public const string EditNode = AdminNodes.PermsEdit;
@@ -314,6 +314,12 @@ namespace Content.Server.Administration.UI
             if (!ValidateAdmin(ua.Title, ua.Pos, ua.Neg, out var pos, out var neg))
                 return;
 
+            var (bad, rankName) = await FetchAndCheckRank(ua.RankId);
+            if (bad)
+            {
+                return;
+            }
+
             var admin = await _db.GetAdminDataForAsync(ua.UserId);
             if (admin == null)
             {
@@ -326,14 +332,6 @@ namespace Content.Server.Administration.UI
             {
                 _sawmill.Warning($"{Player} tried to modify higher-ranked admin {ua.UserId.ToString()}");
                 Fail("duty-perm-result-no-access");
-                return;
-            }
-
-            // _Duty: ранг проверяем ДО записи в БД. Раньше запись шла первой, и проверка уже ничего не откатывала:
-            // можно было записать себе ранг с правами выше своих.
-            var (bad, rankName) = await FetchAndCheckRank(ua.RankId);
-            if (bad)
-            {
                 return;
             }
 

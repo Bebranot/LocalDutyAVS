@@ -30,7 +30,7 @@ namespace Content.Shared._Duty.Trauma.Systems;
 /// </summary>
 public sealed partial class ArterialBleedSystem : EntitySystem
 {
-    [Dependency] private SharedBloodstreamSystem _bloodstream = default!;
+    [Dependency] private BloodstreamSystem _bloodstream = default!;
     [Dependency] private DamageableSystem _damageable = default!;
     [Dependency] private IGameTiming _timing = default!;
     [Dependency] private INetManager _net = default!;

@@ -4,6 +4,7 @@ using Content.Shared.CCVar;
 using Robust.Server.Player;
 using Robust.Shared.Configuration;
 using Robust.Shared.Map;
+using Robust.Shared.Map.Components;
 using Robust.Shared.Player;
 using Timer = Robust.Shared.Timing.Timer;
 
@@ -20,7 +21,7 @@ public sealed partial class EmptyServerLifecycleSystem : EntitySystem
     [Dependency] private IPlayerManager _playerManager = default!;
     [Dependency] private IConfigurationManager _cfg = default!;
     [Dependency] private GameTicker _gameTicker = default!;
-    [Dependency] private IMapManager _mapManager = default!;
+    [Dependency] private readonly SharedMapSystem _mapSystem = default!;
 
     private CancellationTokenSource _restartTimerCancel = new();
     private bool _timerActive;
@@ -128,12 +129,13 @@ public sealed partial class EmptyServerLifecycleSystem : EntitySystem
 
         _mapsPausedForEmptyServer = paused;
 
-        foreach (var mapId in _mapManager.GetAllMapIds())
+        var query = EntityQueryEnumerator<MapComponent>();
+        while (query.MoveNext(out _, out var map))
         {
-            if (mapId == MapId.Nullspace)
+            if (map.MapId == MapId.Nullspace)
                 continue;
 
-            _mapManager.SetMapPaused(mapId, paused);
+            _mapSystem.SetPaused(map.MapId, paused);
         }
     }
 }

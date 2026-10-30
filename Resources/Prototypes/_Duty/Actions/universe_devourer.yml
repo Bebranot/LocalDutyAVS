@@ -5,8 +5,10 @@
   description: View a Mass Scanner Interface.
   components:
   - type: Action
-    icon: { sprite: Objects/Tools/handheld_mass_scanner.rsi, state: icon }
-    iconOn: { sprite: Objects/Tools/handheld_mass_scanner.rsi, state: icon }
     priority: -5
+  - type: Sprite
+    sprite: Objects/Tools/handheld_mass_scanner.rsi
+    layers:
+    - state: icon
   - type: InstantAction
     event: !type:ToggleIntrinsicUIEvent { key: enum.RadarConsoleUiKey.Key }

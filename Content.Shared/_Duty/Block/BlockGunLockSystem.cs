@@ -84,7 +84,7 @@ public sealed partial class BlockGunLockSystem : EntitySystem
 
     private void OnEquipAttempt(EntityUid uid, BlockGunLockComponent component, IsEquippingAttemptEvent args)
     {
-        if (args.Equipee != uid)
+        if (args.EquipTarget != uid)
             return;
 
         args.Cancel();
@@ -93,7 +93,7 @@ public sealed partial class BlockGunLockSystem : EntitySystem
 
     private void OnUnequipAttempt(EntityUid uid, BlockGunLockComponent component, IsUnequippingAttemptEvent args)
     {
-        if (args.Unequipee != uid)
+        if (args.UnEquipTarget != uid)
             return;
 
         args.Cancel();

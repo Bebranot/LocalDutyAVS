@@ -103,7 +103,6 @@
           Slash: 2.5
           Structural: 75
       wideAnimationRotation: -135
-    - type: Sharp
     - type: ComboStrike
       hitsRequired: 6
       bonusDamage:
@@ -135,7 +134,6 @@
           Heat: 0.5
           Structural: 25
       wideAnimationRotation: -135
-    - type: Sharp
     - type: ComboStrike
       hitsRequired: 2
       bonusDamage:
@@ -166,7 +164,6 @@
         types:
           Blunt: 2.5
       wideAnimationRotation: -135
-    - type: Sharp
     - type: ComboStrike
       hitsRequired: 5
       bonusDamage:

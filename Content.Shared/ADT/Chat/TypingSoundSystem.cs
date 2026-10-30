@@ -43,7 +43,7 @@ public sealed partial class TypingSoundSystem : EntitySystem
 
     private void GotEquipped(Entity<TypingSoundComponent> ent, ref GotEquippedEvent args)
     {
-        var typingSound = EnsureComp<TypingSoundComponent>(args.Equipee);
+        var typingSound = EnsureComp<TypingSoundComponent>(args.EquipTarget);
         typingSound.TypingSound = ent.Comp.TypingSound;
         typingSound.MessageSentSound = ent.Comp.MessageSentSound;
     }
@@ -55,9 +55,9 @@ public sealed partial class TypingSoundSystem : EntitySystem
         // (например второй такой же предмет в другом слоте) — тот предмет молча терял звук
         // печати до следующего пере-надевания. Ищем среди оставшихся надетых предметов
         // ещё один источник звука и переносим его настройки вместо удаления компонента.
-        if (TryComp(args.Equipee, out TypingSoundComponent? ownerSound))
+        if (TryComp(args.EquipTarget, out TypingSoundComponent? ownerSound))
         {
-            var enumerator = _inventory.GetSlotEnumerator(args.Equipee);
+            var enumerator = _inventory.GetSlotEnumerator(args.EquipTarget);
             while (enumerator.NextItem(out var item, out _))
             {
                 if (item == ent.Owner)
@@ -72,6 +72,6 @@ public sealed partial class TypingSoundSystem : EntitySystem
             }
         }
 
-        RemCompDeferred<TypingSoundComponent>(args.Equipee);
+        RemCompDeferred<TypingSoundComponent>(args.EquipTarget);
     }
 }

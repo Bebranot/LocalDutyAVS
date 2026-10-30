@@ -40,7 +40,6 @@
     zapDamage: 3
     zapDelay: 6
     doAfterDuration: 3 # длина зарядки = длина charge_low
-    canDefibCrit: false
     chargeSound: null # зарядку играет профиль после вступления
   - type: DutyDefibProfile
     requireAnalysis: true
@@ -89,7 +88,6 @@
         Asphyxiation: -40
         Bloodloss: -15
     doAfterDuration: 5
-    canDefibCrit: false
     chargeSound: null # зарядку играет профиль после вступления
   - type: DutyDefibProfile
     rhythmCheckVerb: true

@@ -1,8 +1,8 @@
 using System.Linq;
-using Content.Server.AlertLevel;
 using Content.Server.Chat.Managers;
 using Content.Server.Chat.Systems;
 using Content.Server.Station.Systems;
+using Content.Shared.AlertLevel;
 using Content.Shared.GameTicking;
 using Robust.Server.GameObjects;
 using Robust.Shared.Audio;
@@ -29,7 +29,7 @@ namespace Content.Server._Duty.ERT;
 /// </summary>
 public sealed partial class DutyErtSystem : EntitySystem
 {
-    [Dependency] private IMapManager _mapManager = default!;
+    [Dependency] private readonly SharedMapSystem _mapSystem = default!;
     [Dependency] private IResourceManager _resource = default!;
     [Dependency] private IGameTiming _timing = default!;
     [Dependency] private IChatManager _chat = default!;
@@ -185,14 +185,14 @@ public sealed partial class DutyErtSystem : EntitySystem
     {
         var gridPath = $"{GridDir}/{variant}.yml";
 
-        var mapId = _mapManager.CreateMap();
-        _metaData.SetEntityName(_mapManager.GetMapEntityId(mapId), Loc.GetString("duty-ert-map-name"));
+        var mapUid = _mapSystem.CreateMap(out var mapId);
+        _metaData.SetEntityName(mapUid, Loc.GetString("duty-ert-map-name"));
 
         // InitializeMaps=true инициализирует карту (= снимает «заморозку»), при этом отрабатывает
         // MapInit на гост-роль спавнерах — 5 ОБРовцев становятся доступны как роли для призраков.
         var opts = new DeserializationOptions { StoreYamlUids = true, InitializeMaps = true };
         _mapLoader.TryLoadGrid(mapId, new ResPath(gridPath), out _, opts);
-        _mapManager.SetMapPaused(mapId, false);
+        _mapSystem.SetPaused(mapId, false);
 
         _chat.SendAdminAlert(Loc.GetString("duty-ert-admin-alert", ("variant", variant), ("map", mapId)));
     }

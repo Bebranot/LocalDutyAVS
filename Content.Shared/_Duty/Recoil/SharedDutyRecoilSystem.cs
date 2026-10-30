@@ -88,7 +88,7 @@ public sealed partial class SharedDutyRecoilSystem : EntitySystem
         // Поднимается только сервером (перед расчётом угла в GunSystem.Shoot) — на клиенте подписка
         // молчит. После тех, кто может отменить выстрел: отменённый выстрел не должен копить разброс.
         SubscribeLocalEvent<HandsComponent, SelfBeforeGunShotEvent>(OnBeforeGunShot,
-            after: new[] { typeof(ClumsySystem), typeof(InventorySystem) });
+            after: new[] { typeof(InventorySystem) });
 
         SubscribeLocalEvent<PrototypesReloadedEventArgs>(OnPrototypesReloaded);
 
@@ -236,7 +236,7 @@ public sealed partial class SharedDutyRecoilSystem : EntitySystem
         var modifiers = armor.Modifiers;
         return modifiers.Coefficients.GetValueOrDefault("Piercing", 1f) < 1f ||
                modifiers.Coefficients.GetValueOrDefault("Blunt", 1f) < 1f ||
-               modifiers.FlatReduction.GetValueOrDefault("Piercing", 0f) > 0f;
+               modifiers.FlatReductions.GetValueOrDefault("Piercing", 0f) > 0f;
     }
 
     #endregion

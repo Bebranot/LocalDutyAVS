@@ -26,7 +26,7 @@ namespace Content.Client.Administration.UI
     // _Duty: панель переписана под дерево прав (PermissionTreeEditor): права — строки (старый флаг или id узла).
     // Окно правки закрывается только после ответа сервера об успехе, чтобы отказ не стирал выставленные галочки.
     [UsedImplicitly]
-    public sealed class PermissionsEui : BaseEui
+    public sealed partial class PermissionsEui : BaseEui
     {
         private const int NoRank = -1;
 

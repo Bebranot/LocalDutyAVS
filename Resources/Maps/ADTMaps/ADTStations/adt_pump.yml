@@ -70711,8 +70711,6 @@ entities:
           showEnts: False
           occludes: False
           ent: null
-    - type: Gun
-      availableModes: SemiAuto
     - type: Physics
       canCollide: False
 - proto: WeaponRevolverDeckard

@@ -5,7 +5,7 @@ using Robust.Shared.Configuration;
 
 namespace Content.Client.Camera;
 
-public sealed class CameraRecoilSystem : SharedCameraRecoilSystem
+public sealed partial class CameraRecoilSystem : SharedCameraRecoilSystem
 {
     // _Duty: ползунок «Тряска экрана» убран — CVar больше не читаем, иначе у тех, кто выставил 0
     // (в настройках раньше или консолью), тряска от взрывов/попаданий так и осталась бы выключенной.

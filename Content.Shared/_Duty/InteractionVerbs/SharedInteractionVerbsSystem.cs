@@ -8,6 +8,7 @@ using System.Linq;
 using Content.Shared._Duty.InteractionVerbs.Events;
 using Content.Shared.DoAfter;
 using Content.Shared.Ghost;
+using Content.Shared.Ghost.Components;
 using Content.Shared.IdentityManagement;
 using Content.Shared.Interaction;
 using Content.Shared.Popups;

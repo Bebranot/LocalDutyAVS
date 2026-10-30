@@ -43,7 +43,7 @@ public sealed partial class DutyEventFtlSystem : EntitySystem
     [Dependency] private SharedTransformSystem _transform = default!;
     [Dependency] private EntityLookupSystem _lookup = default!;
     [Dependency] private SharedStationSystem _station = default!;
-    [Dependency] private IMapManager _mapManager = default!;
+    [Dependency] private readonly SharedMapSystem _mapSystem = default!;
     [Dependency] private IRobustRandom _random = default!;
     [Dependency] private IGameTiming _timing = default!;
     [Dependency] private IAdminLogManager _adminLogger = default!;
@@ -328,7 +328,7 @@ public sealed partial class DutyEventFtlSystem : EntitySystem
     private bool IsSpotFree(EntityUid shuttle, EntityUid mapUid, MapId mapId, Box2 box, EntityUid? ignore, bool strict)
     {
         _grids.Clear();
-        _mapManager.FindGridsIntersecting(mapUid, box, ref _grids, approx: true);
+        _mapSystem.FindGridsIntersecting(mapId, box, ref _grids, approx: true);
         foreach (var grid in _grids)
         {
             if (grid.Owner != shuttle)

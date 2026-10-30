@@ -20,7 +20,6 @@ public sealed partial class DelayedExtractAreaReactionSystem
     : EntityEffectSystem<SlimeExtractComponent, DelayedExtractAreaReaction>
 {
     [Dependency] private SharedAudioSystem _audio = default!;
-    [Dependency] private IMapManager _mapManager = default!;
     [Dependency] private SharedMapSystem _map = default!;
     [Dependency] private SharedSolutionContainerSystem _solutions = default!;
     [Dependency] private SmokeSystem _smoke = default!;
@@ -46,7 +45,7 @@ public sealed partial class DelayedExtractAreaReactionSystem
         Content.Shared.Chemistry.Components.Solution solution,
         DelayedExtractAreaReaction effect)
     {
-        if (!_mapManager.TryFindGridAt(mapCoordinates, out var gridUid, out var grid))
+        if (!_map.TryFindGridAt(mapCoordinates, out var gridUid, out var grid))
             return;
 
         var coordinates = _map.MapToGrid(gridUid, mapCoordinates).SnapToGrid();

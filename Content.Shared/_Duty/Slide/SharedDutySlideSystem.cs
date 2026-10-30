@@ -612,7 +612,7 @@ public abstract partial class SharedDutySlideSystem : EntitySystem
             return;
 
         _blocker.UpdateCanMove(ent);
-        _movementSpeed.RefreshMovementSpeedModifiers(ent);
+        _movementSpeed.RefreshMovementSpeedModifiers(ent.Owner);
 
         // Снятие пришло состоянием с сервера — стойку сервер пришлёт сам.
         if (Timing.ApplyingState)

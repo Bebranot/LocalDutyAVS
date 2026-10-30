@@ -1,13 +1,16 @@
 using System.Text.RegularExpressions;
 using Content.Server.Speech.Components;
 using Content.Shared.Speech;
+using Robust.Shared.Random;
 
 namespace Content.Server.Speech.EntitySystems
 {
     public sealed class GondolaSpeakingSystem : EntitySystem
     {
-        // Gondolas only know one word - matches any run of letters so punctuation/spacing survives untouched.
         private static readonly Regex RegexWord = new(@"[а-яёa-z]+", RegexOptions.IgnoreCase);
+        private static readonly Regex RegexLoneI = new(@"(?<=\ )i(?=[\ \.\?]|$)");
+
+        [Dependency] private IRobustRandom _random = default!;
 
         public override void Initialize()
         {
@@ -30,7 +33,7 @@ namespace Content.Server.Speech.EntitySystems
             return replacement;
         }
 
-        private void OnAccent(EntityUid uid, GondolaSpeakingComponent component, AccentGetEvent args)
+        private void OnAccent(EntityUid uid, GondolaSpeakingComponent component, ref AccentGetEvent args)
         {
             args.Message = Accentuate(args.Message);
         }

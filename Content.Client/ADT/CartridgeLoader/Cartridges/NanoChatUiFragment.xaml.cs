@@ -16,7 +16,7 @@ namespace Content.Client.ADT.CartridgeLoader.Cartridges;
 [GenerateTypedNameReferences]
 public sealed partial class NanoChatUiFragment : BoxContainer
 {
-    [Dependency] private readonly IGameTiming _timing = default!;
+    [Dependency] private IGameTiming _timing = default!;
     [Dependency] private readonly IEntitySystemManager _entitySystem = default!;
 
     // How often we're willing to ping the recipient that we're typing, while typing.

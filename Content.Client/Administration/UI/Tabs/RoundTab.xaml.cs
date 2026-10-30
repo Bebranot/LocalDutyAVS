@@ -12,10 +12,8 @@ namespace Content.Client.Administration.UI.Tabs
     [GenerateTypedNameReferences]
     public sealed partial class RoundTab : Control, IAdminMenuCommandSource // _Duty: поиск F7 и права
     {
-        [Dependency] private readonly IClientConsoleHost _console = default!;
+        [Dependency] private IClientConsoleHost _console = default!;
         [Dependency] private readonly IClientAdminManager _admin = default!; // _Duty
-
-        // _Duty: кнопка → команда; кнопки без права прячутся, поиск F7 их находит
         private readonly (BaseButton Button, string Command)[] _commands;
 
         public RoundTab()

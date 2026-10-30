@@ -26,3 +26,4 @@ bwoink-system-player-banned =
     { $banReason }
 bwoink-message-admin-only = (Только Админ)
 bwoink-message-silent = (S)
+bwoink-message-name-link = (?)

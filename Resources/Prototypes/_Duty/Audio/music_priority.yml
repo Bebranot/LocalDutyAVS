@@ -33,6 +33,7 @@
   id: DutyMusicLavalandAmbience
   priority: 20
   holdAfter: 2
-  rules: OnMapGrid
+  conditions:
+  - !type:OnMapGridCondition
   pathPrefixes:
     - /Audio/Ambience/

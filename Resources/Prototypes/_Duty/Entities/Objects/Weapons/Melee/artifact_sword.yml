@@ -20,7 +20,6 @@
       path: /Audio/_Duty/Weapons/Melee/ArticaftSword/ArtBladeHum.ogg
   - type: ComponentToggler
     components:
-    - type: Sharp
     - type: DisarmMalus
       malus: 0.6
     - type: Execution

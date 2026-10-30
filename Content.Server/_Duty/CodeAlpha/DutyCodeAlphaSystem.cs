@@ -4,13 +4,13 @@
 
 using Content.Server.Access.Systems;
 using Content.Server.Administration.Logs;
-using Content.Server.AlertLevel;
 using Content.Server.Chat.Managers;
+using Content.Shared.AlertLevel;
 using Content.Shared._Duty.CodeAlpha;
 using Content.Shared.Chat;
 using Content.Shared.Database;
 using Content.Shared.GameTicking;
-using Content.Shared.Ghost;
+using Content.Shared.Ghost.Components;
 using Content.Shared.Hands.EntitySystems;
 using Content.Shared.Inventory;
 using Content.Shared.Mind.Components;
@@ -83,7 +83,7 @@ public sealed partial class DutyCodeAlphaSystem : EntitySystem
 
     #region Event handlers
 
-    private void OnAlertLevelChanged(AlertLevelChangedEvent args)
+    private void OnAlertLevelChanged(ref AlertLevelChangedEvent args)
     {
         if (_activeStation is not { } station || args.Station != station)
             return;

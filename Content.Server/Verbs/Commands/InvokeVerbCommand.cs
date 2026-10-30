@@ -9,9 +9,9 @@ using Robust.Shared.Console;
 namespace Content.Server.Verbs.Commands
 {
     [AdminCommand(AdminFlags.Admin)]
-    public sealed class InvokeVerbCommand : IConsoleCommand
+    public sealed partial class InvokeVerbCommand : IConsoleCommand
     {
-        [Dependency] private readonly IEntityManager _entManager = default!;
+        [Dependency] private IEntityManager _entManager = default!;
         [Dependency] private readonly IPlayerManager _players = default!; // _Duty
         [Dependency] private readonly IAdminManager _admins = default!; // _Duty
 

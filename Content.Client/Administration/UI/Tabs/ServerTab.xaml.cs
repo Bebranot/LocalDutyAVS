@@ -1,3 +1,4 @@
+using System.Globalization;
 using Content.Client._Duty.Administration;
 using Content.Client.Administration.Managers;
 using Content.Shared.CCVar;
@@ -13,9 +14,9 @@ namespace Content.Client.Administration.UI.Tabs
     [GenerateTypedNameReferences]
     public sealed partial class ServerTab : Control, IAdminMenuCommandSource // _Duty: поиск F7 и права
     {
-        [Dependency] private readonly IConfigurationManager _config = default!;
-        [Dependency] private readonly IClientConsoleHost _console = default!;
         [Dependency] private readonly IClientAdminManager _admin = default!; // _Duty
+        [Dependency] private IConfigurationManager _config = default!;
+        [Dependency] private IClientConsoleHost _console = default!;
 
         public ServerTab()
         {
@@ -24,14 +25,34 @@ namespace Content.Client.Administration.UI.Tabs
 
             _config.OnValueChanged(CCVars.OocEnabled, OocEnabledChanged, true);
             _config.OnValueChanged(CCVars.LoocEnabled, LoocEnabledChanged, true);
+            _config.OnValueChanged(CCVars.DeadChatEnabled, DeadChatEnabledChanged, true);
+            _config.OnValueChanged(CCVars.AfkTime, AfkTimeChanged, true);
+            _config.OnValueChanged(CCVars.AdminAfkTime, AdminAfkTimeChanged, true);
+            _config.OnValueChanged(CCVars.AfkConfirmTimeout, AfkConfirmTimeoutChanged, true);
 
             ServerShutdownButton.OnPressed += _ => _console.ExecuteCommand("shutdown");
 
             // _Duty-start: кнопка выключения видна только тем, кому команда доступна
-            ServerShutdownButton.ToolTip = AdminNodeLookup.Tooltip("shutdown");
             _admin.AdminStatusUpdated += ApplyPermissions;
-            ApplyPermissions();
             // _Duty-end
+            AfkTime.OnTextEntered += args => SendFloatCVar(CCVars.AfkTime.Name, args.Text);
+            AfkTime.OnFocusExit += args => SendFloatCVar(CCVars.AfkTime.Name, args.Text);
+            AdminAfkTime.OnTextEntered += args => SendFloatCVar(CCVars.AdminAfkTime.Name, args.Text);
+            AdminAfkTime.OnFocusExit += args => SendFloatCVar(CCVars.AdminAfkTime.Name, args.Text);
+            AfkConfirmTimeout.OnTextEntered += args => SendFloatCVar(CCVars.AfkConfirmTimeout.Name, args.Text);
+            AfkConfirmTimeout.OnFocusExit += args => SendFloatCVar(CCVars.AfkConfirmTimeout.Name, args.Text);
+        }
+
+        private void SendFloatCVar(string cvar, string text)
+        {
+            if (string.IsNullOrWhiteSpace(text) ||
+                !float.TryParse(text, CultureInfo.InvariantCulture, out var value) ||
+                value < 0f)
+            {
+                return;
+            }
+
+            _console.ExecuteCommand($"changecvar {cvar} {value.ToString(CultureInfo.InvariantCulture)}");
         }
 
         // _Duty-start
@@ -56,6 +77,26 @@ namespace Content.Client.Administration.UI.Tabs
             SetLoocButton.Pressed = value;
         }
 
+        private void DeadChatEnabledChanged(bool value)
+        {
+            SetDeadChatButton.Pressed = value;
+        }
+
+        private void AfkTimeChanged(float value)
+        {
+            AfkTime.PlaceHolder = value.ToString(CultureInfo.InvariantCulture);
+        }
+
+        private void AdminAfkTimeChanged(float value)
+        {
+            AdminAfkTime.PlaceHolder = value.ToString(CultureInfo.InvariantCulture);
+        }
+
+        private void AfkConfirmTimeoutChanged(float value)
+        {
+            AfkConfirmTimeout.PlaceHolder = value.ToString(CultureInfo.InvariantCulture);
+        }
+
         protected override void Dispose(bool disposing)
         {
             base.Dispose(disposing);
@@ -65,6 +106,9 @@ namespace Content.Client.Administration.UI.Tabs
                 _config.UnsubValueChanged(CCVars.OocEnabled, OocEnabledChanged);
                 _config.UnsubValueChanged(CCVars.LoocEnabled, LoocEnabledChanged);
                 _admin.AdminStatusUpdated -= ApplyPermissions; // _Duty
+                _config.UnsubValueChanged(CCVars.AfkTime, AfkTimeChanged);
+                _config.UnsubValueChanged(CCVars.AdminAfkTime, AdminAfkTimeChanged);
+                _config.UnsubValueChanged(CCVars.AfkConfirmTimeout, AfkConfirmTimeoutChanged);
             }
         }
     }

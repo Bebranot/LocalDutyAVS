@@ -308,6 +308,10 @@ ehthumbs.db
 # Merge driver stuff
 Content.Tools/test/out.yml
 
+# Local changelog Discord debug files.
+Resources/Changelog/Old.yml
+Resources/Changelog/DiscordDebug.md
+
 # Windows
 desktop.ini
 
@@ -319,6 +323,9 @@ Resources/MapImages
 /Content.Docfx/*site
 
 *.bak
+
+# Shader error output
+error.glsl
 
 # Direnv stuff
 .direnv/
@@ -341,3 +348,6 @@ logs_duty/
 # BuildChecker/git_helper.py запускает git submodule update со своим cwd, из-за чего рядом
 # с ним появляется лишняя копия движка (~30 МБ). Настоящий сабмодуль лежит в /RobustToolbox.
 BuildChecker/RobustToolbox/
+
+# C# Dev Kit cache file
+*.lscache

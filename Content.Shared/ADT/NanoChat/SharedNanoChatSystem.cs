@@ -9,7 +9,7 @@ namespace Content.Shared.ADT.NanoChat;
 /// </summary>
 public abstract class SharedNanoChatSystem : EntitySystem
 {
-    [Dependency] private readonly IGameTiming _timing = default!;
+    [Dependency] private IGameTiming _timing = default!;
 
     /// <summary>
     ///     Maximum number of messages kept per conversation. Oldest messages are dropped
