@@ -26,6 +26,7 @@ public sealed partial class EmptyServerLifecycleSystem : EntitySystem
     private CancellationTokenSource _restartTimerCancel = new();
     private bool _timerActive;
     private bool _mapsPausedForEmptyServer;
+    private readonly HashSet<MapId> _pausedMapIds = new();
 
     public override void Initialize()
     {
@@ -92,7 +93,9 @@ public sealed partial class EmptyServerLifecycleSystem : EntitySystem
 
     private void OnServerNoLongerEmpty()
     {
-        if (!_timerActive)
+        // Пауза могла остаться после срабатывания таймера, когда _timerActive уже сброшен,
+        // поэтому ориентируемся не только на флаг таймера, но и на фактическую паузу карт.
+        if (!_timerActive && !_mapsPausedForEmptyServer)
             return;
 
         _timerActive = false;
@@ -110,11 +113,19 @@ public sealed partial class EmptyServerLifecycleSystem : EntitySystem
         _timerActive = false;
 
         // Подстраховка: таймер мог сработать в узком окне гонки с уже обработанным подключением.
+        // В этом случае карты обязательно снимаем с паузы, иначе раунд останется замороженным:
+        // _timerActive уже сброшен, и OnServerNoLongerEmpty сам по себе паузу больше не снимет.
         if (_playerManager.PlayerCount != 0)
+        {
+            SetMapsPaused(false);
             return;
+        }
 
         if (_gameTicker.RunLevel != GameRunLevel.InRound)
+        {
+            SetMapsPaused(false);
             return;
+        }
 
         Log.Info("_Duty: сервер оставался пуст всё отведённое время — принудительно завершаем раунд и уходим в лобби.");
 
@@ -129,13 +140,32 @@ public sealed partial class EmptyServerLifecycleSystem : EntitySystem
 
         _mapsPausedForEmptyServer = paused;
 
-        var query = EntityQueryEnumerator<MapComponent>();
-        while (query.MoveNext(out _, out var map))
+        if (paused)
         {
-            if (map.MapId == MapId.Nullspace)
+            var query = EntityQueryEnumerator<MapComponent>();
+            while (query.MoveNext(out _, out var map))
+            {
+                MapId mapId = map.MapId;
+                if (mapId == MapId.Nullspace)
+                    continue;
+
+                _mapSystem.SetPaused(mapId, true);
+                _pausedMapIds.Add(mapId);
+            }
+
+            return;
+        }
+
+        // Снимаем паузу только с тех карт, которые поставили на паузу мы сами.
+        // Иначе задели бы карты других систем (например, GridPreloaderSystem паузит свою карту).
+        foreach (var mapId in _pausedMapIds)
+        {
+            if (!_mapSystem.MapExists(mapId))
                 continue;
 
-            _mapSystem.SetPaused(map.MapId, paused);
+            _mapSystem.SetPaused(mapId, false);
         }
+
+        _pausedMapIds.Clear();
     }
 }

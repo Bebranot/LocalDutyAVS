@@ -257,7 +257,15 @@ namespace Content.Server.GameTicking
                 return;
             }
 
-            DoSpawn(player, character, station, jobId, silent, out var mob, out var jobPrototype, out var jobName);
+            if (!DoSpawn(player, character, station, jobId, silent, out var mob, out var jobPrototype, out var jobName))
+            {
+                // _Duty: моба создать не удалось (например, на карте нет доступных точек спавна).
+                // Раньше в этом месте падал DebugTools.AssertNotNull и умирал весь сервер,
+                // поэтому теперь просто отправляем игрока в госты, чтобы он мог позвать админа.
+                Log.Error($"Failed to spawn {player} on station {ToPrettyString(station)} as {jobId}, spawning them as an observer instead.");
+                SpawnObserver(player);
+                return;
+            }
 
             if (lateJoin && !silent)
             {
@@ -330,7 +338,8 @@ namespace Content.Server.GameTicking
         /// <summary>
         /// Creates a mob on the specified station, creates the new mind, equips job-specific starting gear and loadout
         /// </summary>
-        public void DoSpawn(
+        /// <returns>Whether the mob was actually created.</returns>
+        public bool DoSpawn(
             ICommonSession player,
             HumanoidCharacterProfile character,
             EntityUid station,
@@ -349,8 +358,17 @@ namespace Content.Server.GameTicking
             jobPrototype = ProtoMan.Index<JobPrototype>(jobId);
 
             var mobMaybe = _stationSpawning.SpawnPlayerCharacterOnStation(station, jobId, character);
-            DebugTools.AssertNotNull(mobMaybe);
-            mob = mobMaybe!.Value;
+            if (mobMaybe == null)
+            {
+                // _Duty: раньше здесь стоял DebugTools.AssertNotNull — в DebugOpt сборке он бросал
+                // исключение и валил весь сервер, если на карте не оставалось точек спавна.
+                Log.Error($"Could not spawn a mob for {player} on station {ToPrettyString(station)} with job {jobId}.");
+                mob = EntityUid.Invalid;
+                jobName = string.Empty;
+                return false;
+            }
+
+            mob = mobMaybe.Value;
 
             var newMind = _mind.CreateMind(data.UserId, Name(mob));
             _mind.SetUserId(newMind, data.UserId);
@@ -362,6 +380,7 @@ namespace Content.Server.GameTicking
             _roles.MindAddJobRole(newMind, silent: silent, jobPrototype: jobId);
             jobName = _jobs.MindTryGetJobName(newMind);
             _admin.UpdatePlayerList(player);
+            return true;
         }
 
         public void Respawn(ICommonSession player)
