@@ -82,17 +82,23 @@ public sealed class ADTTraitSystem : EntitySystem
         var categoryTraitCounts = new Dictionary<ProtoId<TraitCategoryPrototype>, int>();
         var categoryPointTotals = new Dictionary<ProtoId<TraitCategoryPrototype>, int>();
 
-        // _Duty: порядок обхода HashSet был случайным, и положительная черта могла отсекаться раньше отрицательной,
-        // которая её «оплачивает». Сначала дающие очки (меньшая цена), затем по id — результат детерминирован.
-        foreach (var traitId in selectedTraits
-                     .OrderBy(id => ProtoMan.TryIndex(id, out var sortTrait) ? sortTrait.Cost : 0)
-                     .ThenBy(id => id.Id, StringComparer.Ordinal))
+        var candidates = new List<TraitPrototype>();
+        foreach (var traitId in selectedTraits)
         {
             if (!ProtoMan.TryIndex(traitId, out var trait))
             {
                 Log.Warning($"Unknown trait ID in player preferences: {traitId}");
                 continue;
             }
+
+            candidates.Add(trait);
+        }
+
+        candidates.Sort((a, b) => a.Cost.CompareTo(b.Cost));
+
+        foreach (var trait in candidates)
+        {
+            var traitId = new ProtoId<TraitPrototype>(trait.ID);
 
             if (traitCount >= _maxTraitCount)
             {

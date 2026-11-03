@@ -244,6 +244,7 @@ public sealed partial class ChatUIController : UIController
         _config.OnValueChanged(CCVars.ChatWindowOpacity, OnChatWindowOpacityChanged);
 
         InitializeHighlights();
+        InitializeCustomEmotes(); // ADT-Tweak
     }
 
     public void OnScreenLoad()
@@ -773,6 +774,9 @@ public sealed partial class ChatUIController : UIController
 
         // ADT-Tweak-Start
         if (TrySendEmoteMode(box, prefixChannel == 0 ? channel : prefixChannel, text))
+            return;
+
+        if (TrySendCustomEmote(box, prefixChannel == 0 ? channel : prefixChannel, text))
             return;
         // ADT-Tweak-End
 

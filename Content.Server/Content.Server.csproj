@@ -16,6 +16,7 @@
     <PackageReference Include="Microsoft.Extensions.ObjectPool" />
     <!-- _Duty: нужен тип Serilog.Events.LogEvent для реализации ILogHandler в DutyErrorLogHandler -->
     <PackageReference Include="Serilog" />
+    <PackageReference Include="SixLabors.ImageSharp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Content.Packaging\Content.Packaging.csproj" />

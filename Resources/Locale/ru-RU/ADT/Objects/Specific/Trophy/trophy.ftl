@@ -1,11 +1,13 @@
 adt-kinetic-trophy-legion-skull = [color=#FFD700][bold]Улучшение:[/bold][/color] [color=#e480ff]череп легионера[/color]
 adt-kinetic-trophy-magma-wing = [color=#FFD700][bold]Улучшение:[/bold][/color] [color=#ff4500]крыло магмокрыла[/color]
+adt-kinetic-trophy-watcher-wing = [color=#FFD700][bold]Улучшение:[/bold][/color] [color=#ff6347]крыло наблюдателя[/color]
+adt-kinetic-trophy-ice-wing = [color=#FFD700][bold]Улучшение:[/bold][/color] [color=#87cefa]крыло ледяного наблюдателя[/color]
 adt-kinetic-trophy-poison-fang = [color=#FFD700][bold]Улучшение:[/bold][/color] [color=#32cd32]ядовитый клык[/color]
 adt-kinetic-trophy-frost-gland = [color=#FFD700][bold]Улучшение:[/bold][/color] [color=#00ffff]ледяная железа[/color]
 adt-kinetic-trophy-blood-drunk-miner = [color=#FFD700][bold]Улучшение:[/bold][/color] [color=#ff0000]глаз кровавого шахтёра[/color]
 adt-kinetic-trophy-ash-drake-spike = [color=#FFD700][bold]Улучшение:[/bold][/color] [color=#ff8c00]шип пепельного дракона[/color]
 adt-kinetic-trophy-goliath-tentacle = [color=#FFD700][bold]Улучшение:[/bold][/color] [color=#a0522d]щупальце голиафа[/color]
-adt-kinetic-trophy-ancient-goliath-tentacle = [color=#FFD700][bold]Улучшение:[/bold][/color] [color=#ffb700][i]древнее щупальце голиафа[/i][/color]
+adt-kinetic-trophy-ancient-goliath-tentacle = [color=#FFD700][bold]Улучшение:[/bold][/color] [color=#ffb700][italic]древнее щупальце голиафа[/italic][/color]
 adt-kinetic-trophy-demon-claws = [color=#FFD700][bold]Улучшение:[/bold][/color] [color=#8b0000]демонические когти[/color]
 
 ent-ADTKineticTrophyLegionSkull = череп легиона
@@ -14,13 +16,19 @@ ent-ADTKineticTrophyLegionSkull = череп легиона
 ent-ADTKineticTrophyMagmaWing = крыло магмокрыла
     .desc = Всё ещё раскалённое крыло магмокрылого наблюдателя. После детонации метки следующий выстрел протокинетику наносит дополнительный урон огнём.
 
+ent-ADTKineticTrophyWatcherWing = крыло наблюдателя
+    .desc = Оторванное крыло наблюдателя. Детонация метки ненадолго не даёт фауне использовать дальние атаки.
+
+ent-ADTKineticTrophyIceWing = крыло ледяного наблюдателя
+    .desc = Хрупкое, замороженное крыло ледяного наблюдателя. Детонация метки не даёт фауне использовать дальние атаки.
+
 ent-ADTKineticTrophyPoisonFang = ядовитый клык
     .desc = Острый ядовитый клык, снятый с опасного существа. При ударе по помеченной цели та получает на 10% больше урона в течение 2 секунд.
 
 ent-ADTKineticTrophyFrostGland = морозная железа
     .desc = Бережно сохранённая железа ледяного существа. При ударе по помеченной цели та наносит на 10% меньше урона.
 
-ent-ADTKineticTrophyBloodDrunkMiner = глаз кровавого шахтёра
+ent-ADTKineticTrophyBloodDrunkMiner = глаз кровавого шахтера
     .desc = Зрачок сплющен и превратился в кашу. После детонации метки даёт иммунитет к стану и снижает получаемый урон на 90% в течение 1 секунды.
 
 ent-ADTKineticTrophyAshDrakeSpike = хвостовой шип
@@ -44,7 +52,9 @@ crusher-effect-lifesteal = Попадания восстанавливают [co
 
 crusher-effect-slow-debuff = Детонация метки на цели снижает наносимый ею урон на [color=yellow]{$reduction}%[/color] в течение [color=cyan]{$duration} сек.[/color]
 
-crusher-effect-health-scaling = Детонация метки наносит дополнительный урон в размере [color=yellow]{$percent}%[/color] от полученного вами урона.
+crusher-effect-suppress-ranged = Детонация метки не даёт цели использовать дальние атаки в течение [color=cyan]{$duration} сек.[/color]
+
+crusher-effect-health-scaling =Детонация метки наносит дополнительный урон в размере [color=yellow]{$percent}%[/color] от полученного вами урона.
 
 crusher-effect-firerate-boost = Имеет увеличенную скорострельность на [color=yellow]{$percent}%[/color].
 
@@ -57,5 +67,5 @@ crusher-effect-area-pushback = Детонация метки наносит вс
 crusher-upgrade-popup-insert = Вы успешно установили { $upgrade } в { $crusher }.
 crusher-upgrade-popup-already-present = Модуль такого типа уже установлен!
 crusher-upgrade-popup-extracted = Вы аккуратно извлекли { $upgrade } из { $crusher }.
-adt-kinetic-trophy-adaptive-core = [color=#FFD700][b]Улучшение:[/b][/color] [color=#7fffd4]адаптивное ядро ИИ[/color]
+adt-kinetic-trophy-adaptive-core = [color=#FFD700][bold]Улучшение:[/bold][/color] [color=#7fffd4]адаптивное ядро ИИ[/color]
 crusher-effect-adaptive-learning = Каждый удар по цели увеличивает урон по ней на [color=red]{$bonus}[/color], до максимума в [color=red]{$max}[/color].

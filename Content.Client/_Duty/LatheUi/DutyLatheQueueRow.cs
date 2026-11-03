@@ -29,6 +29,7 @@ public sealed class DutyLatheQueueRow : BoxContainer
     private readonly Label _progress;
     private readonly Button _up;
     private readonly Button _down;
+    private readonly Button _delete;
 
     public DutyLatheQueueRow()
     {
@@ -77,7 +78,7 @@ public sealed class DutyLatheQueueRow : BoxContainer
             ToolTip = Loc.GetString("lathe-menu-move-down-tooltip"),
             VerticalAlignment = VAlignment.Center,
         };
-        var delete = new Button
+        _delete = new Button
         {
             Text = "✖",
             StyleClasses = { StyleClass.ButtonOpenLeft, StyleClass.Negative },
@@ -87,22 +88,23 @@ public sealed class DutyLatheQueueRow : BoxContainer
 
         _up.OnPressed += _ => OnMoveUp?.Invoke(_index);
         _down.OnPressed += _ => OnMoveDown?.Invoke(_index);
-        delete.OnPressed += _ => OnDelete?.Invoke(_index);
+        _delete.OnPressed += _ => OnDelete?.Invoke(_index);
 
         AddChild(_up);
         AddChild(_down);
-        AddChild(delete);
+        AddChild(_delete);
     }
 
-    public void Set(int index, int count, string recipeId, string name, string progress, Func<Control> iconFactory)
+    public void Set(int index, int count, string recipeId, string name, string progress, Func<Control> iconFactory, bool enabled)
     {
         _index = index;
         _number.Text = (index + 1).ToString();
         _name.Text = name;
         _name.ToolTip = name;
         _progress.Text = progress;
-        _up.Disabled = index == 0;
-        _down.Disabled = index == count - 1;
+        _up.Disabled = !enabled || index == 0;
+        _down.Disabled = !enabled || index == count - 1;
+        _delete.Disabled = !enabled;
 
         if (_iconRecipe == recipeId)
             return;
