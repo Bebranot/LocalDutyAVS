@@ -34,11 +34,6 @@
   - type: Destructible
     thresholds:
     - trigger: !type:DamageTrigger
-        damage: 80
-      behaviors:
-      - !type:DoActsBehavior
-        acts: [ "Destruction" ]
-    - trigger: !type:DamageTrigger
         damage: 40
       behaviors:
       - !type:EmptyAllContainersBehaviour
@@ -64,7 +59,7 @@
   - type: ContainerFill
     containers:
       ItemCabinet:
-      - Defibrillator
+      - DutyDefibrillatorLifePak40s # _Duty: LifePak-40s вместо старого дефиба
 
 - type: entity
   parent: [DefibrillatorCabinetFilled, DefibrillatorCabinetOpen]

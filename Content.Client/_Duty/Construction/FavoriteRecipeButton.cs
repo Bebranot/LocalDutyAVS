@@ -16,7 +16,7 @@ namespace Content.Client._Duty.Construction;
 /// имя уходит в тултип.
 /// ЛКМ — выбрать рецепт, двойной ЛКМ — сразу строить/крафтить, ПКМ — убрать из избранного.
 /// </summary>
-public sealed class FavoriteRecipeButton : Control
+public sealed partial class FavoriteRecipeButton : Control
 {
     /// <summary>
     /// Сторона кнопки: спрайт 32px со <c>Scale 1.2</c> плюс отступы.
@@ -25,8 +25,8 @@ public sealed class FavoriteRecipeButton : Control
 
     private const float IconScale = 1.2f;
 
-    [Dependency] private readonly IGameTiming _timing = default!;
-    [Dependency] private readonly IConfigurationManager _cfg = default!;
+    [Dependency] private IGameTiming _timing = default!;
+    [Dependency] private IConfigurationManager _cfg = default!;
 
     public ConstructionPrototype Recipe { get; }
 

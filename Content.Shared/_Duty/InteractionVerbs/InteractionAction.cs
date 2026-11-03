@@ -54,13 +54,13 @@ public abstract partial class InteractionAction
     ///     Исключение — <see cref="WhitelistSystem"/>: это EntitySystem, а не сервис из глобального IoC,
     ///     поэтому его нужно проставить вручную (см. SharedInteractionVerbsSystem.Initialize).
     /// </remarks>
-    public sealed class VerbDependencies
+    public sealed partial class VerbDependencies
     {
-        [Dependency] public readonly IEntityManager EntMan = default!;
-        [Dependency] public readonly IPrototypeManager ProtoMan = default!;
-        [Dependency] public readonly IRobustRandom Random = default!;
-        [Dependency] public readonly IGameTiming Timing = default!;
-        [Dependency] public readonly ISerializationManager Serialization = default!;
+        [Dependency] public IEntityManager EntMan = default!;
+        [Dependency] public IPrototypeManager ProtoMan = default!;
+        [Dependency] public IRobustRandom Random = default!;
+        [Dependency] public IGameTiming Timing = default!;
+        [Dependency] public ISerializationManager Serialization = default!;
         public EntityWhitelistSystem WhitelistSystem = default!;
     }
 }

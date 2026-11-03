@@ -38,7 +38,6 @@
     children:
     - id: FlashlightSeclite
     - id: WeaponDisabler
-    - id: WeaponTaser
     - id: ClothingBeltSecurityFilled
     - id: Flash
     - id: ClothingEyesGlassesSecurity
@@ -48,15 +47,11 @@
     - id: ClothingOuterWinterWarden
     - id: RubberStampWarden
     - id: DoorRemoteArmory
-    - id: HoloprojectorSecurity
-    - id: BookSpaceLaw
+    # - id: HoloprojectorSecurity
+    # - id: BookSpaceLaw # ADT-tweak
     - id: ClothingHeadHatCapWardenAlt # Corvax-SecFashion
     - id: ClothingOuterCoatWardenAlt # Corvax-SecFashion
     - id: ClothingBackpackWarden # Corvax-SecFashion
-    #ADT Tweak-Start
-#    - id: ClothingBackpackElectropack
-#      amount: 2
-    #ADT Tweak-End
     - id: RemoteSignaller
       amount: 2
     - id: NetworkConfigurator
@@ -68,10 +63,8 @@
     - id: ADTBookPCDsec
     # duty nizhe
     - id: DutyGunSVD
-    - id: ADTMagazineHristovAdvanced
-    - id: ADTMagazineHristovAdvanced
-    - id: ADTMagazineHristovAdvanced
-    - id: ADTMagazineHristovAdvanced
+    - id: 754Mag10 # _Duty: СВД переведена на 7.62x54R (было ADTMagazineHristovAdvanced)
+      amount: 4
     - id: ADTClothingNeckShockCollar
       amount: 2
     - id: RemoteSignaller
@@ -79,21 +72,8 @@
     - id: ADTSecShuttleConsoleCircuitboard
     - id: BoxTapeRecorder
     # ADT-Tweak-End
-    # duty nizhe: сталкерские снайперские кейсы — весь ассортимент (7 из 7), редкая примесь
-    - id: STWeaponSniperMosinCase
-      prob: 0.3
-    - id: STWeaponSniperSKSCase
-      prob: 0.3
+    # duty nizhe: из сталкерских винтовочных кейсов у вардена — только один, с СВД
     - id: STWeaponSniperSVDSCase
-      prob: 0.3
-    - id: STWeaponSniperSVUCase
-      prob: 0.3
-    - id: STWeaponSniperVeprCase
-      prob: 0.3
-    - id: STWeaponSniperVSSCase
-      prob: 0.3
-    - id: STWeaponSniperOSV96Case
-      prob: 0.3
     - id: PlushieLizardJobWarden
       prob: 0.02
 
@@ -122,7 +102,8 @@
     - id: FlashlightSeclite
       prob: 0.8
     - id: WeaponDisabler
-    - id: WeaponTaser
+    - id: SecurityBola
+      amount: 2
     - id: ClothingUniformJumpsuitSecGrey
       prob: 0.3
     - id: ClothingHeadHelmetBasic
@@ -138,8 +119,8 @@
       prob: 0.1
     - id: HoloprojectorSecurity
       prob: 0.6
-    - id: BookSpaceLaw
-      prob: 0.5
+    # - id: BookSpaceLaw
+    #   prob: 0.5
     - id: ClothingOuterCoatSecurityOvercoat # Corvax-SecFashion
       prob: 0.2
     - id: PlushieLizardJobSecuritycadet
@@ -148,78 +129,39 @@
       prob: 0.02
 
 # moved to ADT
-# - type: entity
-#   id: LockerBrigmedicFilled
-#   suffix: Brigmedic, Filled
-#   parent: LockerBrigmedic
-#   components:
-#   - type: EntityTableContainerFill
-#     containers:
-#       entity_storage: !type:NestedSelector
-#         tableId: FillLockerBrigmedic
-#   - type: StorageFill
-#     contents:
-#       - id: FlashlightSeclite
-#         prob: 0.8
-#       - id: WeaponDisabler
-#       - id: ClothingUniformJumpsuitSecGrey
-#         prob: 0.3
-#       - id: ClothingHeadHelmetBasic
-#       - id: ClothingOuterArmorBasic
-#       - id: ClothingBeltSecurityFilled
-#       - id: Flash
-#         prob: 0.5
-#       - id: ClothingEyesGlassesSecurity
-#       - id: ClothingHeadsetSecurity
-#       - id: ClothingHandsGlovesColorBlack
-#       - id: ClothingShoesBootsJack
-#       - id: WeaponMeleeNeedle
-#         prob: 0.1
-#       - id: ClothingOuterCoatSecurityOvercoat # Corvax-SecFashion
-#         prob: 0.2
-#       - id: HoloprojectorSecurity
-#         prob: 0.6
-#       - id: ADTBookSpaceLaw #ADT-WikiBooks
-#         prob: 0.5
-#     # ADT-WikiBooks-Start
-#       - id: ADTBookSRPsec
-#       - id: ADTBookPCDsec
-#     # ADT-WikiBooks-End
-
-# - type: entity
-#   id: LockerBrigmedicFilled
-#   suffix: Brigmedic, Filled
-#   parent: LockerBrigmedic
-#   components:
-#   - type: StorageFill
-#     contents:
-#       - id: ClothingEyesGlassesSecurity
-#       - id: WeaponDisabler
-#       - id: TrackingImplanter
-#         amount: 2
-#       - id: ClothingOuterHardsuitBrigmedic
-#       - id: BoxSterileMask
-#       - id: ClothingHeadHatBeretBrigmedic              Actual in ADT folder
-#       - id: ClothingOuterCoatAMG
-#       - id: ClothingUniformJumpsuitBrigmedic
-#       - id: ClothingUniformJumpskirtBrigmedic
-#       - id: ClothingUniformJumpskirtOfLife
-#         prob: 0.1
-#       - id: MedkitFilled
-#       - id: MedkitCombatFilled
-#         prob: 0.6
-#       - id: MedkitAdvancedFilled
-#         prob: 0.4
-#       - id: MedkitOxygenFilled
-#         prob: 0.3
-#       - id: MedkitBruteFilled
-#         prob: 0.3
-#       - id: MedkitToxinFilled
-#         prob: 0.3
-#       - id: MedkitBurnFilled
-#         prob: 0.7
-#       - id: ClothingNeckCloakMoth #bzzz Moth-pocalypse
-#         prob: 0.15
+#- type: entityTable
+#  id: FillLockerBrigmedic
+#  table: !type:AllSelector
+#    children:
+#    - id: ClothingEyesGlassesSecurity
+#    - id: WeaponDisabler
+#    - id: TrackingImplanter
+#      amount: 2
+#    - id: ClothingOuterHardsuitBrigmedic
+#    - id: BoxSterileMask
+#    - id: ClothingHeadHatBeretBrigmedic
+#    - id: ClothingOuterCoatAMG
+#    - id: ClothingUniformJumpsuitBrigmedic
+#    - id: ClothingUniformJumpskirtBrigmedic
+#    - id: ClothingUniformJumpskirtOfLife
+#      prob: 0.1
+#    - id: MedkitFilled
+#    - !type:GroupSelector
+#      prob: 0.7
+#      children:
+#      - id: MedkitCombatFilled
+#        weight: 1.6
+#      - id: MedkitAdvancedFilled
+#      - id: MedkitOxygenFilled
+#        weight: 0.8
+#      - id: MedkitBruteFilled
+#        weight: 0.8
+#      - id: MedkitToxinFilled
+#        weight: 0.8
+#      - id: MedkitBurnFilled
+#        weight: 1.8
+#    - id: ClothingNeckCloakMoth #bzzz Moth-pocalypse
+#      prob: 0.15
 
 - type: entity
   id: LockerDetectiveFilled
@@ -248,14 +190,12 @@
     - id: DrinkDetFlask
     - id: ClothingHandsGlovesForensic
     - id: RubberStampDetective
-    - id: BookBusido # Corvax-Books
     - id: HoloprojectorSecurity
     - id: BoxEvidenceMarkers
     - id: HandLabeler
     - id: PlushieLizardJobDetective
       prob: 0.02
     - id: ADTJukeBoxPlayerVintage #ADT-Tweak
-    - id: ADTMusicDiskMix #ADT-Tweak
 
 - type: entity
   id: ClosetBombFilled
@@ -315,6 +255,8 @@
       amount: 12
     - id: DutyGunPM
       amount: 2
+    - id: BasePMMag # _Duty: запасные магазины ПМ (9x18)
+      amount: 4
     # duty nizhe: сталкерские кейсы (пистолеты + револьверы) — весь ассортимент (18 из 18), редкая примесь
     - id: WeaponPistolStalkerAPSCase
       prob: 0.2
@@ -373,81 +315,48 @@
       amount: 4
     - id: DutyGunAK105
       amount: 2
-    - id: MagazineLightRifle
+    - id: Magazine545x30 # _Duty: АК-105 переведён на 5.45x39 (было MagazineLightRifle)
       amount: 4
-    # duty nizhe: сталкерские винтовочные кейсы — весь ассортимент (36 из 36), редкая примесь
-    - id: STWeaponRifleAK103Case
-      prob: 0.12
-    - id: STWeaponRifleAK203Case
-      prob: 0.12
-    - id: STWeaponRifleSaiga739Case
-      prob: 0.12
-    - id: STWeaponRifleAKMCase
-      prob: 0.12
-    - id: STWeaponRifleAKS74Case
-      prob: 0.12
-    - id: STWeaponRifleAK74MCase
-      prob: 0.12
-    - id: STWeaponRifleSaiga545Case
-      prob: 0.12
-    - id: STWeaponRifleA545Case
-      prob: 0.12
-    - id: STWeaponRifleFALCase
-      prob: 0.12
-    - id: STWeaponRifleM14Case
-      prob: 0.12
-    - id: STWeaponRifleGalatzCase
-      prob: 0.12
-    - id: STWeaponRifleSCARHCase
-      prob: 0.12
-    - id: STWeaponRifleSCARHShortCase
-      prob: 0.12
-    - id: STWeaponRifleARX160Case
-      prob: 0.12
-    - id: STWeaponRifleASVALCase
-      prob: 0.12
-    - id: STWeaponRifleSIG550Case
-      prob: 0.12
-    - id: STWeaponRifleSIG739Case
-      prob: 0.12
-    - id: STMetroWeaponRifleVSVCase
-      prob: 0.12
-    - id: STWeaponRifleOC14Case
-      prob: 0.12
-    - id: STWeaponRifleOC14939Case
-      prob: 0.12
-    - id: STWeaponRifleStalkerAK104Case
-      prob: 0.12
-    - id: STWeaponRifleStalkerAK12Case
-      prob: 0.12
-    - id: STWeaponRifleStalkerAK15Case
-      prob: 0.12
-    - id: STWeaponRifleStalkerRPK16Case
-      prob: 0.12
-    - id: STWeaponRifleM16Case
-      prob: 0.12
-    - id: STWeaponRifleM4Case
-      prob: 0.12
-    - id: STWeaponRifleHK416Case
-      prob: 0.12
-    - id: STWeaponRifleLR300v1Case
-      prob: 0.12
-    - id: STWeaponRifleSCARLCase
-      prob: 0.12
-    - id: STWeaponRifleG36Case
-      prob: 0.12
-    - id: STWeaponRifleAUGCase
-      prob: 0.12
-    - id: STWeaponRifleGalilCase
-      prob: 0.12
-    - id: STWeaponRifleL85Case
-      prob: 0.12
-    - id: STWeaponRifleF2000Case
-      prob: 0.12
-    - id: STWeaponRifleStalkerAbakanCase
-      prob: 0.12
-    - id: STWeaponRifleStalkerAek971Case
-      prob: 0.12
+    # duty nizhe: два случайных сталкерских винтовочных кейса из всего ассортимента (36)
+    - !type:GroupSelector
+      rolls: 2
+      children:
+      - id: STWeaponRifleAK103Case
+      - id: STWeaponRifleAK203Case
+      - id: STWeaponRifleSaiga739Case
+      - id: STWeaponRifleAKMCase
+      - id: STWeaponRifleAKS74Case
+      - id: STWeaponRifleAK74MCase
+      - id: STWeaponRifleSaiga545Case
+      - id: STWeaponRifleA545Case
+      - id: STWeaponRifleFALCase
+      - id: STWeaponRifleM14Case
+      - id: STWeaponRifleGalatzCase
+      - id: STWeaponRifleSCARHCase
+      - id: STWeaponRifleSCARHShortCase
+      - id: STWeaponRifleARX160Case
+      - id: STWeaponRifleASVALCase
+      - id: STWeaponRifleSIG550Case
+      - id: STWeaponRifleSIG739Case
+      - id: STMetroWeaponRifleVSVCase
+      - id: STWeaponRifleOC14Case
+      - id: STWeaponRifleOC14939Case
+      - id: STWeaponRifleStalkerAK104Case
+      - id: STWeaponRifleStalkerAK12Case
+      - id: STWeaponRifleStalkerAK15Case
+      - id: STWeaponRifleStalkerRPK16Case
+      - id: STWeaponRifleM16Case
+      - id: STWeaponRifleM4Case
+      - id: STWeaponRifleHK416Case
+      - id: STWeaponRifleLR300v1Case
+      - id: STWeaponRifleSCARLCase
+      - id: STWeaponRifleG36Case
+      - id: STWeaponRifleAUGCase
+      - id: STWeaponRifleGalilCase
+      - id: STWeaponRifleL85Case
+      - id: STWeaponRifleF2000Case
+      - id: STWeaponRifleStalkerAbakanCase
+      - id: STWeaponRifleStalkerAek971Case
 
 - type: entity
   parent: [GunSafeBaseSecure, BaseSecurityContraband]

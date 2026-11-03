@@ -23,7 +23,7 @@ adt-figurines-brigmedic-5 = Чё? Я не должен работать за о�
 adt-figurines-CCC-1 = Я бесполезен.
 adt-figurines-CCC-2 = Вы бесполезны.
 adt-figurines-CCC-3 = Быть ОБР или не быть? вот в чём вопрос.
-adt-figurines-CCC-4 = Три часа, почти утро. А я в еврейском логове. Они хитро изменяй свой облик.
+adt-figurines-CCC-4 = Три часа, почти утро. А я в еврейском логове. Они хитро изменяют свой облик.
 adt-figurines-CCC-5 = КАКОГО ХУЯ КАПИТАН, ВЫ ПРОИГРАЛИ ДИСК В КАЗИНО!?
 
 # Спонсорские
@@ -39,7 +39,7 @@ adt-figurines-apatia-1 = Слушай, парень. Я ведь инженер,
 adt-figurines-apatia-2 = Мм.. Фрезон.
 adt-figurines-apatia-3 = Пиво? А что насчёт плазменного алкоголя?
 adt-figurines-apatia-4 = ХА-ХА-ХА!
-adt-figurines-uker-1 = "Если ты уверен, что впереди тебя ждет победа - вступай в бой". Сунь Цзо так сказал.
+adt-figurines-uker-1 = "Если ты уверен, что впереди тебя ждет победа - вступай в бой". Сунь Цзы так сказал.
 adt-figurines-uker-2 = Дракон. Я слышал всё, что ты сказал о моей матушке.
 adt-figurines-uker-3 = Я тебе рассказывал историю, как убить дракона при помощи ножа?
 adt-figurines-uker-4 = Пиздец.
@@ -60,6 +60,36 @@ adt-figurines-plushie-jungar-9 = Я твой талисман удачи!
 adt-figurines-plushie-emilia-evenwood-1 = Йоу
 adt-figurines-plushie-emilia-evenwood-2 = Мамочки-арканочки
 
+adt-figurines-plushie-yuriy-trixter-1 = Фристайло
+adt-figurines-plushie-yuriy-trixter-2 = Эта вечеринка полный отстой
+adt-figurines-plushie-yuriy-trixter-3 = Сделай музыку погромче
+adt-figurines-plushie-yuriy-trixter-4 = Руки прочь от бумбокса
+adt-figurines-plushie-yuriy-trixter-5 = Я не буду ставить твою пластинку
+
 figurines-gipatter-1 = Ez...
 figurines-gipatter-2 = Хватит со своим Бламех-Жуббром
 figurines-gipatter-3 = Во всём виноваты воксы!
+
+adt-figurines-plushie-proxima-1 = З-з-здразтвуйте...
+adt-figurines-plushie-proxima-2 = Дворжзкого п-пожалуйста...
+adt-figurines-plushie-proxima-3 = Н-не г-гладьте меня...
+
+adt-figurines-plushie-reimor-1 = Ну нихрена себе!
+adt-figurines-plushie-reimor-2 = Ха-ха-ха!
+adt-figurines-plushie-reimor-3 = Да!
+
+adt-figurines-theokaya-1 = Зззтанззия! Датчики!
+adt-figurines-theokaya-2 = Жзжу-жзжу-жзжу
+adt-figurines-theokaya-3 = Азззизззтент умер беззз датчиков...
+
+adt-figurines-navi-1 = Мяу
+adt-figurines-navi-2 = Вам не кажется, что мы виделись с вами?
+adt-figurines-navi-3 = Витаминки один к одному с физраствором, вкусно!
+adt-figurines-navi-4 = Это не борода!
+adt-figurines-navi-5 = Я просто хочу отдохнуть...
+adt-figurines-navi-6 = Бу-бу-бу бе-бе-бе!
+
+adt-figurines-plushie-erich-stohl-1 = Не трогай руку.
+adt-figurines-plushie-erich-stohl-2 = Скрипит? Это протез, не я.
+adt-figurines-plushie-erich-stohl-3 = Где тут бар?
+adt-figurines-plushie-erich-stohl-4 = Мне и одной руки хватит.

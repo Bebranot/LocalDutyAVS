@@ -1,0 +1,71 @@
+- type: entity
+  parent: BaseBullet
+  id: BulletMagnum
+  categories: [ HideSpawnMenu ]
+  name: bullet (.45 magnum)
+  components:
+  - type: Projectile
+    damage:
+      types:
+        Piercing: 28 # ADT tweak 35 > 42 # _Duty: 42 -> 28, пистолетный патрон не должен бить сильнее винтовочного
+  - type: DutyBallistics # _Duty: бронепробитие/травмы калибра
+    armorPenetration: 0.1
+    arteryBonus: 0.01
+    fractureChance: 0.015
+
+- type: entity
+  parent: BaseBulletPractice
+  id: BulletMagnumPractice
+  categories: [ HideSpawnMenu ]
+  name: bullet (.45 magnum practice)
+  components:
+  - type: Projectile
+    damage:
+      types:
+        Blunt: 1
+
+- type: entity
+  parent: BaseBulletIncendiary
+  id: BulletMagnumIncendiary
+  categories: [ HideSpawnMenu ]
+  name: bullet (.45 magnum incendiary)
+  components:
+  - type: Projectile
+    damage:
+      types:
+        Piercing: 22 # ADT-Tweak
+        # Blunt: 3 ADT tweak
+        # Heat: 32 ADT tweak
+        Heat: 6 # ADT-Tweak
+
+- type: entity
+  parent: BaseBulletAP
+  id: BulletMagnumAP
+  categories: [ HideSpawnMenu ]
+  name: bullet (.45 magnum armor-piercing)
+  components:
+  - type: Projectile
+    damage:
+      types:
+        Piercing: 25 # 25% decrease # ADT tweak 26 > 34 # _Duty: 34 -> 25
+    # ignoreResistances: true # _Duty: полный игнор брони заменён бронепробитием 50%
+  - type: DutyBallistics # _Duty: бронепробитие/травмы калибра
+    armorPenetration: 0.5
+    arteryBonus: 0.01
+    fractureChance: 0.015
+
+- type: entity
+  parent: BaseBulletUranium
+  id: BulletMagnumUranium
+  categories: [ HideSpawnMenu ]
+  name: bullet (.45 magnum uranium)
+  components:
+  - type: Projectile
+    damage:
+      types:
+        Radiation: 12 # ADT tweak 15 > 18 # _Duty: 18 -> 12, пропорционально новой базе
+        Piercing: 16 # ADT tweak 20 > 24 # _Duty: 24 -> 16, пропорционально новой базе
+  - type: DutyBallistics # _Duty: бронепробитие/травмы калибра (урановый сердечник)
+    armorPenetration: 0.4
+    arteryBonus: 0.01
+    fractureChance: 0.015

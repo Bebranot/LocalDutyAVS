@@ -18,12 +18,12 @@ namespace Content.Client._Duty.FireAgony;
 /// ведёт единый владелец <c>HudAimFadeSystem</c>; приглушение звука — <c>DynamicAmbientMusicSystem</c>;
 /// зум камеры ставит сервер.
 /// </summary>
-public sealed class FireAgonySystem : EntitySystem
+public sealed partial class FireAgonySystem : EntitySystem
 {
-    [Dependency] private readonly IOverlayManager _overlayMan = default!;
-    [Dependency] private readonly IPlayerManager _player = default!;
-    [Dependency] private readonly SharedAudioSystem _audio = default!;
-    [Dependency] private readonly ContentAudioSystem _contentAudio = default!;
+    [Dependency] private IOverlayManager _overlayMan = default!;
+    [Dependency] private IPlayerManager _player = default!;
+    [Dependency] private SharedAudioSystem _audio = default!;
+    [Dependency] private ContentAudioSystem _contentAudio = default!;
 
     private FireAgonyOverlay _overlay = default!;
 
@@ -53,9 +53,11 @@ public sealed class FireAgonySystem : EntitySystem
         StopScream(immediate: true);
     }
 
-    public override void Update(float frameTime)
+    // FrameUpdate, а не Update: клиентский Update при повторной симуляции зовётся по нескольку раз
+    // за тик, и фейд виньетки шёл бы тем быстрее, чем выше пинг.
+    public override void FrameUpdate(float frameTime)
     {
-        base.Update(frameTime);
+        base.FrameUpdate(frameTime);
 
         var active = IsLocalActive();
 
@@ -66,7 +68,8 @@ public sealed class FireAgonySystem : EntitySystem
             ? MathF.Min(target, _strength + step)
             : MathF.Max(target, _strength - step);
 
-        _overlay.Strength = _strength;
+        // Сглаживаем края: линейный фейд даёт заметный «рывок» в момент старта и остановки.
+        _overlay.Strength = _strength * _strength * (3f - 2f * _strength);
 
         // Непрерывный крик: старт при входе в сцену (персонаж падает), фейд-аут на выходе.
         if (active && !_wasActive)

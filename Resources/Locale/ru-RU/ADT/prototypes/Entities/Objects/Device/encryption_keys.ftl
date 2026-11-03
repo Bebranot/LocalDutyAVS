@@ -1,4 +1,4 @@
-ent-ADTEncryptionKeyLawyer = Ключ шифрования юридического отдела.
+ent-ADTEncryptionKeyLawyer = ключ шифрования юридического отдела
     .desc = Переговоры особой важности происходят по этой частоте.
 
 ent-ADTEncryptionKeySpaceSec = ключ шифрования SPACE SEC

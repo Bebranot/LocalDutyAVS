@@ -14,16 +14,18 @@
 #   5. Горохострел нарисован смотрящим только влево/вправо — соответственно стреляет он тоже
 #      только по горизонтали, см. DutyHorizontalOnlyGunComponent.
 
-- type: seed
-  id: dutyPeaShooter
-  name: семена горохострела
-  noun: seeds-noun-seeds
-  displayName: Горохострел
-  plantRsi: Objects/Specific/Hydroponics/pea.rsi # растёт визуально как обычный горох
-  packetPrototype: DutyPeaShooterSeedsPacket
-  productPrototypes:
+- type: entity
+  parent: BasePlant
+  id: DutyPeaShooterPlants
+  name: Горохострел
+  components:
+  - type: Sprite
+    sprite: Objects/Specific/Hydroponics/pea.rsi
+  - type: PlantData
+    name: duty-seeds-pea-shooter-name
+    packetPrototype: DutyPeaShooterSeedsPacket
+    productPrototypes:
     - DutyPeaPellet
-  seedless: true # стручков не даёт, только горошины — семена этим путём не получить
 
 - type: entity
   parent: SeedBase
@@ -34,7 +36,7 @@
   categories: [ HideSpawnMenu ] # получить можно только мутацией, а не из спавн-меню
   components:
     - type: Seed
-      seedId: dutyPeaShooter
+      plantId: DutyPeaShooterPlants
     - type: Sprite
       sprite: Objects/Specific/Hydroponics/pea.rsi
       state: seed
@@ -53,7 +55,7 @@
   - type: Item
     size: Tiny
   - type: Produce
-    seedId: dutyPeaShooter
+    plantId: DutyPeaShooterPlants
   - type: Projectile
     damage: {} # горошина не наносит урона
   - type: SpawnOnTrigger

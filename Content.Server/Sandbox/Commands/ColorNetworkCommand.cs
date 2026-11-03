@@ -9,11 +9,11 @@ using Robust.Shared.Console;
 namespace Content.Server.Sandbox.Commands
 {
     [AnyCommand]
-    public sealed class ColorNetworkCommand : LocalizedEntityCommands
+    public sealed partial class ColorNetworkCommand : LocalizedEntityCommands
     {
-        [Dependency] private readonly IAdminManager _adminManager = default!;
-        [Dependency] private readonly AtmosPipeColorSystem _pipeColorSystem = default!;
-        [Dependency] private readonly SandboxSystem _sandboxSystem = default!;
+        [Dependency] private IAdminManager _adminManager = default!;
+        [Dependency] private AtmosPipeColorSystem _pipeColorSystem = default!;
+        [Dependency] private SandboxSystem _sandboxSystem = default!;
 
         public override string Command => "colornetwork";
 
@@ -22,6 +22,7 @@ namespace Content.Server.Sandbox.Commands
             if (shell.IsClient || (!_sandboxSystem.IsSandboxEnabled && !_adminManager.HasAdminFlag(shell.Player!, AdminFlags.Mapping)))
             {
                 shell.WriteError(Loc.GetString("cmd-colornetwork-no-access"));
+                return; // _Duty: без return команда выполнялась даже после отказа в доступе
             }
 
             if (args.Length != 3)
@@ -56,14 +57,13 @@ namespace Content.Server.Sandbox.Commands
                 return;
             }
 
-            var color = Color.TryFromHex(args[2]);
-            if (!color.HasValue)
+            if (!Color.TryFromHex(args[2], out var color))
             {
                 shell.WriteError(Loc.GetString("shell-invalid-color-hex"));
                 return;
             }
 
-            PaintNodes(nodeContainerComponent, nodeGroupId, color.Value);
+            PaintNodes(nodeContainerComponent, nodeGroupId, color);
         }
 
         private void PaintNodes(NodeContainerComponent nodeContainerComponent, NodeGroupID nodeGroupId, Color color)

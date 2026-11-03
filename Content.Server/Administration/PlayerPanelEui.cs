@@ -1,3 +1,5 @@
+using Content.Shared._Duty.Administration;
+using Content.Server._Duty.Administration;
 using System.Linq;
 using Content.Server.Administration.Logs;
 using Content.Server.Administration.Managers;
@@ -9,20 +11,21 @@ using Content.Shared.Administration.Systems;
 using Content.Shared.Database;
 using Content.Shared.Eui;
 using Content.Shared.Follower;
+using Content.Shared.Players;
 using Robust.Server.Player;
 using Robust.Shared.Player;
 
 namespace Content.Server.Administration;
 
-public sealed class PlayerPanelEui : BaseEui
+public sealed partial class PlayerPanelEui : BaseEui
 {
-    [Dependency] private readonly IAdminManager _admins = default!;
-    [Dependency] private readonly IServerDbManager _db = default!;
-    [Dependency] private readonly IAdminNotesManager _notesMan = default!;
-    [Dependency] private readonly IEntityManager _entity = default!;
-    [Dependency] private readonly IPlayerManager _player = default!;
-    [Dependency] private readonly EuiManager _eui = default!;
-    [Dependency] private readonly IAdminLogManager _adminLog = default!;
+    [Dependency] private IAdminManager _admins = default!;
+    [Dependency] private IServerDbManager _db = default!;
+    [Dependency] private IAdminNotesManager _notesMan = default!;
+    [Dependency] private IEntityManager _entity = default!;
+    [Dependency] private IPlayerManager _player = default!;
+    [Dependency] private EuiManager _eui = default!;
+    [Dependency] private IAdminLogManager _adminLog = default!;
 
     private readonly LocatedPlayerData _targetPlayer;
     private int? _notes;
@@ -34,6 +37,8 @@ public sealed class PlayerPanelEui : BaseEui
     private bool _frozen;
     private bool _canFreeze;
     private bool _canAhelp;
+    private float _trustScore;
+    private DateTime? _accountCreationDate;
     private FollowerSystem _follower;
 
     public PlayerPanelEui(LocatedPlayerData player)
@@ -67,7 +72,9 @@ public sealed class PlayerPanelEui : BaseEui
             _whitelisted,
             _canFreeze,
             _frozen,
-            _canAhelp);
+            _canAhelp,
+            _trustScore,
+            _accountCreationDate);
     }
 
     private void OnPermsChanged(AdminPermsChangedEventArgs args)
@@ -87,7 +94,7 @@ public sealed class PlayerPanelEui : BaseEui
         switch (msg)
         {
             case PlayerPanelFreezeMessage freezeMsg:
-                if (!_admins.IsAdmin(Player) ||
+                if (!_admins.Can(Player, AdminNodes.EntsVerbs, AdminFlags.Admin) || // _Duty
                     !_entity.TrySystem<AdminFrozenSystem>(out var frozenSystem) ||
                     !_player.TryGetSessionById(_targetPlayer.UserId, out session) ||
                     session.AttachedEntity == null)
@@ -125,7 +132,8 @@ public sealed class PlayerPanelEui : BaseEui
                 break;
             case PlayerPanelDeleteMessage:
             case PlayerPanelRejuvenationMessage:
-                if (!_admins.HasAdminFlag(Player, AdminFlags.Debug) ||
+                // _Duty: удаление и лечение требуют своих узлов, Debug напрямую по-прежнему хватает
+                if (!_admins.Can(Player, msg is PlayerPanelDeleteMessage ? AdminNodes.EntsDelete : AdminNodes.FunHealth, AdminFlags.Debug) ||
                     !_player.TryGetSessionById(_targetPlayer.UserId, out session) ||
                     session.AttachedEntity == null)
                     return;
@@ -145,7 +153,7 @@ public sealed class PlayerPanelEui : BaseEui
                 }
                 break;
             case PlayerPanelFollowMessage:
-                if (!_admins.HasAdminFlag(Player, AdminFlags.Admin) ||
+                if (!_admins.Can(Player, AdminNodes.EntsTeleport, AdminFlags.Admin) || // _Duty
                     !_player.TryGetSessionById(_targetPlayer.UserId, out session) ||
                     session.AttachedEntity == null ||
                     Player.AttachedEntity is null ||
@@ -182,7 +190,7 @@ public sealed class PlayerPanelEui : BaseEui
         _sharedConnections = _player.Sessions.Count(s => s.Channel.RemoteEndPoint.Address.Equals(_targetPlayer.LastAddress) && s.UserId != _targetPlayer.UserId);
 
     // Apparently the Bans flag is also used for whitelists
-    if (_admins.HasAdminFlag(Player, AdminFlags.Ban))
+    if (_admins.HasAdminFlag(Player, AdminFlags.Ban) || _admins.HasAdminNode(Player, AdminNodes.PlayersBanlist)) // _Duty: счётчик банов видит и узел списка банов
         {
             _whitelisted = await _db.GetWhitelistStatusAsync(_targetPlayer.UserId);
             // This won't get associated ip or hwid bans but they were not placed on this account anyways
@@ -200,6 +208,10 @@ public sealed class PlayerPanelEui : BaseEui
         {
             _canFreeze = session.AttachedEntity != null;
             _frozen = _entity.HasComponent<AdminFrozenComponent>(session.AttachedEntity);
+
+            var userData = session.Channel.UserData;
+            _trustScore = userData.Trust;
+            _accountCreationDate = userData.CreatedTime;
         }
         else
         {

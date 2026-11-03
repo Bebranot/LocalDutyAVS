@@ -61,8 +61,9 @@ public sealed partial class HealthPhrasesComponent : Component
     public TimeSpan NextDamageScreamTime = TimeSpan.Zero;
 }
 
-[Serializable, NetSerializable]
-public sealed class HealthPhrasesData
+// DataDefinition нужен, чтобы профиль с этим полем экспортировался/импортировался через ISerializationManager.
+[DataDefinition, Serializable, NetSerializable]
+public sealed partial class HealthPhrasesData
 {
     // Старые профили: phrases70 → только popup (whisper пустой → FTL).
     [DataField("phrases70")]

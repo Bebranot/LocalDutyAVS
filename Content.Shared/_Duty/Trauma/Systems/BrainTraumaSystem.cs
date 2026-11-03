@@ -22,15 +22,15 @@ namespace Content.Shared._Duty.Trauma.Systems;
 /// эскалирует нелинейно. Восстановление и симптомы крутятся на сервере, штрафы движения и осмотр —
 /// в shared.
 /// </summary>
-public sealed class BrainTraumaSystem : EntitySystem
+public sealed partial class BrainTraumaSystem : EntitySystem
 {
-    [Dependency] private readonly IGameTiming _timing = default!;
-    [Dependency] private readonly INetManager _net = default!;
-    [Dependency] private readonly IRobustRandom _random = default!;
-    [Dependency] private readonly MovementSpeedModifierSystem _movementSpeed = default!;
-    [Dependency] private readonly SharedPopupSystem _popup = default!;
-    [Dependency] private readonly SharedStunSystem _stun = default!;
-    [Dependency] private readonly VomitSystem _vomit = default!;
+    [Dependency] private IGameTiming _timing = default!;
+    [Dependency] private INetManager _net = default!;
+    [Dependency] private IRobustRandom _random = default!;
+    [Dependency] private MovementSpeedModifierSystem _movementSpeed = default!;
+    [Dependency] private SharedPopupSystem _popup = default!;
+    [Dependency] private SharedStunSystem _stun = default!;
+    [Dependency] private VomitSystem _vomit = default!;
 
     // ── Тюнинг (Phase 6). ──────────────────────────────────────────────────────
 
@@ -101,6 +101,7 @@ public sealed class BrainTraumaSystem : EntitySystem
         {
             RemComp<HeadTraumaComponent>(uid);
             _movementSpeed.RefreshMovementSpeedModifiers(uid);
+            _popup.PopupEntity(Loc.GetString("trauma-head-recovered"), uid, uid, PopupType.Medium);
         }
     }
 

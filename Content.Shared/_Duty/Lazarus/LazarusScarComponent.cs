@@ -12,6 +12,9 @@ namespace Content.Shared._Duty.Lazarus;
 [RegisterComponent, NetworkedComponent]
 public sealed partial class LazarusScarComponent : Component
 {
+    /// <summary>Порог софт-крита ДО штрафа — нужен, чтобы вернуть его при снятии шрама смертью.</summary>
+    public FixedPoint2? OriginalSoftCritThreshold;
+
     /// <summary>Порог крита ДО штрафа — нужен, чтобы вернуть его при снятии шрама смертью.</summary>
     public FixedPoint2? OriginalCritThreshold;
 

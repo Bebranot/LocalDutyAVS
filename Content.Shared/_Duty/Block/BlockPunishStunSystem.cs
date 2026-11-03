@@ -6,7 +6,7 @@ using Content.Shared.Inventory.Events;
 using Content.Shared.Item;
 using Content.Shared.Movement.Events;
 using Content.Shared.Throwing;
-using Content.Shared.Weapons.Ranged.Systems;
+using Content.Shared.Weapons.Ranged.Events;
 using Robust.Shared.Network;
 using Robust.Shared.Timing;
 
@@ -18,11 +18,11 @@ namespace Content.Shared._Duty.Block;
 /// компонент вместо ванильного StunnedComponent — набор подписок скопирован по составу с
 /// SharedStunSystem, но независимо, чтобы не зависеть от чужих систем, завязанных на Stunned.
 /// </summary>
-public sealed class BlockPunishStunSystem : EntitySystem
+public sealed partial class BlockPunishStunSystem : EntitySystem
 {
-    [Dependency] private readonly IGameTiming _timing = default!;
-    [Dependency] private readonly INetManager _netMan = default!;
-    [Dependency] private readonly ActionBlockerSystem _actionBlocker = default!;
+    [Dependency] private IGameTiming _timing = default!;
+    [Dependency] private INetManager _netMan = default!;
+    [Dependency] private ActionBlockerSystem _actionBlocker = default!;
 
     private const string NoticePunishStun = "duty-block-notice-punish-stun";
 
@@ -43,7 +43,7 @@ public sealed class BlockPunishStunSystem : EntitySystem
         SubscribeLocalEvent<BlockPunishStunComponent, PickupAttemptEvent>(OnCancelAttempt);
         SubscribeLocalEvent<BlockPunishStunComponent, IsEquippingAttemptEvent>(OnEquipAttempt);
         SubscribeLocalEvent<BlockPunishStunComponent, IsUnequippingAttemptEvent>(OnUnequipAttempt);
-        SubscribeLocalEvent<AttemptShootEvent>(OnShootAttempt);
+        SubscribeLocalEvent<BlockPunishStunComponent, ShotAttemptedEvent>(OnShotAttempted);
     }
 
     public override void Update(float frameTime)
@@ -118,7 +118,7 @@ public sealed class BlockPunishStunSystem : EntitySystem
 
     private void OnEquipAttempt(EntityUid uid, BlockPunishStunComponent component, IsEquippingAttemptEvent args)
     {
-        if (args.Equipee != uid)
+        if (args.EquipTarget != uid)
             return;
 
         args.Cancel();
@@ -126,24 +126,15 @@ public sealed class BlockPunishStunSystem : EntitySystem
 
     private void OnUnequipAttempt(EntityUid uid, BlockPunishStunComponent component, IsUnequippingAttemptEvent args)
     {
-        if (args.Unequipee != uid)
+        if (args.UnEquipTarget != uid)
             return;
 
         args.Cancel();
     }
 
-    /// <summary>
-    /// AttemptShootEvent летит directed на само оружие, поэтому подписка широковещательная —
-    /// фильтруем по <see cref="AttemptShootEvent.User"/> вручную.
-    /// </summary>
-    private void OnShootAttempt(ref AttemptShootEvent args)
+    /// <summary>Ловим на стрелке: ShotAttemptedEvent ганы поднимают и на нём.</summary>
+    private void OnShotAttempted(EntityUid uid, BlockPunishStunComponent component, ref ShotAttemptedEvent args)
     {
-        if (args.Cancelled)
-            return;
-
-        if (!HasComp<BlockPunishStunComponent>(args.User))
-            return;
-
-        args.Cancelled = true;
+        args.Cancel();
     }
 }

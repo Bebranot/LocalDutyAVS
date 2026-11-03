@@ -18,11 +18,11 @@ namespace Content.Shared._Duty.ShieldBash;
 /// Выдача Action по гейту «щит + оружие в разных руках», наложение/снятие баффа по таймеру и
 /// динамический бонус ближнего боя — в серверном <c>ShieldBashSystem</c>.
 /// </summary>
-public sealed class SharedShieldBashSystem : EntitySystem
+public sealed partial class SharedShieldBashSystem : EntitySystem
 {
-    [Dependency] private readonly MovementSpeedModifierSystem _movement = default!;
-    [Dependency] private readonly AlertsSystem _alerts = default!;
-    [Dependency] private readonly INetManager _net = default!;
+    [Dependency] private MovementSpeedModifierSystem _movement = default!;
+    [Dependency] private AlertsSystem _alerts = default!;
+    [Dependency] private INetManager _net = default!;
 
     public override void Initialize()
     {
@@ -39,7 +39,7 @@ public sealed class SharedShieldBashSystem : EntitySystem
 
     private void OnBuffStartup(Entity<ShieldBashBuffComponent> ent, ref ComponentStartup args)
     {
-        _movement.RefreshMovementSpeedModifiers(ent);
+        _movement.RefreshMovementSpeedModifiers(ent.Owner);
 
         if (!_net.IsServer)
             return;
@@ -53,7 +53,7 @@ public sealed class SharedShieldBashSystem : EntitySystem
 
     private void OnBuffShutdown(Entity<ShieldBashBuffComponent> ent, ref ComponentShutdown args)
     {
-        _movement.RefreshMovementSpeedModifiers(ent);
+        _movement.RefreshMovementSpeedModifiers(ent.Owner);
 
         if (!_net.IsServer)
             return;

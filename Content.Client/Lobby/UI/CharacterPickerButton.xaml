@@ -14,6 +14,10 @@
         <Label Name="DescriptionLabel"
                ClipText="True"
                HorizontalExpand="True"/>
+        <!-- _Duty: дублирование персонажа -->
+        <Button Name="DuplicateButton" Access="Public"
+                Text="{Loc 'duty-character-picker-duplicate-button'}"
+                ToolTip="{Loc 'duty-character-picker-duplicate-tooltip'}"/>
         <Button Name="DeleteButton"
                 Text="{Loc 'character-setup-gui-character-picker-button-delete-button'}"/>
         <Button Name="ConfirmDeleteButton"

@@ -8,5 +8,5 @@ ent-ActionHereticNightwatcherRebirth = Возрождение Ночного Д�
     .desc = Заклинание, которое тушит вас и истощает ближайших язычников, охваченных пламенем их жизненной силы
 ent-ActionHereticAscension1 = Клятва Огня
     .desc = В течение минуты вы пассивно создаете вокруг себя огненное кольцо.
-ent-ActionHereticAscension2 = Огненый Каскад
+ent-ActionHereticAscension2 = Огненный Каскад
     .desc = Нагревает воздух вокруг вас.

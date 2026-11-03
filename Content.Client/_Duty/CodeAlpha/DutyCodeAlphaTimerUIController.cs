@@ -17,9 +17,9 @@ namespace Content.Client._Duty.CodeAlpha;
 /// Данные берутся напрямую из сетевого <see cref="DutyCodeAlphaComponent"/> на станции, поэтому
 /// панель видят все без исключения — живые, мёртвые и призраки. Отдельной рассылки не нужно.
 /// </summary>
-public sealed class DutyCodeAlphaTimerUIController : UIController
+public sealed partial class DutyCodeAlphaTimerUIController : UIController
 {
-    [Dependency] private readonly IGameTiming _timing = default!;
+    [Dependency] private IGameTiming _timing = default!;
 
     private DutyCodeAlphaTimerWidget? _widget;
 

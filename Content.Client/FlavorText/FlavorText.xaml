@@ -11,6 +11,13 @@
                       VerticalExpand="True"
                       SeparationOverride="10">
 
+            <!-- _Duty: ЕРП-статус -->
+            <BoxContainer HorizontalExpand="True">
+                <Label Text="{Loc 'humanoid-profile-editor-erp-status-label'}" />
+                <Control HorizontalExpand="True"/>
+                <OptionButton Name="ErpStatusButton" Access="Public" HorizontalAlignment="Right" />
+            </BoxContainer>
+
             <!-- Flavor Text Section -->
             <PanelContainer HorizontalExpand="True" VerticalExpand="True">
                 <PanelContainer.PanelOverride>

@@ -22,6 +22,9 @@ public sealed partial class LoadoutWindow : BaseLoadoutWindow   // ADT SAI Custo
     public event Action<ProtoId<LoadoutGroupPrototype>, ProtoId<LoadoutPrototype>>? OnLoadoutPressed;
     public event Action<ProtoId<LoadoutGroupPrototype>, ProtoId<LoadoutPrototype>>? OnLoadoutUnpressed;
 
+    /// <summary>_Duty: персонализация (портировано из Space Onyx).</summary>
+    public event Action<ProtoId<LoadoutGroupPrototype>, ProtoId<LoadoutPrototype>>? OnLoadoutCustomizePressed;
+
     private List<LoadoutGroupContainer> _groups = new();
 
     public bool IsSponsor; //ADT-Sponsors-Loadout
@@ -89,6 +92,11 @@ public sealed partial class LoadoutWindow : BaseLoadoutWindow   // ADT SAI Custo
                 container.OnLoadoutUnpressed += args =>
                 {
                     OnLoadoutUnpressed?.Invoke(group, args);
+                };
+
+                container.OnLoadoutCustomizePressed += args =>
+                {
+                    OnLoadoutCustomizePressed?.Invoke(group, args);
                 };
             }
         }

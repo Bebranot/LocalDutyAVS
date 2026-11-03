@@ -4,8 +4,10 @@ using Content.Shared.Alert;
 using Content.Shared.Camera;
 using Content.Shared.Hands;
 using Content.Shared.Hands.EntitySystems;
+using Content.Shared.IdentityManagement;
 using Content.Shared.Popups;
 using Content.Shared.Weapons.Melee;
+using Robust.Shared.Audio;
 using Robust.Shared.Audio.Systems;
 using Robust.Shared.Player;
 using Robust.Shared.Random;
@@ -21,19 +23,34 @@ namespace Content.Server._Duty.ShieldBash;
 /// или при потере последнего щита. Предсказываемая часть баффа (резист, скорость) — в
 /// <see cref="SharedShieldBashSystem"/>.
 /// </summary>
-public sealed class ShieldBashSystem : EntitySystem
+public sealed partial class ShieldBashSystem : EntitySystem
 {
-    [Dependency] private readonly SharedActionsSystem _actions = default!;
-    [Dependency] private readonly SharedHandsSystem _hands = default!;
-    [Dependency] private readonly SharedPopupSystem _popup = default!;
-    [Dependency] private readonly SharedAudioSystem _audio = default!;
-    [Dependency] private readonly SharedCameraRecoilSystem _recoil = default!;
-    [Dependency] private readonly AlertsSystem _alerts = default!;
-    [Dependency] private readonly IGameTiming _timing = default!;
-    [Dependency] private readonly IRobustRandom _random = default!;
-    [Dependency] private readonly SharedShieldBashSystem _shieldBash = default!;
+    [Dependency] private SharedActionsSystem _actions = default!;
+    [Dependency] private SharedHandsSystem _hands = default!;
+    [Dependency] private SharedPopupSystem _popup = default!;
+    [Dependency] private SharedAudioSystem _audio = default!;
+    [Dependency] private SharedCameraRecoilSystem _recoil = default!;
+    [Dependency] private AlertsSystem _alerts = default!;
+    [Dependency] private IGameTiming _timing = default!;
+    [Dependency] private IRobustRandom _random = default!;
+    [Dependency] private SharedShieldBashSystem _shieldBash = default!;
 
     private const float KickStrength = 0.4f;
+
+    /// <summary>
+    /// Отложенные повторы звука удара. Держим в системе, а не компонентом на игроке: серия
+    /// длится доли секунды, а ShieldBasherComponent может сняться посреди неё (щит выпал из рук).
+    /// </summary>
+    private readonly List<PendingBashSound> _pendingSounds = new();
+
+    private sealed class PendingBashSound
+    {
+        public EntityUid User;
+        public SoundSpecifier Sound = default!;
+        public TimeSpan Interval;
+        public TimeSpan NextTime;
+        public int Remaining;
+    }
 
     public override void Initialize()
     {
@@ -55,6 +72,27 @@ public sealed class ShieldBashSystem : EntitySystem
         base.Update(frameTime);
 
         var now = _timing.CurTime;
+
+        for (var i = _pendingSounds.Count - 1; i >= 0; i--)
+        {
+            var pending = _pendingSounds[i];
+            if (TerminatingOrDeleted(pending.User))
+            {
+                _pendingSounds.RemoveAt(i);
+                continue;
+            }
+
+            if (now < pending.NextTime)
+                continue;
+
+            _audio.PlayPvs(pending.Sound, pending.User);
+            pending.Remaining--;
+            pending.NextTime = now + pending.Interval;
+
+            if (pending.Remaining <= 0)
+                _pendingSounds.RemoveAt(i);
+        }
+
         var query = EntityQueryEnumerator<ShieldBashBuffComponent>();
         while (query.MoveNext(out var uid, out var comp))
         {
@@ -210,8 +248,19 @@ public sealed class ShieldBashSystem : EntitySystem
 
         // ── Атмосфера: звук, попап, толчок камеры ──
         _audio.PlayPvs(shieldComp.Sound, user);
+        if (shieldComp.SoundRepeats > 1)
+        {
+            _pendingSounds.Add(new PendingBashSound
+            {
+                User = user,
+                Sound = shieldComp.Sound,
+                Interval = shieldComp.SoundRepeatInterval,
+                NextTime = now + shieldComp.SoundRepeatInterval,
+                Remaining = shieldComp.SoundRepeats - 1,
+            });
+        }
         _popup.PopupEntity(Loc.GetString("shield-bash-popup-self"), user, user, PopupType.MediumCaution);
-        _popup.PopupEntity(Loc.GetString("shield-bash-popup-others", ("user", Name(user))), user,
+        _popup.PopupEntity(Loc.GetString("shield-bash-popup-others", ("user", Identity.Entity(user, EntityManager))), user,
             Filter.PvsExcept(user), true, PopupType.SmallCaution);
         _recoil.KickCamera(user, _random.NextAngle().ToVec() * KickStrength);
     }

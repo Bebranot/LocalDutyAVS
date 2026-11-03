@@ -1,0 +1,67 @@
+# Городские полы (90-е), перенесено из Stalker и ванили. Суффикс PortedSlPc.
+
+- type: tile
+  id: DutyFloorBarPortedSlPc
+  name: tiles-dutyfloorbarportedslpc
+  sprite: /Textures/_Duty/Ported/City/Tiles/stalker_bar.png
+  variants: 4
+  placementVariants:
+  - 1.0
+  - 1.0
+  - 1.0
+  - 1.0
+  baseTurf: Plating
+  isSubfloor: false
+  deconstructTools: [ Prying ]
+  footstepSounds:
+    collection: DutyCityFootstepTilePortedSlPc
+  heatCapacity: 10000
+  weather: false
+
+- type: tile
+  id: DutyFloorLinoPortedSlPc
+  name: tiles-dutyfloorlinoportedslpc
+  sprite: /Textures/_Duty/Ported/City/Tiles/lino.png
+  baseTurf: Plating
+  isSubfloor: false
+  deconstructTools: [ Prying ]
+  footstepSounds:
+    collection: DutyCityFootstepTilePortedSlPc
+  heatCapacity: 10000
+  weather: false
+
+- type: tile
+  id: DutyFloorCheckerDarkPortedSlPc
+  name: tiles-dutyfloorcheckerdarkportedslpc
+  sprite: /Textures/_Duty/Ported/City/Tiles/checker_dark.png
+  variants: 4
+  placementVariants:
+  - 1.0
+  - 1.0
+  - 1.0
+  - 1.0
+  baseTurf: Plating
+  isSubfloor: false
+  deconstructTools: [ Prying ]
+  footstepSounds:
+    collection: DutyCityFootstepTilePortedSlPc
+  heatCapacity: 10000
+  weather: false
+
+- type: tile
+  id: DutyFloorCafeteriaPortedSlPc
+  name: tiles-dutyfloorcafeteriaportedslpc
+  sprite: /Textures/_Duty/Ported/City/Tiles/cafeteria.png
+  variants: 4
+  placementVariants:
+  - 1.0
+  - 1.0
+  - 1.0
+  - 1.0
+  baseTurf: Plating
+  isSubfloor: false
+  deconstructTools: [ Prying ]
+  footstepSounds:
+    collection: DutyCityFootstepTilePortedSlPc
+  heatCapacity: 10000
+  weather: false

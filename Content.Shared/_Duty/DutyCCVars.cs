@@ -28,34 +28,34 @@ public sealed class DutyCCVars
         CVarDef.Create("duty.ambient_music_disable_combat", false, CVar.ARCHIVE | CVar.CLIENTONLY);
 
     public static readonly CVarDef<float> DynamicAmbientMusicVolumeVeryGood =
-        CVarDef.Create("duty.ambient_music_volume_very_good", 1f, CVar.ARCHIVE | CVar.CLIENTONLY);
+        CVarDef.Create("duty.ambient_music_volume_very_good", 0.5f, CVar.ARCHIVE | CVar.CLIENTONLY);
 
     public static readonly CVarDef<float> DynamicAmbientMusicVolumeGood =
-        CVarDef.Create("duty.ambient_music_volume_good", 1f, CVar.ARCHIVE | CVar.CLIENTONLY);
+        CVarDef.Create("duty.ambient_music_volume_good", 0.5f, CVar.ARCHIVE | CVar.CLIENTONLY);
 
     public static readonly CVarDef<float> DynamicAmbientMusicVolumeMedium =
-        CVarDef.Create("duty.ambient_music_volume_medium", 1f, CVar.ARCHIVE | CVar.CLIENTONLY);
+        CVarDef.Create("duty.ambient_music_volume_medium", 0.5f, CVar.ARCHIVE | CVar.CLIENTONLY);
 
     public static readonly CVarDef<float> DynamicAmbientMusicVolumeBelowMedium =
-        CVarDef.Create("duty.ambient_music_volume_below_medium", 1f, CVar.ARCHIVE | CVar.CLIENTONLY);
+        CVarDef.Create("duty.ambient_music_volume_below_medium", 0.5f, CVar.ARCHIVE | CVar.CLIENTONLY);
 
     public static readonly CVarDef<float> DynamicAmbientMusicVolumeAwful =
-        CVarDef.Create("duty.ambient_music_volume_awful", 1f, CVar.ARCHIVE | CVar.CLIENTONLY);
+        CVarDef.Create("duty.ambient_music_volume_awful", 0.5f, CVar.ARCHIVE | CVar.CLIENTONLY);
 
     public static readonly CVarDef<float> DynamicAmbientMusicVolumeHpCritical =
-        CVarDef.Create("duty.ambient_music_volume_hp_critical", 1f, CVar.ARCHIVE | CVar.CLIENTONLY);
+        CVarDef.Create("duty.ambient_music_volume_hp_critical", 0.5f, CVar.ARCHIVE | CVar.CLIENTONLY);
 
     public static readonly CVarDef<float> DynamicAmbientMusicVolumeMobCritical =
-        CVarDef.Create("duty.ambient_music_volume_mob_critical", 1f, CVar.ARCHIVE | CVar.CLIENTONLY);
+        CVarDef.Create("duty.ambient_music_volume_mob_critical", 0.5f, CVar.ARCHIVE | CVar.CLIENTONLY);
 
     public static readonly CVarDef<float> DynamicAmbientMusicVolumeCombat =
-        CVarDef.Create("duty.ambient_music_volume_combat", 1f, CVar.ARCHIVE | CVar.CLIENTONLY);
+        CVarDef.Create("duty.ambient_music_volume_combat", 0.5f, CVar.ARCHIVE | CVar.CLIENTONLY);
 
     public static readonly CVarDef<float> DynamicAmbientMusicVolumeCombatLow =
-        CVarDef.Create("duty.ambient_music_volume_combat_low", 1f, CVar.ARCHIVE | CVar.CLIENTONLY);
+        CVarDef.Create("duty.ambient_music_volume_combat_low", 0.5f, CVar.ARCHIVE | CVar.CLIENTONLY);
 
     public static readonly CVarDef<float> DynamicAmbientMusicVolumeDeath =
-        CVarDef.Create("duty.ambient_music_volume_death", 1f, CVar.ARCHIVE | CVar.CLIENTONLY);
+        CVarDef.Create("duty.ambient_music_volume_death", 0.5f, CVar.ARCHIVE | CVar.CLIENTONLY);
 
     /// <summary>
     /// Громкость звука входа в крит (CritEnterSound). Как и остальные уровни — 0..1, чтобы
@@ -63,7 +63,7 @@ public sealed class DutyCCVars
     /// через <c>critEnterVolumeBoost</c> в прототипе.
     /// </summary>
     public static readonly CVarDef<float> DynamicAmbientMusicVolumeCritEnter =
-        CVarDef.Create("duty.ambient_music_volume_crit_enter", 1f, CVar.ARCHIVE | CVar.CLIENTONLY);
+        CVarDef.Create("duty.ambient_music_volume_crit_enter", 0.5f, CVar.ARCHIVE | CVar.CLIENTONLY);
 
     /// <summary>Доп. усиление critmode-музыки (dB), поверх boost из yml.</summary>
     public static readonly CVarDef<float> DynamicAmbientMusicCritExtraBoostDb =
@@ -243,6 +243,42 @@ public sealed class DutyCCVars
     public static readonly CVarDef<float> SpawnMenuPrivacyRange =
         CVarDef.Create("duty.spawn_menu_privacy_range", 8f, CVar.SERVERONLY | CVar.ARCHIVE);
 
+    // ── Пустой сервер (авто-пауза и рестарт при отсутствии игроков) ────────────
+
+    /// <summary>
+    /// Включена ли авто-пауза раунда и принудительный рестарт в лобби, когда на сервере
+    /// не остаётся ни одного подключённого игрока.
+    /// </summary>
+    public static readonly CVarDef<bool> EmptyServerAutoRestartEnabled =
+        CVarDef.Create("duty.empty_server_auto_restart_enabled", true, CVar.SERVERONLY | CVar.ARCHIVE);
+
+    /// <summary>
+    /// Сколько секунд сервер должен простоять без единого подключённого игрока, прежде
+    /// чем текущий раунд будет принудительно завершён и сервер уйдёт в лобби.
+    /// По умолчанию 1500 секунд = 25 минут. Пока идёт отсчёт, карты активного раунда стоят
+    /// на паузе и не тикают вхолостую; подключение любого игрока сразу снимает паузу.
+    /// </summary>
+    public static readonly CVarDef<float> EmptyServerAutoRestartDelaySeconds =
+        CVarDef.Create("duty.empty_server_auto_restart_delay_seconds", 1500f, CVar.SERVERONLY | CVar.ARCHIVE);
+
+    // ── Голосование при старте раунда ───────────────────────────────────────
+
+    /// <summary>
+    /// Включён ли фреймворк голосований раунд-старта (да/нет с эффектом при победе).
+    /// Выключение полностью отключает функционал: голосование при старте раунда не запускается.
+    /// </summary>
+    public static readonly CVarDef<bool> RoundStartVoteEnabled =
+        CVarDef.Create("duty.round_start_vote_enabled", true, CVar.SERVERONLY | CVar.ARCHIVE);
+
+    // ── Окно приветствия/чейнджлога ─────────────────────────────────────────────
+
+    /// <summary>
+    /// Включено ли автоматическое окно приветствия/чейнджлога для новых и вернувшихся
+    /// после рестарта игроков. Выключение полностью отключает показ (в т.ч. новичкам).
+    /// </summary>
+    public static readonly CVarDef<bool> WelcomeEnabled =
+        CVarDef.Create("duty.welcome_enabled", false, CVar.SERVERONLY | CVar.ARCHIVE);
+
     // ── Discord ───────────────────────────────────────────────────────────────
 
     /// <summary>
@@ -251,4 +287,116 @@ public sealed class DutyCCVars
     /// </summary>
     public static readonly CVarDef<string> DiscordRoundStartRole =
         CVarDef.Create("discord.round_start_role", string.Empty, CVar.SERVERONLY);
+
+    // ── Discord: статус сервера (живой эмбед) ──────────────────────────────────
+
+    /// <summary>
+    /// Включает автообновляемый эмбед со статусом сервера в Discord (карта, пресет, число игроков
+    /// онлайн, лобби/раунд). Раз в <see cref="DiscordStatusUpdateInterval"/> секунд редактирует одно
+    /// и то же сообщение, а не спамит новыми. Требует уже настроенного бота (discord.token,
+    /// discord.guild_id) и непустого <see cref="DiscordStatusChannelId"/>.
+    /// Канал должен существовать, а у бота — быть права Send Messages и Manage Messages в нём
+    /// (Manage Messages не обязателен для самого редактирования своих сообщений, но нужен, чтобы
+    /// бот мог найти и доредактировать сообщение после рестарта, если ID сообщения был потерян).
+    /// </summary>
+    public static readonly CVarDef<bool> DiscordStatusEnabled =
+        CVarDef.Create("duty.discord_status_enabled", false, CVar.SERVERONLY);
+
+    /// <summary>
+    /// ID Discord-канала для статус-эмбеда (число, как оно копируется через "Copy Channel ID"
+    /// в Discord с включённым режимом разработчика). Пусто — фича не работает, даже если включена.
+    /// </summary>
+    public static readonly CVarDef<string> DiscordStatusChannelId =
+        CVarDef.Create("duty.discord_status_channel_id", string.Empty, CVar.SERVERONLY);
+
+    /// <summary>
+    /// Интервал обновления статус-эмбеда, секунды. Меньше 5 — обрезается до 5, чтобы случайно не
+    /// зарейтлимитить бота на канале.
+    /// </summary>
+    public static readonly CVarDef<float> DiscordStatusUpdateInterval =
+        CVarDef.Create("duty.discord_status_update_interval", 60f, CVar.SERVERONLY);
+
+    // ── Звук при входе в игру ────────────────────────────────────────────────
+
+    /// <summary>
+    /// Проигрывать ли короткий звук при первом входе игрока в игру за сессию подключения.
+    /// </summary>
+    public static readonly CVarDef<bool> LoginSoundEnabled =
+        CVarDef.Create("duty.login_sound_enabled", true, CVar.ARCHIVE | CVar.CLIENTONLY);
+
+    // ── Производительность ───────────────────────────────────────────────────
+
+    /// <summary>
+    /// Режим для слабых устройств: разом опускает тяжёлые настройки графики и звука до минимума.
+    /// Работает только через существующие CVar-ы движка и контента — лаунчер ставит игрокам
+    /// стоковый Robust.Client, так что на свои правки движка тут рассчитывать нельзя.
+    /// </summary>
+    public static readonly CVarDef<bool> LowEndMode =
+        CVarDef.Create("duty.low_end_mode", false, CVar.ARCHIVE | CVar.CLIENTONLY);
+
+    /// <summary>
+    /// Служебный: значения настроек игрока до включения <see cref="LowEndMode"/>, чтобы выключение
+    /// вернуло всё как было. Непустая строка означает «пресет сейчас применён». Должен переживать
+    /// рестарт клиента — иначе, выйдя из игры с включённым режимом, игрок потерял бы свои настройки.
+    /// </summary>
+    public static readonly CVarDef<string> LowEndModeSaved =
+        CVarDef.Create("duty.low_end_mode_saved", string.Empty, CVar.ARCHIVE | CVar.CLIENTONLY);
+
+    /// <summary>
+    /// Уровни логирования по каналам для консоли сервера: <c>канал=Уровень;канал=Уровень</c>.
+    /// По умолчанию глушим запросы лаунчера к статусу сервера и раздачу ACZ (<c>statushost</c>) —
+    /// они пишут Info на каждое обновление списка серверов и забивают консоль.
+    /// См. <c>DutyLogLevels</c>.
+    /// </summary>
+    public static readonly CVarDef<string> LogLevels =
+        CVarDef.Create("duty.log_levels", "statushost=Warning", CVar.ARCHIVE | CVar.SERVERONLY);
+
+    // ── Баллистика (бронепробитие пуль и травмы от калибра) ───────────────────
+
+    /// <summary>
+    /// Множитель бронепробития всех пуль (DutyBallisticsComponent.ArmorPenetration). 0 — пробитие
+    /// выключено, броня работает как в ванилле. Нужен, чтобы подкрутить баланс на живом сервере
+    /// без правки прототипов и рестарта.
+    /// </summary>
+    public static readonly CVarDef<float> BallisticsPenetrationScale =
+        CVarDef.Create("duty.ballistics_penetration_scale", 1f, CVar.SERVERONLY);
+
+    /// <summary>
+    /// Множитель баллистических бонусов травм (прибавка к шансу артерии и шанс перелома от пули).
+    /// 0 — пули травмируют только по общим формулам TraumaRollSystem.
+    /// </summary>
+    public static readonly CVarDef<float> BallisticsTraumaScale =
+        CVarDef.Create("duty.ballistics_trauma_scale", 1f, CVar.SERVERONLY);
+
+    // ── Отдача и разброс ─────────────────────────────────────────────────────
+
+    /// <summary>
+    /// Общий множитель отдачи камеры у стрелка. Серверный и реплицируемый: игрок его не меняет —
+    /// отдача одинакова для всех (ползунок тряски из настроек убран намеренно). Подкручивать на живом
+    /// сервере, если в игре окажется слабо/сильно.
+    /// </summary>
+    public static readonly CVarDef<float> RecoilCameraScale =
+        CVarDef.Create("duty.recoil_camera_scale", 1f, CVar.SERVER | CVar.REPLICATED);
+
+    /// <summary>
+    /// Общий множитель разброса всего огнестрела (MinAngle/MaxAngle/AngleIncrease после всех
+    /// модификаторов). Разброс задан у каждого ствола свой, поэтому крутим его множителем, а не
+    /// правкой сотен прототипов. 0.6 оказалось слишком точно («стрельба в точку»), поэтому 1.2.
+    /// Реплицируется — клиентский оверлей разброса совпадает с сервером.
+    /// </summary>
+    public static readonly CVarDef<float> GunSpreadMultiplier =
+        CVarDef.Create("duty.gun_spread_multiplier", 1.2f, CVar.SERVER | CVar.REPLICATED);
+
+    // ── Меню станков (автолат, техфабы) ──────────────────────────────────────
+
+    /// <summary>
+    /// Размер окна станка, который игрок выставил руками. Запоминается при закрытии окна,
+    /// общий для всех станков — у них одно меню. Имена сменены вместе с размером по умолчанию,
+    /// чтобы новый размер применился и у тех, кто уже растягивал окно.
+    /// </summary>
+    public static readonly CVarDef<float> LatheUiWidth =
+        CVarDef.Create("duty.lathe_window_width", 1280f, CVar.ARCHIVE | CVar.CLIENTONLY);
+
+    public static readonly CVarDef<float> LatheUiHeight =
+        CVarDef.Create("duty.lathe_window_height", 760f, CVar.ARCHIVE | CVar.CLIENTONLY);
 }

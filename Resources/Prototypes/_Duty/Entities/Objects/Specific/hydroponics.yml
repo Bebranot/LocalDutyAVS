@@ -1,35 +1,40 @@
 
 # ============================================== Начало целебного мха ==================================================================================================
 
-- type: seed
-  id: MagnificentMoss
-  name: Целебный мох
-  noun: seeds-noun-seeds
-  displayName: Колония целебного мха
-  plantRsi: _Duty/Specific/Hydroponics/Moss.rsi
-  packetPrototype: MossSeeds
-  productPrototypes:
+- type: entity
+  parent: BasePlant
+  id: MagnificentMossPlants
+  name: Колония целебного мха
+  components:
+  - type: Sprite
+    sprite: _Duty/Specific/Hydroponics/Moss.rsi
+  - type: PlantData
+    name: duty-seeds-moss-name
+    packetPrototype: MossSeeds
+    productPrototypes:
     - FoodMoss
-  lifespan: 60
-  maturation: 6
-  production: 9
-  yield: 5
-  potency: 15
-  growthStages: 3
-  idealHeat: 340
-  endurance: 3
-  waterConsumption: 2.5
-  nutrientConsumption: -1
-  harvestRepeat: Repeat
-  chemicals:
-    Water:
-      Min: 35
-      Max: 45
-      PotencyDivisor: 10
-    MossJuice:
-      Min: 1
-      Max: 20
-      PotencyDivisor: 40
+  - type: Plant
+    lifespan: 60
+    maturation: 6
+    production: 9
+    yield: 5
+    potency: 15
+    growthStages: 3
+  - type: PlantGrowth
+    waterConsumption: 2.5
+    nutrientConsumption: -1
+  - type: PlantHarvest
+    harvestRepeat: Repeat
+  - type: PlantChemicals
+    chemicals:
+      Water:
+        min: 35
+        max: 45
+        potencyDivisor: 10
+      MossJuice:
+        min: 1
+        max: 20
+        potencyDivisor: 40
 
 - type: flavor
   id: Moss
@@ -119,7 +124,7 @@
   suffix: Duty, Растение
   components:
     - type: Seed
-      seedId: MagnificentMoss
+      plantId: MagnificentMossPlants
     - type: Sprite
       sprite: _Duty/Specific/Hydroponics/Moss.rsi
       state: seed
@@ -163,7 +168,8 @@
   metabolisms:
     Digestion:
       effects:
-      - !type:SatiateThirst
+      - !type:Satiate
+        satiationType: Thirst
         factor: 3
       - !type:HealthChange
         damage:
@@ -192,8 +198,10 @@
 
 - type: reaction
   id: MossFiltration
+  # Перемешивание, а не центрифуга: в центрифуге получившийся омнизин тут же разбирала
+  # ADTOmnizineBreakdown, и до игрока он не доходил (TryAllReactionsTest).
   requiredMixerCategories:
-  - Centrifuge
+  - Stir
   reactants:
     MossJuice:
       amount: 1
@@ -207,30 +215,35 @@
 
 # ============================================== Начало Грозовой капусты ===============================================================================================
 
-- type: seed
-  id: ElectroCabbage
+- type: entity
+  parent: BasePlant
+  id: ElectroCabbagePlants
   name: Гром-капуста
-  noun: seeds-noun-seeds
-  displayName: Гром-капуста
-  plantRsi: _Duty/Specific/Hydroponics/ElectroCabbage.rsi
-  packetPrototype: ElectroCabbageSeeds
-  productPrototypes:
+  components:
+  - type: Sprite
+    sprite: _Duty/Specific/Hydroponics/ElectroCabbage.rsi
+  - type: PlantData
+    name: duty-seeds-electro-cabbage-name
+    packetPrototype: ElectroCabbageSeeds
+    productPrototypes:
     - FoodElectroCabbage
-  lifespan: 50
-  maturation: 9
-  production: 3
-  yield: 3
-  potency: 15
-  growthStages: 1
-  chemicals:
-    Licoxide:
-      Min: 1
-      Max: 10
-      PotencyDivisor: 20
-    Plasma:
-      Min: 5
-      Max: 30
-      PotencyDivisor: 30
+  - type: Plant
+    lifespan: 50
+    maturation: 9
+    production: 3
+    yield: 3
+    potency: 15
+    growthStages: 1
+  - type: PlantChemicals
+    chemicals:
+      Licoxide:
+        min: 1
+        max: 10
+        potencyDivisor: 20
+      Plasma:
+        min: 5
+        max: 30
+        potencyDivisor: 30
 
 - type: entity
   name: Electro Cabbage
@@ -279,7 +292,7 @@
   suffix: Duty, Растение
   components:
     - type: Seed
-      seedId: ElectroCabbage
+      plantId: ElectroCabbagePlants
     - type: Sprite
       sprite: _Duty/Specific/Hydroponics/ElectroCabbage.rsi
       state: seed

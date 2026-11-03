@@ -39,14 +39,17 @@ public sealed partial class HumanoidProfileEditor
         if (Profile is null)
             return;
 
-        foreach (var existingTrait in Profile.TraitPreferences)
+        // _Duty: применяем только разницу вместо снятия и повторного добавления всех черт (каждое — копия профиля).
+        foreach (var existingTrait in Profile.TraitPreferences.ToList())
         {
-            Profile = Profile.WithoutTraitPreference(existingTrait, _prototypeManager);
+            if (!traits.Contains(existingTrait))
+                Profile = Profile.WithoutTraitPreference(existingTrait, _prototypeManager);
         }
 
         foreach (var trait in traits)
         {
-            Profile = Profile.WithTraitPreference(trait.Id, _prototypeManager);
+            if (!Profile.TraitPreferences.Contains(trait))
+                Profile = Profile.WithTraitPreference(trait.Id, _prototypeManager);
         }
 
         TrimLanguages();

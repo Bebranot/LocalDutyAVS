@@ -1,9 +1,12 @@
-﻿using System.Linq;
+using Content.Shared._Duty.Administration;
+using System.Linq;
 using System.Threading.Tasks;
+using Content.Server.Administration.Logs;
 using Content.Server.Administration.Managers;
 using Content.Server.Database;
 using Content.Server.EUI;
 using Content.Shared.Administration;
+using Content.Shared.Database;
 using Content.Shared.Eui;
 using Robust.Server.Player;
 using Robust.Shared.Network;
@@ -13,11 +16,21 @@ using static Content.Shared.Administration.PermissionsEuiMsg;
 
 namespace Content.Server.Administration.UI
 {
-    public sealed class PermissionsEui : BaseEui
+    // _Duty-start: файл целиком переписан под дерево админ-прав (права — строки: старый флаг или id узла)
+    // _Duty: права — строки: старый флаг (BAN) либо id узла дерева прав (players_ban).
+    // Каждую правку проверяем ДО записи в БД: выдать можно только то, что есть у самого редактора.
+    public sealed partial class PermissionsEui : BaseEui
     {
+        /// <summary>Узел, дающий право открывать панель выдачи прав (вместе со старым флагом Permissions).</summary>
+        public const string EditNode = AdminNodes.PermsEdit;
+
+        private const int MaxTitleLength = 64;
+        private const int MaxRankNameLength = 64;
+
         [Dependency] private readonly IPlayerManager _playerManager = default!;
         [Dependency] private readonly IServerDbManager _db = default!;
         [Dependency] private readonly IAdminManager _adminManager = default!;
+        [Dependency] private readonly IAdminLogManager _adminLog = default!;
         [Dependency] private readonly ILogManager _logManager = default!;
 
         private readonly ISawmill _sawmill;
@@ -50,12 +63,34 @@ namespace Content.Server.Administration.UI
 
         private void AdminManagerOnPermsChanged(AdminPermsChangedEventArgs obj)
         {
-            // Close UI if user loses +PERMISSIONS.
-            if (obj.Player == Player && !UserAdminFlagCheck(AdminFlags.Permissions))
+            // Close UI if user loses the right to edit permissions.
+            if (obj.Player == Player)
             {
-                Close();
+                if (!CanEdit())
+                    Close();
+                else
+                    StateDirty();
             }
         }
+
+        private bool CanEdit()
+        {
+            var data = _adminManager.GetAdminData(Player);
+            return data != null && (data.HasNode(EditNode) || data.HasDirectFlag(AdminFlags.Permissions));
+        }
+
+        private static string[] ToStrings(IEnumerable<string> names) => names.ToArray();
+
+        /// <summary>Сообщает клиенту итог действия: без этого отказ выглядел как «ничего не произошло».</summary>
+        private void Report(bool success, string locKey, params (string, object)[] args)
+        {
+            if (IsShutDown)
+                return;
+
+            SendMessage(new OperationResult { Success = success, Message = Loc.GetString(locKey, args) });
+        }
+
+        private void Fail(string locKey, params (string, object)[] args) => Report(false, locKey, args);
 
         public override EuiStateBase GetNewState()
         {
@@ -67,12 +102,23 @@ namespace Content.Server.Administration.UI
                 };
             }
 
+            var editor = _adminManager.GetAdminData(Player);
+            var editorGrants = new List<string>();
+            if (editor != null)
+            {
+                // Host выдаёт любые старые флаги, даже если напрямую у него только HOST
+                var flags = editor.HasDirectFlag(AdminFlags.Host) ? AdminFlagsHelper.Everything : editor.DirectFlags;
+                editorGrants.AddRange(AdminFlagsHelper.FlagsToNames(flags));
+                editorGrants.AddRange(editor.Nodes);
+            }
+
             return new PermissionsEuiState
             {
+                EditorGrants = editorGrants.ToArray(),
                 Admins = _admins.Select(p => new PermissionsEuiState.AdminData
                 {
-                    PosFlags = AdminFlagsHelper.NamesToFlags(p.a.Flags.Where(f => !f.Negative).Select(f => f.Flag)),
-                    NegFlags = AdminFlagsHelper.NamesToFlags(p.a.Flags.Where(f => f.Negative).Select(f => f.Flag)),
+                    Pos = ToStrings(p.a.Flags.Where(f => !f.Negative).Select(f => f.Flag)),
+                    Neg = ToStrings(p.a.Flags.Where(f => f.Negative).Select(f => f.Flag)),
                     Title = p.a.Title,
                     RankId = p.a.AdminRankId,
                     UserId = new NetUserId(p.a.UserId),
@@ -82,7 +128,7 @@ namespace Content.Server.Administration.UI
 
                 AdminRanks = _adminRanks.ToDictionary(a => a.Id, a => new PermissionsEuiState.AdminRankData
                 {
-                    Flags = AdminFlagsHelper.NamesToFlags(a.Flags.Select(p => p.Flag)),
+                    Grants = ToStrings(a.Flags.Select(p => p.Flag)),
                     Name = a.Name
                 })
             };
@@ -92,43 +138,64 @@ namespace Content.Server.Administration.UI
         {
             base.HandleMessage(msg);
 
-            switch (msg)
+            // _Duty: base мог закрыть окно по CloseEuiMessage, повторно закрывать нельзя
+            if (IsShutDown)
+                return;
+
+            // _Duty: право правки могли отозвать, пока окно было открыто
+            if (!CanEdit())
             {
-                case AddAdmin ca:
-                {
-                    await HandleCreateAdmin(ca);
-                    break;
-                }
+                _sawmill.Warning($"{Player} отправил правку прав без права на неё");
+                Close();
+                return;
+            }
 
-                case UpdateAdmin ua:
+            try
+            {
+                switch (msg)
                 {
-                    await HandleUpdateAdmin(ua);
-                    break;
-                }
+                    case AddAdmin ca:
+                    {
+                        await HandleCreateAdmin(ca);
+                        break;
+                    }
 
-                case RemoveAdmin ra:
-                {
-                    await HandleRemoveAdmin(ra);
-                    break;
-                }
+                    case UpdateAdmin ua:
+                    {
+                        await HandleUpdateAdmin(ua);
+                        break;
+                    }
 
-                case AddAdminRank ar:
-                {
-                    await HandleAddAdminRank(ar);
-                    break;
-                }
+                    case RemoveAdmin ra:
+                    {
+                        await HandleRemoveAdmin(ra);
+                        break;
+                    }
 
-                case UpdateAdminRank ur:
-                {
-                    await HandleUpdateAdminRank(ur);
-                    break;
-                }
+                    case AddAdminRank ar:
+                    {
+                        await HandleAddAdminRank(ar);
+                        break;
+                    }
 
-                case RemoveAdminRank ra:
-                {
-                    await HandleRemoveAdminRank(ra);
-                    break;
+                    case UpdateAdminRank ur:
+                    {
+                        await HandleUpdateAdminRank(ur);
+                        break;
+                    }
+
+                    case RemoveAdminRank ra:
+                    {
+                        await HandleRemoveAdminRank(ra);
+                        break;
+                    }
                 }
+            }
+            catch (Exception e)
+            {
+                // async void: без перехвата ошибка БД уронила бы процесс
+                _sawmill.Error($"Ошибка при правке прав ({msg.GetType().Name}) от {Player}: {e}");
+                Fail("duty-perm-result-error");
             }
 
             if (!IsShutDown)
@@ -142,17 +209,21 @@ namespace Content.Server.Administration.UI
             var rank = await _db.GetAdminRankAsync(rr.Id);
             if (rank == null)
             {
+                Fail("duty-perm-result-not-found");
                 return;
             }
 
             if (!CanTouchRank(rank))
             {
                 _sawmill.Warning($"{Player} tried to remove higher-ranked admin rank {rank.Name}");
+                Fail("duty-perm-result-no-access");
                 return;
             }
 
             await _db.RemoveAdminRankAsync(rr.Id);
+            Report(true, "duty-perm-result-rank-removed", ("name", rank.Name));
 
+            _adminLog.Add(LogType.AdminCommands, LogImpact.Extreme, $"{Player} удалил админ-ранг {rank.Name}");
             _adminManager.ReloadAdminsWithRank(rr.Id);
         }
 
@@ -161,50 +232,50 @@ namespace Content.Server.Administration.UI
             var rank = await _db.GetAdminRankAsync(ur.Id);
             if (rank == null)
             {
+                Fail("duty-perm-result-not-found");
                 return;
             }
 
             if (!CanTouchRank(rank))
             {
                 _sawmill.Warning($"{Player} tried to update higher-ranked admin rank {rank.Name}");
+                Fail("duty-perm-result-no-access");
                 return;
             }
 
-            if (!UserAdminFlagCheck(ur.Flags))
-            {
-                _sawmill.Warning($"{Player} tried to give a rank permissions above their authorization.");
+            if (!ValidateRank(ur.Name, ur.Grants, out var name, out var grants))
                 return;
-            }
 
-            rank.Flags = GenRankFlagList(ur.Flags);
-            rank.Name = ur.Name;
+            rank.Flags = GenRankFlagList(grants);
+            rank.Name = name;
 
             await _db.UpdateAdminRankAsync(rank);
 
-            var flagText = string.Join(' ', AdminFlagsHelper.FlagsToNames(ur.Flags).Select(f => $"+{f}"));
+            var flagText = string.Join(' ', grants.Select(f => $"+{f}"));
             _sawmill.Info($"{Player} updated admin rank {rank.Name}/{flagText}.");
+            _adminLog.Add(LogType.AdminCommands, LogImpact.Extreme, $"{Player} изменил админ-ранг {rank.Name}: {flagText}");
+            Report(true, "duty-perm-result-rank-saved", ("name", rank.Name));
 
             _adminManager.ReloadAdminsWithRank(ur.Id);
         }
 
         private async Task HandleAddAdminRank(AddAdminRank ar)
         {
-            if (!UserAdminFlagCheck(ar.Flags))
-            {
-                _sawmill.Warning($"{Player} tried to give a rank permissions above their authorization.");
+            if (!ValidateRank(ar.Name, ar.Grants, out var name, out var grants))
                 return;
-            }
 
             var rank = new DbAdminRank
             {
-                Name = ar.Name,
-                Flags = GenRankFlagList(ar.Flags)
+                Name = name,
+                Flags = GenRankFlagList(grants)
             };
 
             await _db.AddAdminRankAsync(rank);
 
-            var flagText = string.Join(' ', AdminFlagsHelper.FlagsToNames(ar.Flags).Select(f => $"+{f}"));
+            var flagText = string.Join(' ', grants.Select(f => $"+{f}"));
             _sawmill.Info($"{Player} added admin rank {rank.Name}/{flagText}.");
+            _adminLog.Add(LogType.AdminCommands, LogImpact.Extreme, $"{Player} создал админ-ранг {rank.Name}: {flagText}");
+            Report(true, "duty-perm-result-rank-saved", ("name", rank.Name));
         }
 
         private async Task HandleRemoveAdmin(RemoveAdmin ra)
@@ -213,19 +284,24 @@ namespace Content.Server.Administration.UI
             if (admin == null)
             {
                 // Doesn't exist.
+                Fail("duty-perm-result-not-found");
                 return;
             }
 
             if (!CanTouchAdmin(admin))
             {
                 _sawmill.Warning($"{Player} tried to remove higher-ranked admin {ra.UserId.ToString()}");
+                Fail("duty-perm-result-no-access");
                 return;
             }
 
             await _db.RemoveAdminAsync(ra.UserId);
 
             var record = await _db.GetPlayerRecordByUserId(ra.UserId);
-            _sawmill.Info($"{Player} removed admin {record?.LastSeenUserName ?? ra.UserId.ToString()}");
+            var removedName = record?.LastSeenUserName ?? ra.UserId.ToString();
+            _sawmill.Info($"{Player} removed admin {removedName}");
+            _adminLog.Add(LogType.AdminCommands, LogImpact.Extreme, $"{Player} снял админа {removedName}");
+            Report(true, "duty-perm-result-admin-removed", ("name", removedName));
 
             if (_playerManager.TryGetSessionById(ra.UserId, out var player))
             {
@@ -235,7 +311,11 @@ namespace Content.Server.Administration.UI
 
         private async Task HandleUpdateAdmin(UpdateAdmin ua)
         {
-            if (!CheckCreatePerms(ua.PosFlags, ua.NegFlags))
+            if (!ValidateAdmin(ua.Title, ua.Pos, ua.Neg, out var pos, out var neg))
+                return;
+
+            var (bad, rankName) = await FetchAndCheckRank(ua.RankId);
+            if (bad)
             {
                 return;
             }
@@ -244,34 +324,33 @@ namespace Content.Server.Administration.UI
             if (admin == null)
             {
                 // Was removed in the mean time I guess?
+                Fail("duty-perm-result-not-found");
                 return;
             }
 
             if (!CanTouchAdmin(admin))
             {
                 _sawmill.Warning($"{Player} tried to modify higher-ranked admin {ua.UserId.ToString()}");
+                Fail("duty-perm-result-no-access");
                 return;
             }
 
             admin.Title = ua.Title;
             admin.AdminRankId = ua.RankId;
-            admin.Flags = GenAdminFlagList(ua.PosFlags, ua.NegFlags);
+            admin.Flags = GenAdminFlagList(pos, neg);
             admin.Suspended = ua.Suspended;
 
             await _db.UpdateAdminAsync(admin);
 
             var playerRecord = await _db.GetPlayerRecordByUserId(ua.UserId);
-            var (bad, rankName) = await FetchAndCheckRank(ua.RankId);
-            if (bad)
-            {
-                return;
-            }
 
             var name = playerRecord?.LastSeenUserName ?? ua.UserId.ToString();
             var title = ua.Title ?? "<no title>";
-            var flags = AdminFlagsHelper.PosNegFlagsText(ua.PosFlags, ua.NegFlags);
+            var flags = PosNegText(pos, neg);
 
             _sawmill.Info($"{Player} updated admin {name} to {title}/{rankName}/{flags}");
+            _adminLog.Add(LogType.AdminCommands, LogImpact.Extreme, $"{Player} изменил права админа {name}: {title}/{rankName}/{flags}");
+            Report(true, "duty-perm-result-admin-saved", ("name", name));
 
             if (_playerManager.TryGetSessionById(ua.UserId, out var player))
             {
@@ -281,10 +360,8 @@ namespace Content.Server.Administration.UI
 
         private async Task HandleCreateAdmin(AddAdmin ca)
         {
-            if (!CheckCreatePerms(ca.PosFlags, ca.NegFlags))
-            {
+            if (!ValidateAdmin(ca.Title, ca.Pos, ca.Neg, out var pos, out var neg))
                 return;
-            }
 
             string name;
             NetUserId userId;
@@ -294,12 +371,13 @@ namespace Content.Server.Administration.UI
                 var playerRecord = await _db.GetPlayerRecordByUserId(userId);
                 if (playerRecord == null)
                 {
-                    name = userId.ToString();
+                    // _Duty: выдавать права несуществующему Guid нельзя (раньше запись создавалась)
+                    _sawmill.Warning($"{Player} tried to add admin with unknown id {ca.UserNameOrId}.");
+                    Fail("duty-perm-result-unknown-player", ("name", ca.UserNameOrId));
+                    return;
                 }
-                else
-                {
-                    name = playerRecord.LastSeenUserName;
-                }
+
+                name = playerRecord.LastSeenUserName;
             }
             else
             {
@@ -308,8 +386,8 @@ namespace Content.Server.Administration.UI
                 if (dbPlayer == null)
                 {
                     // username not in DB.
-                    // TODO: Notify user.
                     _sawmill.Warning($"{Player} tried to add admin with unknown username {ca.UserNameOrId}.");
+                    Fail("duty-perm-result-unknown-player", ("name", ca.UserNameOrId));
                     return;
                 }
 
@@ -321,6 +399,7 @@ namespace Content.Server.Administration.UI
             if (existing != null)
             {
                 // Already exists.
+                Fail("duty-perm-result-already-admin", ("name", name));
                 return;
             }
 
@@ -334,7 +413,7 @@ namespace Content.Server.Administration.UI
 
             var admin = new Admin
             {
-                Flags = GenAdminFlagList(ca.PosFlags, ca.NegFlags),
+                Flags = GenAdminFlagList(pos, neg),
                 AdminRankId = ca.RankId,
                 UserId = userId.UserId,
                 Title = ca.Title,
@@ -344,9 +423,11 @@ namespace Content.Server.Administration.UI
             await _db.AddAdminAsync(admin);
 
             var title = ca.Title ?? "<no title>";
-            var flags = AdminFlagsHelper.PosNegFlagsText(ca.PosFlags, ca.NegFlags);
+            var flags = PosNegText(pos, neg);
 
             _sawmill.Info($"{Player} added admin {name} as {title}/{rankName}/{flags}");
+            _adminLog.Add(LogType.AdminCommands, LogImpact.Extreme, $"{Player} добавил админа {name}: {title}/{rankName}/{flags}");
+            Report(true, "duty-perm-result-admin-saved", ("name", name));
 
             if (_playerManager.TryGetSessionById(userId, out var player))
             {
@@ -354,20 +435,58 @@ namespace Content.Server.Administration.UI
             }
         }
 
-        // ReSharper disable once ParameterOnlyUsedForPreconditionCheck.Local
-        private bool CheckCreatePerms(AdminFlags posFlags, AdminFlags negFlags)
+        private bool ValidateAdmin(string? title, string[] rawPos, string[] rawNeg, out string[] pos, out string[] neg)
         {
-            if ((posFlags & negFlags) != 0)
+            neg = Array.Empty<string>();
+            if (!TryNormalize(rawPos, out pos) || !TryNormalize(rawNeg, out neg))
             {
-                // Can't have overlapping pos and neg flags.
-                // Just deny the entire message.
+                Fail("duty-perm-result-unknown-grant");
                 return false;
             }
 
-            if (!UserAdminFlagCheck(posFlags))
+            if (title is { Length: > MaxTitleLength })
+            {
+                Fail("duty-perm-result-bad-title", ("max", MaxTitleLength));
+                return false;
+            }
+
+            if (pos.Intersect(neg).Any())
+            {
+                // Can't have overlapping pos and neg flags.
+                Fail("duty-perm-result-conflict");
+                return false;
+            }
+
+            if (!HoldsAll(pos))
             {
                 // Can't create an admin with higher perms than yourself, obviously.
                 _sawmill.Warning($"{Player} tried to grant admin powers above their authorization.");
+                Fail("duty-perm-result-no-access");
+                return false;
+            }
+
+            return true;
+        }
+
+        private bool ValidateRank(string rawName, string[] rawGrants, out string name, out string[] grants)
+        {
+            grants = Array.Empty<string>();
+            if (!ValidateName(rawName, MaxRankNameLength, out name))
+            {
+                Fail("duty-perm-result-bad-name", ("max", MaxRankNameLength));
+                return false;
+            }
+
+            if (!TryNormalize(rawGrants, out grants))
+            {
+                Fail("duty-perm-result-unknown-grant");
+                return false;
+            }
+
+            if (!HoldsAll(grants))
+            {
+                _sawmill.Warning($"{Player} tried to give a rank permissions above their authorization.");
+                Fail("duty-perm-result-no-access");
                 return false;
             }
 
@@ -384,16 +503,17 @@ namespace Content.Server.Administration.UI
                 {
                     // Tried to set to nonexistent rank.
                     _sawmill.Warning($"{Player} tried to assign nonexistent admin rank.");
+                    Fail("duty-perm-result-not-found");
                     return (true, null);
                 }
 
                 ret = rank.Name;
 
-                var rankFlags = AdminFlagsHelper.NamesToFlags(rank.Flags.Select(p => p.Flag));
-                if (!UserAdminFlagCheck(rankFlags))
+                if (!HoldsAll(rank.Flags.Select(p => p.Flag)))
                 {
                     // Can't assign a rank with flags you don't have yourself.
                     _sawmill.Warning($"{Player} tried to assign admin rank above their authorization.");
+                    Fail("duty-perm-result-rank-too-high", ("name", rank.Name));
                     return (true, null);
                 }
             }
@@ -403,55 +523,126 @@ namespace Content.Server.Administration.UI
 
         private async void LoadFromDb()
         {
-            StateDirty();
-            _isLoading = true;
-            var (admins, ranks) = await _db.GetAllAdminAndRanksAsync();
+            try
+            {
+                StateDirty();
+                _isLoading = true;
+                var (admins, ranks) = await _db.GetAllAdminAndRanksAsync();
 
-            _admins.Clear();
-            _admins.AddRange(admins);
-            _adminRanks.Clear();
-            _adminRanks.AddRange(ranks);
-
-            _isLoading = false;
-            StateDirty();
+                _admins.Clear();
+                _admins.AddRange(admins);
+                _adminRanks.Clear();
+                _adminRanks.AddRange(ranks);
+            }
+            catch (Exception e)
+            {
+                _sawmill.Error($"Не удалось загрузить админов из БД: {e}");
+            }
+            finally
+            {
+                _isLoading = false;
+                StateDirty();
+            }
         }
 
-        private static List<AdminFlag> GenAdminFlagList(AdminFlags posFlags, AdminFlags negFlags)
+        private List<AdminFlag> GenAdminFlagList(string[] pos, string[] neg)
         {
-            var posFlagList = AdminFlagsHelper.FlagsToNames(posFlags);
-            var negFlagList = AdminFlagsHelper.FlagsToNames(negFlags);
-
-            return posFlagList
-                .Select(f => new AdminFlag {Negative = false, Flag = f})
-                .Concat(negFlagList.Select(f => new AdminFlag {Negative = true, Flag = f}))
+            return pos.Select(f => new AdminFlag {Negative = false, Flag = f})
+                .Concat(neg.Select(f => new AdminFlag {Negative = true, Flag = f}))
                 .ToList();
         }
 
-        private static List<AdminRankFlag> GenRankFlagList(AdminFlags flags)
+        private static List<AdminRankFlag> GenRankFlagList(IEnumerable<string> grants)
         {
-            return AdminFlagsHelper.FlagsToNames(flags).Select(f => new AdminRankFlag {Flag = f}).ToList();
+            return grants.Select(f => new AdminRankFlag {Flag = f}).ToList();
         }
 
-        private bool UserAdminFlagCheck(AdminFlags flags)
+        private static string PosNegText(string[] pos, string[] neg)
         {
-            return _adminManager.HasAdminFlag(Player, flags);
+            return string.Join(' ', pos.Select(f => $"+{f}").Concat(neg.Select(f => $"-{f}")));
+        }
+
+        /// <summary>
+        /// Разбирает присланные права: каждое имя должно быть известным старым флагом или узлом дерева.
+        /// Старые флаги приводятся к верхнему регистру. Дубликаты убираются.
+        /// </summary>
+        private bool TryNormalize(string[] raw, out string[] result)
+        {
+            var tree = _adminManager.PermissionTree;
+            var set = new List<string>();
+            foreach (var item in raw)
+            {
+                var name = item.Trim();
+                // Сначала узел как есть: id областей (debug, server, host, fun, logs, round) совпадают с именами
+                // старых флагов без учёта регистра, и без этого область превращалась бы в старый флаг.
+                if (tree.Exists(name))
+                {
+                    // узел
+                }
+                else if (AdminFlagsHelper.TryNameToFlag(name.ToUpperInvariant(), out _))
+                    name = name.ToUpperInvariant();
+                else
+                {
+                    _sawmill.Warning($"{Player} прислал неизвестное право '{item}'");
+                    result = Array.Empty<string>();
+                    return false;
+                }
+
+                if (!set.Contains(name))
+                    set.Add(name);
+            }
+
+            result = set.ToArray();
+            return true;
+        }
+
+        private static bool ValidateName(string raw, int maxLength, out string name)
+        {
+            name = raw.Trim();
+            return name.Length > 0 && name.Length <= maxLength;
+        }
+
+        /// <summary>Есть ли у редактора это право: старый флаг, выданный напрямую, либо узел (родитель включает вложенные).</summary>
+        private bool UserHolds(string grant)
+        {
+            var data = _adminManager.GetAdminData(Player);
+            if (data == null)
+                return false;
+
+            if (AdminFlagsHelper.TryNameToFlag(grant, out var flag))
+                return data.HasDirectFlag(flag) || data.HasDirectFlag(AdminFlags.Host);
+
+            return data.HasNode(grant);
+        }
+
+        private bool HoldsAll(IEnumerable<string> grants)
+        {
+            // Неизвестное имя в БД (устарело) права не даёт и редактору мешать не должно.
+            var tree = _adminManager.PermissionTree;
+            foreach (var g in grants)
+            {
+                if (!AdminFlagsHelper.TryNameToFlag(g, out _) && !tree.Exists(g))
+                    continue;
+
+                if (!UserHolds(g))
+                    return false;
+            }
+
+            return true;
         }
 
         private bool CanTouchAdmin(Admin admin)
         {
-            var posFlags = AdminFlagsHelper.NamesToFlags(admin.Flags.Where(f => !f.Negative).Select(f => f.Flag));
-            var rankFlags = AdminFlagsHelper.NamesToFlags(
-                admin.AdminRank?.Flags.Select(f => f.Flag) ?? Array.Empty<string>());
+            var grants = admin.Flags.Where(f => !f.Negative).Select(f => f.Flag)
+                .Concat(admin.AdminRank?.Flags.Select(f => f.Flag) ?? Enumerable.Empty<string>());
 
-            var totalFlags = posFlags | rankFlags;
-            return UserAdminFlagCheck(totalFlags);
+            return HoldsAll(grants);
         }
 
         private bool CanTouchRank(DbAdminRank rank)
         {
-            var rankFlags = AdminFlagsHelper.NamesToFlags(rank.Flags.Select(f => f.Flag));
-
-            return UserAdminFlagCheck(rankFlags);
+            return HoldsAll(rank.Flags.Select(f => f.Flag));
         }
     }
+// _Duty-end
 }

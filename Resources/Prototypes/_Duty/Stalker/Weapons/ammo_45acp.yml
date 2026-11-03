@@ -1,59 +1,23 @@
 # Боеприпасы .45 ACP (Thompson) — порт из STALKER-14. Mutant→Piercing.
 
 # ── Снаряды ──────────────────────────────────────────────────────────────────
+# Три роли на калибр (см. bases.yml): обычный / бронебойный (БП) / экспансивный.
 - type: entity
   id: Bullet45ACPLFMJ
-  name: bullet (.45 ACP Lasermatch FMJ)
+  name: bullet (.45 ACP)
   parent: STBase45ACP
   categories: [ HideSpawnMenu ]
   components:
   - type: TimedDespawn
     lifetime: 2
   - type: Projectile
-    projectileClass: 1
     damage:
       types:
         Piercing: 16
-
-- type: entity
-  id: Bullet45ACPMFMJ
-  name: bullet (.45 ACP Match FMJ)
-  parent: Bullet45ACPLFMJ
-  categories: [ HideSpawnMenu ]
-  components:
-  - type: Projectile
-    projectileClass: 2
-    damage:
-      types:
-        Piercing: 17
-
-- type: entity
-  id: Bullet45ACPHydroshock
-  name: bullet (.45 ACP Hydra-Shok)
-  parent: Bullet45ACPLFMJ
-  categories: [ HideSpawnMenu ]
-  components:
-  - type: Projectile
-    projectileClass: 1
-    damage:
-      types:
-        Blunt: 3
-        Slash: 3
-        Piercing: 12
-
-- type: entity
-  id: Bullet45ACPRIP
-  name: bullet (.45 ACP RIP)
-  parent: Bullet45ACPLFMJ
-  categories: [ HideSpawnMenu ]
-  components:
-  - type: Projectile
-    projectileClass: 0
-    damage:
-      types:
-        Piercing: 12
-        Blunt: 3
-        Slash: 3
+  - type: StaminaDamageOnCollide
+    damage: 2
+  - type: DutyBallistics
+    fractureChance: 0.005
 
 - type: entity
   id: Bullet45ACPAP
@@ -62,10 +26,28 @@
   categories: [ HideSpawnMenu ]
   components:
   - type: Projectile
-    projectileClass: 3
     damage:
       types:
-        Piercing: 17
+        Piercing: 14
+  - type: DutyBallistics
+    armorPenetration: 0.3
+    fractureChance: 0.005
+
+- type: entity
+  id: Bullet45ACPHydroshock
+  name: bullet (.45 ACP HP)
+  parent: Bullet45ACPLFMJ
+  categories: [ HideSpawnMenu ]
+  components:
+  - type: Projectile
+    damage:
+      types:
+        Piercing: 12
+        Slash: 5
+        Blunt: 2
+  - type: DutyBallistics
+    armorPenetration: -0.35
+    arteryBonus: 0.02
 
 # ── Патроны ──────────────────────────────────────────────────────────────────
 - type: entity
@@ -91,7 +73,7 @@
 
 - type: entity
   id: Cartridge45ACPLFMJ
-  name: cartridge .45 ACP Lasermatch FMJ
+  name: cartridge (.45 ACP)
   suffix: "Stalker, STWeapon, Огнестрел"
   parent: BaseCartridge45ACP
   components:
@@ -99,40 +81,37 @@
     proto: Bullet45ACPLFMJ
 
 - type: entity
-  id: Cartridge45ACPMFMJ
-  name: cartridge .45 ACP Match FMJ
-  suffix: "Stalker, STWeapon, Огнестрел"
-  parent: BaseCartridge45ACP
-  components:
-  - type: CartridgeAmmo
-    proto: Bullet45ACPMFMJ
-
-- type: entity
-  id: Cartridge45ACPHydroshock
-  name: cartridge .45 ACP Hydra-Shok
-  suffix: "Stalker, STWeapon, Огнестрел"
-  parent: BaseCartridge45ACP
-  components:
-  - type: CartridgeAmmo
-    proto: Bullet45ACPHydroshock
-
-- type: entity
-  id: Cartridge45ACPRIP
-  name: cartridge .45 ACP RIP
-  suffix: "Stalker, STWeapon, Огнестрел"
-  parent: BaseCartridge45ACP
-  components:
-  - type: CartridgeAmmo
-    proto: Bullet45ACPRIP
-
-- type: entity
   id: Cartridge45ACPAP
-  name: cartridge .45 ACP AP
+  name: cartridge (.45 ACP AP)
   suffix: "Stalker, STWeapon, Огнестрел"
   parent: BaseCartridge45ACP
   components:
   - type: CartridgeAmmo
     proto: Bullet45ACPAP
+  - type: Sprite
+    layers:
+    - state: base
+      map: ["enum.AmmoVisualLayers.Base"]
+    - state: tip
+      map: ["enum.AmmoVisualLayers.Tip"]
+      color: "#2b2b2b"
+
+- type: entity
+  id: Cartridge45ACPHydroshock
+  name: cartridge (.45 ACP HP)
+  suffix: "Stalker, STWeapon, Огнестрел"
+  parent: BaseCartridge45ACP
+  components:
+  - type: CartridgeAmmo
+    proto: Bullet45ACPHydroshock
+  - type: Sprite
+    layers:
+    - state: base
+      map: ["enum.AmmoVisualLayers.Base"]
+    - state: tip
+      map: ["enum.AmmoVisualLayers.Tip"]
+      color: "#4f86c6"
+
 
 # ── Спидлоадер (.45 ACP, для револьверов) ────────────────────────────────────
 - type: entity

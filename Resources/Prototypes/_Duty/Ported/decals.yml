@@ -1,0 +1,854 @@
+# Перенесено из Space Onyx. Идентификаторы с суффиксом PortedDuty.
+
+- type: decal
+  id: ShiptestSplineEastPortedDuty
+  tags: ["station", "markings", "shiptest"]
+  sprite:
+    sprite: _Duty/Ported/Decals/spline_fancy.rsi
+    state: trimlineeast
+
+- type: decal
+  id: ShiptestSplineEastEndPortedDuty
+  tags: ["station", "markings", "shiptest"]
+  sprite:
+    sprite: _Duty/Ported/Decals/spline_fancy.rsi
+    state: trimlineeastend
+
+- type: decal
+  id: ShiptestSplineNorthPortedDuty
+  tags: ["station", "markings", "shiptest"]
+  sprite:
+    sprite: _Duty/Ported/Decals/spline_fancy.rsi
+    state: trimlinenorth
+
+- type: decal
+  id: ShiptestSplineNorthEastPortedDuty
+  tags: ["station", "markings", "shiptest"]
+  sprite:
+    sprite: _Duty/Ported/Decals/spline_fancy.rsi
+    state: trimlinenortheast
+
+- type: decal
+  id: ShiptestSplineNorthEastCornerPortedDuty
+  tags: ["station", "markings", "shiptest"]
+  sprite:
+    sprite: _Duty/Ported/Decals/spline_fancy.rsi
+    state: trimlinenortheastcorner
+
+- type: decal
+  id: ShiptestSplineNorthEndPortedDuty
+  tags: ["station", "markings", "shiptest"]
+  sprite:
+    sprite: _Duty/Ported/Decals/spline_fancy.rsi
+    state: trimlinenorthend
+
+- type: decal
+  id: ShiptestSplineNorthWestPortedDuty
+  tags: ["station", "markings", "shiptest"]
+  sprite:
+    sprite: _Duty/Ported/Decals/spline_fancy.rsi
+    state: trimlinenorthwest
+
+- type: decal
+  id: ShiptestSplineNorthWestCornerPortedDuty
+  tags: ["station", "markings", "shiptest"]
+  sprite:
+    sprite: _Duty/Ported/Decals/spline_fancy.rsi
+    state: trimlinenorthwestcorner
+
+- type: decal
+  id: ShiptestSplineSouthPortedDuty
+  tags: ["station", "markings", "shiptest"]
+  sprite:
+    sprite: _Duty/Ported/Decals/spline_fancy.rsi
+    state: trimlinesouth
+
+- type: decal
+  id: ShiptestSplineSouthEastPortedDuty
+  tags: ["station", "markings", "shiptest"]
+  sprite:
+    sprite: _Duty/Ported/Decals/spline_fancy.rsi
+    state: trimlinesoutheast
+
+- type: decal
+  id: ShiptestSplineSouthEastCornerPortedDuty
+  tags: ["station", "markings", "shiptest"]
+  sprite:
+    sprite: _Duty/Ported/Decals/spline_fancy.rsi
+    state: trimlinesoutheastcorner
+
+- type: decal
+  id: ShiptestSplineSouthEndPortedDuty
+  tags: ["station", "markings", "shiptest"]
+  sprite:
+    sprite: _Duty/Ported/Decals/spline_fancy.rsi
+    state: trimlinesouthend
+
+- type: decal
+  id: ShiptestSplineSouthWestPortedDuty
+  tags: ["station", "markings", "shiptest"]
+  sprite:
+    sprite: _Duty/Ported/Decals/spline_fancy.rsi
+    state: trimlinesouthwest
+
+- type: decal
+  id: ShiptestSplineSouthWestCornerPortedDuty
+  tags: ["station", "markings", "shiptest"]
+  sprite:
+    sprite: _Duty/Ported/Decals/spline_fancy.rsi
+    state: trimlinesouthwestcorner
+
+- type: decal
+  id: ShiptestSplineWestPortedDuty
+  tags: ["station", "markings", "shiptest"]
+  sprite:
+    sprite: _Duty/Ported/Decals/spline_fancy.rsi
+    state: trimlinewest
+
+- type: decal
+  id: ShiptestSplineWestEndPortedDuty
+  tags: ["station", "markings", "shiptest"]
+  sprite:
+    sprite: _Duty/Ported/Decals/spline_fancy.rsi
+    state: trimlinewestend
+
+- type: decal
+  id: TechCornerEPortedDuty
+  tags: ["station", "markings"]
+  sprite:
+    sprite: _Duty/Ported/Decals/techfloor.rsi
+    state: cornere
+
+- type: decal
+  id: TechCornerWPortedDuty
+  tags: ["station", "markings"]
+  sprite:
+    sprite: _Duty/Ported/Decals/techfloor.rsi
+    state: cornerw
+
+- type: decal
+  id: TechCornerSPortedDuty
+  tags: ["station", "markings"]
+  sprite:
+    sprite: _Duty/Ported/Decals/techfloor.rsi
+    state: corners
+
+- type: decal
+  id: TechCornerNPortedDuty
+  tags: ["station", "markings"]
+  sprite:
+    sprite: _Duty/Ported/Decals/techfloor.rsi
+    state: cornern
+
+- type: decal
+  id: TechFullCornerEPortedDuty
+  tags: ["station", "markings"]
+  sprite:
+    sprite: _Duty/Ported/Decals/techfloor.rsi
+    state: fullcornere
+
+- type: decal
+  id: TechFullCornerWPortedDuty
+  tags: ["station", "markings"]
+  sprite:
+    sprite: _Duty/Ported/Decals/techfloor.rsi
+    state: fullcornerw
+
+- type: decal
+  id: TechFullCornerSPortedDuty
+  tags: ["station", "markings"]
+  sprite:
+    sprite: _Duty/Ported/Decals/techfloor.rsi
+    state: fullcorners
+
+- type: decal
+  id: TechFullCornerNPortedDuty
+  tags: ["station", "markings"]
+  sprite:
+    sprite: _Duty/Ported/Decals/techfloor.rsi
+    state: fullcornern
+
+- type: decal
+  id: TechEPortedDuty
+  tags: ["station", "markings"]
+  sprite:
+    sprite: _Duty/Ported/Decals/techfloor.rsi
+    state: teche
+
+- type: decal
+  id: TechWPortedDuty
+  tags: ["station", "markings"]
+  sprite:
+    sprite: _Duty/Ported/Decals/techfloor.rsi
+    state: techw
+
+- type: decal
+  id: TechNPortedDuty
+  tags: ["station", "markings"]
+  sprite:
+    sprite: _Duty/Ported/Decals/techfloor.rsi
+    state: techn
+
+- type: decal
+  id: TechSPortedDuty
+  tags: ["station", "markings"]
+  sprite:
+    sprite: _Duty/Ported/Decals/techfloor.rsi
+    state: techs
+
+- type: decal
+  id: TechNWPortedDuty
+  tags: ["station", "markings"]
+  sprite:
+    sprite: _Duty/Ported/Decals/techfloor.rsi
+    state: technw
+
+- type: decal
+  id: TechNEPortedDuty
+  tags: ["station", "markings"]
+  sprite:
+    sprite: _Duty/Ported/Decals/techfloor.rsi
+    state: techne
+
+- type: decal
+  id: TechSEPortedDuty
+  tags: ["station", "markings"]
+  sprite:
+    sprite: _Duty/Ported/Decals/techfloor.rsi
+    state: techse
+
+- type: decal
+  id: TechSWPortedDuty
+  tags: ["station", "markings"]
+  sprite:
+    sprite: _Duty/Ported/Decals/techfloor.rsi
+    state: techsw
+
+- type: decal
+  id: ZeroTestPortedDuty
+  tags: ["station", "markings"]
+  sprite:
+    sprite: _Duty/Ported/Decals/trimline.rsi
+    state: 0
+
+- type: decal
+  id: OneTestPortedDuty
+  tags: ["station", "markings"]
+  sprite:
+    sprite: _Duty/Ported/Decals/trimline.rsi
+    state: 1
+
+- type: decal
+  id: TwoTestPortedDuty
+  tags: ["station", "markings"]
+  sprite:
+    sprite: _Duty/Ported/Decals/trimline.rsi
+    state: 2
+
+- type: decal
+  id: ThreeTestPortedDuty
+  tags: ["station", "markings"]
+  sprite:
+    sprite: _Duty/Ported/Decals/trimline.rsi
+    state: 3
+
+- type: decal
+  id: FourTestPortedDuty
+  tags: ["station", "markings"]
+  sprite:
+    sprite: _Duty/Ported/Decals/trimline.rsi
+    state: 4
+
+- type: decal
+  id: FiveTestPortedDuty
+  tags: ["station", "markings"]
+  sprite:
+    sprite: _Duty/Ported/Decals/trimline.rsi
+    state: 5
+
+- type: decal
+  id: SixTestPortedDuty
+  tags: ["station", "markings"]
+  sprite:
+    sprite: _Duty/Ported/Decals/trimline.rsi
+    state: 6
+
+- type: decal
+  id: SevenTestPortedDuty
+  tags: ["station", "markings"]
+  sprite:
+    sprite: _Duty/Ported/Decals/trimline.rsi
+    state: 7
+
+- type: decal
+  id: EightTestPortedDuty
+  tags: ["station", "markings"]
+  sprite:
+    sprite: _Duty/Ported/Decals/trimline.rsi
+    state: 8
+
+- type: decal
+  id: NineTestPortedDuty
+  tags: ["station", "markings"]
+  sprite:
+    sprite: _Duty/Ported/Decals/trimline.rsi
+    state: 9
+
+- type: decal
+  id: TrimlineEastPortedDuty
+  tags: ["station", "markings"]
+  sprite:
+    sprite: _Duty/Ported/Decals/trimline.rsi
+    state: trimlineeast
+
+- type: decal
+  id: TrimlineEastEndPortedDuty
+  tags: ["station", "markings"]
+  sprite:
+    sprite: _Duty/Ported/Decals/trimline.rsi
+    state: trimlineeastend
+
+- type: decal
+  id: TrimlineNorthPortedDuty
+  tags: ["station", "markings"]
+  sprite:
+    sprite: _Duty/Ported/Decals/trimline.rsi
+    state: trimlinenorth
+
+- type: decal
+  id: TrimlineNorthEastPortedDuty
+  tags: ["station", "markings"]
+  sprite:
+    sprite: _Duty/Ported/Decals/trimline.rsi
+    state: trimlinenortheast
+
+- type: decal
+  id: TrimlineNorthEastCornerPortedDuty
+  tags: ["station", "markings"]
+  sprite:
+    sprite: _Duty/Ported/Decals/trimline.rsi
+    state: trimlinenortheastcorner
+
+- type: decal
+  id: TrimlineNorthEndPortedDuty
+  tags: ["station", "markings"]
+  sprite:
+    sprite: _Duty/Ported/Decals/trimline.rsi
+    state: trimlinenorthend
+
+- type: decal
+  id: TrimlineNorthWestPortedDuty
+  tags: ["station", "markings"]
+  sprite:
+    sprite: _Duty/Ported/Decals/trimline.rsi
+    state: trimlinenorthwest
+
+- type: decal
+  id: TrimlineNorthWestCornerPortedDuty
+  tags: ["station", "markings"]
+  sprite:
+    sprite: _Duty/Ported/Decals/trimline.rsi
+    state: trimlinenorthwestcorner
+
+- type: decal
+  id: TrimlineSouthPortedDuty
+  tags: ["station", "markings"]
+  sprite:
+    sprite: _Duty/Ported/Decals/trimline.rsi
+    state: trimlinesouth
+
+- type: decal
+  id: TrimlineSouthEastPortedDuty
+  tags: ["station", "markings"]
+  sprite:
+    sprite: _Duty/Ported/Decals/trimline.rsi
+    state: trimlinesoutheast
+
+- type: decal
+  id: TrimlineSouthEastCornerPortedDuty
+  tags: ["station", "markings"]
+  sprite:
+    sprite: _Duty/Ported/Decals/trimline.rsi
+    state: trimlinesoutheastcorner
+
+- type: decal
+  id: TrimlineSouthEndPortedDuty
+  tags: ["station", "markings"]
+  sprite:
+    sprite: _Duty/Ported/Decals/trimline.rsi
+    state: trimlinesouthend
+
+- type: decal
+  id: TrimlineSouthWestPortedDuty
+  tags: ["station", "markings"]
+  sprite:
+    sprite: _Duty/Ported/Decals/trimline.rsi
+    state: trimlinesouthwest
+
+- type: decal
+  id: TrimlineSouthWestCornerPortedDuty
+  tags: ["station", "markings"]
+  sprite:
+    sprite: _Duty/Ported/Decals/trimline.rsi
+    state: trimlinesouthwestcorner
+
+- type: decal
+  id: TrimlineWestPortedDuty
+  tags: ["station", "markings"]
+  sprite:
+    sprite: _Duty/Ported/Decals/trimline.rsi
+    state: trimlinewest
+
+- type: decal
+  id: TrimlineWestEndPortedDuty
+  tags: ["station", "markings"]
+  sprite:
+    sprite: _Duty/Ported/Decals/trimline.rsi
+    state: trimlinewestend
+
+- type: decal
+  id: TrimWarnEastPortedDuty
+  tags: ["station", "markings"]
+  sprite:
+    sprite: _Duty/Ported/Decals/trimlinewarn.rsi
+    state: warneast
+
+- type: decal
+  id: TrimWarnNorthPortedDuty
+  tags: ["station", "markings"]
+  sprite:
+    sprite: _Duty/Ported/Decals/trimlinewarn.rsi
+    state: warnnorth
+
+- type: decal
+  id: TrimWarnNorthEastPortedDuty
+  tags: ["station", "markings"]
+  sprite:
+    sprite: _Duty/Ported/Decals/trimlinewarn.rsi
+    state: warnnortheast
+
+- type: decal
+  id: TrimWarnNorthWestPortedDuty
+  tags: ["station", "markings"]
+  sprite:
+    sprite: _Duty/Ported/Decals/trimlinewarn.rsi
+    state: warnnorthwest
+
+- type: decal
+  id: TrimWarnSouthPortedDuty
+  tags: ["station", "markings"]
+  sprite:
+    sprite: _Duty/Ported/Decals/trimlinewarn.rsi
+    state: warnsouth
+
+- type: decal
+  id: TrimWarnSouthEastPortedDuty
+  tags: ["station", "markings"]
+  sprite:
+    sprite: _Duty/Ported/Decals/trimlinewarn.rsi
+    state: warnsoutheast
+
+- type: decal
+  id: TrimWarnSouthWestPortedDuty
+  tags: ["station", "markings"]
+  sprite:
+    sprite: _Duty/Ported/Decals/trimlinewarn.rsi
+    state: warnsouthwest
+
+- type: decal
+  id: TrimWarnWestPortedDuty
+  tags: ["station", "markings"]
+  sprite:
+    sprite: _Duty/Ported/Decals/trimlinewarn.rsi
+    state: warnwest
+
+- type: decal
+  id: TrimWarnLiveFirePortedDuty
+  tags: ["station", "markings"]
+  sprite:
+    sprite: _Duty/Ported/Decals/trimlinewarn.rsi
+    state: warnlivefire
+
+- type: decal
+  id: ShiptestOverlayTrimlineEastPortedDuty
+  tags: ["station", "markings"]
+  sprite:
+    sprite: _Duty/Ported/Decals/trim_shiptest.rsi
+    state: trimlineeast
+
+- type: decal
+  id: ShiptestOverlayTrimlineEastEndPortedDuty
+  tags: ["station", "markings"]
+  sprite:
+    sprite: _Duty/Ported/Decals/trim_shiptest.rsi
+    state: trimlineeastend
+
+- type: decal
+  id: ShiptestOverlayTrimlineNorthPortedDuty
+  tags: ["station", "markings"]
+  sprite:
+    sprite: _Duty/Ported/Decals/trim_shiptest.rsi
+    state: trimlinenorth
+
+- type: decal
+  id: ShiptestOverlayTrimlineNorthEastPortedDuty
+  tags: ["station", "markings"]
+  sprite:
+    sprite: _Duty/Ported/Decals/trim_shiptest.rsi
+    state: trimlinenortheast
+
+- type: decal
+  id: ShiptestOverlayTrimlineNorthEastCornerPortedDuty
+  tags: ["station", "markings"]
+  sprite:
+    sprite: _Duty/Ported/Decals/trim_shiptest.rsi
+    state: trimlinenortheastcorner
+
+- type: decal
+  id: ShiptestOverlayTrimlineNorthEndPortedDuty
+  tags: ["station", "markings"]
+  sprite:
+    sprite: _Duty/Ported/Decals/trim_shiptest.rsi
+    state: trimlinenorthend
+
+- type: decal
+  id: ShiptestOverlayTrimlineNorthWestPortedDuty
+  tags: ["station", "markings"]
+  sprite:
+    sprite: _Duty/Ported/Decals/trim_shiptest.rsi
+    state: trimlinenorthwest
+
+- type: decal
+  id: ShiptestOverlayTrimlineNorthWestCornerPortedDuty
+  tags: ["station", "markings"]
+  sprite:
+    sprite: _Duty/Ported/Decals/trim_shiptest.rsi
+    state: trimlinenorthwestcorner
+
+- type: decal
+  id: ShiptestOverlayTrimlineSouthPortedDuty
+  tags: ["station", "markings"]
+  sprite:
+    sprite: _Duty/Ported/Decals/trim_shiptest.rsi
+    state: trimlinesouth
+
+- type: decal
+  id: ShiptestOverlayTrimlineSouthEastPortedDuty
+  tags: ["station", "markings"]
+  sprite:
+    sprite: _Duty/Ported/Decals/trim_shiptest.rsi
+    state: trimlinesoutheast
+
+- type: decal
+  id: ShiptestOverlayTrimlineSouthEastCornerPortedDuty
+  tags: ["station", "markings"]
+  sprite:
+    sprite: _Duty/Ported/Decals/trim_shiptest.rsi
+    state: trimlinesoutheastcorner
+
+- type: decal
+  id: ShiptestOverlayTrimlineSouthEndPortedDuty
+  tags: ["station", "markings"]
+  sprite:
+    sprite: _Duty/Ported/Decals/trim_shiptest.rsi
+    state: trimlinesouthend
+
+- type: decal
+  id: ShiptestOverlayTrimlineSouthWestPortedDuty
+  tags: ["station", "markings"]
+  sprite:
+    sprite: _Duty/Ported/Decals/trim_shiptest.rsi
+    state: trimlinesouthwest
+
+- type: decal
+  id: ShiptestOverlayTrimlineSouthWestCornerPortedDuty
+  tags: ["station", "markings"]
+  sprite:
+    sprite: _Duty/Ported/Decals/trim_shiptest.rsi
+    state: trimlinesouthwestcorner
+
+- type: decal
+  id: ShiptestOverlayTrimlineWestPortedDuty
+  tags: ["station", "markings"]
+  sprite:
+    sprite: _Duty/Ported/Decals/trim_shiptest.rsi
+    state: trimlinewest
+
+- type: decal
+  id: ShiptestOverlayTrimlineWestEndPortedDuty
+  tags: ["station", "markings"]
+  sprite:
+    sprite: _Duty/Ported/Decals/trim_shiptest.rsi
+    state: trimlinewestend
+
+- type: decal
+  id: TrimlineCcwEastPortedDuty
+  tags: ["station", "markings"]
+  sprite:
+    sprite: _Duty/Ported/Decals/trim_shiptest_ccw.rsi
+    state: trimlineeast
+
+- type: decal
+  id: TrimlineCcwNorthPortedDuty
+  tags: ["station", "markings"]
+  sprite:
+    sprite: _Duty/Ported/Decals/trim_shiptest_ccw.rsi
+    state: trimlinenorth
+
+- type: decal
+  id: TrimlineCcwNorthEastPortedDuty
+  tags: ["station", "markings"]
+  sprite:
+    sprite: _Duty/Ported/Decals/trim_shiptest_ccw.rsi
+    state: trimlinenortheast
+
+- type: decal
+  id: TrimlineCcwNorthWestPortedDuty
+  tags: ["station", "markings"]
+  sprite:
+    sprite: _Duty/Ported/Decals/trim_shiptest_ccw.rsi
+    state: trimlinenorthwest
+
+- type: decal
+  id: TrimlineCcwSouthPortedDuty
+  tags: ["station", "markings"]
+  sprite:
+    sprite: _Duty/Ported/Decals/trim_shiptest_ccw.rsi
+    state: trimlinesouth
+
+- type: decal
+  id: TrimlineCcwSouthEastPortedDuty
+  tags: ["station", "markings"]
+  sprite:
+    sprite: _Duty/Ported/Decals/trim_shiptest_ccw.rsi
+    state: trimlinesoutheast
+
+- type: decal
+  id: TrimlineCcwSouthWestPortedDuty
+  tags: ["station", "markings"]
+  sprite:
+    sprite: _Duty/Ported/Decals/trim_shiptest_ccw.rsi
+    state: trimlinesouthwest
+
+- type: decal
+  id: TrimlineCcwWestPortedDuty
+  tags: ["station", "markings"]
+  sprite:
+    sprite: _Duty/Ported/Decals/trim_shiptest_ccw.rsi
+    state: trimlinewest
+
+- type: decal
+  id: TrimlineCwEastPortedDuty
+  tags: ["station", "markings"]
+  sprite:
+    sprite: _Duty/Ported/Decals/trim_shiptest_cw.rsi
+    state: trimlineeast
+
+- type: decal
+  id: TrimlineCwNorthPortedDuty
+  tags: ["station", "markings"]
+  sprite:
+    sprite: _Duty/Ported/Decals/trim_shiptest_cw.rsi
+    state: trimlinenorth
+
+- type: decal
+  id: TrimlineCwNorthEastPortedDuty
+  tags: ["station", "markings"]
+  sprite:
+    sprite: _Duty/Ported/Decals/trim_shiptest_cw.rsi
+    state: trimlinenortheast
+
+- type: decal
+  id: TrimlineCwNorthWestPortedDuty
+  tags: ["station", "markings"]
+  sprite:
+    sprite: _Duty/Ported/Decals/trim_shiptest_cw.rsi
+    state: trimlinenorthwest
+
+- type: decal
+  id: TrimlineCwSouthPortedDuty
+  tags: ["station", "markings"]
+  sprite:
+    sprite: _Duty/Ported/Decals/trim_shiptest_cw.rsi
+    state: trimlinesouth
+
+- type: decal
+  id: TrimlineCwSouthEastPortedDuty
+  tags: ["station", "markings"]
+  sprite:
+    sprite: _Duty/Ported/Decals/trim_shiptest_cw.rsi
+    state: trimlinesoutheast
+
+- type: decal
+  id: TrimlineCwSouthWestPortedDuty
+  tags: ["station", "markings"]
+  sprite:
+    sprite: _Duty/Ported/Decals/trim_shiptest_cw.rsi
+    state: trimlinesouthwest
+
+- type: decal
+  id: TrimlineCwWestPortedDuty
+  tags: ["station", "markings"]
+  sprite:
+    sprite: _Duty/Ported/Decals/trim_shiptest_cw.rsi
+    state: trimlinewest
+
+- type: decal
+  id: ShiptestFullTileOverlayGreyscalePortedDuty
+  tags: ["station", "overlay", "shiptest"]
+  defaultCustomColor: true
+  sprite:
+    sprite: _Duty/Ported/Decals/overlays_shiptest.rsi
+    state: fulltile_overlay
+
+- type: decal
+  id: ShiptestHalfTileOverlayGreyscalePortedDuty
+  tags: ["station", "overlay", "shiptest"]
+  defaultCustomColor: true
+  sprite:
+    sprite: _Duty/Ported/Decals/overlays_shiptest.rsi
+    state: halftile_overlay
+
+- type: decal
+  id: ShiptestHalfTileOverlayGreyscale90PortedDuty
+  tags: ["station", "overlay", "shiptest"]
+  defaultCustomColor: true
+  sprite:
+    sprite: _Duty/Ported/Decals/overlays_shiptest.rsi
+    state: halftile_overlay_90
+
+- type: decal
+  id: ShiptestHalfTileOverlayGreyscale180PortedDuty
+  tags: ["station", "overlay", "shiptest"]
+  defaultCustomColor: true
+  sprite:
+    sprite: _Duty/Ported/Decals/overlays_shiptest.rsi
+    state: halftile_overlay_180
+
+- type: decal
+  id: ShiptestHalfTileOverlayGreyscale270PortedDuty
+  tags: ["station", "overlay", "shiptest"]
+  defaultCustomColor: true
+  sprite:
+    sprite: _Duty/Ported/Decals/overlays_shiptest.rsi
+    state: halftile_overlay_270
+
+- type: decal
+  id: ShiptestQuarterTileOverlayGreyscalePortedDuty
+  tags: ["station", "overlay", "shiptest"]
+  defaultCustomColor: true
+  sprite:
+    sprite: _Duty/Ported/Decals/overlays_shiptest.rsi
+    state: quartertile_overlay
+
+- type: decal
+  id: ShiptestQuarterTileOverlayGreyscale90PortedDuty
+  tags: ["station", "overlay", "shiptest"]
+  defaultCustomColor: true
+  sprite:
+    sprite: _Duty/Ported/Decals/overlays_shiptest.rsi
+    state: quartertile_overlay_90
+
+- type: decal
+  id: ShiptestQuarterTileOverlayGreyscale180PortedDuty
+  tags: ["station", "overlay", "shiptest"]
+  defaultCustomColor: true
+  sprite:
+    sprite: _Duty/Ported/Decals/overlays_shiptest.rsi
+    state: quartertile_overlay_180
+
+- type: decal
+  id: ShiptestQuarterTileOverlayGreyscale270PortedDuty
+  tags: ["station", "overlay", "shiptest"]
+  defaultCustomColor: true
+  sprite:
+    sprite: _Duty/Ported/Decals/overlays_shiptest.rsi
+    state: quartertile_overlay_270
+
+- type: decal
+  id: ShiptestThreeQuarterTileOverlayGreyscalePortedDuty
+  tags: ["station", "overlay", "shiptest"]
+  defaultCustomColor: true
+  sprite:
+    sprite: _Duty/Ported/Decals/overlays_shiptest.rsi
+    state: threequartertile_overlay
+
+- type: decal
+  id: ShiptestThreeQuarterTileOverlayGreyscale90PortedDuty
+  tags: ["station", "overlay", "shiptest"]
+  defaultCustomColor: true
+  sprite:
+    sprite: _Duty/Ported/Decals/overlays_shiptest.rsi
+    state: threequartertile_overlay_90
+
+- type: decal
+  id: ShiptestThreeQuarterTileOverlayGreyscale180PortedDuty
+  tags: ["station", "overlay", "shiptest"]
+  defaultCustomColor: true
+  sprite:
+    sprite: _Duty/Ported/Decals/overlays_shiptest.rsi
+    state: threequartertile_overlay_180
+
+- type: decal
+  id: ShiptestThreeQuarterTileOverlayGreyscale270PortedDuty
+  tags: ["station", "overlay", "shiptest"]
+  defaultCustomColor: true
+  sprite:
+    sprite: _Duty/Ported/Decals/overlays_shiptest.rsi
+    state: threequartertile_overlay_270
+
+- type: decal
+  id: ShiptestMonoOverlayPortedDuty
+  tags: ["station", "overlay", "shiptest"]
+  defaultCustomColor: true
+  sprite:
+    sprite: _Duty/Ported/Decals/overlays_shiptest.rsi
+    state: mono
+
+- type: decal
+  id: ShiptestCheckerNESWPortedDuty
+  tags: ["station", "overlay", "shiptest"]
+  defaultCustomColor: true
+  sprite:
+    sprite: _Duty/Ported/Decals/overlays_shiptest.rsi
+    state: checkerNESW
+
+- type: decal
+  id: ShiptestCheckerNWSEPortedDuty
+  tags: ["station", "overlay", "shiptest"]
+  defaultCustomColor: true
+  sprite:
+    sprite: _Duty/Ported/Decals/overlays_shiptest.rsi
+    state: checkerNWSE
+
+- type: decal
+  id: ShiptestAltHalfTileOverlayGreyscalePortedDuty
+  tags: ["station", "overlay", "shiptest"]
+  defaultCustomColor: true
+  sprite:
+    sprite: _Duty/Ported/Decals/overlays_shiptest.rsi
+    state: halftile_overlay_alt
+
+- type: decal
+  id: ShiptestAltHalfTileOverlayGreyscale90PortedDuty
+  tags: ["station", "overlay", "shiptest"]
+  defaultCustomColor: true
+  sprite:
+    sprite: _Duty/Ported/Decals/overlays_shiptest.rsi
+    state: halftile_overlay_90_alt
+
+- type: decal
+  id: ShiptestAltHalfTileOverlayGreyscale180PortedDuty
+  tags: ["station", "overlay", "shiptest"]
+  defaultCustomColor: true
+  sprite:
+    sprite: _Duty/Ported/Decals/overlays_shiptest.rsi
+    state: halftile_overlay_180_alt
+
+- type: decal
+  id: ShiptestAltHalfTileOverlayGreyscale270PortedDuty
+  tags: ["station", "overlay", "shiptest"]
+  defaultCustomColor: true
+  sprite:
+    sprite: _Duty/Ported/Decals/overlays_shiptest.rsi
+    state: halftile_overlay_270_alt

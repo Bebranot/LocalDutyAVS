@@ -1,96 +1,56 @@
 # Боеприпасы 9x39 — порт из STALKER-14. Mutant→Piercing.
 
 # ── Снаряды ──────────────────────────────────────────────────────────────────
+# Три роли на калибр (см. bases.yml): обычный / бронебойный (БП) / экспансивный.
 - type: entity
+  id: STBullet9x39SP5
+  name: bullet (9x39)
   parent: STBaseSPBullet
-  id: STBullet9x39
-  abstract: true
   categories: [ HideSpawnMenu ]
   components:
   - type: TimedDespawn
     lifetime: 6
   - type: Projectile
-  - type: StaminaDamageOnCollide
-
-- type: entity
-  parent: STBullet9x39
-  id: STBullet9x39PSO
-  categories: [ HideSpawnMenu ]
-  components:
-  - type: Projectile
-    projectileClass: 0
     damage:
       types:
-        Blunt: 4
-        Slash: 4
-        Piercing: 17
-  - type: StaminaDamageOnCollide
-    damage: 30
-
-- type: entity
-  parent: STBullet9x39
-  id: STBullet9x39SP6Uch
-  categories: [ HideSpawnMenu ]
-  components:
-  - type: Projectile
-    projectileClass: 1
-    damage:
-      types:
-        Blunt: 6
-  - type: StaminaDamageOnCollide
-    damage: 10
-
-- type: entity
-  parent: STBullet9x39
-  id: STBullet9x39SP5
-  categories: [ HideSpawnMenu ]
-  components:
-  - type: Projectile
-    projectileClass: 2
-    damage:
-      types:
-        Piercing: 22
+        Piercing: 20
   - type: StaminaDamageOnCollide
     damage: 4
+  - type: DutyBallistics
+    armorPenetration: 0.3
+    arteryBonus: 0.01
+    fractureChance: 0.005
 
 - type: entity
-  parent: STBullet9x39
-  id: STBullet9x39PAB9
-  categories: [ HideSpawnMenu ]
-  components:
-  - type: Projectile
-    projectileClass: 3
-    damage:
-      types:
-        Piercing: 23
-  - type: StaminaDamageOnCollide
-    damage: 6
-
-- type: entity
-  parent: STBullet9x39
   id: STBullet9x39SP6
+  name: bullet (9x39 AP)
+  parent: STBullet9x39SP5
   categories: [ HideSpawnMenu ]
   components:
   - type: Projectile
-    projectileClass: 4
     damage:
       types:
-        Piercing: 24
-  - type: StaminaDamageOnCollide
-    damage: 8
+        Piercing: 18
+  - type: DutyBallistics
+    armorPenetration: 0.6
+    arteryBonus: 0.01
+    fractureChance: 0.005
 
 - type: entity
-  parent: STBullet9x39
-  id: STBullet9x39AA
+  id: STBullet9x39PSO
+  name: bullet (9x39 HP)
+  parent: STBullet9x39SP5
   categories: [ HideSpawnMenu ]
   components:
   - type: Projectile
-    projectileClass: 5
     damage:
       types:
-        Piercing: 24
-  - type: StaminaDamageOnCollide
-    damage: 10
+        Piercing: 15
+        Slash: 6
+        Blunt: 2
+  - type: DutyBallistics
+    armorPenetration: -0.05
+    arteryBonus: 0.03
 
 # ── Патроны ──────────────────────────────────────────────────────────────────
 - type: entity
@@ -114,58 +74,46 @@
     state: "base"
 
 - type: entity
-  parent: STCartridge9x39
-  id: STCartridge9x39PSO
-  name: cartridge 9x39 PSO
-  suffix: "Stalker, STWeapon, Огнестрел"
-  components:
-  - type: CartridgeAmmo
-    proto: STBullet9x39PSO
-
-- type: entity
-  parent: STCartridge9x39
-  id: STCartridge9x39SP6Uch
-  name: cartridge 9x39 SP-6U
-  suffix: "Stalker, STWeapon, Огнестрел"
-  components:
-  - type: CartridgeAmmo
-    proto: STBullet9x39SP6Uch
-
-- type: entity
-  parent: STCartridge9x39
   id: STCartridge9x39SP5
-  name: cartridge 9x39 SP-5
+  name: cartridge (9x39)
   suffix: "Stalker, STWeapon, Огнестрел"
+  parent: STCartridge9x39
   components:
   - type: CartridgeAmmo
     proto: STBullet9x39SP5
 
 - type: entity
-  parent: STCartridge9x39
-  id: STCartridge9x39PAB9
-  name: cartridge 9x39 PAB-9
-  suffix: "Stalker, STWeapon, Огнестрел"
-  components:
-  - type: CartridgeAmmo
-    proto: STBullet9x39PAB9
-
-- type: entity
-  parent: STCartridge9x39
   id: STCartridge9x39SP6
-  name: cartridge 9x39 SP-6
+  name: cartridge (9x39 AP)
   suffix: "Stalker, STWeapon, Огнестрел"
+  parent: STCartridge9x39
   components:
   - type: CartridgeAmmo
     proto: STBullet9x39SP6
+  - type: Sprite
+    layers:
+    - state: base
+      map: ["enum.AmmoVisualLayers.Base"]
+    - state: tip
+      map: ["enum.AmmoVisualLayers.Tip"]
+      color: "#2b2b2b"
 
 - type: entity
-  parent: STCartridge9x39
-  id: STCartridge9x39AA
-  name: cartridge 9x39 BP
+  id: STCartridge9x39PSO
+  name: cartridge (9x39 HP)
   suffix: "Stalker, STWeapon, Огнестрел"
+  parent: STCartridge9x39
   components:
   - type: CartridgeAmmo
-    proto: STBullet9x39AA
+    proto: STBullet9x39PSO
+  - type: Sprite
+    layers:
+    - state: base
+      map: ["enum.AmmoVisualLayers.Base"]
+    - state: tip
+      map: ["enum.AmmoVisualLayers.Tip"]
+      color: "#4f86c6"
+
 
 # ── Магазины ─────────────────────────────────────────────────────────────────
 - type: entity

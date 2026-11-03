@@ -1,3 +1,4 @@
+using System.Linq;
 using Content.Shared._Duty.Weapons.ComboStrike;
 using Content.Shared.Damage;
 using Content.Shared.Damage.Components;
@@ -6,15 +7,17 @@ using Content.Shared.Weapons.Melee.Events;
 using Robust.Shared.Audio.Systems;
 using Robust.Shared.GameObjects;
 using Robust.Shared.IoC;
+using Robust.Shared.Timing;
 
 namespace Content.Server._Duty.Weapons.ComboStrike;
 
-public sealed class ComboStrikeSystem : EntitySystem
+public sealed partial class ComboStrikeSystem : EntitySystem
 {
-    [Dependency] private readonly DamageableSystem _damageable = default!;
-    [Dependency] private readonly SharedStaminaSystem _stamina = default!;
-    [Dependency] private readonly SharedAudioSystem _audio = default!;
-    [Dependency] private readonly SharedTransformSystem _transform = default!;
+    [Dependency] private DamageableSystem _damageable = default!;
+    [Dependency] private SharedStaminaSystem _stamina = default!;
+    [Dependency] private SharedAudioSystem _audio = default!;
+    [Dependency] private SharedTransformSystem _transform = default!;
+    [Dependency] private IGameTiming _timing = default!;
 
     public override void Initialize()
     {
@@ -30,15 +33,17 @@ public sealed class ComboStrikeSystem : EntitySystem
             return;
         }
 
-        var target = args.HitEntities[0];
+        var target = args.HitEntities.First();
+        var now = _timing.CurTime;
 
-        if (combo.LastTarget != target)
+        if (combo.LastTarget != target || now - combo.LastHitTime > TimeSpan.FromSeconds(combo.ComboWindow))
         {
             ResetCombo(combo);
             combo.LastTarget = target;
         }
 
         combo.CurrentHits++;
+        combo.LastHitTime = now;
 
         if (combo.CurrentHits < combo.HitsRequired)
             return;

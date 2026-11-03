@@ -1,20 +1,23 @@
+using Content.Shared._Duty.Administration;
+using Content.Server._Duty.Administration;
 using Content.Server.Administration.Logs;
 using Content.Server.Administration.Managers;
 using Content.Server.Administration.UI;
-using Content.Server.Disposal.Tube;
+using Content.Server.Afk;
 using Content.Server.EUI;
 using Content.Server.Ghost.Roles;
 using Content.Server.Mind;
 using Content.Server.Prayer;
 using Content.Server.Silicons.Laws;
 using Content.Server.Station.Systems;
-using Content.Server.Traits;
+using Content.Server.ADT.Traits; // ADT-Tweak
 using Content.Shared.Administration;
 using Content.Shared.Administration.Systems;
 using Content.Shared.Chemistry.Components.SolutionManager;
 using Content.Shared.Chemistry.EntitySystems;
 using Content.Shared.Configurable;
 using Content.Shared.Database;
+using Content.Shared.Disposal.Tube;
 using Content.Shared.Examine;
 using Content.Shared.GameTicking;
 using Content.Shared.Inventory;
@@ -31,11 +34,12 @@ using Robust.Shared.Console;
 using Robust.Shared.Map.Components;
 using Robust.Shared.Physics.Components;
 using Robust.Shared.Player;
-using Robust.Shared.Prototypes;
 using Robust.Shared.Timing;
 using Robust.Shared.Toolshed;
 using Robust.Shared.Utility;
 using System.Linq;
+using Content.Shared.Chemistry.Components;
+using Content.Shared.Mind;
 using static Content.Shared.Configurable.ConfigurationComponent;
 
 namespace Content.Server.Administration.Systems
@@ -45,29 +49,30 @@ namespace Content.Server.Administration.Systems
     /// </summary>
     public sealed partial class AdminVerbSystem : EntitySystem
     {
-        [Dependency] private readonly IConGroupController _groupController = default!;
-        [Dependency] private readonly IConsoleHost _console = default!;
-        [Dependency] private readonly IAdminManager _adminManager = default!;
-        [Dependency] private readonly IGameTiming _gameTiming = default!;
-        [Dependency] private readonly SharedMapSystem _map = default!;
-        [Dependency] private readonly IPrototypeManager _prototypeManager = default!;
-        [Dependency] private readonly AdminSystem _adminSystem = default!;
-        [Dependency] private readonly DisposalTubeSystem _disposalTubes = default!;
-        [Dependency] private readonly EuiManager _euiManager = default!;
-        [Dependency] private readonly GhostRoleSystem _ghostRoleSystem = default!;
-        [Dependency] private readonly UserInterfaceSystem _uiSystem = default!;
-        [Dependency] private readonly PrayerSystem _prayerSystem = default!;
-        [Dependency] private readonly MindSystem _mindSystem = default!;
-        [Dependency] private readonly ToolshedManager _toolshed = default!;
-        [Dependency] private readonly RejuvenateSystem _rejuvenate = default!;
-        [Dependency] private readonly SharedPopupSystem _popup = default!;
-        [Dependency] private readonly StationSystem _stations = default!;
-        [Dependency] private readonly StationSpawningSystem _spawning = default!;
-        [Dependency] private readonly TraitSystem _traits = default!; // ADT-Tweak
-        [Dependency] private readonly ExamineSystemShared _examine = default!;
-        [Dependency] private readonly AdminFrozenSystem _freeze = default!;
-        [Dependency] private readonly IPlayerManager _playerManager = default!;
-        [Dependency] private readonly SiliconLawSystem _siliconLawSystem = default!;
+        [Dependency] private IConGroupController _groupController = default!;
+        [Dependency] private IConsoleHost _console = default!;
+        [Dependency] private IAdminLogManager _adminLogs = default!;
+        [Dependency] private IAdminManager _adminManager = default!;
+        [Dependency] private IGameTiming _gameTiming = default!;
+        [Dependency] private SharedMapSystem _map = default!;
+        [Dependency] private AdminSystem _adminSystem = default!;
+        [Dependency] private DisposalTubeSystem _disposalTubes = default!;
+        [Dependency] private EuiManager _euiManager = default!;
+        [Dependency] private GhostRoleSystem _ghostRoleSystem = default!;
+        [Dependency] private UserInterfaceSystem _uiSystem = default!;
+        [Dependency] private PrayerSystem _prayerSystem = default!;
+        [Dependency] private MindSystem _mindSystem = default!;
+        [Dependency] private ToolshedManager _toolshed = default!;
+        [Dependency] private RejuvenateSystem _rejuvenate = default!;
+        [Dependency] private SharedPopupSystem _popup = default!;
+        [Dependency] private StationSystem _stations = default!;
+        [Dependency] private StationSpawningSystem _spawning = default!;
+        [Dependency] private ExamineSystemShared _examine = default!;
+        [Dependency] private AdminFrozenSystem _freeze = default!;
+        [Dependency] private IPlayerManager _playerManager = default!;
+        [Dependency] private SiliconLawSystem _siliconLawSystem = default!;
+        [Dependency] private AfkConfirmSystem _afkConfirm = default!;
+        [Dependency] private ADTTraitSystem _traits = default!; // ADT-Tweak
 
         private readonly Dictionary<ICommonSession, List<EditSolutionsEui>> _openSolutionUis = new();
 
@@ -75,7 +80,10 @@ namespace Content.Server.Administration.Systems
         {
             SubscribeLocalEvent<GetVerbsEvent<Verb>>(GetVerbs);
             SubscribeLocalEvent<RoundRestartCleanupEvent>(Reset);
-            SubscribeLocalEvent<SolutionContainerManagerComponent, SolutionContainerChangedEvent>(OnSolutionChanged);
+
+            // TODO: This is genuinely terrible, solutions are already networked and we shouldn't need to update the BUI like this.
+            SubscribeLocalEvent<SolutionComponent, SolutionChangedEvent>((x, ref _) => OnSolutionChanged(x.Owner));
+            SubscribeLocalEvent<SolutionManagerComponent, SolutionChangedEvent>((x, ref _) => OnSolutionChanged(x.Owner));
         }
 
         private void GetVerbs(GetVerbsEvent<Verb> ev)
@@ -99,6 +107,14 @@ namespace Content.Server.Administration.Systems
 
             if (_adminManager.IsAdmin(player))
             {
+                // _Duty-start: каждый верб требует своё право, а не просто «быть админом»
+                var canVerbs = _adminManager.Can(player, AdminNodes.EntsVerbs, AdminFlags.Admin);
+                var canSpawn = _adminManager.Can(player, AdminNodes.EntsSpawn, AdminFlags.Admin | AdminFlags.Spawn);
+                var canErase = _adminManager.Can(player, AdminNodes.EntsDelete, AdminFlags.Admin);
+                var canRespawn = _adminManager.Can(player, AdminNodes.PlayersKick, AdminFlags.Admin | AdminFlags.Moderator);
+                var canPanel = _adminManager.Can(player, AdminNodes.PlayersPanel, AdminFlags.Admin);
+                // _Duty-end
+
                 Verb mark = new();
                 mark.Text = Loc.GetString("toolshed-verb-mark");
                 mark.Message = Loc.GetString("toolshed-verb-mark-description");
@@ -134,12 +150,15 @@ namespace Content.Server.Administration.Systems
                         });
                     };
                     prayerVerb.Impact = LogImpact.Low;
-                    args.Verbs.Add(prayerVerb);
+                    if (canVerbs) // _Duty
+                        args.Verbs.Add(prayerVerb);
 
                     // Spawn - Like respawn but on the spot.
+                    if (canSpawn) // _Duty
                     args.Verbs.Add(new Verb()
                     {
                         Text = Loc.GetString("admin-player-actions-spawn"),
+                        Message = Loc.GetString("admin-player-actions-spawn-message"),
                         Category = VerbCategory.Admin,
                         Act = () =>
                         {
@@ -164,9 +183,11 @@ namespace Content.Server.Administration.Systems
                     });
 
                     // Clone - Spawn but without the mind transfer, also spawns at the user's coordinates not the target's
+                    if (canSpawn) // _Duty
                     args.Verbs.Add(new Verb()
                     {
                         Text = Loc.GetString("admin-player-actions-clone"),
+                        Message = Loc.GetString("admin-player-actions-clone-message"),
                         Category = VerbCategory.Admin,
                         Act = () =>
                         {
@@ -187,6 +208,7 @@ namespace Content.Server.Administration.Systems
                     });
 
                     // PlayerPanel
+                    if (canPanel) // _Duty
                     args.Verbs.Add(new Verb
                     {
                         Text = Loc.GetString("admin-player-actions-player-panel"),
@@ -194,11 +216,20 @@ namespace Content.Server.Administration.Systems
                         Act = () => _console.ExecuteCommand(player, $"playerpanel \"{targetActor.PlayerSession.UserId}\""),
                         Impact = LogImpact.Low
                     });
+
+                    args.Verbs.Add(new Verb
+                    {
+                        Text = Loc.GetString("admin-player-actions-check-afk"),
+                        Category = VerbCategory.Admin,
+                        Act = () => _afkConfirm.TryStartConfirmation(targetActor.PlayerSession, requireAttached: true),
+                        Impact = LogImpact.Low
+                    });
                 }
 
                 if (_mindSystem.TryGetMind(args.Target, out var mindId, out var mindComp) && mindComp.UserId != null)
                 {
                     // Erase
+                    if (canErase) // _Duty
                     args.Verbs.Add(new Verb
                     {
                         Text = Loc.GetString("admin-verbs-erase"),
@@ -215,9 +246,11 @@ namespace Content.Server.Administration.Systems
                     });
 
                     // Respawn
+                    if (canRespawn) // _Duty
                     args.Verbs.Add(new Verb
                     {
                         Text = Loc.GetString("admin-player-actions-respawn"),
+                        Message = Loc.GetString("admin-player-actions-respawn-message"),
                         Category = VerbCategory.Admin,
                         Act = () =>
                         {
@@ -228,6 +261,7 @@ namespace Content.Server.Administration.Systems
                     });
 
                     // Inspect mind
+                    if (_groupController.CanCommand(player, "vv")) // _Duty: верб открывает vv, без права на него он бесполезен
                     args.Verbs.Add(new Verb
                     {
                         Text = Loc.GetString("inspect-mind-verb-get-data-text"),
@@ -237,11 +271,27 @@ namespace Content.Server.Administration.Systems
                     });
                 }
 
+                // Player Admin Logs. this is distinct from entity logs above as it will get the logs of the _player_
+                // that last owned the mind of the entity you are right-clicking on. words.
+                if (_mindSystem.TryGetLastMindOwner(args.Target, out var lastOwner))
+                {
+                    args.Verbs.Add(new Verb()
+                    {
+                        Priority = -3,
+                        Text = Loc.GetString("admin-verbs-admin-logs-player"),
+                        Category = VerbCategory.Admin,
+                        Act = () =>
+                        {
+                            _adminLogs.OpenEui(player, targetPlayer: lastOwner);
+                        },
+                    });
+                }
+
                 // Freeze
                 var frozen = TryComp<AdminFrozenComponent>(args.Target, out var frozenComp);
                 var frozenAndMuted = frozenComp?.Muted ?? false;
 
-                if (!frozen)
+                if (!frozen && canVerbs) // _Duty
                 {
                     args.Verbs.Add(new Verb
                     {
@@ -257,7 +307,7 @@ namespace Content.Server.Administration.Systems
                     });
                 }
 
-                if (!frozenAndMuted)
+                if (!frozenAndMuted && canVerbs) // _Duty
                 {
                     // allow you to additionally mute someone when they are already frozen
                     args.Verbs.Add(new Verb
@@ -274,7 +324,7 @@ namespace Content.Server.Administration.Systems
                     });
                 }
 
-                if (frozen)
+                if (frozen && canVerbs) // _Duty
                 {
                     args.Verbs.Add(new Verb
                     {
@@ -380,7 +430,7 @@ namespace Content.Server.Administration.Systems
 
                 }
 
-                if (lawBoundComponent != null && target != null && _adminManager.HasAdminFlag(player, AdminFlags.Moderator))
+                if (lawBoundComponent != null && target != null && _adminManager.Can(player, AdminNodes.RolesLaws, AdminFlags.Moderator)) // _Duty: узел законов ИИ
                 {
                     args.Verbs.Add(new Verb()
                     {
@@ -401,6 +451,7 @@ namespace Content.Server.Administration.Systems
                 }
 
                 // open camera
+                if (_adminManager.Can(player, AdminNodes.EntsTeleport, AdminFlags.Admin)) // _Duty: камера — часть узла перемещения
                 args.Verbs.Add(new Verb()
                 {
                     Priority = 10,
@@ -455,7 +506,7 @@ namespace Content.Server.Administration.Systems
             }
 
             // Control mob verb
-            if ((_toolshed.ActivePermissionController?.CheckInvokable(new CommandSpec(_toolshed.DefaultEnvironment.GetCommand("mind"), "control"), player, out _) ?? false) &&
+            if (_toolshed.ActivePermissionController?.CheckInvokable(new CommandSpec(_toolshed.DefaultEnvironment.GetCommand("mind"), "control"), player, out _) ?? false &&
                 args.User != args.Target)
             {
                 Verb verb = new()
@@ -549,7 +600,7 @@ namespace Content.Server.Administration.Systems
                     Text = Loc.GetString("tube-direction-verb-get-data-text"),
                     Category = VerbCategory.Debug,
                     Icon = new SpriteSpecifier.Texture(new ("/Textures/Interface/VerbIcons/information.svg.192dpi.png")),
-                    Act = () => _disposalTubes.PopupDirections(args.Target, tube, args.User)
+                    Act = () => _disposalTubes.PopupDirections((args.Target, tube), args.User)
                 };
                 args.Verbs.Add(verb);
             }
@@ -583,7 +634,7 @@ namespace Content.Server.Administration.Systems
 
             // Add verb to open Solution Editor
             if (_groupController.CanCommand(player, "addreagent") &&
-                HasComp<SolutionContainerManagerComponent>(args.Target))
+                (HasComp<SolutionManagerComponent>(args.Target) || HasComp<SolutionComponent>(args.Target)))
             {
                 Verb verb = new()
                 {
@@ -598,13 +649,13 @@ namespace Content.Server.Administration.Systems
         }
 
         #region SolutionsEui
-        private void OnSolutionChanged(Entity<SolutionContainerManagerComponent> entity, ref SolutionContainerChangedEvent args)
+        private void OnSolutionChanged(EntityUid uid)
         {
             foreach (var list in _openSolutionUis.Values)
             {
                 foreach (var eui in list)
                 {
-                    if (eui.Target == entity.Owner)
+                    if (eui.Target == uid)
                         eui.StateDirty();
                 }
             }

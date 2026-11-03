@@ -1,3 +1,5 @@
+using Content.Shared._Duty.Administration;
+using Content.Server._Duty.Administration;
 using Content.Shared.Administration;
 using Content.Shared.Database;
 using Content.Shared.Sprite;
@@ -29,7 +31,7 @@ public sealed partial class AdminVerbSystem
 
         var player = actor.PlayerSession;
 
-        if (!_adminManager.HasAdminFlag(player, AdminFlags.Admin))
+        if (!_adminManager.Can(player, AdminNodes.EntsVerbs, AdminFlags.Admin)) // _Duty
             return;
 
         if (_adminManager.HasAdminFlag(player, AdminFlags.VarEdit))

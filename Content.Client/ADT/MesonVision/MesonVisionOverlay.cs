@@ -14,19 +14,20 @@ namespace Content.Client.ADT.MesonVision;
 
 public sealed class MesonVisionOverlay : Overlay
 {
-    [Dependency] private readonly IEntityManager _entity = default!;
-    [Dependency] private readonly IPlayerManager _player = default!;
+    [Dependency] private IEntityManager _entity = default!;
+    [Dependency] private IPlayerManager _player = default!;
     private readonly SharedTransformSystem _xformSystem;
     private readonly ContainerSystem _container;
     private readonly SpriteSystem _spriteSystem;
     private readonly EntityQuery<SpriteComponent> _spriteQuery;
     private readonly EntityQuery<TransformComponent> _xformQuery;
     private readonly EntityQuery<TagComponent> _tagQuery;
+    private readonly EntityLookupSystem _lookup;
+    private readonly HashSet<EntityUid> _visible = new();
 
     public override OverlaySpace Space => OverlaySpace.WorldSpace;
     private readonly List<MesonVisionRenderEntry> _entries = new(64);
 
-    private const float MesonAlpha = 0.35f; // Someday, someone will do this in a component.
     private const int MesonDrawDepth = 0;
 
     public MesonVisionOverlay()
@@ -38,6 +39,7 @@ public sealed class MesonVisionOverlay : Overlay
         _spriteQuery = _entity.GetEntityQuery<SpriteComponent>();
         _xformQuery = _entity.GetEntityQuery<TransformComponent>();
         _tagQuery = _entity.GetEntityQuery<TagComponent>();
+        _lookup = _entity.System<EntityLookupSystem>();
     }
 
     protected override void Draw(in OverlayDrawArgs args)
@@ -55,10 +57,14 @@ public sealed class MesonVisionOverlay : Overlay
         var worldBounds = args.WorldBounds;
         var worldHandle = args.WorldHandle;
 
-        var query = _entity.EntityQueryEnumerator<SpriteComponent, TransformComponent>();
-        while (query.MoveNext(out var entity, out var sprite, out var xform))
+        _visible.Clear();
+        _lookup.GetEntitiesIntersecting(mapId, args.WorldAABB, _visible, LookupFlags.Static | LookupFlags.Dynamic | LookupFlags.Sundries | LookupFlags.Approximate);
+
+        foreach (var entity in _visible)
         {
-            if (xform.MapID != mapId ||
+            if (!_spriteQuery.TryGetComponent(entity, out var sprite) ||
+                !_xformQuery.TryGetComponent(entity, out var xform) ||
+                xform.MapID != mapId ||
                 _container.TryGetOuterContainer(entity, xform, out _))
                 continue;
 
@@ -90,7 +96,7 @@ public sealed class MesonVisionOverlay : Overlay
                 mapId,
                 eyeRot,
                 MesonDrawDepth,
-                MesonAlpha));
+                nightVision.WallAlpha));
         }
 
         foreach (var entry in _entries)

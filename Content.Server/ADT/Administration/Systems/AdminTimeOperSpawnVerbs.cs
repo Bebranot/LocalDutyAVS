@@ -1,3 +1,5 @@
+using Content.Shared._Duty.Administration;
+using Content.Server._Duty.Administration;
 using Content.Server.GameTicking;
 using Content.Shared.Actions;
 using Content.Shared.Administration;
@@ -26,7 +28,7 @@ namespace Content.Server.Administration.Systems;
 
 public sealed partial class AdminVerbSystem
 {
-    [Dependency] private readonly SharedAudioSystem _audio = default!;
+    [Dependency] private SharedAudioSystem _audio = default!;
 
     private void AddAdminTimeOperSpawnVerbs(GetVerbsEvent<Verb> args)
     {
@@ -35,7 +37,7 @@ public sealed partial class AdminVerbSystem
 
         var player = actor.PlayerSession;
 
-        if (!_adminManager.HasAdminFlag(player, AdminFlags.Admin))
+        if (!_adminManager.Can(player, AdminNodes.EntsSpawn, AdminFlags.Admin)) // _Duty: вербы создают сущности
             return;
 
         if (_adminManager.IsAdmin(player))

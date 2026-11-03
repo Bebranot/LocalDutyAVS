@@ -1,3 +1,4 @@
+using Content.Shared._Duty.Administration;
 using System.Linq;
 using Content.Server.Administration.Managers;
 using Content.Server.Chat.Managers;
@@ -7,7 +8,6 @@ using Content.Server.Hands.Systems;
 using Content.Server.Mind;
 using Content.Server.Players.PlayTimeTracking;
 using Content.Server.Popups;
-using Content.Server.StationRecords.Systems;
 using Content.Shared.Administration;
 using Content.Shared.Administration.Events;
 using Content.Shared.CCVar;
@@ -24,6 +24,8 @@ using Content.Shared.Popups;
 using Content.Shared.Roles;
 using Content.Shared.Roles.Jobs;
 using Content.Shared.StationRecords;
+using Content.Shared.StationRecords.Components;
+using Content.Shared.StationRecords.Systems;
 using Content.Shared.Throwing;
 using Robust.Server.GameObjects;
 using Robust.Server.Player;
@@ -33,31 +35,30 @@ using Robust.Shared.Configuration;
 using Robust.Shared.Enums;
 using Robust.Shared.Network;
 using Robust.Shared.Player;
-using Robust.Shared.Prototypes;
 
 namespace Content.Server.Administration.Systems;
 
-public sealed class AdminSystem : EntitySystem
+public sealed partial class AdminSystem : EntitySystem
 {
-    [Dependency] private readonly IAdminManager _adminManager = default!;
-    [Dependency] private readonly IChatManager _chat = default!;
-    [Dependency] private readonly IConfigurationManager _config = default!;
-    [Dependency] private readonly IPlayerManager _playerManager = default!;
-    [Dependency] private readonly HandsSystem _hands = default!;
-    [Dependency] private readonly SharedJobSystem _jobs = default!;
-    [Dependency] private readonly InventorySystem _inventory = default!;
-    [Dependency] private readonly MindSystem _minds = default!;
-    [Dependency] private readonly PopupSystem _popup = default!;
-    [Dependency] private readonly PhysicsSystem _physics = default!;
-    [Dependency] private readonly PlayTimeTrackingManager _playTime = default!;
-    [Dependency] private readonly IPrototypeManager _proto = default!;
-    [Dependency] private readonly SharedRoleSystem _role = default!;
-    [Dependency] private readonly GameTicker _gameTicker = default!;
-    [Dependency] private readonly SharedAudioSystem _audio = default!;
-    [Dependency] private readonly StationRecordsSystem _stationRecords = default!;
-    [Dependency] private readonly TransformSystem _transform = default!;
+    [Dependency] private IAdminManager _adminManager = default!;
+    [Dependency] private IChatManager _chat = default!;
+    [Dependency] private IConfigurationManager _config = default!;
+    [Dependency] private IPlayerManager _playerManager = default!;
+    [Dependency] private HandsSystem _hands = default!;
+    [Dependency] private SharedJobSystem _jobs = default!;
+    [Dependency] private InventorySystem _inventory = default!;
+    [Dependency] private MindSystem _minds = default!;
+    [Dependency] private PopupSystem _popup = default!;
+    [Dependency] private PhysicsSystem _physics = default!;
+    [Dependency] private PlayTimeTrackingManager _playTime = default!;
+    [Dependency] private SharedRoleSystem _role = default!;
+    [Dependency] private GameTicker _gameTicker = default!;
+    [Dependency] private SharedAudioSystem _audio = default!;
+    [Dependency] private StationRecordsSystem _stationRecords = default!;
+    [Dependency] private TransformSystem _transform = default!;
+
     //ADT-SPONSORS
-    [Dependency] private readonly SponsorsManager _sponsorsManager = default!;
+    [Dependency] private SponsorsManager _sponsorsManager = default!;
     //ADT-SPONSORS
     private readonly Dictionary<NetUserId, PlayerInfo> _playerList = new();
 
@@ -115,7 +116,8 @@ public sealed class AdminSystem : EntitySystem
 
         var updateEv = new FullPlayerListEvent() { PlayersInfo = _playerList.Values.ToList() };
 
-        foreach (var admin in _adminManager.ActiveAdmins)
+        // _Duty: полный список игроков (роли, антаги) — только тем, кто работает с игроками (см. CanSeePlayerList)
+        foreach (var admin in _adminManager.ActiveAdmins.Where(CanSeePlayerList))
         {
             RaiseNetworkEvent(updateEv, admin.Channel);
         }
@@ -135,7 +137,7 @@ public sealed class AdminSystem : EntitySystem
             PlayerInfo = _playerList[player.UserId]
         };
 
-        foreach (var admin in _adminManager.ActiveAdmins)
+        foreach (var admin in _adminManager.ActiveAdmins.Where(CanSeePlayerList)) // _Duty
         {
             RaiseNetworkEvent(playerInfoChangedEvent, admin.Channel);
         }
@@ -167,7 +169,7 @@ public sealed class AdminSystem : EntitySystem
     {
         UpdatePanicBunker();
 
-        if (!obj.IsAdmin)
+        if (!obj.IsAdmin || !CanSeePlayerList(obj.Player)) // _Duty: список только тем, кому он нужен
         {
             RaiseNetworkEvent(new FullPlayerListEvent(), obj.Player.Channel);
             return;
@@ -209,6 +211,23 @@ public sealed class AdminSystem : EntitySystem
         UpdatePanicBunker();
     }
 
+    // _Duty-start: кому отправлять полный список игроков
+    private bool CanSeePlayerList(ICommonSession session)
+    {
+        // _Duty: список нужен тем, кто работает с игроками: Admin, баны, модерация, ahelp или узлы просмотра игроков
+        var data = _adminManager.GetAdminData(session);
+        if (data == null)
+            return false;
+
+        const AdminFlags mask = AdminFlags.Admin | AdminFlags.Ban | AdminFlags.Moderator | AdminFlags.Adminhelp
+                                | AdminFlags.AhelpView | AdminFlags.Logs | AdminFlags.ViewNotes;
+        return (data.Flags & mask) != 0
+               || data.HasNode(AdminNodes.PlayersPanel)
+               || data.HasNode(AdminNodes.PlayersBanlist)
+               || data.HasNode(AdminNodes.EntsView);
+    }
+    // _Duty-end
+
     private void SendFullPlayerList(ICommonSession playerSession)
     {
         var ev = new FullPlayerListEvent();
@@ -242,7 +261,7 @@ public sealed class AdminSystem : EntitySystem
         {
             sortWeight = _role.GetRoleCompByTime(mindComp)?.Comp.SortWeight ?? 0;
 
-            if (_proto.TryIndex(mindComp.RoleType, out var role))
+            if (ProtoMan.TryIndex(mindComp.RoleType, out var role))
             {
                 roleType = role;
                 subtype = mindComp.Subtype;
@@ -270,7 +289,7 @@ public sealed class AdminSystem : EntitySystem
 
         //ADT-SPONSORS
         SponsorInfo? sponsorInfo = null;
-        _sponsorsManager.TryGetInfo(data.UserId, out sponsorInfo);
+        _sponsorsManager.TryGetRawInfo(data.UserId, out sponsorInfo); // ADT-Tweak
 
         return new PlayerInfo(
             name,
@@ -350,7 +369,10 @@ public sealed class AdminSystem : EntitySystem
         var hasAdmins = false;
         foreach (var admin in _adminManager.AllAdmins)
         {
-            if (_adminManager.HasAdminFlag(admin, AdminFlags.Admin, includeDeAdmin: PanicBunker.CountDeadminnedAdmins))
+            // _Duty: админом на сервере считается и тот, у кого права выданы узлами (без флага Admin)
+            var includeDeAdmin = PanicBunker.CountDeadminnedAdmins;
+            if (_adminManager.HasAdminFlag(admin, AdminFlags.Admin, includeDeAdmin)
+                || _adminManager.GetAdminData(admin, includeDeAdmin) is { Nodes.Count: > 0 })
             {
                 hasAdmins = true;
                 break;
@@ -417,8 +439,13 @@ public sealed class AdminSystem : EntitySystem
                 var name = Identity.Entity(entity, EntityManager);
                 _popup.PopupCoordinates(Loc.GetString("admin-erase-popup", ("user", name)), coordinates, PopupType.LargeCaution);
                 var filter = Filter.Pvs(coordinates, 1, EntityManager, _playerManager);
-                var audioParams = new AudioParams().WithVolume(3);
-                _audio.PlayStatic("/Audio/Effects/pop_high.ogg", filter, coordinates, true, audioParams);
+                _audio.PlayStatic(
+                        "/Audio/Effects/pop_high.ogg",
+                        filter,
+                        coordinates,
+                        true,
+                        AudioParams.Default.AddVolume(3)
+                        );
             }
 
             foreach (var item in _inventory.GetHandOrInventoryEntities(entity))

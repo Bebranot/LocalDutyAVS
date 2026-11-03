@@ -1,5 +1,7 @@
 using Content.Shared._Duty.Aiming.Events;
 using Content.Shared.Damage.Systems;
+using Content.Shared.Hands;
+using Content.Shared.Hands.EntitySystems;
 using Content.Shared.Mobs;
 using Content.Shared.Movement.Systems;
 using Content.Shared.Popups;
@@ -10,6 +12,7 @@ using Content.Shared.Weapons.Ranged.Systems;
 using Content.Shared.Wieldable;
 using Content.Shared.Wieldable.Components;
 using Robust.Shared.Maths;
+using Robust.Shared.Network;
 using Robust.Shared.Player;
 using Robust.Shared.Prototypes;
 using Robust.Shared.Timing;
@@ -22,15 +25,17 @@ namespace Content.Shared._Duty.Aiming;
 /// Нельзя сменить стойку (лечь/встать) во время прицеливания; выход из прицеливания лёжа
 /// на короткое время обездвиживает персонажа.
 /// </summary>
-public sealed class SharedAimingSystem : EntitySystem
+public sealed partial class SharedAimingSystem : EntitySystem
 {
-    [Dependency] private readonly SharedContentEyeSystem _contentEye = default!;
-    [Dependency] private readonly MovementSpeedModifierSystem _movementSpeedModifier = default!;
-    [Dependency] private readonly MovementModStatusSystem _movementMod = default!;
-    [Dependency] private readonly SharedGunSystem _gun = default!;
-    [Dependency] private readonly SharedPopupSystem _popup = default!;
-    [Dependency] private readonly SharedTransformSystem _transform = default!;
-    [Dependency] private readonly IGameTiming _timing = default!;
+    [Dependency] private SharedContentEyeSystem _contentEye = default!;
+    [Dependency] private SharedHandsSystem _hands = default!;
+    [Dependency] private MovementSpeedModifierSystem _movementSpeedModifier = default!;
+    [Dependency] private MovementModStatusSystem _movementMod = default!;
+    [Dependency] private SharedGunSystem _gun = default!;
+    [Dependency] private SharedPopupSystem _popup = default!;
+    [Dependency] private SharedTransformSystem _transform = default!;
+    [Dependency] private IGameTiming _timing = default!;
+    [Dependency] private INetManager _net = default!;
 
     private static readonly EntProtoId AimRecoveryEffect = "AimRecoveryImmobilizeStatusEffect";
     private static readonly TimeSpan TooCloseWarningCooldown = TimeSpan.FromSeconds(5);
@@ -45,6 +50,7 @@ public sealed class SharedAimingSystem : EntitySystem
         SubscribeAllEvent<RequestStopAimEvent>(OnStopAimRequest);
 
         SubscribeLocalEvent<AimableComponent, ItemUnwieldedEvent>(OnGunUnwielded);
+        SubscribeLocalEvent<AimableComponent, GotUnequippedHandEvent>(OnGunUnequippedHand);
 
         SubscribeLocalEvent<AimableComponent, GunRefreshModifiersEvent>(OnGunRefreshModifiers);
 
@@ -68,11 +74,24 @@ public sealed class SharedAimingSystem : EntitySystem
             return;
 
         if (!TryComp<AimableComponent>(gunUid, out var aimable) ||
-            !TryComp<WieldableComponent>(gunUid, out var wieldable) ||
-            !wieldable.Wielded || wieldable.User != user ||
             !TryComp<GunComponent>(gunUid, out var gun) ||
             !gun.UseKey)
         {
+            return;
+        }
+
+        if (aimable.RequiresWield)
+        {
+            // Двуручный прицел: оружие обязано быть зажато в обе руки (Wieldable).
+            if (!TryComp<WieldableComponent>(gunUid, out var wieldable) ||
+                !wieldable.Wielded || wieldable.User != user)
+            {
+                return;
+            }
+        }
+        else if (!_hands.IsHolding(user, gunUid))
+        {
+            // Одноручный прицел: не нужен wield, но оружие обязано быть в руке пользователя.
             return;
         }
 
@@ -162,7 +181,7 @@ public sealed class SharedAimingSystem : EntitySystem
     private void OnAimingShutdown(Entity<AimingComponent> ent, ref ComponentShutdown args)
     {
         _contentEye.ResetZoom(ent);
-        _movementSpeedModifier.RefreshMovementSpeedModifiers(ent);
+        _movementSpeedModifier.RefreshMovementSpeedModifiers(ent.Owner);
 
         if (Exists(ent.Comp.Gun))
         {
@@ -173,6 +192,14 @@ public sealed class SharedAimingSystem : EntitySystem
 
     private void OnGunUnwielded(Entity<AimableComponent> ent, ref ItemUnwieldedEvent args)
     {
+        if (TryComp<AimingComponent>(args.User, out var aiming) && aiming.Gun == ent.Owner)
+            StopAiming(args.User);
+    }
+
+    private void OnGunUnequippedHand(Entity<AimableComponent> ent, ref GotUnequippedHandEvent args)
+    {
+        // Одноручный прицел не связан с Wieldable, поэтому его нужно сбрасывать
+        // при уходе оружия из руки отдельно (для двуручного это уже покрыто ItemUnwieldedEvent).
         if (TryComp<AimingComponent>(args.User, out var aiming) && aiming.Gun == ent.Owner)
             StopAiming(args.User);
     }
@@ -247,17 +274,30 @@ public sealed class SharedAimingSystem : EntitySystem
         if (!TryComp<AimableComponent>(ent.Comp.Gun, out var aimable))
             return;
 
-        // Лёжа прицеливание полностью обездвиживает (стрельба с упора). Стоя — обычное замедление.
+        // Лёжа прицеливание полностью обездвиживает (стрельба с упора). Стоя — обычное замедление,
+        // либо усиленный штраф для одноручного прицела (RequiresWield == false).
         if (ent.Comp.IsProne)
             args.ModifySpeed(0f, 0f);
-        else
+        else if (aimable.RequiresWield)
             args.ModifySpeed(aimable.WalkSpeedModifier, aimable.SprintSpeedModifier);
+        else
+            args.ModifySpeed(aimable.OneHandedWalkSpeedModifier, aimable.OneHandedSprintSpeedModifier);
     }
 
     private void OnAimingDamaged(Entity<AimingComponent> ent, ref DamageChangedEvent args)
     {
-        if (args.DamageIncreased)
-            StopAiming(ent);
+        if (!args.DamageIncreased)
+            return;
+
+        // Попадание решает только сервер, и у клиента-жертвы нечего предсказывать: рывок камеры
+        // приходит с задержкой в пинг, как и сам урон.
+        if (_net.IsServer)
+        {
+            var damage = args.DamageDelta?.GetTotal().Float() ?? 0f;
+            RaiseNetworkEvent(new AimFlinchEvent(damage), ent.Owner);
+        }
+
+        StopAiming(ent);
     }
 
     private void OnAimingStunned(Entity<AimingComponent> ent, ref StunnedEvent args)
@@ -275,6 +315,16 @@ public sealed class SharedAimingSystem : EntitySystem
     {
         if (ent.Comp.IsProne)
             return;
+
+        // Запрет — только на добровольное «лечь» (ToggleKnockdown и подкат зовут нокдаун с
+        // AutoStand = false). Раньше отменялся любой нокдаун, и прицеливающийся стоя не падал от
+        // толчка, взрыва и прочего нефорсированного — фактически иммунитет. Внешний нокдаун
+        // теперь сбивает прицел и проходит как обычно.
+        if (args.AutoStand)
+        {
+            StopAiming(ent);
+            return;
+        }
 
         args.Cancelled = true;
         _popup.PopupClient(Loc.GetString("aiming-cant-change-stance"), ent, ent);

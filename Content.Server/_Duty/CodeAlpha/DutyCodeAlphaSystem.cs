@@ -4,13 +4,13 @@
 
 using Content.Server.Access.Systems;
 using Content.Server.Administration.Logs;
-using Content.Server.AlertLevel;
 using Content.Server.Chat.Managers;
+using Content.Shared.AlertLevel;
 using Content.Shared._Duty.CodeAlpha;
 using Content.Shared.Chat;
 using Content.Shared.Database;
 using Content.Shared.GameTicking;
-using Content.Shared.Ghost;
+using Content.Shared.Ghost.Components;
 using Content.Shared.Hands.EntitySystems;
 using Content.Shared.Inventory;
 using Content.Shared.Mind.Components;
@@ -34,17 +34,17 @@ namespace Content.Server._Duty.CodeAlpha;
 /// админское, а не механическое. Отсчёт идёт от самого объявления кода: пятнадцать минут с этого
 /// момента и есть срок, по истечении которого оперативники вылетают.
 /// </summary>
-public sealed class DutyCodeAlphaSystem : EntitySystem
+public sealed partial class DutyCodeAlphaSystem : EntitySystem
 {
-    [Dependency] private readonly IAdminLogManager _adminLogger = default!;
-    [Dependency] private readonly IChatManager _chat = default!;
-    [Dependency] private readonly IGameTiming _timing = default!;
-    [Dependency] private readonly IPlayerManager _player = default!;
-    [Dependency] private readonly IRobustRandom _random = default!;
-    [Dependency] private readonly AlertLevelSystem _alertLevel = default!;
-    [Dependency] private readonly IdCardSystem _idCard = default!;
-    [Dependency] private readonly InventorySystem _inventory = default!;
-    [Dependency] private readonly SharedHandsSystem _hands = default!;
+    [Dependency] private IAdminLogManager _adminLogger = default!;
+    [Dependency] private IChatManager _chat = default!;
+    [Dependency] private IGameTiming _timing = default!;
+    [Dependency] private IPlayerManager _player = default!;
+    [Dependency] private IRobustRandom _random = default!;
+    [Dependency] private AlertLevelSystem _alertLevel = default!;
+    [Dependency] private IdCardSystem _idCard = default!;
+    [Dependency] private InventorySystem _inventory = default!;
+    [Dependency] private SharedHandsSystem _hands = default!;
 
     private static readonly Color NoticeColor = Color.Gray;
 
@@ -83,7 +83,7 @@ public sealed class DutyCodeAlphaSystem : EntitySystem
 
     #region Event handlers
 
-    private void OnAlertLevelChanged(AlertLevelChangedEvent args)
+    private void OnAlertLevelChanged(ref AlertLevelChangedEvent args)
     {
         if (_activeStation is not { } station || args.Station != station)
             return;

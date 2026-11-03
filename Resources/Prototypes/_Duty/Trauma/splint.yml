@@ -17,6 +17,11 @@
       # У самодельной рси нет отдельных инхенд-состояний (только icon) — не задаём
       # Item.sprite, иначе движок искал бы несуществующие "inhand-*" состояния там же.
       size: Small
+    # Конечная сущность графа обязана знать свой граф и узел, иначе граф считается сломанным
+    # (ConstructionPrototypeTest), а разбор/доводка предмета не находят, откуда он взялся.
+    - type: Construction
+      graph: DutySplint
+      node: splint
 
 - type: constructionGraph
   id: DutySplint

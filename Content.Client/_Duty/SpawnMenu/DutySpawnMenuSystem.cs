@@ -13,9 +13,9 @@ namespace Content.Client._Duty.SpawnMenu;
 /// _Duty: клиентская половина меню выдачи предметов. Окно и режим размещения — здесь,
 /// все проверки — на сервере (см. Content.Server/_Duty/SpawnMenu).
 /// </summary>
-public sealed class DutySpawnMenuSystem : EntitySystem
+public sealed partial class DutySpawnMenuSystem : EntitySystem
 {
-    [Dependency] private readonly IPlacementManager _placement = default!;
+    [Dependency] private IPlacementManager _placement = default!;
 
     /// <summary>
     /// Режим размещения из движка: свободная точка, но с проверкой дистанции до игрока

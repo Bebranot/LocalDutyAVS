@@ -1,59 +1,52 @@
 # Боеприпасы 9x18 — порт из STALKER-14. Mutant→Piercing.
 
 # ── Снаряды ──────────────────────────────────────────────────────────────────
+# Три роли на калибр (см. bases.yml): обычный / бронебойный (БП) / экспансивный.
 - type: entity
   id: Bullet918PGJ
-  name: bullet (9х18 auto)
+  name: bullet (9x18)
   parent: STBasePistolBullet
   categories: [ HideSpawnMenu ]
   components:
   - type: TimedDespawn
     lifetime: 2
   - type: Projectile
-    projectileClass: 1
     damage:
       types:
-        Piercing: 13
+        Piercing: 12
   - type: StaminaDamageOnCollide
     damage: 1
-
-- type: entity
-  id: Bullet918PST
-  name: bullet (9х18 auto)
-  parent: Bullet918PGJ
-  categories: [ HideSpawnMenu ]
-  components:
-  - type: Projectile
-    projectileClass: 2
-    damage:
-      types:
-        Piercing: 14
-
-- type: entity
-  id: Bullet918SP7
-  name: bullet (9х18 auto)
-  parent: Bullet918PGJ
-  categories: [ HideSpawnMenu ]
-  components:
-  - type: Projectile
-    projectileClass: 0
-    damage:
-      types:
-        Piercing: 11
-        Blunt: 2
-        Slash: 2
+  - type: DutyBallistics
+    armorPenetration: 0.05
 
 - type: entity
   id: Bullet918PBM
-  name: bullet (9х18 auto)
+  name: bullet (9x18 AP)
   parent: Bullet918PGJ
   categories: [ HideSpawnMenu ]
   components:
   - type: Projectile
-    projectileClass: 3
     damage:
       types:
-        Piercing: 14
+        Piercing: 11
+  - type: DutyBallistics
+    armorPenetration: 0.35
+
+- type: entity
+  id: Bullet918SP7
+  name: bullet (9x18 HP)
+  parent: Bullet918PGJ
+  categories: [ HideSpawnMenu ]
+  components:
+  - type: Projectile
+    damage:
+      types:
+        Piercing: 9
+        Slash: 4
+        Blunt: 1
+  - type: DutyBallistics
+    armorPenetration: -0.3
+    arteryBonus: 0.02
 
 # ── Патроны ──────────────────────────────────────────────────────────────────
 - type: entity
@@ -79,7 +72,7 @@
 
 - type: entity
   id: STCartridge918PGJ
-  name: cartridge 9x18 P
+  name: cartridge (9x18)
   suffix: "Stalker, STWeapon, Огнестрел"
   parent: BaseSTCartridge918
   components:
@@ -87,31 +80,37 @@
     proto: Bullet918PGJ
 
 - type: entity
-  id: STCartridge918PST
-  name: cartridge 9x18 PST
-  suffix: "Stalker, STWeapon, Огнестрел"
-  parent: BaseSTCartridge918
-  components:
-  - type: CartridgeAmmo
-    proto: Bullet918PST
-
-- type: entity
-  id: STCartridge918SP7
-  name: cartridge 9x18 SP-7
-  suffix: "Stalker, STWeapon, Огнестрел"
-  parent: BaseSTCartridge918
-  components:
-  - type: CartridgeAmmo
-    proto: Bullet918SP7
-
-- type: entity
   id: STCartridge918PBM
-  name: cartridge 9x18 PBM
+  name: cartridge (9x18 AP)
   suffix: "Stalker, STWeapon, Огнестрел"
   parent: BaseSTCartridge918
   components:
   - type: CartridgeAmmo
     proto: Bullet918PBM
+  - type: Sprite
+    layers:
+    - state: base
+      map: ["enum.AmmoVisualLayers.Base"]
+    - state: tip
+      map: ["enum.AmmoVisualLayers.Tip"]
+      color: "#2b2b2b"
+
+- type: entity
+  id: STCartridge918SP7
+  name: cartridge (9x18 HP)
+  suffix: "Stalker, STWeapon, Огнестрел"
+  parent: BaseSTCartridge918
+  components:
+  - type: CartridgeAmmo
+    proto: Bullet918SP7
+  - type: Sprite
+    layers:
+    - state: base
+      map: ["enum.AmmoVisualLayers.Base"]
+    - state: tip
+      map: ["enum.AmmoVisualLayers.Tip"]
+      color: "#4f86c6"
+
 
 # ── Магазины ─────────────────────────────────────────────────────────────────
 - type: entity

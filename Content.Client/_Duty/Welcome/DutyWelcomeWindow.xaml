@@ -1,0 +1,31 @@
+<controls:FancyWindow xmlns="https://spacestation14.io"
+                      xmlns:controls="clr-namespace:Content.Client.UserInterface.Controls"
+                      Title="{Loc 'duty-welcome-window-title'}"
+                      MinSize="480 420"
+                      SetSize="520 480">
+    <BoxContainer Orientation="Vertical" Margin="8" SeparationOverride="8">
+        <Label Name="HeaderLabel"
+               HorizontalExpand="True"
+               StyleClasses="LabelSubText" />
+        <TabContainer Name="Tabs" VerticalExpand="True">
+            <ScrollContainer Name="NewTab" VerticalExpand="True" HorizontalExpand="True">
+                <RichTextLabel Name="NewLabel" Margin="6" HorizontalExpand="True" />
+            </ScrollContainer>
+            <ScrollContainer Name="MechanicsTab" VerticalExpand="True" HorizontalExpand="True">
+                <RichTextLabel Name="MechanicsLabel" Margin="6" HorizontalExpand="True" />
+            </ScrollContainer>
+            <ScrollContainer Name="RulesTab" VerticalExpand="True" HorizontalExpand="True">
+                <RichTextLabel Name="RulesLabel" Margin="6" HorizontalExpand="True" />
+            </ScrollContainer>
+        </TabContainer>
+        <BoxContainer Orientation="Horizontal" SeparationOverride="8">
+            <CheckBox Name="DontShowAgainCheckBox"
+                      Text="{Loc 'duty-welcome-checkbox'}"
+                      HorizontalExpand="True" />
+            <Button Name="OkButton"
+                    Text="{Loc 'duty-welcome-ok-button'}"
+                    StyleClasses="ButtonColorGreen"
+                    MinWidth="120" />
+        </BoxContainer>
+    </BoxContainer>
+</controls:FancyWindow>

@@ -1,0 +1,117 @@
+# Городские стены и полы (90-е): перенесено из Stalker, ADT и ванили. Суффикс PortedSlPc.
+
+- type: entity
+  parent: BaseWall
+  id: DutyWallStalkerConcretePortedSlPc
+  suffix: Duty, Ported, SlPc
+  components:
+  - type: Sprite
+    sprite: _Duty/Ported/City/Structures/Walls/stalker_concrete.rsi
+  - type: Icon
+    sprite: _Duty/Ported/City/Structures/Walls/stalker_concrete.rsi
+  - type: RCDDeconstructable
+    cost: 6
+    delay: 8
+    fx: EffectRCDDeconstruct8
+  - type: Destructible
+    thresholds:
+    - trigger:
+        !type:DamageTrigger
+        damage: 400
+      behaviors:
+      - !type:PlaySoundBehavior
+        sound:
+          collection: DutyCityWallBreakPortedSlPc
+      - !type:SpawnEntitiesBehavior
+        spawn:
+          Girder:
+            min: 1
+            max: 1
+      - !type:DoActsBehavior
+        acts: [ "Destruction" ]
+  - type: IconSmooth
+    key: walls
+    base: concrete
+
+- type: entity
+  parent: BaseWall
+  id: DutyWallYellowBrickPortedSlPc
+  suffix: Duty, Ported, SlPc
+  components:
+  - type: Sprite
+    sprite: _Duty/Ported/City/Structures/Walls/adt_yellow_bricks.rsi
+  - type: Icon
+    sprite: _Duty/Ported/City/Structures/Walls/adt_yellow_bricks.rsi
+  - type: RCDDeconstructable
+    cost: 6
+    delay: 8
+    fx: EffectRCDDeconstruct8
+  - type: Destructible
+    thresholds:
+    - trigger:
+        !type:DamageTrigger
+        damage: 400
+      behaviors:
+      - !type:PlaySoundBehavior
+        sound:
+          collection: DutyCityWallBreakPortedSlPc
+      - !type:SpawnEntitiesBehavior
+        spawn:
+          Girder:
+            min: 1
+            max: 1
+      - !type:DoActsBehavior
+        acts: [ "Destruction" ]
+  - type: IconSmooth
+    key: walls
+    base: yellowbricks
+
+- type: entity
+  parent: BaseWall
+  id: DutyWallStoneBrickPortedSlPc
+  suffix: Duty, Ported, SlPc
+  components:
+  - type: Sprite
+    sprite: _Duty/Ported/City/Structures/Walls/adt_stone_bricks.rsi
+  - type: Icon
+    sprite: _Duty/Ported/City/Structures/Walls/adt_stone_bricks.rsi
+  - type: RCDDeconstructable
+    cost: 6
+    delay: 8
+    fx: EffectRCDDeconstruct8
+  - type: Destructible
+    thresholds:
+    - trigger:
+        !type:DamageTrigger
+        damage: 400
+      behaviors:
+      - !type:PlaySoundBehavior
+        sound:
+          collection: DutyCityWallBreakPortedSlPc
+      - !type:SpawnEntitiesBehavior
+        spawn:
+          Girder:
+            min: 1
+            max: 1
+      - !type:DoActsBehavior
+        acts: [ "Destruction" ]
+  - type: IconSmooth
+    key: walls
+    base: stonebricks
+
+# Звуки: переиспользуем уже имеющиеся файлы, чтобы не плодить копии.
+- type: soundCollection
+  id: DutyCityWallBreakPortedSlPc
+  files:
+  - /Audio/Effects/metal_slam1.ogg
+  - /Audio/Effects/metal_slam2.ogg
+  - /Audio/Effects/metal_slam3.ogg
+  - /Audio/Effects/metal_slam4.ogg
+  - /Audio/Effects/metal_slam5.ogg
+
+- type: soundCollection
+  id: DutyCityFootstepTilePortedSlPc
+  files:
+  - /Audio/Effects/Footsteps/tile1.ogg
+  - /Audio/Effects/Footsteps/tile2.ogg
+  - /Audio/Effects/Footsteps/tile3.ogg

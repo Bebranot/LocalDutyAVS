@@ -11,13 +11,13 @@ namespace Content.Client._Duty.FireAgony;
 /// Силу (<see cref="Strength"/>, 0..1, с фейдом ~0.5с) выставляет клиентская
 /// <see cref="FireAgonySystem"/> по сетевому флагу <c>FireAgonyComponent.Active</c>.
 /// </summary>
-public sealed class FireAgonyOverlay : Overlay
+public sealed partial class FireAgonyOverlay : Overlay
 {
     private static readonly ProtoId<ShaderPrototype> FireShader = "FireAgonyVision";
 
-    [Dependency] private readonly IEntityManager _entMan = default!;
-    [Dependency] private readonly IPrototypeManager _proto = default!;
-    [Dependency] private readonly ISharedPlayerManager _player = default!;
+    [Dependency] private IEntityManager _entMan = default!;
+    [Dependency] private IPrototypeManager _proto = default!;
+    [Dependency] private ISharedPlayerManager _player = default!;
 
     public override bool RequestScreenTexture => true;
     public override OverlaySpace Space => OverlaySpace.WorldSpace;

@@ -1,0 +1,81 @@
+# _Duty: трейты, портированные из Space Onyx.
+- type: trait
+  id: DutyColdBlooded
+  name: trait-duty-cold-blooded-name
+  description: trait-duty-cold-blooded-desc
+  category: PhysicalTraits
+  cost: -1
+  effects:
+    - !type:AddCompsEffect
+      components:
+        - type: ColdBlooded
+
+- type: trait
+  id: DutyOneLife
+  name: trait-duty-one-life-name
+  description: trait-duty-one-life-desc
+  category: MentalTraits
+  cost: -4
+  effects:
+    - !type:AddCompsEffect
+      components:
+        - type: OneLife
+
+- type: trait
+  id: DutyAlcoholIntolerance
+  name: trait-duty-alcohol-intolerance-name
+  description: trait-duty-alcohol-intolerance-desc
+  category: PhysicalTraits
+  cost: -1
+  conflicts:
+    - DutyAlcoholTolerance
+  effects:
+    - !type:AddCompsEffect
+      components:
+        - type: AlcoholIntolerance
+
+- type: trait
+  id: DutyAlcoholTolerance
+  name: trait-duty-alcohol-tolerance-name
+  description: trait-duty-alcohol-tolerance-desc
+  category: PhysicalTraits
+  cost: 1
+  conflicts:
+    - DutyAlcoholIntolerance
+  effects:
+    - !type:AddCompsEffect
+      components:
+        - type: AlcoholTolerance
+
+- type: trait
+  id: DutyLightStep
+  name: trait-duty-light-step-name
+  description: trait-duty-light-step-desc
+  category: PhysicalTraits
+  cost: 1
+  effects:
+    - !type:AddCompsEffect
+      components:
+        - type: LightStep
+
+- type: trait
+  id: DutyParkour
+  name: trait-duty-parkour-name
+  description: trait-duty-parkour-desc
+  category: PhysicalTraits
+  cost: 1
+  effects:
+    - !type:AddCompsEffect
+      components:
+        - type: Parkour
+
+- type: trait
+  id: DutyVoracious
+  name: trait-duty-voracious-name
+  description: trait-duty-voracious-desc
+  category: PhysicalTraits
+  cost: 0
+  effects:
+    - !type:AddCompsEffect
+      components:
+        - type: Voracious

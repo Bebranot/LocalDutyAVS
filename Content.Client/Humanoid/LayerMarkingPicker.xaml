@@ -1,14 +1,21 @@
 <BoxContainer xmlns="https://spacestation14.io" Orientation="Vertical">
-    <LineEdit Name="SearchBar" PlaceHolder="{Loc 'markings-search'}" HorizontalExpand="True" />
+    <!-- _Duty: кнопка очистки поиска -->
+    <BoxContainer Orientation="Horizontal" HorizontalExpand="True">
+        <LineEdit Name="SearchBar" PlaceHolder="{Loc 'markings-search'}" HorizontalExpand="True" />
+        <Button Name="ClearSearchButton" Text="✕" ToolTip="{Loc 'duty-markings-search-clear'}" Visible="False" />
+    </BoxContainer>
     <ScrollContainer Name="SelectionItems" HorizontalExpand="True" VerticalExpand="True">
-        <!-- ADT-Tweak-Start -->
         <BoxContainer Orientation="Vertical">
+            <!-- _Duty: выбранное — отдельной секцией сверху -->
+            <Label Name="SelectedHeader" Text="{Loc 'duty-markings-selected'}" StyleClasses="LabelHeading" Margin="4 4 4 0" Visible="False" />
+            <GridContainer Name="SelectedItems" Columns="2" Margin="4" Visible="False" />
+            <!-- ADT-Tweak-Start -->
             <Label Name="SponsorHeader" Text="{Loc 'adt-sponsor-marking-category'}" StyleClasses="LabelHeading" Margin="4 4 4 0" Visible="False" />
             <GridContainer Name="SponsorItems" Columns="2" Margin="4" Visible="False" />
-            <Label Name="RegularHeader" Text="{Loc 'adt-sponsor-marking-regular'}" StyleClasses="LabelHeading" Margin="4 4 4 0" Visible="False" />
+            <Label Name="RegularHeader" Text="{Loc 'duty-markings-available'}" StyleClasses="LabelHeading" Margin="4 4 4 0" Visible="False" />
+            <!-- ADT-Tweak-End -->
             <GridContainer Name="Items" Columns="2" Margin="4" />
         </BoxContainer>
-        <!-- ADT-Tweak-End -->
     </ScrollContainer>
     <ScrollContainer Name="OrderingItems" HorizontalExpand="True" VerticalExpand="True" Visible="False">
     </ScrollContainer>

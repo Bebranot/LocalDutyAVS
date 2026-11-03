@@ -1,0 +1,129 @@
+# _Duty: аксессуары-шутки "fun". Текстуры портированы из Lust Station
+# (https://github.com/makura-games/lust-station, коммит 8390dd2c1469ded1bc35ff8aec615a5b50ef9a02),
+# но их компоненты и функционал ERP вырезаны целиком — это просто предмет-аксессуар с шуточным
+# эффектом присасывания к поверхности (тот же StickyComponent, что и у C4).
+
+- type: entity
+  parent: BaseItem
+  id: DutyDildoAvianFun
+  suffix: fun, Lust Station
+  name: игрушка «Авиан»
+  description: Странноватая резиновая игрушка птичьей формы. Судя по всему, кто-то забыл, что это не сувенир.
+  components:
+  - type: Sprite
+    sprite: _Duty/Objects/Misc/ToysFun/d_avian.rsi
+    state: icon
+  - type: Item
+    size: Tiny
+    sprite: _Duty/Objects/Misc/ToysFun/d_avian.rsi
+  - type: Sticky
+    stickDelay: 1
+    unstickDelay: 1
+    stickPopupStart: comp-sticky-start-stick-dildofun
+    stickPopupSuccess: comp-sticky-success-stick-dildofun
+    unstickPopupStart: comp-sticky-start-unstick-dildofun
+    unstickPopupSuccess: comp-sticky-success-unstick-dildofun
+    blacklist:
+      components:
+      - Item
+      - Spectral
+
+- type: entity
+  parent: BaseItem
+  id: DutyDildoDragonFun
+  suffix: fun, Lust Station
+  name: игрушка «Дракон»
+  description: Резиновая игрушка с драконьими мотивами. Выглядит горячо, на ощупь — обычная резина.
+  components:
+  - type: Sprite
+    sprite: _Duty/Objects/Misc/ToysFun/d_dragon.rsi
+    state: icon
+  - type: Item
+    size: Tiny
+    sprite: _Duty/Objects/Misc/ToysFun/d_dragon.rsi
+  - type: Sticky
+    stickDelay: 1
+    unstickDelay: 1
+    stickPopupStart: comp-sticky-start-stick-dildofun
+    stickPopupSuccess: comp-sticky-success-stick-dildofun
+    unstickPopupStart: comp-sticky-start-unstick-dildofun
+    unstickPopupSuccess: comp-sticky-success-unstick-dildofun
+    blacklist:
+      components:
+      - Item
+      - Spectral
+
+- type: entity
+  parent: BaseItem
+  id: DutyDildoEquineFun
+  suffix: fun, Lust Station
+  name: игрушка «Эквин»
+  description: Резиновая игрушка лошадиной формы. Кто-то явно готовился к родео.
+  components:
+  - type: Sprite
+    sprite: _Duty/Objects/Misc/ToysFun/d_equine.rsi
+    state: icon
+  - type: Item
+    size: Tiny
+    sprite: _Duty/Objects/Misc/ToysFun/d_equine.rsi
+  - type: Sticky
+    stickDelay: 1
+    unstickDelay: 1
+    stickPopupStart: comp-sticky-start-stick-dildofun
+    stickPopupSuccess: comp-sticky-success-stick-dildofun
+    unstickPopupStart: comp-sticky-start-unstick-dildofun
+    unstickPopupSuccess: comp-sticky-success-unstick-dildofun
+    blacklist:
+      components:
+      - Item
+      - Spectral
+
+- type: entity
+  parent: BaseItem
+  id: DutyDildoKnotFun
+  suffix: fun, Lust Station
+  name: игрушка «Узел»
+  description: Резиновая игрушка с узловатым основанием. Присасывается что надо.
+  components:
+  - type: Sprite
+    sprite: _Duty/Objects/Misc/ToysFun/d_knot.rsi
+    state: icon
+  - type: Item
+    size: Tiny
+    sprite: _Duty/Objects/Misc/ToysFun/d_knot.rsi
+  - type: Sticky
+    stickDelay: 1
+    unstickDelay: 1
+    stickPopupStart: comp-sticky-start-stick-dildofun
+    stickPopupSuccess: comp-sticky-success-stick-dildofun
+    unstickPopupStart: comp-sticky-start-unstick-dildofun
+    unstickPopupSuccess: comp-sticky-success-unstick-dildofun
+    blacklist:
+      components:
+      - Item
+      - Spectral
+
+- type: entity
+  parent: BaseItem
+  id: DutyDildoTentacleFun
+  suffix: fun, Lust Station
+  name: игрушка «Щупальце»
+  description: Резиновая игрушка в виде щупальца. Для самых любопытных.
+  components:
+  - type: Sprite
+    sprite: _Duty/Objects/Misc/ToysFun/d_tentacle.rsi
+    state: icon
+  - type: Item
+    size: Tiny
+    sprite: _Duty/Objects/Misc/ToysFun/d_tentacle.rsi
+  - type: Sticky
+    stickDelay: 1
+    unstickDelay: 1
+    stickPopupStart: comp-sticky-start-stick-dildofun
+    stickPopupSuccess: comp-sticky-success-stick-dildofun
+    unstickPopupStart: comp-sticky-start-unstick-dildofun
+    unstickPopupSuccess: comp-sticky-success-unstick-dildofun
+    blacklist:
+      components:
+      - Item
+      - Spectral

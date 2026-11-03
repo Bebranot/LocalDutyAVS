@@ -1,6 +1,7 @@
 using System.Linq;
 using System.Numerics;
 using Content.Client.Shuttles.Systems;
+using Content.Shared._Duty.Shuttles; // _Duty
 using Content.Shared.Shuttles.BUIStates;
 using Content.Shared.Shuttles.Components;
 using Content.Shared.Shuttles.Systems;
@@ -26,10 +27,9 @@ namespace Content.Client.Shuttles.UI;
 [GenerateTypedNameReferences]
 public sealed partial class MapScreen : BoxContainer
 {
-    [Dependency] private readonly IEntityManager _entManager = default!;
-    [Dependency] private readonly IGameTiming _timing = default!;
-    [Dependency] private readonly IMapManager _mapManager = default!;
-    [Dependency] private readonly IRobustRandom _random = default!;
+    [Dependency] private IEntityManager _entManager = default!;
+    [Dependency] private IGameTiming _timing = default!;
+    [Dependency] private IRobustRandom _random = default!;
     private readonly SharedAudioSystem _audio;
     private readonly SharedMapSystem _maps;
     private readonly ShuttleSystem _shuttles;
@@ -55,6 +55,7 @@ public sealed partial class MapScreen : BoxContainer
 
     public event Action<MapCoordinates, Angle>? RequestFTL;
     public event Action<NetEntity, Angle>? RequestBeaconFTL;
+    public event Action? RequestDutyCentcommJump; // _Duty
 
     private readonly Dictionary<MapId, BoxContainer> _mapHeadings = new();
     private readonly Dictionary<MapId, List<IMapObject>> _mapObjects = new();
@@ -101,6 +102,8 @@ public sealed partial class MapScreen : BoxContainer
         {
             MapRadar.ShowBeacons = args.Pressed;
         };
+
+        DutyCentcommJumpButton.OnPressed += _ => RequestDutyCentcommJump?.Invoke(); // _Duty
     }
 
     public void UpdateState(ShuttleMapInterfaceState state)
@@ -311,7 +314,7 @@ public sealed partial class MapScreen : BoxContainer
             };
 
             _mapHeadings.Add(mapComp.MapId, gridContents);
-            foreach (var grid in _mapManager.GetAllGrids(mapComp.MapId))
+            foreach (var grid in _maps.GetAllGrids(mapComp.MapId))
             {
                 _entManager.TryGetComponent(grid.Owner, out IFFComponent? iffComp);
 
@@ -525,7 +528,42 @@ public sealed partial class MapScreen : BoxContainer
 
         var progress = _ftlTime.ProgressAt(curTime);
         FTLBar.Value = float.IsFinite(progress) ? progress : 1;
+
+        UpdateDutyCentcomm(); // _Duty
     }
+
+    // _Duty-start: кнопка прыжка ЦК <-> станция.
+    // Читаем компонент консоли каждый кадр, а не в UpdateState: направление меняется сервером по прилёту,
+    // и состояние компонента может прийти позже состояния интерфейса — кнопка бы показывала старое направление.
+    private bool? _dutyAtCentcomm;
+
+    private void UpdateDutyCentcomm()
+    {
+        if (!_entManager.TryGetComponent(_console, out DutyCentcommShuttleConsoleComponent? duty))
+        {
+            DutyCentcommBox.Visible = false;
+            _dutyAtCentcomm = null;
+            return;
+        }
+
+        DutyCentcommBox.Visible = true;
+
+        var blocked = IsFTLBlocked();
+        DutyCentcommJumpButton.Visible = !blocked;
+        DutyCentcommJumpBlocked.Visible = blocked;
+
+        if (_dutyAtCentcomm == duty.AtCentcomm)
+            return;
+
+        _dutyAtCentcomm = duty.AtCentcomm;
+        var text = Loc.GetString(duty.AtCentcomm
+            ? "duty-centcomm-console-jump-station"
+            : "duty-centcomm-console-jump-centcomm");
+        DutyCentcommJumpButton.Text = text;
+        DutyCentcommJumpButton.ConfirmationText = Loc.GetString("duty-centcomm-console-jump-confirm");
+        DutyCentcommJumpBlocked.Text = text;
+    }
+    // _Duty-end
 
     protected override void Draw(DrawingHandleScreen handle)
     {

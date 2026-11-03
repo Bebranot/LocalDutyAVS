@@ -2,7 +2,7 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
-using Content.Shared.Random.Rules;
+using Content.Shared.EntityConditions;
 using Robust.Shared.Prototypes;
 
 namespace Content.Shared._Duty.AmbientMusic;
@@ -51,5 +51,5 @@ public sealed partial class DutyMusicPriorityPrototype : IPrototype
     /// включить. Пусто — правило действует всегда.
     /// </summary>
     [DataField]
-    public ProtoId<RulesPrototype>? Rules;
+    public EntityCondition[]? Conditions;
 }

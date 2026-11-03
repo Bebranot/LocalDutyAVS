@@ -1,0 +1,22 @@
+{
+  "version": 1,
+  "license": "CC-BY-SA-3.0",
+  "copyright": "Taken from bluemoon https://github.com/BlueMoon-Labs/MOLOT-BlueMoon-Station; ported via Lust Station https://github.com/makura-games/lust-station (commit 8390dd2c1469ded1bc35ff8aec615a5b50ef9a02)",
+  "size": {
+    "x": 32,
+    "y": 32
+  },
+  "states": [
+    {
+      "name": "icon"
+    },
+    {
+      "name": "inhand-left",
+      "directions": 4
+    },
+    {
+      "name": "inhand-right",
+      "directions": 4
+    }
+  ]
+}

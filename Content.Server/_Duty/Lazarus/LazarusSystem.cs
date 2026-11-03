@@ -24,6 +24,7 @@ using Robust.Shared.Console;
 using Robust.Shared.Player;
 using Robust.Shared.Random;
 using Robust.Shared.Timing;
+using Content.Shared.IdentityManagement;
 
 namespace Content.Server._Duty.Lazarus;
 
@@ -38,20 +39,20 @@ namespace Content.Server._Duty.Lazarus;
 /// их можно крутить вживую. Каждый бросок пишется в лог: срабатывания редки, и без этого
 /// нельзя отличить "не выпал шанс" от "зона недостижима" и от "система вообще не работает".
 /// </summary>
-public sealed class LazarusSystem : EntitySystem
+public sealed partial class LazarusSystem : EntitySystem
 {
-    [Dependency] private readonly IRobustRandom _random = default!;
-    [Dependency] private readonly IGameTiming _timing = default!;
-    [Dependency] private readonly DamageableSystem _damageable = default!;
-    [Dependency] private readonly BloodstreamSystem _bloodstream = default!;
-    [Dependency] private readonly MobStateSystem _mobState = default!;
-    [Dependency] private readonly MobThresholdSystem _mobThreshold = default!;
-    [Dependency] private readonly MovementModStatusSystem _movementMod = default!;
-    [Dependency] private readonly SharedPopupSystem _popup = default!;
-    [Dependency] private readonly IConsoleHost _console = default!;
-    [Dependency] private readonly IPlayerManager _playerManager = default!;
-    [Dependency] private readonly IConfigurationManager _cfg = default!;
-    [Dependency] private readonly EntityLookupSystem _lookup = default!;
+    [Dependency] private IRobustRandom _random = default!;
+    [Dependency] private IGameTiming _timing = default!;
+    [Dependency] private DamageableSystem _damageable = default!;
+    [Dependency] private BloodstreamSystem _bloodstream = default!;
+    [Dependency] private MobStateSystem _mobState = default!;
+    [Dependency] private MobThresholdSystem _mobThreshold = default!;
+    [Dependency] private MovementModStatusSystem _movementMod = default!;
+    [Dependency] private SharedPopupSystem _popup = default!;
+    [Dependency] private IConsoleHost _console = default!;
+    [Dependency] private IPlayerManager _playerManager = default!;
+    [Dependency] private IConfigurationManager _cfg = default!;
+    [Dependency] private EntityLookupSystem _lookup = default!;
 
     /// <summary>Как часто опрашиваем критов (сек). Раз в тик не нужно.</summary>
     private const float ScanInterval = 0.25f;
@@ -407,7 +408,7 @@ public sealed class LazarusSystem : EntitySystem
         _popup.PopupEntity(Loc.GetString("duty-lazarus-popup-self"), uid, uid, PopupType.LargeCaution);
 
         // Окружающие видят, как боец снова приходит в себя.
-        _popup.PopupEntity(Loc.GetString("duty-lazarus-popup-others", ("target", Name(uid))), uid,
+        _popup.PopupEntity(Loc.GetString("duty-lazarus-popup-others", ("target", Identity.Entity(uid, EntityManager))), uid,
             Filter.PvsExcept(uid), true, PopupType.MediumCaution);
     }
 
@@ -458,12 +459,16 @@ public sealed class LazarusSystem : EntitySystem
             return;
 
         // Считываем текущие пороги до изменения (SetMobStateThreshold правит словарь).
+        FixedPoint2? softCrit = null;
         FixedPoint2? crit = null;
         FixedPoint2? dead = null;
         foreach (var (threshold, state) in thresholds.Thresholds)
         {
             switch (state)
             {
+                case MobState.SoftCritical:
+                    softCrit = threshold;
+                    break;
                 case MobState.Critical:
                     crit = threshold;
                     break;
@@ -473,12 +478,17 @@ public sealed class LazarusSystem : EntitySystem
             }
         }
 
+        // Софт-крит режем тем же множителем: иначе при сильном штрафе крит опустился бы ниже
+        // софт-крита и пороги перепутались.
+        if (softCrit is { } softCritValue)
+            _mobThreshold.SetMobStateThreshold(uid, softCritValue * fraction, MobState.SoftCritical, thresholds);
         if (crit is { } critValue)
             _mobThreshold.SetMobStateThreshold(uid, critValue * fraction, MobState.Critical, thresholds);
         if (dead is { } deadValue)
             _mobThreshold.SetMobStateThreshold(uid, deadValue * fraction, MobState.Dead, thresholds);
 
         var scar = EnsureComp<LazarusScarComponent>(uid);
+        scar.OriginalSoftCritThreshold = softCrit;
         scar.OriginalCritThreshold = crit;
         scar.OriginalDeadThreshold = dead;
     }
@@ -496,6 +506,8 @@ public sealed class LazarusSystem : EntitySystem
 
         if (TryComp<MobThresholdsComponent>(ent, out var thresholds))
         {
+            if (ent.Comp.OriginalSoftCritThreshold is { } softCrit)
+                _mobThreshold.SetMobStateThreshold(ent, softCrit, MobState.SoftCritical, thresholds);
             if (ent.Comp.OriginalCritThreshold is { } crit)
                 _mobThreshold.SetMobStateThreshold(ent, crit, MobState.Critical, thresholds);
             if (ent.Comp.OriginalDeadThreshold is { } dead)

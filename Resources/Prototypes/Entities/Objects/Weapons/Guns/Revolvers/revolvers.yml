@@ -64,6 +64,8 @@
   - type: StaticPrice
     price: 500
   - type: UniqueAction # ADT TWEAK
+  - type: Aimable # _Duty: одноручный прицел (ПКМ) — без wield, с сильным штрафом к скорости
+    requiresWield: false
 
 - type: entity
   name: Deckard

@@ -7,8 +7,7 @@
   parent: Jug
   id: DutyJugDexalinSaline
   suffix: Duty, физраствор+дексалин
-  name: duty-jug-dexalin-saline-name
-  description: duty-jug-dexalin-saline-desc
+  name: Дексалиново-физрастворный раствор
   categories: [ HideSpawnMenu ]
   components:
   - type: Label
@@ -26,8 +25,7 @@
   parent: Jug
   id: DutyJugBurnRelief
   suffix: Duty, дермалин+сульфадиазин
-  name: duty-jug-burn-relief-name
-  description: duty-jug-burn-relief-desc
+  name: Противоожоговый раствор
   categories: [ HideSpawnMenu ]
   components:
   - type: Label
@@ -45,8 +43,7 @@
   parent: Jug
   id: DutyJugAntiHemorrhage
   suffix: Duty, бикаридин+кровоостан. пудра
-  name: duty-jug-anti-hemorrhage-name
-  description: duty-jug-anti-hemorrhage-desc
+  name: Противотравматический раствор
   categories: [ HideSpawnMenu ]
   components:
   - type: Label
@@ -64,8 +61,7 @@
   parent: Jug
   id: DutyJugAntitoxin
   suffix: Duty, диловен 200
-  name: duty-jug-antitoxin-name
-  description: duty-jug-antitoxin-desc
+  name: Концентрированный антитоксин
   categories: [ HideSpawnMenu ]
   components:
   - type: Label
@@ -81,8 +77,7 @@
   parent: Jug
   id: DutyJugCriticalCare
   suffix: Duty, трикордразин 200
-  name: duty-jug-critical-care-name
-  description: duty-jug-critical-care-desc
+  name: Раствор для легкораненных
   categories: [ HideSpawnMenu ]
   components:
   - type: Label
@@ -98,8 +93,7 @@
   parent: ClothingBackpackDuffelSyndicateBundle
   id: DutyClothingBackpackDuffelChemicalsKit
   suffix: Duty
-  name: duty-chemicals-kit-name
-  description: duty-chemicals-kit-desc
+  name: вещмешок с набором химикатов
   components:
   - type: EntityTableContainerFill
     containers:

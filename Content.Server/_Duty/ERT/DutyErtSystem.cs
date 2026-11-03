@@ -1,8 +1,8 @@
 using System.Linq;
-using Content.Server.AlertLevel;
 using Content.Server.Chat.Managers;
 using Content.Server.Chat.Systems;
 using Content.Server.Station.Systems;
+using Content.Shared.AlertLevel;
 using Content.Shared.GameTicking;
 using Robust.Server.GameObjects;
 using Robust.Shared.Audio;
@@ -27,18 +27,18 @@ namespace Content.Server._Duty.ERT;
 /// (2 офицера + медик + инженер + лидер) и варп-маяк для призраков — загрузка грида создаёт всё сама.
 /// <c>ertcall5min</c> делает уведомление и код угрозы сразу, а сам шаттл прибывает через 5 минут.
 /// </summary>
-public sealed class DutyErtSystem : EntitySystem
+public sealed partial class DutyErtSystem : EntitySystem
 {
-    [Dependency] private readonly IMapManager _mapManager = default!;
-    [Dependency] private readonly IResourceManager _resource = default!;
-    [Dependency] private readonly IGameTiming _timing = default!;
-    [Dependency] private readonly IChatManager _chat = default!;
-    [Dependency] private readonly MapLoaderSystem _mapLoader = default!;
-    [Dependency] private readonly MetaDataSystem _metaData = default!;
-    [Dependency] private readonly AlertLevelSystem _alertLevel = default!;
-    [Dependency] private readonly ChatSystem _chatSystem = default!;
-    [Dependency] private readonly StationSystem _station = default!;
-    [Dependency] private readonly SharedAudioSystem _audio = default!;
+    [Dependency] private readonly SharedMapSystem _mapSystem = default!;
+    [Dependency] private IResourceManager _resource = default!;
+    [Dependency] private IGameTiming _timing = default!;
+    [Dependency] private IChatManager _chat = default!;
+    [Dependency] private MapLoaderSystem _mapLoader = default!;
+    [Dependency] private MetaDataSystem _metaData = default!;
+    [Dependency] private AlertLevelSystem _alertLevel = default!;
+    [Dependency] private ChatSystem _chatSystem = default!;
+    [Dependency] private StationSystem _station = default!;
+    [Dependency] private SharedAudioSystem _audio = default!;
 
     private const string GridDir = "/Maps/ADTMaps/Shuttles/ERT";
     private const string AlertCode = "gamma";
@@ -185,14 +185,14 @@ public sealed class DutyErtSystem : EntitySystem
     {
         var gridPath = $"{GridDir}/{variant}.yml";
 
-        var mapId = _mapManager.CreateMap();
-        _metaData.SetEntityName(_mapManager.GetMapEntityId(mapId), Loc.GetString("duty-ert-map-name"));
+        var mapUid = _mapSystem.CreateMap(out var mapId);
+        _metaData.SetEntityName(mapUid, Loc.GetString("duty-ert-map-name"));
 
         // InitializeMaps=true инициализирует карту (= снимает «заморозку»), при этом отрабатывает
         // MapInit на гост-роль спавнерах — 5 ОБРовцев становятся доступны как роли для призраков.
         var opts = new DeserializationOptions { StoreYamlUids = true, InitializeMaps = true };
         _mapLoader.TryLoadGrid(mapId, new ResPath(gridPath), out _, opts);
-        _mapManager.SetMapPaused(mapId, false);
+        _mapSystem.SetPaused(mapId, false);
 
         _chat.SendAdminAlert(Loc.GetString("duty-ert-admin-alert", ("variant", variant), ("map", mapId)));
     }

@@ -32,6 +32,13 @@ public sealed partial class LoadoutPrototype : IPrototype, IEquipmentLoadout
     public ProtoId<StartingGearPrototype>? StartingGear;
 
     /// <summary>
+    /// _Duty: разрешает игроку выбрать кастомный цвет этому предмету лоадаута в редакторе
+    /// персонажа (портировано из Space Onyx).
+    /// </summary>
+    [DataField]
+    public bool CustomColorTint;
+
+    /// <summary>
     /// Effects to be applied when the loadout is applied.
     /// These can also return true or false for validation purposes.
     /// </summary>

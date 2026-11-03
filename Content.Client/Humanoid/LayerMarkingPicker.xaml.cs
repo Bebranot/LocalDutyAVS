@@ -1,6 +1,4 @@
 using System.Linq;
-using Content.Client.UserInterface.ControlExtensions;
-using Content.Client.Guidebook.Controls;
 using Content.Shared.Body;
 using Content.Shared.Humanoid;
 using Content.Shared.Humanoid.Markings;
@@ -12,15 +10,25 @@ using Robust.Shared.Prototypes;
 
 namespace Content.Client.Humanoid;
 
+// _Duty-start: переработка пикера (переиспользование контролов, секция «Выбрано»)
+
 [GenerateTypedNameReferences]
 public sealed partial class LayerMarkingPicker : BoxContainer
 {
-    private readonly IReadOnlyDictionary<string, MarkingPrototype> _allMarkings;
+    private IReadOnlyDictionary<string, MarkingPrototype> _allMarkings; // _Duty: переработка пикера
     private readonly ProtoId<OrganCategoryPrototype> _organ;
     private readonly HumanoidVisualLayers _layer;
     private readonly MarkingsViewModel _markingsModel;
-    private List<ISearchableControl> _searchable = new();
     private const int _columnWidth = 500;
+
+    // _Duty: карточки живут, пока жив пикер, и лишь перекладываются между секциями «Выбрано» / «Доступно»,
+    // поэтому поиск, скролл и раскрытые палитры не сбрасываются при выборе.
+    private readonly Dictionary<string, LayerMarkingItem> _items = new();
+    private readonly Dictionary<string, LayerMarkingItem> _selectedCopies = new();
+    private readonly Dictionary<string, string> _names = new();
+    private List<string> _sortedIds = new();
+    private List<string> _arrangedSelected = new();
+    private bool _arranged;
 
     // ADT-Tweak-Start
     [Dependency] private readonly Content.Client.ADT.Sponsors.SponsorManager _adtSponsors = default!;
@@ -39,14 +47,19 @@ public sealed partial class LayerMarkingPicker : BoxContainer
 
         OrderingItems.AddChild(new LayerMarkingOrderer(markingsModel, organ, layer));
 
-        UpdateMarkings();
+        RebuildItems(); // _Duty: переработка пикера
 
         SearchBar.OnTextChanged += _ =>
         {
-            foreach (var element in _searchable)
-            {
-                element.SetHiddenState(true, SearchBar.Text.Trim());
-            }
+            ClearSearchButton.Visible = !string.IsNullOrEmpty(SearchBar.Text); // _Duty: переработка пикера
+            ApplySearch();
+        };
+        ClearSearchButton.OnPressed += _ =>
+        {
+            SearchBar.Clear();
+            ClearSearchButton.Visible = false;
+            ApplySearch();
+            SearchBar.GrabKeyboardFocus();
         };
 
         UpdateCount();
@@ -58,75 +71,175 @@ public sealed partial class LayerMarkingPicker : BoxContainer
     {
         base.EnteredTree();
 
-        _markingsModel.MarkingsReset += UpdateCount;
+        _markingsModel.MarkingsReset += OnMarkingsReset; // _Duty: переработка пикера
         _markingsModel.MarkingsChanged += MarkingsChanged;
-        _adtSponsors.Updated += UpdateMarkings; // ADT-Tweak
+        _adtSponsors.Updated += RebuildItems; // ADT-Tweak
+
+        // Пока контрол был вне дерева, события мы не получали.
+        ArrangeItems();
+        UpdateCount();
     }
 
     protected override void ExitedTree()
     {
         base.ExitedTree();
 
-        _markingsModel.MarkingsReset -= UpdateCount;
+        _markingsModel.MarkingsReset -= OnMarkingsReset; // _Duty: переработка пикера
         _markingsModel.MarkingsChanged -= MarkingsChanged;
-        _adtSponsors.Updated -= UpdateMarkings; // ADT-Tweak
+        _adtSponsors.Updated -= RebuildItems; // ADT-Tweak
+    }
+
+    private void OnMarkingsReset()
+    {
+        ArrangeItems();
+        UpdateCount();
     }
 
     private void MarkingsChanged(ProtoId<OrganCategoryPrototype> organ, HumanoidVisualLayers layer)
     {
-        if (_organ != organ ||  _layer != layer)
+        if (_organ != organ || _layer != layer)
             return;
 
+        ArrangeItems();
         UpdateCount();
     }
 
-    private void UpdateMarkings()
+    /// <summary>
+    /// Подменяет список доступных маркингов (например, после смены пола), сохраняя поиск и прокрутку.
+    /// </summary>
+    public void SetMarkings(IReadOnlyDictionary<string, MarkingPrototype> allMarkings)
+    {
+        if (ReferenceEquals(_allMarkings, allMarkings))
+            return;
+
+        if (_allMarkings.Count == allMarkings.Count && allMarkings.Keys.All(_allMarkings.ContainsKey))
+        {
+            _allMarkings = allMarkings;
+            return;
+        }
+
+        _allMarkings = allMarkings;
+        RebuildItems();
+    }
+
+    private string NameOf(MarkingPrototype marking)
+    {
+        if (_names.TryGetValue(marking.ID, out var name))
+            return name;
+
+        name = Loc.TryGetString($"marking-{marking.ID}", out var localized) ? localized : marking.ID;
+        _names[marking.ID] = name;
+        return name;
+    }
+
+    /// <summary>
+    /// Пересобирает набор карточек; уже существующие переиспользуются.
+    /// </summary>
+    private void RebuildItems()
     {
         var localSession = _players.LocalSession; // ADT-Tweak
+        var present = new Dictionary<string, LayerMarkingItem>();
 
-        // ADT-Tweak-Start
-        SponsorItems.RemoveAllChildren();
-        Items.RemoveAllChildren();
-        // ADT-Tweak-End
-
-        foreach (var marking in _allMarkings.Values.OrderBy(marking => Loc.GetString($"marking-{marking.ID}")))
+        foreach (var marking in _allMarkings.Values)
         {
-            var item = new LayerMarkingItem(_markingsModel, _organ, _layer, marking, true);
-
             // ADT-Tweak-Start
-            if (marking.SponsorOnly)
-            {
-                if (!_adtSponsors.IsMarkingAllowed(localSession, marking.ID))
-                    continue;
-
-                SponsorItems.AddChild(item);
+            if (marking.SponsorOnly && !_adtSponsors.IsMarkingAllowed(localSession, marking.ID))
                 continue;
-            }
             // ADT-Tweak-End
 
-            Items.AddChild(item);
+            if (!_items.TryGetValue(marking.ID, out var item))
+                item = new LayerMarkingItem(_markingsModel, _organ, _layer, marking, true);
+
+            present[marking.ID] = item;
         }
 
-        // ADT-Tweak-Start
-        var hasSponsor = SponsorItems.ChildCount > 0;
+        _items.Clear();
+        foreach (var (id, item) in present)
+        {
+            _items[id] = item;
+        }
+
+        _sortedIds = _items.Keys
+            .OrderBy(id => NameOf(_allMarkings[id]), StringComparer.CurrentCultureIgnoreCase)
+            .ToList();
+
+        // Основной список всегда содержит все маркинги — выбранные в нём остаются на своих местах.
+        SponsorItems.RemoveAllChildren();
+        Items.RemoveAllChildren();
+        foreach (var id in _sortedIds)
+        {
+            if (_allMarkings[id].SponsorOnly)
+                SponsorItems.AddChild(_items[id]);
+            else
+                Items.AddChild(_items[id]);
+        }
+
+        // Дубликаты в секции «Выбрано» устарели вместе со старым набором.
+        _selectedCopies.Clear();
+        _arranged = false;
+        ArrangeItems();
+        ApplySearch();
+    }
+
+    /// <summary>
+    /// Наполняет секцию «Выбрано» копиями карточек выбранных маркингов (в порядке модели).
+    /// Основной список при этом не меняется: выбранное остаётся и в нём.
+    /// </summary>
+    private void ArrangeItems()
+    {
+        var selected = (_markingsModel.SelectedMarkings(_organ, _layer) ?? new List<Marking>())
+            .Select(it => (string) it.MarkingId)
+            .Where(_items.ContainsKey)
+            .Distinct()
+            .ToList();
+
+        // Без этой проверки перетаскивание ползунка цвета (MarkingsChanged на каждый тик) пересобирало бы секцию.
+        if (_arranged && selected.SequenceEqual(_arrangedSelected))
+            return;
+
+        _arranged = true;
+        _arrangedSelected = selected;
+
+        SelectedItems.RemoveAllChildren();
+        foreach (var id in selected)
+        {
+            if (!_selectedCopies.TryGetValue(id, out var copy))
+                _selectedCopies[id] = copy = new LayerMarkingItem(_markingsModel, _organ, _layer, _allMarkings[id], true);
+
+            SelectedItems.AddChild(copy);
+        }
+
+        UpdateHeaders();
+    }
+
+    private void ApplySearch()
+    {
+        var query = SearchBar.Text.Trim();
+        foreach (var item in _items.Values)
+        {
+            item.SetHiddenState(true, query);
+        }
+
+        UpdateHeaders();
+    }
+
+    private static bool AnyVisible(Control container)
+    {
+        return container.Children.Any(it => it.Visible);
+    }
+
+    private void UpdateHeaders()
+    {
+        var hasSelected = SelectedItems.ChildCount > 0; // секция «Выбрано» поиском не фильтруется
+        var hasSponsor = AnyVisible(SponsorItems);
+
+        SelectedHeader.Visible = hasSelected;
+        SelectedItems.Visible = hasSelected;
         SponsorHeader.Visible = hasSponsor;
         SponsorItems.Visible = hasSponsor;
-        RegularHeader.Visible = hasSponsor;
-        // ADT-Tweak-End
 
-        _searchable = SponsorItems.GetSearchableControls();
-        _searchable.AddRange(Items.GetSearchableControls());
-
-        // ADT-Tweak-Start
-        var currentSearch = SearchBar.Text.Trim();
-        if (!string.IsNullOrEmpty(currentSearch))
-        {
-            foreach (var element in _searchable)
-            {
-                element.SetHiddenState(true, currentSearch);
-            }
-        }
-        // ADT-Tweak-End
+        // «Доступно:» нужно только когда над списком есть другие секции.
+        RegularHeader.Visible = (hasSelected || hasSponsor) && AnyVisible(Items); // «Доступно:» = полный список
     }
 
     private void UpdateCount()
@@ -141,12 +254,14 @@ public sealed partial class LayerMarkingPicker : BoxContainer
         {
             SelectionItems.Visible = false;
             SearchBar.Visible = false;
+            ClearSearchButton.Visible = false;
             OrderingItems.Visible = true;
         }
         else
         {
             SelectionItems.Visible = true;
             SearchBar.Visible = true;
+            ClearSearchButton.Visible = !string.IsNullOrEmpty(SearchBar.Text);
             OrderingItems.Visible = false;
         }
     }
@@ -155,6 +270,10 @@ public sealed partial class LayerMarkingPicker : BoxContainer
     {
         base.Resized();
 
-        Items.Columns = (int)(Width / _columnWidth);
+        // _Duty: при ширине < 500 было 0 колонок -> исключение GridContainer.
+        var columns = Math.Max(1, (int) (Width / _columnWidth));
+        Items.Columns = columns;
+        SelectedItems.Columns = columns;
     }
 }
+// _Duty-end

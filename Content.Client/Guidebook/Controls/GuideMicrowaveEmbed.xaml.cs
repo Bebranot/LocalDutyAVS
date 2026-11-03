@@ -22,9 +22,9 @@ namespace Content.Client.Guidebook.Controls;
 [UsedImplicitly, GenerateTypedNameReferences]
 public sealed partial class GuideMicrowaveEmbed : PanelContainer, IDocumentTag, ISearchableControl, IPrototypeRepresentationControl
 {
-    [Dependency] private readonly IPrototypeManager _prototype = default!;
-    [Dependency] private readonly ILogManager _logManager = default!;
-    private readonly SpriteSystem _sprite = default!; // ADT-Tweak
+    [Dependency] private IPrototypeManager _prototype = default!;
+    [Dependency] private ILogManager _logManager = default!;
+    private SpriteSystem _sprite = default!; // ADT-Tweak
 
     private readonly ISawmill _sawmill = default!;
 
@@ -88,8 +88,8 @@ public sealed partial class GuideMicrowaveEmbed : PanelContainer, IDocumentTag, 
         RepresentedPrototype = entity;
 
         IconContainer.AddChild(new GuideEntityEmbed(recipe.Result, false, false));
-        ResultName.SetMarkup(entity.Name);
-        ResultDescription.SetMarkup(entity.Description);
+        ResultName.SetMarkupPermissive(entity.Name); // _Duty: не падать на кривой разметке
+        ResultDescription.SetMarkupPermissive(entity.Description); // _Duty: не падать на кривой разметке
     }
 
     private void GenerateSolidIngredients(FoodRecipePrototype recipe)
@@ -204,6 +204,11 @@ public sealed partial class GuideMicrowaveEmbed : PanelContainer, IDocumentTag, 
         {
             AppendMachineTexture("/Textures/ADT/Structures/Machines/medical_assembler.rsi", "mediwave-base");
             processingTypes.Add(Loc.GetString("guidebook-food-processing-type-medical-assembler"));
+        }
+        if (recipeType.HasFlag(MicrowaveRecipeType.TribalOven))
+        {
+            AppendMachineTexture("/Textures/ADT/Structures/Specific/tribal_oven.rsi", "oven_off");
+            processingTypes.Add(Loc.GetString("guidebook-food-processing-type-tribal-oven"));
         }
         var processingTypeString = string.Join('/', processingTypes);
         var msg_machine = new FormattedMessage();

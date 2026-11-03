@@ -10,10 +10,10 @@ namespace Content.Shared._Duty.Trigger;
 /// сам намордник лежит в слоте маски, а говорит владелец, поэтому кроме
 /// собственной речи проверяем и речь того, в чьём контейнере мы находимся.
 /// </summary>
-public sealed class DutyTriggerOnSpeakSystem : EntitySystem
+public sealed partial class DutyTriggerOnSpeakSystem : EntitySystem
 {
-    [Dependency] private readonly TriggerSystem _trigger = default!;
-    [Dependency] private readonly SharedContainerSystem _container = default!;
+    [Dependency] private TriggerSystem _trigger = default!;
+    [Dependency] private SharedContainerSystem _container = default!;
 
     public override void Initialize()
     {

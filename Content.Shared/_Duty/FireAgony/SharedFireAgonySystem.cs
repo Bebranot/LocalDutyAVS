@@ -14,10 +14,10 @@ namespace Content.Shared._Duty.FireAgony;
 /// Серверная машина состояний — в <c>Content.Server._Duty.FireAgony.FireAgonySystem</c>,
 /// клиентская кинематографика — в <c>Content.Client._Duty.FireAgony.FireAgonySystem</c>.
 /// </summary>
-public sealed class SharedFireAgonySystem : EntitySystem
+public sealed partial class SharedFireAgonySystem : EntitySystem
 {
-    [Dependency] private readonly SharedPopupSystem _popup = default!;
-    [Dependency] private readonly IGameTiming _timing = default!;
+    [Dependency] private SharedPopupSystem _popup = default!;
+    [Dependency] private IGameTiming _timing = default!;
 
     private static readonly TimeSpan BlockedPopupCooldown = TimeSpan.FromSeconds(1);
 

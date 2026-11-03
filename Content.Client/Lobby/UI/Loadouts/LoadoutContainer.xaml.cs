@@ -13,12 +13,15 @@ namespace Content.Client.Lobby.UI.Loadouts;
 [GenerateTypedNameReferences]
 public sealed partial class LoadoutContainer : BoxContainer
 {
-    [Dependency] private readonly IEntityManager _entManager = default!;
-    [Dependency] private readonly IPrototypeManager _protoManager = default!;
+    [Dependency] private IEntityManager _entManager = default!;
+    [Dependency] private IPrototypeManager _protoManager = default!;
 
     private readonly EntityUid? _entity;
 
     public Button Select => SelectButton;
+
+    /// <summary>_Duty: кнопка персонализации (кастомные имя/описание/цвет) — портировано из Space Onyx.</summary>
+    public Button Customize => CustomizeButton;
 
     public string? Text
     {
@@ -51,7 +54,7 @@ public sealed partial class LoadoutContainer : BoxContainer
             Sprite.SetEntity(_entity);
 
             var spriteTooltip = new Tooltip();
-            spriteTooltip.SetMessage(FormattedMessage.FromUnformatted(_entManager.GetComponent<MetaDataComponent>(_entity.Value).EntityDescription));
+            spriteTooltip.SetMessage(FormattedMessage.FromMarkupPermissive(_entManager.GetComponent<MetaDataComponent>(_entity.Value).EntityDescription) /* _Duty: описания с [color] */);
 
             TooltipSupplier = _ => spriteTooltip;
         }

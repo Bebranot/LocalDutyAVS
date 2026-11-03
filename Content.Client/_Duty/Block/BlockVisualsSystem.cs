@@ -12,9 +12,9 @@ namespace Content.Client._Duty.Block;
 /// (полный/ослабленный). Сетевой BlockComponent 1:1 с видимостью иконки — промежуточные
 /// Appearance-данные не нужны.
 /// </summary>
-public sealed class BlockVisualsSystem : EntitySystem
+public sealed partial class BlockVisualsSystem : EntitySystem
 {
-    [Dependency] private readonly IPrototypeManager _prototype = default!;
+    [Dependency] private IPrototypeManager _prototype = default!;
 
     private static readonly ProtoId<DutyBlockIconPrototype> BlockIcon = "DutyBlockIcon";
 

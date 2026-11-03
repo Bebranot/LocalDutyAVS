@@ -10,9 +10,9 @@ namespace Content.Shared._Duty.Weapons.PeaShooter;
 /// до того, как снаряд посчитает направление полёта. Чистая математика без рандома и без
 /// серверного состояния — безопасно предсказывается и на клиенте.
 /// </summary>
-public sealed class DutyHorizontalOnlyGunSystem : EntitySystem
+public sealed partial class DutyHorizontalOnlyGunSystem : EntitySystem
 {
-    [Dependency] private readonly SharedTransformSystem _transform = default!;
+    [Dependency] private SharedTransformSystem _transform = default!;
 
     public override void Initialize()
     {

@@ -3,6 +3,7 @@ using Content.Shared.Hands.EntitySystems;
 using Content.Shared.Throwing;
 using Robust.Server.Audio;
 using Robust.Shared.Audio;
+using Robust.Shared.Containers;
 using Robust.Shared.GameObjects;
 using Robust.Shared.IoC;
 using Robust.Shared.Maths;
@@ -14,16 +15,17 @@ using Robust.Shared.Timing;
 
 namespace Content.Server._Duty.Weapons.Boomerang;
 
-public sealed class BoomerangItemSystem : EntitySystem
+public sealed partial class BoomerangItemSystem : EntitySystem
 {
-    [Dependency] private readonly AudioSystem _audio = default!;
-    [Dependency] private readonly SharedPhysicsSystem _physics = default!;
-    [Dependency] private readonly SharedTransformSystem _transform = default!;
-    [Dependency] private readonly ThrowingSystem _throwing = default!;
-    [Dependency] private readonly IGameTiming _timing = default!;
-    [Dependency] private readonly SharedHandsSystem _hands = default!;
-    [Dependency] private readonly ThrownItemSystem _thrownItem = default!;
-    [Dependency] private readonly FixtureSystem _fixtures = default!;
+    [Dependency] private AudioSystem _audio = default!;
+    [Dependency] private SharedPhysicsSystem _physics = default!;
+    [Dependency] private SharedTransformSystem _transform = default!;
+    [Dependency] private ThrowingSystem _throwing = default!;
+    [Dependency] private IGameTiming _timing = default!;
+    [Dependency] private SharedHandsSystem _hands = default!;
+    [Dependency] private ThrownItemSystem _thrownItem = default!;
+    [Dependency] private FixtureSystem _fixtures = default!;
+    [Dependency] private SharedContainerSystem _container = default!;
 
     private const string ThrowingFixture = "throw-fixture";
 
@@ -96,7 +98,17 @@ public sealed class BoomerangItemSystem : EntitySystem
             if (!comp.WaitingForReturn && !comp.IsReturning)
                 continue;
 
-            if (comp.Thrower == null || TerminatingOrDeleted(comp.Thrower.Value))
+            // Хозяин пропал или бумеранг уже кто-то поймал/подобрал — возвращать некуда и нечего:
+            // иначе на возврате его вырвало бы из чужих рук.
+            if (comp.Thrower == null
+                || TerminatingOrDeleted(comp.Thrower.Value)
+                || _container.IsEntityInContainer(uid))
+            {
+                ResetBoomerang(uid, comp);
+                continue;
+            }
+
+            if (comp.IsReturning && _timing.CurTime >= comp.ReturnGiveUpAt)
             {
                 ResetBoomerang(uid, comp);
                 continue;
@@ -132,6 +144,7 @@ public sealed class BoomerangItemSystem : EntitySystem
     {
         comp.WaitingForReturn = false;
         comp.IsReturning = true;
+        comp.ReturnGiveUpAt = _timing.CurTime + TimeSpan.FromSeconds(comp.ReturnTimeout);
 
         if (comp.Thrower == null)
             return;

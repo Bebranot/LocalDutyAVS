@@ -2,7 +2,7 @@ using Content.Shared._Duty.Block.Components;
 using Content.Shared.Hands;
 using Content.Shared.Inventory.Events;
 using Content.Shared.Item;
-using Content.Shared.Weapons.Ranged.Systems;
+using Content.Shared.Weapons.Ranged.Events;
 using Robust.Shared.Network;
 using Robust.Shared.Timing;
 
@@ -13,10 +13,10 @@ namespace Content.Shared._Duty.Block;
 /// оружие в руках — "бейся тем же, чем заблокировал". Вешается BlockSystem'ом при активации
 /// полного уровня блока оружием с GunComponent, независимо от исхода блока.
 /// </summary>
-public sealed class BlockGunLockSystem : EntitySystem
+public sealed partial class BlockGunLockSystem : EntitySystem
 {
-    [Dependency] private readonly IGameTiming _timing = default!;
-    [Dependency] private readonly INetManager _netMan = default!;
+    [Dependency] private IGameTiming _timing = default!;
+    [Dependency] private INetManager _netMan = default!;
 
     /// <summary>Не чаще раза в этот интервал — иначе строка в чат спамит при частых попытках.</summary>
     private static readonly TimeSpan NoticeDebounce = TimeSpan.FromSeconds(1);
@@ -27,7 +27,7 @@ public sealed class BlockGunLockSystem : EntitySystem
     {
         base.Initialize();
 
-        SubscribeLocalEvent<AttemptShootEvent>(OnShootAttempt);
+        SubscribeLocalEvent<BlockGunLockComponent, ShotAttemptedEvent>(OnShotAttempted);
         SubscribeLocalEvent<BlockGunLockComponent, DropAttemptEvent>(OnCancelAttempt);
         SubscribeLocalEvent<BlockGunLockComponent, PickupAttemptEvent>(OnCancelAttempt);
         SubscribeLocalEvent<BlockGunLockComponent, IsEquippingAttemptEvent>(OnEquipAttempt);
@@ -65,19 +65,15 @@ public sealed class BlockGunLockSystem : EntitySystem
     }
 
     /// <summary>
-    /// AttemptShootEvent летит directed на само оружие, поэтому подписка широковещательная —
-    /// фильтруем по <see cref="AttemptShootEvent.User"/> вручную.
+    /// Ловим на стрелке: ShotAttemptedEvent ганы поднимают и на нём (см. BlockSystem.OnShotAttempted).
     /// </summary>
-    private void OnShootAttempt(ref AttemptShootEvent args)
+    private void OnShotAttempted(EntityUid uid, BlockGunLockComponent component, ref ShotAttemptedEvent args)
     {
         if (args.Cancelled)
             return;
 
-        if (!TryComp<BlockGunLockComponent>(args.User, out var comp))
-            return;
-
-        args.Cancelled = true;
-        TryNotify(args.User, comp);
+        args.Cancel();
+        TryNotify(uid, component);
     }
 
     private void OnCancelAttempt(EntityUid uid, BlockGunLockComponent component, CancellableEntityEventArgs args)
@@ -88,7 +84,7 @@ public sealed class BlockGunLockSystem : EntitySystem
 
     private void OnEquipAttempt(EntityUid uid, BlockGunLockComponent component, IsEquippingAttemptEvent args)
     {
-        if (args.Equipee != uid)
+        if (args.EquipTarget != uid)
             return;
 
         args.Cancel();
@@ -97,7 +93,7 @@ public sealed class BlockGunLockSystem : EntitySystem
 
     private void OnUnequipAttempt(EntityUid uid, BlockGunLockComponent component, IsUnequippingAttemptEvent args)
     {
-        if (args.Unequipee != uid)
+        if (args.UnEquipTarget != uid)
             return;
 
         args.Cancel();

@@ -21,16 +21,16 @@ namespace Content.Client._Duty.Lazarus;
 /// <see cref="LazarusCancelledEvent"/> обрывает сцену: персонаж умер или его вытащили
 /// из крита раньше, чем сработало «вставание».
 /// </summary>
-public sealed class LazarusSystem : EntitySystem
+public sealed partial class LazarusSystem : EntitySystem
 {
-    [Dependency] private readonly IOverlayManager _overlay = default!;
-    [Dependency] private readonly IClyde _clyde = default!;
-    [Dependency] private readonly IGameTiming _timing = default!;
-    [Dependency] private readonly IResourceCache _cache = default!;
-    [Dependency] private readonly IRobustRandom _random = default!;
-    [Dependency] private readonly IPlayerManager _player = default!;
-    [Dependency] private readonly SharedAudioSystem _audio = default!;
-    [Dependency] private readonly ContentAudioSystem _contentAudio = default!;
+    [Dependency] private IOverlayManager _overlay = default!;
+    [Dependency] private IClyde _clyde = default!;
+    [Dependency] private IGameTiming _timing = default!;
+    [Dependency] private IResourceCache _cache = default!;
+    [Dependency] private IRobustRandom _random = default!;
+    [Dependency] private IPlayerManager _player = default!;
+    [Dependency] private SharedAudioSystem _audio = default!;
+    [Dependency] private ContentAudioSystem _contentAudio = default!;
 
     /// <summary>За сколько гаснет сцена при обрыве — быстро, но не рывком.</summary>
     private const float AbortFadeSeconds = 0.4f;
@@ -136,9 +136,11 @@ public sealed class LazarusSystem : EntitySystem
         FadeOutAudio();
     }
 
-    public override void Update(float frameTime)
+    // FrameUpdate, а не Update: клиентский Update при повторной симуляции зовётся по нескольку раз
+    // за тик, и затухание при обрыве шло бы тем быстрее, чем выше пинг.
+    public override void FrameUpdate(float frameTime)
     {
-        base.Update(frameTime);
+        base.FrameUpdate(frameTime);
 
         if (_pendingLastStand != null && _timing.RealTime >= _lastStandTime)
         {

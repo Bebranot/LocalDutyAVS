@@ -14,7 +14,7 @@ public sealed partial class HumanoidProfileEditor
         /* TabContainer.SetTabTitle(2, Loc.GetString("humanoid-profile-editor-languages-tab"));
         Вынесено в HumanoidProfileEditor в регионе InvokeRefresh, чтобы не накладывало названия друг на друга*/
 
-        SetDefaultLanguagesButton.OnPressed += _ => SetDefaultLanguages();
+        // _Duty: обработчик кнопки подписывается один раз в конструкторе (раньше добавлялся при каждом обновлении списка).
 
         if (Profile == null)
             return;
@@ -30,13 +30,13 @@ public sealed partial class HumanoidProfileEditor
             list.Add(_prototypeManager.Index(item));
         }
 
-        list.Sort((x, y) => x.LocalizedName[0].CompareTo(y.LocalizedName[0]));
+        list.Sort((x, y) => string.Compare(x.LocalizedName, y.LocalizedName, StringComparison.CurrentCultureIgnoreCase)); // _Duty: по всему названию, а не по первой букве
         list.Sort((x, y) => y.Priority.CompareTo(x.Priority));
 
         List<LanguagePrototype> defaultList = new();
         defaultList.AddRange(list.Where(x => species.DefaultLanguages.Contains(x) && !species.UniqueLanguages.Contains(x)));
         defaultList.AddRange(list.Where(x => species.UniqueLanguages.Contains(x)));
-        defaultList.Sort((x, y) => x.LocalizedName[0].CompareTo(y.LocalizedName[0]));
+        defaultList.Sort((x, y) => string.Compare(x.LocalizedName, y.LocalizedName, StringComparison.CurrentCultureIgnoreCase));
         defaultList.Sort((x, y) => y.Priority.CompareTo(x.Priority));
 
         foreach (var item in defaultList)

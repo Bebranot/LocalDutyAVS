@@ -62,6 +62,6 @@ names_shadekin_female_first-52 = Любопытство
 names_shadekin_female_first-53 = Свободная
 names_shadekin_female_first-54 = Интерес
 names_shadekin_female_first-55 = Непривязанность
-names_shadekin_female_first-56 = Безрасудство
+names_shadekin_female_first-56 = Безрассудство
 names_shadekin_female_first-57 = Безмятежность
 names_shadekin_female_first-58 = Трансцендентность

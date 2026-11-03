@@ -1,3 +1,5 @@
+using Content.Shared._Duty.Administration;
+using Content.Server._Duty.Administration;
 using Content.Server.Administration.Managers;
 using Content.Server.EUI;
 using Content.Shared.Administration;
@@ -7,9 +9,9 @@ using JetBrains.Annotations;
 namespace Content.Server.Administration.UI
 {
     [UsedImplicitly]
-    public sealed class SetOutfitEui : BaseEui
+    public sealed partial class SetOutfitEui : BaseEui
     {
-        [Dependency] private readonly IAdminManager _adminManager = default!;
+        [Dependency] private IAdminManager _adminManager = default!;
         private readonly NetEntity _target;
 
         public SetOutfitEui(NetEntity entity)
@@ -37,7 +39,8 @@ namespace Content.Server.Administration.UI
         private void AdminManagerOnPermsChanged(AdminPermsChangedEventArgs obj)
         {
             // Close UI if user loses +FUN.
-            if (obj.Player == Player && !UserAdminFlagCheck(AdminFlags.Fun))
+            // _Duty: или узел «Разум и персонаж», где лежит setoutfit
+            if (obj.Player == Player && !UserAdminFlagCheck(AdminFlags.Fun) && !_adminManager.Can(Player, AdminNodes.RolesMind, AdminFlags.Fun))
             {
                 Close();
             }

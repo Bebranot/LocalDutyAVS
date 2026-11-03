@@ -1,4 +1,5 @@
 using Content.Client.Shuttles.UI;
+using Content.Shared._Duty.Shuttles; // _Duty
 using Content.Shared.Shuttles.BUIStates;
 using Content.Shared.Shuttles.Events;
 using JetBrains.Annotations;
@@ -26,6 +27,7 @@ public sealed class ShuttleConsoleBoundUserInterface : BoundUserInterface
         _window.RequestBeaconFTL += OnFTLBeaconRequest;
         _window.DockRequest += OnDockRequest;
         _window.UndockRequest += OnUndockRequest;
+        _window.RequestDutyCentcommJump += () => SendMessage(new DutyCentcommShuttleJumpMessage()); // _Duty
     }
 
     private void OnUndockRequest(NetEntity entity)

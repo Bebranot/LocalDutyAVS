@@ -1,3 +1,4 @@
+using Content.Shared.Radio; // _Duty
 using Content.Shared.Research.Prototypes;
 using Robust.Shared.Prototypes;
 using Robust.Shared.Serialization;
@@ -18,6 +19,21 @@ public sealed class LatheUpdateState : BoundUserInterfaceState
 
     public bool BeakerInserted;
     // ADT-Tweak-End
+
+    // _Duty-start: прогресс текущей детали и каналы объявлений для нового меню станка
+    /// <summary>
+    /// Когда началась печать текущей детали; null — станок стоит (нет питания или очередь пуста).
+    /// Длительность считает только сервер (смазка, детали), поэтому клиенту передаём готовые значения.
+    /// </summary>
+    public TimeSpan? ProductionStart;
+
+    public TimeSpan ProductionLength;
+
+    /// <summary>
+    /// Каналы, в которые станок сообщает о новых рецептах (LatheAnnouncingComponent — серверный).
+    /// </summary>
+    public List<ProtoId<RadioChannelPrototype>> AnnounceChannels = new();
+    // _Duty-end
 
     public LatheUpdateState(List<ProtoId<LatheRecipePrototype>> recipes, LatheRecipeBatch[] queue, ProtoId<LatheRecipePrototype>? currentlyProducing = null)
     {

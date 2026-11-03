@@ -14,10 +14,10 @@ namespace Content.Server.ADT.Administration.Commands;
 [AdminCommand(AdminFlags.Permissions)]
 public sealed class KickHideCommand : LocalizedCommands
 {
-    [Dependency] private readonly IPlayerLocator _locator = default!;
-    [Dependency] private readonly IPlayerManager _playerManager = default!;
-    [Dependency] private readonly GhostKickManager _ghostKickManager = default!;
-    [Dependency] private readonly IAdminManager _adminManager = default!;
+    [Dependency] private IPlayerLocator _locator = default!;
+    [Dependency] private IPlayerManager _playerManager = default!;
+    [Dependency] private GhostKickManager _ghostKickManager = default!;
+    [Dependency] private IAdminManager _adminManager = default!;
 
     public override string Command => "kick_hide";
 
@@ -44,6 +44,14 @@ public sealed class KickHideCommand : LocalizedCommands
             shell.WriteError($"Unable to find player: '{target}'.");
             return;
         }
+
+        // _Duty: тихо кикать админа с большими правами нельзя
+        if (shell.Player is { } invoker && _adminManager.IsOutranked(invoker, player))
+        {
+            shell.WriteError(Loc.GetString("duty-admin-toggle-outranked"));
+            return;
+        }
+
         _ghostKickManager.DoDisconnect(player.Channel, "Smitten.");
     }
 

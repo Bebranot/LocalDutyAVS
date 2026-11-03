@@ -11,9 +11,9 @@ using Robust.Shared.Prototypes;
 
 namespace Content.Server._Duty.PocketPlayer;
 
-public sealed class PocketPlayerSystem : SharedPocketPlayerSystem
+public sealed partial class PocketPlayerSystem : SharedPocketPlayerSystem
 {
-    [Dependency] private readonly IPrototypeManager _protoManager = default!;
+    [Dependency] private IPrototypeManager _protoManager = default!;
 
     private const float MaxDistance = 14f;
     private const float RolloffFactor = 2.5f;

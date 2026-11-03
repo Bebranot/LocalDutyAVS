@@ -16,6 +16,8 @@ public enum TraumaAnalyzerKind : byte
     DislocationResidual,
     ArterialBleed,
     HeadTrauma,
+    Arrhythmia,
+    RevivalWeakness,
 }
 
 /// <summary>

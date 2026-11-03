@@ -27,8 +27,8 @@ marking-HumanTattooSymbolElysium = Татуировка, туловище (Си�
 marking-HumanTattooSymbolElysium-tattoo_symbol_elysium = Татуировка, туловище (Символ Элизиума)
 marking-HumanTattooNarsi = Татуировка, туловище (Нар'Си)
 marking-HumanTattooNarsi-tattoo_narsi = Татуировка, туловище (Нар'Си)
-marking-HumanTattooSpaceChristianCross = Татуировка, туловище (Космического христианский крест)
-marking-HumanTattooSpaceChristianCross-tattoo_space_christian_cross = Татуировка, туловище (Космического христианский крест)
+marking-HumanTattooSpaceChristianCross = Татуировка, туловище (Космический христианский крест)
+marking-HumanTattooSpaceChristianCross-tattoo_space_christian_cross = Татуировка, туловище (Космический христианский крест)
 
 # Руки
 marking-HumanTattooArmImheartmomL = Татуировка, левая рука ("Я люблю маму")

@@ -1,3 +1,5 @@
+using Content.Shared._Duty.Administration;
+using Content.Server._Duty.Administration;
 using Content.Server.Administration.Managers;
 using Content.Server.EUI;
 using Content.Shared.Administration;
@@ -19,9 +21,9 @@ namespace Content.Server.Administration.UI;
 [UsedImplicitly]
 public sealed partial class AdminCameraEui : BaseEui
 {
-    [Dependency] private readonly IAdminManager _admin = default!;
-    [Dependency] private readonly IEntityManager _entityManager = default!;
-    [Dependency] private readonly IGameTiming _timing = default!;
+    [Dependency] private IAdminManager _admin = default!;
+    [Dependency] private IEntityManager _entityManager = default!;
+    [Dependency] private IGameTiming _timing = default!;
 
     private readonly FollowerSystem _follower = default!;
     private readonly PvsOverrideSystem _pvs = default!;
@@ -65,7 +67,7 @@ public sealed partial class AdminCameraEui : BaseEui
         switch (msg)
         {
             case AdminCameraFollowMessage:
-                if (!_admin.HasAdminFlag(Player, AdminFlags.Admin) || Player.AttachedEntity == null)
+                if (!_admin.Can(Player, AdminNodes.EntsTeleport, AdminFlags.Admin) || Player.AttachedEntity == null) // _Duty
                     return;
                 _follower.StartFollowingEntity(Player.AttachedEntity.Value, _target);
                 break;

@@ -10,8 +10,8 @@ namespace Content.Shared.ADT.OfferItem;
 
 public abstract partial class SharedOfferItemSystem
 {
-    [Dependency] private readonly ActionBlockerSystem _actionBlocker = default!;
-    [Dependency] private readonly SharedHandsSystem _hand = default!;
+    [Dependency] private ActionBlockerSystem _actionBlocker = default!;
+    [Dependency] private SharedHandsSystem _hand = default!;
 
     private void InitializeInteractions()
     {
@@ -49,11 +49,10 @@ public abstract partial class SharedOfferItemSystem
         if (!TryComp<HandsComponent>(uid, out var hands) || hands.ActiveHandId is null)
             return;
 
+        // _Duty: без попапа. OfferItem по умолчанию делит клавишу N с блоком (_Duty Block), и
+        // «У вас в руках ничего нет!» вылезало при каждом блоке голыми руками — дезинформация.
         if (_hand.GetActiveItem((uid, hands)) is not { } item)
-        {
-            _popup.PopupClient(Loc.GetString("offer-item-empty-hand"), uid, uid);
             return;
-        }
 
         offerItem.IsInOfferMode = true;
         offerItem.Hand = hands.ActiveHandId;

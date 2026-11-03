@@ -1,0 +1,11 @@
+# Голосования "да/нет" на старте раунда, применяющие игровой эффект при победе "Да".
+# Чтобы добавить новое такое голосование — достаточно нового прототипа roundStartVoteEvent
+# здесь плюс системы, реализующей effectId (см. Content.Server/_Duty/RoundStartVote/RoundStartVoteSystem.cs).
+
+- type: roundStartVoteEvent
+  id: DutySmesDebugCharge
+  question: duty-round-start-vote-smes-debug-question
+  description: duty-round-start-vote-smes-debug-description
+  effectId: SmesInfiniteCharge
+  duration: 120
+  enabled: true

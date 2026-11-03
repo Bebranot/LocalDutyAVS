@@ -4,6 +4,8 @@
 # ══════════════════════════════════════════════════════════════
 #  LocalDuty — Огнестрельное оружие (Огнестрел)
 #  Префиксы: Duty + Огнестрел
+#  Калибры — сталкерские (Stalker/Weapons/ammo_*.yml): АК-105 5.45x39, М16 5.56x45, ПМ 9x18,
+#  ТТ 7.62x25, СВД 7.62x54R. Сайга-12 — ванильная дробь (своего 12 калибра у пака нет).
 # ══════════════════════════════════════════════════════════════
 
 # ── АК-105 ────────────────────────────────────────────────────
@@ -44,21 +46,21 @@
     slots:
       gun_magazine:
         name: Magazine
-        startingItem: MagazineLightRifle
+        startingItem: Magazine545x30
         insertSound: /Audio/_Duty/Weapons/Guns/RifleGen/MagIn/rifle_magin.ogg
         ejectSound: /Audio/_Duty/Weapons/Guns/RifleGen/MagOut/rifle_magout.ogg
         priority: 2
         whitelist:
           tags:
-          - MagazineLightRifle
+          - Magazine545
         whitelistFailPopup: gun-magazine-whitelist-fail
       gun_chamber:
         name: Chamber
-        startingItem: CartridgeLightRifle
+        startingItem: STCartridge545FMJ
         priority: 1
         whitelist:
           tags:
-          - CartridgeLightRifle
+          - STCartridge545
   - type: ContainerContainer
     containers:
       gun_magazine: !type:ContainerSlot
@@ -115,21 +117,21 @@
     slots:
       gun_magazine:
         name: Magazine
-        startingItem: MagazinePistol
+        startingItem: BasePMMag
         insertSound: /Audio/Weapons/Guns/MagIn/pistol_magin.ogg
         ejectSound: /Audio/Weapons/Guns/MagOut/pistol_magout.ogg
         priority: 2
         whitelist:
           tags:
-          - MagazinePistol
+          - MagazinePM
         whitelistFailPopup: gun-magazine-whitelist-fail
       gun_chamber:
         name: Chamber
-        startingItem: CartridgePistol
+        startingItem: STCartridge918PGJ
         priority: 1
         whitelist:
           tags:
-          - CartridgePistol
+          - STCartridge918
   - type: ContainerContainer
     containers:
       gun_magazine: !type:ContainerSlot
@@ -183,21 +185,21 @@
     slots:
       gun_magazine:
         name: Magazine
-        startingItem: MagazineMagnum
+        startingItem: TTMag
         insertSound: /Audio/Weapons/Guns/MagIn/pistol_magin.ogg
         ejectSound: /Audio/Weapons/Guns/MagOut/pistol_magout.ogg
         priority: 2
         whitelist:
           tags:
-          - MagazineMagnum
+          - MagazineTT
         whitelistFailPopup: gun-magazine-whitelist-fail
       gun_chamber:
         name: Chamber
-        startingItem: CartridgeMagnum
+        startingItem: STCartridge725PGL
         priority: 1
         whitelist:
           tags:
-          - CartridgeMagnum
+          - STCartridge725
   - type: ContainerContainer
     containers:
       gun_magazine: !type:ContainerSlot
@@ -262,21 +264,21 @@
     slots:
       gun_magazine:
         name: Magazine
-        startingItem: ADTMagazineHristovAdvanced
+        startingItem: 754Mag10
         insertSound: /Audio/_Duty/Weapons/Guns/RifleGen/MagIn/osv96_magin.ogg
         ejectSound: /Audio/_Duty/Weapons/Guns/RifleGen/MagOut/osv96_magout.ogg
         priority: 2
         whitelist:
           tags:
-          - ADTMagazineHristovAdvanced
+          - Magazine754
         whitelistFailPopup: gun-magazine-whitelist-fail
       gun_chamber:
         name: Chamber
-        startingItem: CartridgeAntiMateriel
+        startingItem: STCartridge754FMJ
         priority: 1
         whitelist:
           tags:
-          - CartridgeAntiMateriel
+          - STCartridge754
   - type: ContainerContainer
     containers:
       gun_magazine: !type:ContainerSlot
@@ -442,21 +444,21 @@
     slots:
       gun_magazine:
         name: Magazine
-        startingItem: MagazineLightRifle
+        startingItem: Magazine556x30
         insertSound: /Audio/_Duty/Weapons/Guns/RifleGen/MagIn/rifle_magin.ogg
         ejectSound: /Audio/_Duty/Weapons/Guns/RifleGen/MagOut/rifle_magout.ogg
         priority: 2
         whitelist:
           tags:
-          - MagazineLightRifle
+          - Magazine556
         whitelistFailPopup: gun-magazine-whitelist-fail
       gun_chamber:
         name: Chamber
-        startingItem: CartridgeLightRifle
+        startingItem: Cartridge556FMJ
         priority: 1
         whitelist:
           tags:
-          - CartridgeLightRifle
+          - STCartridge556
   - type: ContainerContainer
     containers:
       gun_magazine: !type:ContainerSlot

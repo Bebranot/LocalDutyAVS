@@ -23,6 +23,7 @@
     angleIncrease: 2
     angleDecay: 5
     fireRate: 7.5
+    cameraRecoilScalar: 1.0 # АШ-12: тяжесть 12.7x55 уже в калибре; компоновка буллпап — без надбавки
     selectedMode: FullAuto
     availableModes:
     - Burst
@@ -54,7 +55,7 @@
           - STWeaponModuleRifleScopeRu
       gun_chamber:
         name: Chamber
-        startingItem: STCartridge1255BP
+        startingItem: STCartridge1255PS12A
         priority: 1
         whitelist:
           tags:

@@ -18,7 +18,12 @@ namespace Content.Shared._Duty.Movement;
 /// Скорость спринта = бег × <see cref="SprintBonus"/> × ХП × выносливость × оружие-в-руках × слоты.
 /// На нуле выносливости спринт становится медленнее обычного бега. См. <see cref="DutySprintSystem"/>.
 /// </summary>
-[RegisterComponent, NetworkedComponent, AutoGenerateComponentState(true), AutoGenerateComponentPause]
+/// <remarks>
+/// Дельта-состояния: пока игрок бежит или отдыхает, запас меняется каждый тик, и без них по сети
+/// каждый тик уходили бы все ~18 полей (почти все — неизменные настройки из прототипа) каждому
+/// игроку в PVS. Тиковое изменение помечается через DirtyFields — уходят только изменившиеся поля.
+/// </remarks>
+[RegisterComponent, NetworkedComponent, AutoGenerateComponentState(true, fieldDeltas: true), AutoGenerateComponentPause]
 public sealed partial class DutyStaminaComponent : Component
 {
     /// <summary>Зажата ли клавиша спринта (C). Ставится инпут-хендлером, предсказывается.</summary>
@@ -106,6 +111,21 @@ public sealed partial class DutyStaminaComponent : Component
     /// </summary>
     [DataField(customTypeSerializer: typeof(TimeOffsetSerializer)), AutoNetworkedField, AutoPausedField]
     public TimeSpan NextSprintAllowed = TimeSpan.Zero;
+
+    /// <summary>
+    /// Сколько секунд можно стоять с зажатой C, прежде чем рывок считается законченным. Короткая
+    /// пауза нужна, чтобы смена направления (отпустил W, нажал D) не обрывала спринт.
+    /// </summary>
+    [DataField]
+    public float SprintStopGrace = 0.3f;
+
+    /// <summary>Служебное: в текущем нажатии C персонаж уже реально бежал.</summary>
+    [ViewVariables]
+    public bool SprintStarted;
+
+    /// <summary>Служебное: с какого момента персонаж стоит на месте с зажатой C.</summary>
+    [ViewVariables]
+    public TimeSpan? SprintIdleSince;
 
     // ── Отдышка (клиентский звук) ─────────────────────────────────────────────
 

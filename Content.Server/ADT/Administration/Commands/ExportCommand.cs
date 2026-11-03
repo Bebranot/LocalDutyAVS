@@ -18,8 +18,8 @@ namespace Content.Server.ADT.Administration.Commands;
 [AdminCommand(AdminFlags.Mapping)]
 public sealed class ExportCommand : LocalizedCommands
 {
-    [Dependency] private readonly INetManager _netMan = default!;
-    [Dependency] private readonly IResourceManager _resource = default!;
+    [Dependency] private INetManager _netMan = default!;
+    [Dependency] private IResourceManager _resource = default!;
 
     public override string Command => "export";
 
@@ -40,6 +40,13 @@ public sealed class ExportCommand : LocalizedCommands
         if (shell.Player == null)
         {
             Logger.Error("This command can not be executed by server.");
+            return;
+        }
+
+        // _Duty: без аргумента команда падала с IndexOutOfRange в async void
+        if (args.Length != 1)
+        {
+            shell.WriteError(Loc.GetString("shell-need-exactly-one-argument"));
             return;
         }
 

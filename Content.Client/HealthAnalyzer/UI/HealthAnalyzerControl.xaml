@@ -33,10 +33,10 @@
             <Label Name="BloodLabel" />
             <Label Text="{Loc 'health-analyzer-window-entity-damage-total-text'}" />
             <Label Name="DamageLabel" />
-            <!-- ADT-Tweak-Start -->
-            <Label Name="AllergyText" Text="{Loc 'health-analyzer-window-entity-allergy-text'}" />
-            <!-- ADT-Tweak-End -->
         </GridContainer>
+        <!-- ADT-Tweak-Start -->
+        <Label Name="AllergyText" FontColorOverride="Orange" Text="{Loc 'health-analyzer-window-entity-allergy-text'}" />
+        <!-- ADT-Tweak-End -->
     </BoxContainer>
 
     <!-- _Duty: мигающая табличка критического статуса (HP пациента < ~10%) -->
@@ -54,7 +54,7 @@
 
     </BoxContainer>
 
-    <PanelContainer StyleClasses="LowDivider" />
+    <PanelContainer Name="GroupsDivider" StyleClasses="LowDivider" /> <!-- ADT-Tweak -->
 
     <BoxContainer
         Name="GroupsContainer"

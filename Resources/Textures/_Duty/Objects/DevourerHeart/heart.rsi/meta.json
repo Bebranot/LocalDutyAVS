@@ -1,0 +1,9 @@
+{
+  "version": 1,
+  "license": "CC-BY-SA-3.0",
+  "copyright": "_Duty (LocalDutyAVS)",
+  "size": { "x": 16, "y": 16 },
+  "states": [
+    { "name": "icon", "directions": 1 }
+  ]
+}

@@ -17,14 +17,14 @@ namespace Content.Client._Duty.Lazarus;
 /// боли — игрок читает сужение поля зрения как знакомый язык. Но без пульсации и в почти
 /// чёрном цвете: пульсирующий красный означает боль, а здесь — угасание, а не рана.
 /// </summary>
-public sealed class LazarusVignetteOverlay : Overlay
+public sealed partial class LazarusVignetteOverlay : Overlay
 {
     private static readonly ProtoId<ShaderPrototype> CircleMaskShader = "GradientCircleMask";
 
-    [Dependency] private readonly IEntityManager _entity = default!;
-    [Dependency] private readonly IPlayerManager _player = default!;
-    [Dependency] private readonly IPrototypeManager _proto = default!;
-    [Dependency] private readonly IGameTiming _timing = default!;
+    [Dependency] private IEntityManager _entity = default!;
+    [Dependency] private IPlayerManager _player = default!;
+    [Dependency] private IPrototypeManager _proto = default!;
+    [Dependency] private IGameTiming _timing = default!;
 
     /// <summary>Выше <c>DutyPainFlashOverlay</c> и агонии, чтобы порядок был определён явно.</summary>
     private const int SceneZIndex = 100;

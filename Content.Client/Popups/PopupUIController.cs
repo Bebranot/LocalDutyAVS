@@ -7,6 +7,7 @@ using Robust.Client.Graphics;
 using Robust.Client.ResourceManagement;
 using Robust.Client.UserInterface;
 using Robust.Client.UserInterface.Controllers;
+using Robust.Shared.Configuration; // ADT-Tweak
 
 namespace Content.Client.Popups;
 
@@ -16,7 +17,9 @@ namespace Content.Client.Popups;
 public sealed class PopupUIController : UIController, IOnStateEntered<GameplayState>, IOnStateExited<GameplayState>
 {
     [UISystemDependency] private readonly PopupSystem? _popup = default!;
+    [Dependency] private IConfigurationManager _cfg = default!; // ADT-Tweak
 
+    private bool _outline; // ADT-Tweak
     private Font _smallFont = default!;
     private Font _mediumFont = default!;
     private Font _largeFont = default!;

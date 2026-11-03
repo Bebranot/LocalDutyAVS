@@ -46,3 +46,17 @@ duty-jug-critical-care-desc =
     {"["}color=violet]200 ед. трикордразина[/color]. Ровным слоем подлечивает сразу все виды урона —
     но заметно это только когда боец не сильно ранен: [color=red]эффективен при малых ранениях[/color], колоть для профилактики.
     {"["}color=yellow]Рекомендации отсутствуют. Передоза нет.[/color]
+
+# Имена и описания сущностей — через автоматические ent-ключи (ключ в поле name прототипа запрещён тестом).
+ent-DutyJugDexalinSaline = { duty-jug-dexalin-saline-name }
+    .desc = { duty-jug-dexalin-saline-desc }
+ent-DutyJugBurnRelief = { duty-jug-burn-relief-name }
+    .desc = { duty-jug-burn-relief-desc }
+ent-DutyJugAntiHemorrhage = { duty-jug-anti-hemorrhage-name }
+    .desc = { duty-jug-anti-hemorrhage-desc }
+ent-DutyJugAntitoxin = { duty-jug-antitoxin-name }
+    .desc = { duty-jug-antitoxin-desc }
+ent-DutyJugCriticalCare = { duty-jug-critical-care-name }
+    .desc = { duty-jug-critical-care-desc }
+ent-DutyClothingBackpackDuffelChemicalsKit = { duty-chemicals-kit-name }
+    .desc = { duty-chemicals-kit-desc }

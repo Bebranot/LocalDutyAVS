@@ -12,11 +12,13 @@ using System.Numerics;
 namespace Content.Client._Duty.Crit;
 
 /// <summary>
-/// В MobState.Critical локальный игрок слышит IC/эмоции только в 3 клетках; дальше — заглушённые фразы.
+/// В MobState.Critical локальный игрок слышит IC/эмоции только с соседних клеток; дальше — заглушённые фразы.
 /// </summary>
 public sealed class DutyCritChatSystem : EntitySystem
 {
-    private const float HearRangeTiles = 3f;
+    // 1.5, а не 1: расстояние евклидово между центрами, а сущности не стоят ровно по сетке —
+    // с 1f собеседник на соседней клетке по диагонали (~1.41) или чуть сместившийся стал бы неразборчив.
+    private const float HearRangeTiles = 1.5f;
 
     [Dependency] private readonly IPlayerManager _player = default!;
     [Dependency] private readonly IStateManager _state = default!;

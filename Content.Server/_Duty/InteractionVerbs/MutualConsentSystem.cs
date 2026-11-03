@@ -9,9 +9,9 @@ using Robust.Shared.Timing;
 
 namespace Content.Server._Duty.InteractionVerbs;
 
-public sealed class MutualConsentSystem : EntitySystem
+public sealed partial class MutualConsentSystem : EntitySystem
 {
-    [Dependency] private readonly IGameTiming _timing = default!;
+    [Dependency] private IGameTiming _timing = default!;
 
     private readonly List<ProtoId<InteractionVerbPrototype>> _expiredBuffer = new();
 

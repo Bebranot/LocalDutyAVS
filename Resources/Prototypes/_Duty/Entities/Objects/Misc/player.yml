@@ -38,7 +38,7 @@
 # --------- CRYSIS
 - type: dutyTrack
   id: redzed_terror_reid_ramirez_type_beat_venom
-  name: "(FREE) REDZED x TERROR REID x RAMIREZ Type Beat - VENOM Boombap Oldschool Instru"
+  name: "(FREE) REDZED x TERROR REID x RAMIREZ Type Beat - VENOM 2 (Boombap Oldschool Instrumental)"
   category: "Кризис: Третий Путь"
   path:
     path: "/Audio/_Duty/Ambient/CrysisThirdWay/(FREE) REDZED x TERROR REID x RAMIREZ Type Beat - VENOM Boombap Oldschool Instru.ogg"
@@ -73,7 +73,7 @@
 
 - type: dutyTrack
   id: ave_plague_king_plague
-  name: "ave plague king plague"
+  name: "King Plague - Ave Plague"
   category: "Кризис: Третий Путь"
   path:
     path: "/Audio/_Duty/Ambient/CrysisThirdWay/ave plague king plague.ogg"
@@ -87,7 +87,7 @@
 
 - type: dutyTrack
   id: boombapoldschool_type_instrumental_2020_redzed
-  name: "BoombapOldschool Type Instrumental 2020 - REDZED"
+  name: "REDZED - Boombap Oldschool Type Instrumental 2020"
   category: "Кризис: Третий Путь"
   path:
     path: "/Audio/_Duty/Ambient/CrysisThirdWay/BoombapOldschool Type Instrumental 2020 - REDZED.ogg"
@@ -227,7 +227,7 @@
 
 - type: dutyTrack
   id: egorgez_rape_me
-  name: "egorgez - Rape me"
+  name: "egorgez - Rape Me"
   category: "Кризис: Третий Путь"
   path:
     path: "/Audio/_Duty/Ambient/CrysisThirdWay/egorgez - rape me.ogg"
@@ -290,7 +290,7 @@
 
 - type: dutyTrack
   id: hanna_agyzarova_otel
-  name: "Жанна Агузарова - Отель"
+  name: "Жанна Агузарова - Старый отель"
   category: "Кризис: Третий Путь"
   path:
     path: "/Audio/_Duty/Ambient/CrysisThirdWay/Hanna Agyzarova - otel.ogg"
@@ -598,7 +598,7 @@
 
 - type: dutyTrack
   id: romantik_m_spasatelnyi_krug_igor_talkov_cover
-  name: "Романтик м - Спасательный круг (Игорь Тальков cover)"
+  name: "Романтик М - Спасательный круг (Игорь Тальков cover)"
   category: "Кризис: Третий Путь"
   path:
     path: "/Audio/_Duty/Ambient/CrysisThirdWay/romantik m - spasatelnyi krug (igor talkov cover).ogg"
@@ -675,7 +675,7 @@
 
 - type: dutyTrack
   id: ylica_vostok_nahi_dni
-  name: "Улица восток - Наши дни"
+  name: "Улица Восток - Наши дни"
   category: "Кризис: Третий Путь"
   path:
     path: "/Audio/_Duty/Ambient/CrysisThirdWay/Ylica vostok_-_nahi_dni.ogg"
@@ -720,14 +720,14 @@
 
 - type: dutyTrack
   id: dpk_2b8fd475bbf9e2
-  name: "Made Of Steel"
+  name: "Made of Steel"
   category: "Decaying Winter"
   path:
     path: "/Audio/_Duty/PlayerDK/Decaying Winter/,___MadeOfSteel__.ogg"
 
 - type: dutyTrack
   id: dpk_d567793d9f371a
-  name: "Gods Will Be Watching - Forged At Sineicos (Demo)"
+  name: "Gods Will Be Watching - Forged at Sineicos (Demo)"
   category: "Decaying Winter"
   path:
     path: "/Audio/_Duty/PlayerDK/Decaying Winter/[DEMO] Gods Will Be Watching - Forged At Sineicos.ogg"
@@ -818,7 +818,7 @@
 
 - type: dutyTrack
   id: dpk_2a88b96a597bad
-  name: "Where's The Van?"
+  name: "Where's the Van?"
   category: "Decaying Winter"
   path:
     path: "/Audio/_Duty/PlayerDK/Decaying Winter/Wheres The Van.ogg"
@@ -897,7 +897,7 @@
 
 - type: dutyTrack
   id: dpk_df17961a45491f
-  name: "Chirumiño, Future Boss - Humanicide"
+  name: "Chirumiño - Humanicide (Future Boss)"
   category: "Mewgenics"
   path:
     path: "/Audio/_Duty/PlayerDK/Mewgenics/Chirumiño, Future Boss - HUMANICIDE -Mewgenics Original Soundtrack.ogg"
@@ -939,7 +939,7 @@
 
 - type: dutyTrack
   id: dpk_1df8fa5a7682b6
-  name: "Down With The Devil"
+  name: "Down with the Devil"
   category: "Mewgenics"
   path:
     path: "/Audio/_Duty/PlayerDK/Mewgenics/Down With The Devil - Mewgenics.ogg"
@@ -1107,7 +1107,7 @@
 
 - type: dutyTrack
   id: dpk_4b06fa6a8133e8
-  name: "The Crack Of Doom"
+  name: "The Crack of Doom"
   category: "Mewgenics"
   path:
     path: "/Audio/_Duty/PlayerDK/Mewgenics/The Crack Of Doom - Mewgenics OST.ogg"
@@ -1152,7 +1152,7 @@
 
 - type: dutyTrack
   id: dpk_6bc8fed5dZZZZc56asdfasdf5c
-  name: "Master Of Shadow (Persona 3 Reload)"
+  name: "Master of Shadow (Persona 3 Reload)"
   category: "Karp/Persona"
   path:
     path: "/Audio/_Duty/PlayerDK/Persona/Master Of Shadow -Reload-.ogg"
@@ -1173,7 +1173,7 @@
 
 - type: dutyTrack
   id: dpk_6bc8fed5dc5ergeg6sadf5c
-  name: "Time To Make History (Persona 4 Golden)"
+  name: "Time to Make History (Persona 4 Golden)"
   category: "Karp/Persona"
   path:
     path: "/Audio/_Duty/PlayerDK/Persona/8.Time To Make History(P4G).ogg"
@@ -1194,7 +1194,7 @@
 
 - type: dutyTrack
   id: dpk_6bc8fed5dc56fsdfafasadf5c
-  name: "Reach Out To The Truth (Instrumental) (Persona 4)"
+  name: "Reach Out to the Truth (Instrumental) (Persona 4)"
   category: "Karp/Persona"
   path:
     path: "/Audio/_Duty/PlayerDK/Persona/5.Reach Out To The Truth -inst vesion-(P4).ogg"
@@ -1424,7 +1424,7 @@
 
 - type: dutyTrack
   id: dpk_59b4a1a5ca0aae
-  name: "Holding Out For A Hero"
+  name: "Holding Out for a Hero"
   category: "Stalker"
   path:
     path: "/Audio/_Duty/PlayerDK/Stalker/Radio/holding_out_for_a_hero.ogg"
@@ -1678,7 +1678,7 @@
 
 - type: dutyTrack
   id: dpk_619d274e252920
-  name: "In The House, In A Heartbeat"
+  name: "In the House, in a Heartbeat"
   category: "Stalker"
   path:
     path: "/Audio/_Duty/PlayerDK/Stalker/Radio/Contributor/InTheHouseInAHeartbeat.ogg"
@@ -1755,7 +1755,7 @@
 
 - type: dutyTrack
   id: dpk_8ac605cbc85d6e
-  name: "Stay With Me"
+  name: "Stay with Me"
   category: "Stalker"
   path:
     path: "/Audio/_Duty/PlayerDK/Stalker/Radio/Contributor/StayWithMe.ogg"
@@ -2621,7 +2621,7 @@
 
 - type: dutyTrack
   id: dpk_8961178528cef7
-  name: "A Complete And Utter Destruction Of The Sense - Reikgon Boss Wave"
+  name: "A Complete and Utter Destruction of the Sense - Reikgon Boss Wave"
   category: "Прочее"
   path:
     path: "/Audio/_Duty/PlayerDK/Прочее/A Complete And Utter Destruction Of The Sense - Reikgon boss wave.ogg"
@@ -2656,14 +2656,14 @@
 
 - type: dutyTrack
   id: dpk_4da267a6690ab5
-  name: "Damien Gauci - Mice On Venus"
+  name: "Damien Gauci - Mice on Venus"
   category: "Прочее"
   path:
     path: "/Audio/_Duty/PlayerDK/Прочее/Damien Gauci - Mice On Venus.ogg"
 
 - type: dutyTrack
   id: dpk_ec4abcfdd8767d
-  name: "Debito De Sonno (Forsaken)"
+  name: "Debito Di Sonno (Forsaken)"
   category: "Прочее"
   path:
     path: "/Audio/_Duty/PlayerDK/Прочее/DebitoDeSonnoFORSAKEN.ogg"
@@ -2684,7 +2684,7 @@
 
 - type: dutyTrack
   id: dpk_283cd90f0e3688
-  name: "Edge Of Darkness"
+  name: "Edge of Darkness"
   category: "Прочее"
   path:
     path: "/Audio/_Duty/PlayerDK/Прочее/Edge Of Darkness.ogg"
@@ -2705,7 +2705,7 @@
 
 - type: dutyTrack
   id: dpk_224b2260fd82d0
-  name: "Forsaken OST — Creation Of Hatred [Shedletsky vs 1x1x1x1]"
+  name: "Forsaken OST — Creation of Hatred [Shedletsky vs 1x1x1x1]"
   category: "Прочее"
   path:
     path: "/Audio/_Duty/PlayerDK/Прочее/Forsaken OST — Creation Of Hatred [Shedletsky vs 1x1x1x1].ogg"
@@ -2831,7 +2831,7 @@
 
 - type: dutyTrack
   id: dpk_b01abd994afa62
-  name: "Search 'n Destroy Arid"
+  name: "Search'n'Destroy (Arid OST)"
   category: "Прочее"
   path:
     path: "/Audio/_Duty/PlayerDK/Прочее/Search'nDestroyARID.ogg"
@@ -2917,7 +2917,7 @@
 
 - type: dutyTrack
   id: dpk_3a4f30f3922ac5
-  name: "Feel The Fury (ft. MrGoodbarz & Martin T.)"
+  name: "Feel the Fury (ft. MrGoodbarz & Martin T.)"
   category: "С словами"
   path:
     path: "/Audio/_Duty/PlayerDK/С словами/Feel The Fury (Ft. MrGoodbarz, Martin T.) - SONIC.exe OUTCOME MEMORIES OST.ogg"

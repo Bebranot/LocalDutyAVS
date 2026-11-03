@@ -7,11 +7,11 @@ using Robust.Shared.Utility;
 
 namespace Content.Client.Chat.Managers;
 
-internal sealed class ChatManager : IChatManager
+internal sealed partial class ChatManager : IChatManager
 {
-    [Dependency] private readonly IClientConsoleHost _consoleHost = default!;
-    [Dependency] private readonly IClientAdminManager _adminMgr = default!;
-    [Dependency] private readonly IEntitySystemManager _systems = default!;
+    [Dependency] private IClientConsoleHost _consoleHost = default!;
+    [Dependency] private IClientAdminManager _adminMgr = default!;
+    [Dependency] private IEntitySystemManager _systems = default!;
 
     private ISawmill _sawmill = default!;
     public event Action? PermissionsUpdated; // ADT-CollectiveMind-Tweak
@@ -67,7 +67,7 @@ internal sealed class ChatManager : IChatManager
                 if (_systems.GetEntitySystemOrNull<GhostSystem>() is {IsGhost: true})
                     goto case ChatSelectChannel.Local;
 
-                if (_adminMgr.HasFlag(AdminFlags.Admin))
+                if (_adminMgr.CanCommand("dsay")) // _Duty: проверяем саму команду, а не флаги
                     _consoleHost.ExecuteCommand($"dsay \"{CommandParsing.Escape(str)}\"");
                 else
                     _sawmill.Warning("Tried to speak on deadchat without being ghost or admin.");

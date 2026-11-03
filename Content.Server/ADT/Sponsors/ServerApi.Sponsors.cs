@@ -14,7 +14,7 @@ namespace Content.Server.Administration;
 
 public sealed partial class ServerApi
 {
-    [Dependency] private readonly SponsorManager _sponsors = default!;
+    [Dependency] private SponsorManager _sponsors = default!;
 
     private void RegisterSponsorHandlers()
     {
@@ -175,6 +175,12 @@ public sealed partial class ServerApi
             return;
 
         var grants = await _sponsors.GetGrantHistoryAsync(userId.Value);
+
+        var legacy = await RunOnMainThreadAsync(() =>
+            _sponsors.GetLegacyGrantAsync(new Robust.Shared.Network.NetUserId(userId.Value)));
+
+        if (legacy != null)
+            grants.Insert(0, legacy);
 
         var resolved = await RunOnMainThread(() =>
         {

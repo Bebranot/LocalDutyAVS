@@ -17,4 +17,4 @@
     ADTHemostasisAutoInjector: 30
     BruteAutoInjector: 30
     BurnAutoInjector: 30
-    Defibrillator: 3
+    DutyDefibrillatorLifePak40s: 3 # _Duty: вместо ванильного Defibrillator

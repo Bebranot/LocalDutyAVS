@@ -6,15 +6,16 @@ using Robust.Client.UserInterface;
 using Robust.Client.UserInterface.XAML;
 using Robust.Shared.Prototypes;
 using Robust.Shared.Timing;
+using Robust.Shared.Utility;
 
 namespace Content.Client.Store.Ui;
 
 [GenerateTypedNameReferences]
 public sealed partial class StoreListingControl : Control
 {
-    [Dependency] private readonly IPrototypeManager _prototype = default!;
-    [Dependency] private readonly IEntityManager _entity = default!;
-    [Dependency] private readonly IGameTiming _timing = default!;
+    [Dependency] private IPrototypeManager _prototype = default!;
+    [Dependency] private IEntityManager _entity = default!;
+    [Dependency] private IGameTiming _timing = default!;
     private readonly ClientGameTicker _ticker;
 
     private readonly ListingDataWithCostModifiers _data;
@@ -35,7 +36,8 @@ public sealed partial class StoreListingControl : Control
         _discount = discount;
 
         StoreItemName.Text = ListingLocalisationHelpers.GetLocalisedNameOrEntityName(_data, _prototype);
-        StoreItemDescription.SetMessage(ListingLocalisationHelpers.GetLocalisedDescriptionOrEntityDescription(_data, _prototype));
+        // _Duty: описания лотов могут содержать [color=…] — разбираем как разметку, а не показываем сырые теги.
+        StoreItemDescription.SetMessage(FormattedMessage.FromMarkupPermissive(ListingLocalisationHelpers.GetLocalisedDescriptionOrEntityDescription(_data, _prototype)));
 
         UpdateBuyButtonText();
         StoreItemBuyButton.Disabled = !CanBuy();
@@ -52,6 +54,9 @@ public sealed partial class StoreListingControl : Control
         if (_data.RestockTime > stationTime)
             return false;
 
+        if (_data.Locked)
+            return false;
+
         return true;
     }
 
@@ -62,6 +67,10 @@ public sealed partial class StoreListingControl : Control
         {
             var timeLeftToBuy = stationTime - _data.RestockTime;
             StoreItemBuyButton.Text =  timeLeftToBuy.Duration().ToString(@"mm\:ss");
+        }
+        else if (_data.Locked)
+        {
+            StoreItemBuyButton.Text = Loc.GetString("store-listing-locked");
         }
         else
         {

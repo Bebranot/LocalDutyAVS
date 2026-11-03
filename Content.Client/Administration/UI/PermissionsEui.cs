@@ -1,9 +1,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
-using Content.Client.Administration.Managers;
+using Content.Client._Duty.Administration;
 using Content.Client.Eui;
 using Content.Client.Stylesheets;
+using Content.Client.UserInterface.Controls;
+using Content.Shared._Duty.Administration;
 using Content.Shared.Administration;
 using Content.Shared.Eui;
 using JetBrains.Annotations;
@@ -13,34 +15,50 @@ using Robust.Client.UserInterface.CustomControls;
 using Robust.Shared.IoC;
 using Robust.Shared.Localization;
 using Robust.Shared.Maths;
+using Robust.Shared.Prototypes;
 using Robust.Shared.Utility;
 using static Content.Shared.Administration.PermissionsEuiMsg;
 using static Robust.Client.UserInterface.Controls.BoxContainer;
 
 namespace Content.Client.Administration.UI
 {
+    // _Duty-start: файл целиком переписан под дерево админ-прав (права — строки: старый флаг или id узла)
+    // _Duty: панель переписана под дерево прав (PermissionTreeEditor): права — строки (старый флаг или id узла).
+    // Окно правки закрывается только после ответа сервера об успехе, чтобы отказ не стирал выставленные галочки.
     [UsedImplicitly]
-    public sealed class PermissionsEui : BaseEui
+    public sealed partial class PermissionsEui : BaseEui
     {
         private const int NoRank = -1;
 
-        [Dependency] private readonly IClientAdminManager _adminManager = default!;
+        private static readonly Color SuccessColor = Color.FromHex("#7ccf62");
+        private static readonly Color ErrorColor = Color.FromHex("#e27a7a");
+
+        [Dependency] private readonly IPrototypeManager _proto = default!;
 
         private readonly Menu _menu;
         private readonly List<BaseWindow> _subWindows = new();
 
-        private Dictionary<int, PermissionsEuiState.AdminRankData> _ranks =
-            new();
+        private Dictionary<int, PermissionsEuiState.AdminRankData> _ranks = new();
+        private HashSet<string> _editorGrants = new();
+        private AdminPermissionTree? _tree;
+        private PermissionsEuiState? _lastState;
+
+        /// <summary>Окно, чьё сохранение ждёт ответа сервера.</summary>
+        private IPendingWindow? _pending;
 
         public PermissionsEui()
         {
             IoCManager.InjectDependencies(this);
 
-            _menu = new Menu(this);
-            _menu.AddAdminButton.OnPressed += AddAdminPressed;
-            _menu.AddAdminRankButton.OnPressed += AddAdminRankPressed;
+            _menu = new Menu();
+            _menu.AddAdminButton.OnPressed += _ => OpenEditWindow(null);
+            _menu.AddAdminRankButton.OnPressed += _ => OpenRankEditWindow(null);
+            _menu.AdminSearch.OnTextChanged += _ => Rebuild();
+            _menu.RankSearch.OnTextChanged += _ => Rebuild();
             _menu.OnClose += CloseEverything;
         }
+
+        private AdminPermissionTree Tree => _tree ??= new AdminPermissionTree(_proto);
 
         public override void Closed()
         {
@@ -60,68 +78,102 @@ namespace Content.Client.Administration.UI
             _menu.Close();
         }
 
-        private void AddAdminPressed(BaseButton.ButtonEventArgs obj)
+        public override void Opened()
         {
-            OpenEditWindow(null);
+            _menu.OpenCentered();
         }
 
-        private void AddAdminRankPressed(BaseButton.ButtonEventArgs obj)
+        public override void HandleMessage(EuiMessageBase msg)
         {
-            OpenRankEditWindow(null);
+            base.HandleMessage(msg);
+
+            if (msg is not OperationResult result)
+                return;
+
+            ShowStatus(_menu.Status, result);
+
+            if (_pending is { } pending)
+            {
+                _pending = null;
+                if (result.Success)
+                {
+                    pending.Window.Close();
+                }
+                else
+                {
+                    pending.SaveButton.Disabled = false;
+                    ShowStatus(pending.Status, result);
+                }
+            }
         }
 
-
-        private void OnEditPressed(PermissionsEuiState.AdminData admin)
+        private static void ShowStatus(Label label, OperationResult result)
         {
-            OpenEditWindow(admin);
+            label.Text = result.Message;
+            label.FontColorOverride = result.Success ? SuccessColor : ErrorColor;
         }
+
+        // ---- окна правки ---------------------------------------------------------------------------------------
 
         private void OpenEditWindow(PermissionsEuiState.AdminData? data)
         {
-            var window = new EditAdminWindow(this, data);
+            var window = new EditAdminWindow(Tree, _editorGrants, _ranks, data, Holds);
             window.SaveButton.OnPressed += _ => SaveAdminPressed(window);
             window.OpenCentered();
-            window.OnClose += () => _subWindows.Remove(window);
-            if (data != null)
+            window.OnClose += () => OnSubWindowClosed(window);
+            if (window.RemoveButton is { } remove)
             {
-                window.RemoveButton!.OnPressed += _ => RemoveButtonPressed(window);
+                remove.OnPressed += _ =>
+                {
+                    SendMessage(new RemoveAdmin { UserId = window.SourceData!.Value.UserId });
+                    BeginPending(window);
+                };
             }
 
             _subWindows.Add(window);
         }
-
 
         private void OpenRankEditWindow(KeyValuePair<int, PermissionsEuiState.AdminRankData>? rank)
         {
-            var window = new EditAdminRankWindow(this, rank);
+            var window = new EditAdminRankWindow(Tree, _editorGrants, rank);
             window.SaveButton.OnPressed += _ => SaveAdminRankPressed(window);
             window.OpenCentered();
-            window.OnClose += () => _subWindows.Remove(window);
-            if (rank != null)
+            window.OnClose += () => OnSubWindowClosed(window);
+            if (window.RemoveButton is { } remove)
             {
-                window.RemoveButton!.OnPressed += _ => RemoveRankButtonPressed(window);
+                remove.OnPressed += _ =>
+                {
+                    SendMessage(new RemoveAdminRank { Id = window.SourceId!.Value });
+                    BeginPending(window);
+                };
             }
 
             _subWindows.Add(window);
         }
 
-        private void RemoveButtonPressed(EditAdminWindow window)
+        private void OnSubWindowClosed(BaseWindow window)
         {
-            SendMessage(new RemoveAdmin { UserId = window.SourceData!.Value.UserId });
-
-            window.Close();
+            _subWindows.Remove(window);
+            if (_pending?.Window == window)
+                _pending = null;
         }
 
-        private void RemoveRankButtonPressed(EditAdminRankWindow window)
+        private void BeginPending(IPendingWindow window)
         {
-            SendMessage(new RemoveAdminRank { Id = window.SourceId!.Value });
+            // Ответа ждёт одно окно: старое ожидание (если ответ потерялся) снимаем, его кнопку возвращаем
+            if (_pending is { } old && old != window)
+                old.SaveButton.Disabled = false;
 
-            window.Close();
+            _pending = window;
+            window.SaveButton.Disabled = true;
+            window.Status.Text = Loc.GetString("duty-perm-ui-saving");
+            window.Status.FontColorOverride = null;
         }
 
         private void SaveAdminPressed(EditAdminWindow popup)
         {
-            popup.CollectSetFlags(out var pos, out var neg);
+            var pos = popup.Editor.CollectPositive();
+            var neg = popup.Editor.CollectNegative();
 
             int? rank = popup.RankButton.SelectedId;
             if (rank == NoRank)
@@ -129,7 +181,7 @@ namespace Content.Client.Administration.UI
                 rank = null;
             }
 
-            var title = string.IsNullOrWhiteSpace(popup.TitleEdit.Text) ? null : popup.TitleEdit.Text;
+            var title = string.IsNullOrWhiteSpace(popup.TitleEdit.Text) ? null : popup.TitleEdit.Text.Trim();
             var suspended = popup.SuspendedCheckbox.Pressed;
 
             if (popup.SourceData is { } src)
@@ -138,8 +190,8 @@ namespace Content.Client.Administration.UI
                 {
                     UserId = src.UserId,
                     Title = title,
-                    PosFlags = pos,
-                    NegFlags = neg,
+                    Pos = pos,
+                    Neg = neg,
                     RankId = rank,
                     Suspended = suspended,
                 });
@@ -150,30 +202,29 @@ namespace Content.Client.Administration.UI
 
                 SendMessage(new AddAdmin
                 {
-                    UserNameOrId = popup.NameEdit!.Text,
+                    UserNameOrId = popup.NameEdit!.Text.Trim(),
                     Title = title,
-                    PosFlags = pos,
-                    NegFlags = neg,
+                    Pos = pos,
+                    Neg = neg,
                     RankId = rank,
                     Suspended = suspended,
                 });
             }
 
-            popup.Close();
+            BeginPending(popup);
         }
-
 
         private void SaveAdminRankPressed(EditAdminRankWindow popup)
         {
-            var flags = popup.CollectSetFlags();
-            var name = popup.NameEdit.Text;
+            var grants = popup.Editor.CollectPositive();
+            var name = popup.NameEdit.Text.Trim();
 
             if (popup.SourceId is { } src)
             {
                 SendMessage(new UpdateAdminRank
                 {
                     Id = src,
-                    Flags = flags,
+                    Grants = grants,
                     Name = name,
                 });
             }
@@ -181,18 +232,15 @@ namespace Content.Client.Administration.UI
             {
                 SendMessage(new AddAdminRank
                 {
-                    Flags = flags,
+                    Grants = grants,
                     Name = name
                 });
             }
 
-            popup.Close();
+            BeginPending(popup);
         }
 
-        public override void Opened()
-        {
-            _menu.OpenCentered();
-        }
+        // ---- списки --------------------------------------------------------------------------------------------
 
         public override void HandleState(EuiStateBase state)
         {
@@ -203,7 +251,52 @@ namespace Content.Client.Administration.UI
                 return;
             }
 
+            _lastState = s;
             _ranks = s.AdminRanks;
+            _editorGrants = new HashSet<string>(s.EditorGrants);
+            Rebuild();
+        }
+
+        /// <summary>Держит ли редактор все эти права (неизвестные имена не мешают).</summary>
+        private bool Holds(IEnumerable<string> grants)
+        {
+            foreach (var g in grants)
+            {
+                var known = AdminFlagsHelper.TryNameToFlag(g, out _) || Tree.Exists(g);
+                if (known && !_editorGrants.Contains(g))
+                    return false;
+            }
+
+            return true;
+        }
+
+        private string GrantName(string grant)
+        {
+            return Tree.TryGet(grant, out var proto) ? Loc.GetString(proto.NameLoc) : grant;
+        }
+
+        /// <summary>Короткая сводка прав для строки списка, полный перечень идёт в подсказку.</summary>
+        private string Summarize(IEnumerable<string> pos, IEnumerable<string> neg, out string full)
+        {
+            var names = pos.Select(GrantName).Concat(neg.Select(n => "−" + GrantName(n))).ToList();
+            full = names.Count == 0 ? Loc.GetString("duty-perm-ui-none") : string.Join(", ", names);
+            if (names.Count == 0)
+                return Loc.GetString("duty-perm-ui-none");
+
+            const int shown = 3;
+            var text = string.Join(", ", names.Take(shown));
+            if (names.Count > shown)
+                text += " " + Loc.GetString("duty-perm-ui-more", ("count", names.Count - shown));
+            return text;
+        }
+
+        private void Rebuild()
+        {
+            if (_lastState is not { } s)
+                return;
+
+            var adminQuery = _menu.AdminSearch.Text.Trim().ToLowerInvariant();
+            var rankQuery = _menu.RankSearch.Text.Trim().ToLowerInvariant();
 
             _menu.AdminsList.RemoveAllChildren();
             foreach (var admin in s.Admins.OrderBy(d => d.UserName))
@@ -211,7 +304,27 @@ namespace Content.Client.Administration.UI
                 var al = _menu.AdminsList;
                 var name = admin.UserName ?? admin.UserId.ToString();
 
-                al.AddChild(new Label { Text = name });
+                var hasRank = admin.RankId is { } rid && s.AdminRanks.ContainsKey(rid);
+                var rankName = hasRank
+                    ? s.AdminRanks[admin.RankId!.Value].Name
+                    : Loc.GetString("permissions-eui-edit-no-rank-text").ToLowerInvariant();
+                var rankGrants = hasRank ? s.AdminRanks[admin.RankId!.Value].Grants : Array.Empty<string>();
+
+                var summary = Summarize(admin.Pos, admin.Neg, out var full);
+                if (adminQuery.Length > 0)
+                {
+                    var hay = (name + " " + (admin.Title ?? string.Empty) + " " + rankName + " " + full).ToLowerInvariant();
+                    if (!hay.Contains(adminQuery))
+                        continue;
+                }
+
+                var nameLabel = new Label
+                {
+                    Text = admin.Suspended ? Loc.GetString("duty-perm-ui-suspended", ("name", name)) : name,
+                };
+                if (admin.Suspended)
+                    nameLabel.FontColorOverride = ErrorColor;
+                al.AddChild(nameLabel);
 
                 var titleControl = new Label { Text = admin.Title ?? Loc.GetString("permissions-eui-edit-admin-title-control-text").ToLowerInvariant() };
                 if (admin.Title == null) // none
@@ -221,44 +334,27 @@ namespace Content.Client.Administration.UI
 
                 al.AddChild(titleControl);
 
-                bool italic;
-                string rank;
-                var combinedFlags = admin.PosFlags;
-                if (admin.RankId is { } rankId)
-                {
-                    italic = false;
-                    var rankData = s.AdminRanks[rankId];
-                    rank = rankData.Name;
-                    combinedFlags |= rankData.Flags;
-                }
-                else
-                {
-                    italic = true;
-                    rank = Loc.GetString("permissions-eui-edit-no-rank-text").ToLowerInvariant();
-                }
-
-                var rankControl = new Label { Text = rank };
-                if (italic)
+                var rankControl = new Label { Text = rankName };
+                if (!hasRank)
                 {
                     rankControl.StyleClasses.Add(StyleClass.Italic);
                 }
 
                 al.AddChild(rankControl);
 
-                var flagsText = AdminFlagsHelper.PosNegFlagsText(admin.PosFlags, admin.NegFlags);
-
                 al.AddChild(new Label
                 {
-                    Text = flagsText,
+                    Text = summary,
                     HorizontalExpand = true,
-                    HorizontalAlignment = Control.HAlignment.Center,
+                    ClipText = true,
+                    ToolTip = full,
                 });
 
                 var editButton = new Button { Text = Loc.GetString("permissions-eui-edit-title-button") };
-                editButton.OnPressed += _ => OnEditPressed(admin);
+                editButton.OnPressed += _ => OpenEditWindow(admin);
                 al.AddChild(editButton);
 
-                if (!_adminManager.HasFlag(combinedFlags))
+                if (!Holds(admin.Pos.Concat(rankGrants)))
                 {
                     editButton.Disabled = true;
                     editButton.ToolTip = Loc.GetString("permissions-eui-do-not-have-required-flags-to-edit-admin-tooltip");
@@ -266,22 +362,26 @@ namespace Content.Client.Administration.UI
             }
 
             _menu.AdminRanksList.RemoveAllChildren();
-            foreach (var kv in s.AdminRanks)
+            foreach (var kv in s.AdminRanks.OrderBy(k => k.Value.Name))
             {
                 var rank = kv.Value;
-                var flagsText = string.Join(' ', AdminFlagsHelper.FlagsToNames(rank.Flags).Select(f => $"+{f}"));
+                var summary = Summarize(rank.Grants, Array.Empty<string>(), out var full);
+                if (rankQuery.Length > 0 && !(rank.Name + " " + full).ToLowerInvariant().Contains(rankQuery))
+                    continue;
+
                 _menu.AdminRanksList.AddChild(new Label { Text = rank.Name });
                 _menu.AdminRanksList.AddChild(new Label
                 {
-                    Text = flagsText,
+                    Text = summary,
                     HorizontalExpand = true,
-                    HorizontalAlignment = Control.HAlignment.Center,
+                    ClipText = true,
+                    ToolTip = full,
                 });
                 var editButton = new Button { Text = Loc.GetString("permissions-eui-edit-admin-rank-button") };
-                editButton.OnPressed += _ => OnEditRankPressed(kv);
+                editButton.OnPressed += _ => OpenRankEditWindow(kv);
                 _menu.AdminRanksList.AddChild(editButton);
 
-                if (!_adminManager.HasFlag(rank.Flags))
+                if (!Holds(rank.Grants))
                 {
                     editButton.Disabled = true;
                     editButton.ToolTip = Loc.GetString("permissions-eui-do-not-have-required-flags-to-edit-rank-tooltip");
@@ -289,25 +389,36 @@ namespace Content.Client.Administration.UI
             }
         }
 
-        private void OnEditRankPressed(KeyValuePair<int, PermissionsEuiState.AdminRankData> rank)
+        /// <summary>Окно, которое после сохранения ждёт ответа сервера.</summary>
+        private interface IPendingWindow
         {
-            OpenRankEditWindow(rank);
+            BaseWindow Window { get; }
+            Button SaveButton { get; }
+            Label Status { get; }
+        }
+
+        private static Label MakeStatusLabel()
+        {
+            return new Label { HorizontalExpand = true, ClipText = true };
         }
 
         private sealed class Menu : DefaultWindow
         {
-            private readonly PermissionsEui _ui;
             public readonly GridContainer AdminsList;
             public readonly GridContainer AdminRanksList;
             public readonly Button AddAdminButton;
             public readonly Button AddAdminRankButton;
+            public readonly LineEdit AdminSearch;
+            public readonly LineEdit RankSearch;
+            public readonly Label Status = MakeStatusLabel();
 
-            public Menu(PermissionsEui ui)
+            public Menu()
             {
-                _ui = ui;
                 Title = Loc.GetString("permissions-eui-menu-title");
+                MinSize = new Vector2(760, 460);
+                SetSize = new Vector2(860, 520); // фиксированный размер: содержимое не должно растягивать окно
 
-                var tab = new TabContainer();
+                var tab = new TabContainer { VerticalExpand = true };
 
                 AddAdminButton = new Button
                 {
@@ -321,67 +432,91 @@ namespace Content.Client.Administration.UI
                     HorizontalAlignment = HAlignment.Right
                 };
 
-                AdminsList = new GridContainer { Columns = 5, VerticalExpand = true };
+                AdminSearch = new LineEdit { PlaceHolder = Loc.GetString("duty-perm-ui-search-admins") };
+                RankSearch = new LineEdit { PlaceHolder = Loc.GetString("duty-perm-ui-search-ranks") };
+
+                AdminsList = new GridContainer { Columns = 5, HSeparationOverride = 12, HorizontalExpand = true };
                 var adminVBox = new BoxContainer
                 {
                     Orientation = LayoutOrientation.Vertical,
-                    Children = { new ScrollContainer() { VerticalExpand = true, Children = { AdminsList } }, AddAdminButton },
+                    SeparationOverride = 4,
+                    Children =
+                    {
+                        AdminSearch,
+                        new ScrollContainer { VerticalExpand = true, HScrollEnabled = false, Children = { AdminsList } },
+                        AddAdminButton,
+                    },
                 };
                 TabContainer.SetTabTitle(adminVBox, Loc.GetString("permissions-eui-menu-admins-tab-title"));
 
-                AdminRanksList = new GridContainer { Columns = 3, VerticalExpand = true };
+                AdminRanksList = new GridContainer { Columns = 3, HSeparationOverride = 12, HorizontalExpand = true };
                 var rankVBox = new BoxContainer
                 {
                     Orientation = LayoutOrientation.Vertical,
-                    Children = { new ScrollContainer() { VerticalExpand = true, Children = { AdminRanksList } }, AddAdminRankButton }
+                    SeparationOverride = 4,
+                    Children =
+                    {
+                        RankSearch,
+                        new ScrollContainer { VerticalExpand = true, HScrollEnabled = false, Children = { AdminRanksList } },
+                        AddAdminRankButton,
+                    },
                 };
                 TabContainer.SetTabTitle(rankVBox, Loc.GetString("permissions-eui-menu-admin-ranks-tab-title"));
 
                 tab.AddChild(adminVBox);
                 tab.AddChild(rankVBox);
 
-                ContentsContainer.AddChild(tab);
-                ContentsContainer.MinSize = new(600, 400);
+                ContentsContainer.AddChild(new BoxContainer
+                {
+                    Orientation = LayoutOrientation.Vertical,
+                    SeparationOverride = 4,
+                    Children = { tab, Status },
+                });
             }
         }
 
-        private sealed class EditAdminWindow : DefaultWindow
+        private sealed class EditAdminWindow : DefaultWindow, IPendingWindow
         {
             public readonly PermissionsEuiState.AdminData? SourceData;
+
             public readonly LineEdit? NameEdit;
             public readonly LineEdit TitleEdit;
-            public readonly OptionButton RankButton;
-            public readonly Button SaveButton;
-            public readonly Button? RemoveButton;
             public readonly CheckBox SuspendedCheckbox;
+            public readonly OptionButton RankButton;
+            public readonly ConfirmButton? RemoveButton;
+            public readonly PermissionTreeEditor Editor;
 
-            public readonly Dictionary<AdminFlags, (Button inherit, Button sub, Button plus)> FlagButtons
-                = new();
+            public BaseWindow Window => this;
+            public Button SaveButton { get; }
+            public Label Status { get; } = MakeStatusLabel();
 
-            public EditAdminWindow(PermissionsEui ui, PermissionsEuiState.AdminData? data)
+            public EditAdminWindow(
+                AdminPermissionTree tree,
+                HashSet<string> editorGrants,
+                Dictionary<int, PermissionsEuiState.AdminRankData> ranks,
+                PermissionsEuiState.AdminData? data,
+                Func<IEnumerable<string>, bool> canGrant)
             {
-                MinSize = new Vector2(600, 400);
+                MinSize = new Vector2(820, 560);
+                SetSize = new Vector2(940, 640); // фиксированный размер: описания флагов не должны растягивать окно
                 SourceData = data;
 
                 Control nameControl;
 
                 if (data is { } dat)
                 {
-                    var name = dat.UserName ?? dat.UserId.ToString();
                     Title = Loc.GetString("permissions-eui-edit-admin-window-edit-admin-label",
-                                          ("admin", name));
-
-                    nameControl = new Label { Text = name };
+                        ("admin", dat.UserName ?? dat.UserId.ToString()));
+                    nameControl = new Label { Text = dat.UserName ?? dat.UserId.ToString() };
                 }
                 else
                 {
                     Title = Loc.GetString("permissions-eui-menu-add-admin-button");
-
                     nameControl = NameEdit = new LineEdit { PlaceHolder = Loc.GetString("permissions-eui-edit-admin-window-name-edit-placeholder") };
                 }
 
                 TitleEdit = new LineEdit { PlaceHolder = Loc.GetString("permissions-eui-edit-admin-window-title-edit-placeholder") };
-                RankButton = new OptionButton();
+
                 SaveButton = new Button { Text = Loc.GetString("permissions-eui-edit-admin-window-save-button"), HorizontalAlignment = HAlignment.Right };
 
                 SuspendedCheckbox = new CheckBox
@@ -390,245 +525,151 @@ namespace Content.Client.Administration.UI
                     Pressed = data?.Suspended ?? false,
                 };
 
+                // Ранг, права которого не все есть у вас, выбрать нельзя: сервер такое отвергнет
+                RankButton = new OptionButton();
                 RankButton.AddItem(Loc.GetString("permissions-eui-edit-admin-window-no-rank-button"), NoRank);
-                foreach (var (rId, rank) in ui._ranks)
+                foreach (var (id, rank) in ranks.OrderBy(r => r.Value.Name))
                 {
-                    RankButton.AddItem(rank.Name, rId);
+                    RankButton.AddItem(rank.Name, id);
+                    if (!canGrant(rank.Grants) && id != data?.RankId)
+                        RankButton.SetItemDisabled(RankButton.ItemCount - 1, true);
                 }
 
                 RankButton.SelectId(data?.RankId ?? NoRank);
-                RankButton.OnItemSelected += RankSelected;
-
-                var permGrid = new GridContainer
+                RankButton.OnItemSelected += args =>
                 {
-                    Columns = 4,
-                    HSeparationOverride = 0,
-                    VSeparationOverride = 0
+                    RankButton.SelectId(args.Id);
+                    UpdateInherited(ranks);
                 };
 
-                foreach (var flag in AdminFlagsHelper.AllFlags)
+                Editor = new PermissionTreeEditor(tree, editorGrants, PermissionTreeEditor.EditorMode.Admin);
+
+                var left = new BoxContainer
                 {
-                    // Can only grant out perms you also have yourself.
-                    // Primarily intended to prevent people giving themselves +HOST with +PERMISSIONS but generalized.
-                    var disable = !ui._adminManager.HasFlag(flag);
-                    var flagName = flag.ToString().ToUpper();
-
-                    var group = new ButtonGroup();
-
-                    var inherit = new Button
+                    Orientation = LayoutOrientation.Vertical,
+                    SeparationOverride = 6,
+                    MinSize = new Vector2(230, 0),
+                    Children =
                     {
-                        Text = "I",
-                        StyleClasses = { StyleClass.ButtonOpenRight },
-                        Disabled = disable,
-                        Group = group,
-                    };
-                    var sub = new Button
-                    {
-                        Text = "-",
-                        StyleClasses = { StyleClass.ButtonOpenBoth },
-                        Disabled = disable,
-                        Group = group
-                    };
-                    var plus = new Button
-                    {
-                        Text = "+",
-                        StyleClasses = { StyleClass.ButtonOpenLeft },
-                        Disabled = disable,
-                        Group = group
-                    };
-
-                    if (data is { } d)
-                    {
-                        if ((d.NegFlags & flag) != 0)
-                        {
-                            sub.Pressed = true;
-                        }
-                        else if ((d.PosFlags & flag) != 0)
-                        {
-                            plus.Pressed = true;
-                        }
-                        else
-                        {
-                            inherit.Pressed = true;
-                        }
-                    }
-                    else
-                    {
-                        inherit.Pressed = true;
-                    }
-
-                    permGrid.AddChild(new Label { Text = flagName });
-                    permGrid.AddChild(inherit);
-                    permGrid.AddChild(sub);
-                    permGrid.AddChild(plus);
-
-                    FlagButtons.Add(flag, (inherit, sub, plus));
-                }
-
-                var bottomButtons = new BoxContainer
-                {
-                    Orientation = LayoutOrientation.Horizontal
+                        nameControl,
+                        TitleEdit,
+                        RankButton,
+                        SuspendedCheckbox,
+                        new Control { VerticalExpand = true },
+                    },
                 };
+
                 if (data != null)
                 {
-                    // show remove button.
-                    RemoveButton = new Button { Text = Loc.GetString("permissions-eui-edit-admin-window-remove-flag-button") };
-                    bottomButtons.AddChild(RemoveButton);
+                    RemoveButton = new ConfirmButton
+                    {
+                        Text = Loc.GetString("permissions-eui-edit-admin-window-remove-flag-button"),
+                        ConfirmationText = Loc.GetString("duty-perm-ui-confirm-remove"),
+                    };
+                    left.AddChild(RemoveButton);
                 }
 
-                bottomButtons.AddChild(SaveButton);
+                left.AddChild(SaveButton);
 
                 ContentsContainer.AddChild(new BoxContainer
                 {
                     Orientation = LayoutOrientation.Vertical,
+                    SeparationOverride = 4,
+                    VerticalExpand = true,
                     Children =
                     {
                         new BoxContainer
                         {
                             Orientation = LayoutOrientation.Horizontal,
-                            SeparationOverride = 2,
-                            Children =
-                            {
-                                new BoxContainer
-                                {
-                                    Orientation = LayoutOrientation.Vertical,
-                                    HorizontalExpand = true,
-                                    Children =
-                                    {
-                                        nameControl,
-                                        TitleEdit,
-                                        RankButton,
-                                        SuspendedCheckbox,
-                                    }
-                                },
-                                permGrid
-                            },
-                            VerticalExpand = true
+                            SeparationOverride = 8,
+                            VerticalExpand = true,
+                            Children = { left, Editor },
                         },
-                        bottomButtons
-                    }
+                        Status,
+                    },
                 });
+
+                TitleEdit.Text = data?.Title ?? string.Empty;
+                Editor.SetData(data?.Pos ?? Array.Empty<string>(), data?.Neg ?? Array.Empty<string>(), InheritedFor(ranks));
             }
 
-            private void RankSelected(OptionButton.ItemSelectedEventArgs obj)
+            private IEnumerable<string> InheritedFor(Dictionary<int, PermissionsEuiState.AdminRankData> ranks)
             {
-                RankButton.SelectId(obj.Id);
+                var id = RankButton.SelectedId;
+                return id != NoRank && ranks.TryGetValue(id, out var rank) ? rank.Grants : Array.Empty<string>();
             }
 
-            public void CollectSetFlags(out AdminFlags pos, out AdminFlags neg)
+            private void UpdateInherited(Dictionary<int, PermissionsEuiState.AdminRankData> ranks)
             {
-                pos = default;
-                neg = default;
-
-                foreach (var (flag, (_, s, p)) in FlagButtons)
-                {
-                    if (s.Pressed)
-                    {
-                        neg |= flag;
-                    }
-                    else if (p.Pressed)
-                    {
-                        pos |= flag;
-                    }
-                }
+                Editor.SetInherited(InheritedFor(ranks));
             }
         }
 
-        private sealed class EditAdminRankWindow : DefaultWindow
+        private sealed class EditAdminRankWindow : DefaultWindow, IPendingWindow
         {
             public readonly int? SourceId;
             public readonly LineEdit NameEdit;
-            public readonly Button SaveButton;
-            public readonly Button? RemoveButton;
-            public readonly Dictionary<AdminFlags, CheckBox> FlagCheckBoxes = new();
+            public readonly ConfirmButton? RemoveButton;
+            public readonly PermissionTreeEditor Editor;
 
-            public EditAdminRankWindow(PermissionsEui ui, KeyValuePair<int, PermissionsEuiState.AdminRankData>? data)
+            public BaseWindow Window => this;
+            public Button SaveButton { get; }
+            public Label Status { get; } = MakeStatusLabel();
+
+            public EditAdminRankWindow(
+                AdminPermissionTree tree,
+                HashSet<string> editorGrants,
+                KeyValuePair<int, PermissionsEuiState.AdminRankData>? data)
             {
+                MinSize = new Vector2(760, 540);
+                SetSize = new Vector2(900, 620); // фиксированный размер
                 Title = Loc.GetString("permissions-eui-edit-admin-rank-window-title");
-                MinSize = new Vector2(600, 400);
                 SourceId = data?.Key;
 
                 NameEdit = new LineEdit
                 {
                     PlaceHolder = Loc.GetString("permissions-eui-edit-admin-rank-window-name-edit-placeholder"),
+                    Text = data?.Value.Name ?? string.Empty,
                 };
-
-                if (data != null)
-                {
-                    NameEdit.Text = data.Value.Value.Name;
-                }
 
                 SaveButton = new Button
                 {
                     Text = Loc.GetString("permissions-eui-menu-save-admin-rank-button"),
                     HorizontalAlignment = HAlignment.Right,
+                };
+
+                Editor = new PermissionTreeEditor(tree, editorGrants, PermissionTreeEditor.EditorMode.Rank);
+                Editor.SetData(data?.Value.Grants ?? Array.Empty<string>(), Array.Empty<string>(), Array.Empty<string>());
+
+                var buttons = new BoxContainer
+                {
+                    Orientation = LayoutOrientation.Horizontal,
+                    SeparationOverride = 6,
                     HorizontalExpand = true,
-                };
-                var flagsBox = new BoxContainer
-                {
-                    Orientation = LayoutOrientation.Vertical
+                    Children = { Status },
                 };
 
-                foreach (var flag in AdminFlagsHelper.AllFlags)
-                {
-                    // Can only grant out perms you also have yourself.
-                    // Primarily intended to prevent people giving themselves +HOST with +PERMISSIONS but generalized.
-                    var disable = !ui._adminManager.HasFlag(flag);
-                    var flagName = flag.ToString().ToUpper();
-
-                    var checkBox = new CheckBox
-                    {
-                        Disabled = disable,
-                        Text = flagName
-                    };
-
-                    if (data != null && (data.Value.Value.Flags & flag) != 0)
-                    {
-                        checkBox.Pressed = true;
-                    }
-
-                    FlagCheckBoxes.Add(flag, checkBox);
-                    flagsBox.AddChild(checkBox);
-                }
-
-                var bottomButtons = new BoxContainer
-                {
-                    Orientation = LayoutOrientation.Horizontal
-                };
                 if (data != null)
                 {
-                    // show remove button.
-                    RemoveButton = new Button { Text = Loc.GetString("permissions-eui-menu-remove-admin-rank-button") };
-                    bottomButtons.AddChild(RemoveButton);
+                    RemoveButton = new ConfirmButton
+                    {
+                        Text = Loc.GetString("permissions-eui-menu-remove-admin-rank-button"),
+                        ConfirmationText = Loc.GetString("duty-perm-ui-confirm-remove"),
+                    };
+                    buttons.AddChild(RemoveButton);
                 }
 
-                bottomButtons.AddChild(SaveButton);
+                buttons.AddChild(SaveButton);
 
                 ContentsContainer.AddChild(new BoxContainer
                 {
                     Orientation = LayoutOrientation.Vertical,
-                    Children =
-                    {
-                        NameEdit,
-                        flagsBox,
-                        bottomButtons
-                    }
+                    SeparationOverride = 6,
+                    VerticalExpand = true,
+                    Children = { NameEdit, Editor, buttons },
                 });
-            }
-
-            public AdminFlags CollectSetFlags()
-            {
-                AdminFlags flags = default;
-                foreach (var (flag, chk) in FlagCheckBoxes)
-                {
-                    if (chk.Pressed)
-                    {
-                        flags |= flag;
-                    }
-                }
-
-                return flags;
             }
         }
     }
+// _Duty-end
 }

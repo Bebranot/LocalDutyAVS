@@ -15,7 +15,7 @@ namespace Content.Client.Materials.UI;
 [GenerateTypedNameReferences]
 public sealed partial class MaterialStorageControl : ScrollContainer
 {
-    [Dependency] private readonly IEntityManager _entityManager = default!;
+    [Dependency] private IEntityManager _entityManager = default!;
     private readonly MaterialStorageSystem _materialStorage;
 
     private EntityUid? _owner;
@@ -35,6 +35,23 @@ public sealed partial class MaterialStorageControl : ScrollContainer
         _owner = owner;
     }
 
+    // ADT-Tweak start
+    private bool _locked;
+
+    public void SetLocked(bool locked)
+    {
+        if (_locked == locked)
+            return;
+
+        _locked = locked;
+        _currentMaterials.Clear();
+        foreach (var display in MaterialList.Children.OfType<MaterialDisplay>().ToList())
+        {
+            MaterialList.RemoveChild(display);
+        }
+    }
+    // ADT-Tweak end
+
     protected override void FrameUpdate(FrameEventArgs args)
     {
         base.FrameUpdate(args);
@@ -51,8 +68,13 @@ public sealed partial class MaterialStorageControl : ScrollContainer
         var canEject = materialStorage.CanEjectStoredMaterials;
         var mats = _materialStorage.GetStoredMaterials((_owner.Value, materialStorage));
 
-        if (_currentMaterials.Equals(mats))
+        // _Duty-start: Equals у словаря ссылочный — список материалов пересобирался каждый кадр; сравниваем содержимое
+        SiloLinkedLabel.Visible = _entityManager.TryGetComponent<OreSiloClientComponent>(_owner.Value, out var siloClient) && siloClient.Silo != null;
+
+        if (_currentMaterials.Count == mats.Count
+            && mats.All(kv => _currentMaterials.TryGetValue(kv.Key, out var old) && old == kv.Value))
             return;
+        // _Duty-end
 
         var missing = new List<string>();
         var extra = new List<string>();
@@ -89,7 +111,7 @@ public sealed partial class MaterialStorageControl : ScrollContainer
         foreach (var mat in missing)
         {
             var volume = mats[mat];
-            MaterialList.AddChild(new MaterialDisplay(_owner.Value, mat, volume, canEject));
+            MaterialList.AddChild(new MaterialDisplay(_owner.Value, mat, volume, canEject, _locked)); // ADT-Tweak
         }
 
         _currentMaterials = mats;

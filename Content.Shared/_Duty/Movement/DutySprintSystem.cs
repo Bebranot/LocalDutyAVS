@@ -15,8 +15,10 @@ using Content.Shared.Input;
 using Content.Shared.Inventory;
 using Content.Shared.Inventory.Events;
 using Content.Shared.Mobs;
+using Content.Shared.Mobs.Components;
 using Content.Shared.Mobs.Systems;
 using Content.Shared.Movement.Components;
+using Content.Shared.Movement.Events;
 using Content.Shared.Movement.Systems;
 using Content.Shared.Popups;
 using Content.Shared.Standing;
@@ -44,6 +46,7 @@ public sealed class DutySprintSystem : EntitySystem
     [Dependency] private readonly IConfigurationManager _config = default!;
     [Dependency] private readonly IGameTiming _timing = default!;
     [Dependency] private readonly INetManager _net = default!;
+    [Dependency] private readonly ISharedPlayerManager _player = default!;
     [Dependency] private readonly AlertsSystem _alerts = default!;
     [Dependency] private readonly InventorySystem _inventory = default!;
     [Dependency] private readonly MobStateSystem _mobState = default!;
@@ -80,6 +83,15 @@ public sealed class DutySprintSystem : EntitySystem
     private const float TorsoFractureFullDrainPenalty = 0.3f;
     private const float TorsoFractureOpenDrainPenalty = 0.5f;
 
+    /// <summary>Поля, которые меняет тиковый расход/восстановление, — только они уходят дельтой.</summary>
+    private static readonly string[] TickDirtyFields =
+    {
+        nameof(DutyStaminaComponent.Current),
+        nameof(DutyStaminaComponent.Exhausted),
+        nameof(DutyStaminaComponent.NextRegen),
+        nameof(DutyStaminaComponent.Breathing),
+    };
+
     public override void Initialize()
     {
         base.Initialize();
@@ -92,6 +104,11 @@ public sealed class DutySprintSystem : EntitySystem
             .Register<DutySprintSystem>();
 
         SubscribeLocalEvent<DutyStaminaComponent, RefreshMovementSpeedModifiersEvent>(OnRefreshSprint);
+
+        // Переход в ходьбу (Shift) во время спринта — приравниваем к отпусканию C: иначе отпустив
+        // Shift обратно, игрок мгновенно возобновляет спринт (WantsSprint не менялся) с повторным
+        // проигрыванием стартового звука/анимации и в обход кулдауна.
+        SubscribeLocalEvent<DutyStaminaComponent, MoveInputEvent>(OnMoveInput);
 
         // Пересчёт спринта при смене снаряжения/ранении (важно только пока зажат C).
         SubscribeLocalEvent<DutyStaminaComponent, DidEquipEvent>((u, _, _) => Refresh(u));
@@ -115,19 +132,51 @@ public sealed class DutySprintSystem : EntitySystem
             ClearWantsSprint(ent.Owner, ent.Comp);
     }
 
+    private void OnMoveInput(Entity<DutyStaminaComponent> ent, ref MoveInputEvent args)
+    {
+        // Без отсечки по IsFirstTimePredicted: при повторной симуляции ввод движения переигрывается,
+        // и остановка спринта обязана переиграться вместе с ним — иначе после каждого пакета с сервера
+        // клиент ещё RTT считал бы бег спринтом и дёргал позицию назад, когда придёт правда.
+        if (!ent.Comp.WantsSprint)
+            return;
+
+        var startedWalking = (args.OldMovement & MoveButtons.Walk) == 0
+                              && (args.Entity.Comp.HeldMoveButtons & MoveButtons.Walk) != 0;
+
+        if (startedWalking)
+            StopSprint(ent.Owner, ent.Comp);
+    }
+
     /// <summary>Принудительно снимает намерение спринтовать (отсоединение, крит, смерть).</summary>
     private void ClearWantsSprint(EntityUid uid, DutyStaminaComponent comp)
     {
         if (!comp.WantsSprint)
             return;
 
-        comp.WantsSprint = false;
         comp.SprintElapsed = 0f;
-        // Пауза как при обычном отпускании клавиши — чтобы её нельзя было обойти смертью или
-        // переподключением с зажатой C.
+        StopSprint(uid, comp, emote: false);
+    }
+
+    /// <summary>
+    /// Снимает намерение спринтовать и заводит паузу до следующего рывка — та же логика, что при
+    /// отпускании клавиши C. Используется и на реальном отпускании, и всюду, где спринт обязан
+    /// оборваться сам (переход в ходьбу, крит, смерть, отсоединение), чтобы обход кулдауна был
+    /// невозможен ни одним из путей.
+    /// </summary>
+    private void StopSprint(EntityUid uid, DutyStaminaComponent comp, bool emote = true)
+    {
         comp.NextSprintAllowed = _timing.CurTime + TimeSpan.FromSeconds(comp.SprintCooldown);
+        comp.WantsSprint = false;
+        comp.SprintStarted = false;
+        comp.SprintIdleSince = null;
         Dirty(uid, comp);
         _movementSpeed.RefreshMovementSpeedModifiers(uid);
+
+        if (emote && _net.IsServer && !_mobState.IsIncapacitated(uid))
+        {
+            var msg = Loc.GetString("duty-sprint-emote-stop");
+            _popup.PopupEntity(msg, uid, Filter.Pvs(uid, entityManager: EntityManager), true);
+        }
     }
 
     public override void Shutdown()
@@ -161,9 +210,12 @@ public sealed class DutySprintSystem : EntitySystem
 
     private void SetWantsSprint(ICommonSession? session, bool wants)
     {
-        if (!_timing.IsFirstTimePredicted)
-            return;
-
+        // Отсечки по IsFirstTimePredicted здесь быть не должно. Клиент при повторной симуляции
+        // сбрасывает компонент к серверному состоянию и переигрывает нажатия клавиш; пропусти мы
+        // этот повтор, WantsSprint оставался бы false (или true после отпускания) целый RTT — спринт
+        // включался бы с задержкой пинга, а позиция дёргалась бы при каждой правке с сервера.
+        // Побочные эффекты повтор не задваивает: PopupClient сам показывает только в первом проходе,
+        // эмоции шлёт только сервер, звук рывка — в Update под IsFirstTimePredicted.
         if (session?.AttachedEntity is not { Valid: true } uid
             || !TryComp<DutyStaminaComponent>(uid, out var comp)
             || comp.WantsSprint == wants)
@@ -184,26 +236,23 @@ public sealed class DutySprintSystem : EntitySystem
                 _popup.PopupClient(Loc.GetString("duty-sprint-blocked-cooldown"), uid, uid);
                 return;
             }
+
+            comp.WantsSprint = true;
+            Dirty(uid, comp);
+            EnsureComp<ActiveDutyStaminaComponent>(uid);
+            _movementSpeed.RefreshMovementSpeedModifiers(uid);
+
+            // Эмоция над головой (не в чат) — только если жив; шлёт сервер на всю PVS.
+            if (_net.IsServer && !_mobState.IsIncapacitated(uid))
+            {
+                var msg = Loc.GetString("duty-sprint-emote-start");
+                _popup.PopupEntity(msg, uid, Filter.Pvs(uid, entityManager: EntityManager), true);
+            }
         }
         else
         {
-            // Отпустили клавишу — заводим паузу до следующего рывка.
-            comp.NextSprintAllowed = _timing.CurTime + TimeSpan.FromSeconds(comp.SprintCooldown);
-        }
-
-        comp.WantsSprint = wants;
-        Dirty(uid, comp);
-
-        if (wants)
-            EnsureComp<ActiveDutyStaminaComponent>(uid);
-
-        _movementSpeed.RefreshMovementSpeedModifiers(uid);
-
-        // Эмоция над головой (не в чат) — только если жив; шлёт сервер на всю PVS.
-        if (_net.IsServer && !_mobState.IsIncapacitated(uid))
-        {
-            var msg = Loc.GetString(wants ? "duty-sprint-emote-start" : "duty-sprint-emote-stop");
-            _popup.PopupEntity(msg, uid, Filter.Pvs(uid, entityManager: EntityManager), true);
+            // Отпустили клавишу — та же остановка, что и при переходе в ходьбу/крите/смерти.
+            StopSprint(uid, comp);
         }
     }
 
@@ -257,7 +306,10 @@ public sealed class DutySprintSystem : EntitySystem
         if (!TryComp<DamageableComponent>(uid, out var dmg) || _damageable.GetTotalDamage((uid, dmg)) <= 0)
             return 1f;
 
-        if (!_mobThreshold.TryGetThresholdForState(uid, MobState.Critical, out var threshold) || threshold <= 0)
+        // Меряем до первого выхода из строя (софт-крит, если есть), а не до крита.
+        if (!TryComp<MobThresholdsComponent>(uid, out var thresholds)
+            || !_mobThreshold.TryGetIncapThreshold(uid, out var threshold, thresholds)
+            || threshold <= 0)
             return 1f;
 
         var frac = Math.Clamp((_damageable.GetTotalDamage((uid, dmg)) / threshold.Value).Float(), 0f, 1f);
@@ -320,6 +372,38 @@ public sealed class DutySprintSystem : EntitySystem
         };
     }
 
+    /// <summary>Обрывает спринт, если персонаж с зажатой C простоял дольше <see cref="DutyStaminaComponent.SprintStopGrace"/>.</summary>
+    private bool UpdateSprintIdle(EntityUid uid, DutyStaminaComponent comp, bool sprinting, TimeSpan now)
+    {
+        if (!comp.WantsSprint)
+            return false;
+
+        if (sprinting)
+        {
+            comp.SprintStarted = true;
+            comp.SprintIdleSince = null;
+            return false;
+        }
+
+        // Ещё ни разу не побежал в этом нажатии (нажал C стоя) или стоит не по своей воле
+        // (лежит, невесомость) — ждём, это не остановка рывка.
+        if (!comp.SprintStarted
+            || !CanSprint(uid)
+            || !TryComp<InputMoverComponent>(uid, out var mover)
+            || mover.HasDirectionalMovement)
+        {
+            comp.SprintIdleSince = null;
+            return false;
+        }
+
+        comp.SprintIdleSince ??= now;
+        if (now - comp.SprintIdleSince.Value < TimeSpan.FromSeconds(comp.SprintStopGrace))
+            return false;
+
+        StopSprint(uid, comp);
+        return true;
+    }
+
     /// <summary>
     /// Реально ли существо сейчас спринтует: клавиша зажата, состояние тела позволяет, ходьба не
     /// включена и есть ввод направления. Публично — этим же предикатом клиент решает, пора ли
@@ -368,10 +452,25 @@ public sealed class DutySprintSystem : EntitySystem
             return;
 
         var now = _timing.CurTime;
+        var isClient = _net.IsClient;
+        var local = _player.LocalEntity;
         var query = EntityQueryEnumerator<ActiveDutyStaminaComponent, DutyStaminaComponent>();
         while (query.MoveNext(out var uid, out _, out var comp))
         {
+            // Клиент предсказывает только своё тело. Чужой запас и так приходит с сервера каждый тик,
+            // а своя симуляция чужих лишь тратила кадр, снимала с них сетевой маркер и проигрывала
+            // звук рывка второй раз поверх серверного PlayPredicted.
+            if (isClient && uid != local)
+                continue;
+
             var sprinting = IsSprinting(uid, comp);
+
+            // Остановился посреди рывка с зажатой C — рывок окончен, как при отпускании клавиши.
+            // Иначе стоило тронуться снова, и звук, пыль и ускорение запускались заново в обход
+            // SprintCooldown. Снова побежать — только повторным нажатием C после отката.
+            if (UpdateSprintIdle(uid, comp, sprinting, now))
+                sprinting = false;
+
             var old = comp.Current;
             var oldBreathing = comp.Breathing;
 
@@ -442,7 +541,7 @@ public sealed class DutySprintSystem : EntitySystem
             }
 
             if (staminaChanged || comp.Breathing != oldBreathing)
-                Dirty(uid, comp);
+                DirtyFields(uid, comp, null, TickDirtyFields);
 
             // Пока клавиша зажата, маркер НЕ снимаем, даже если запас полон. Иначе: держим C,
             // останавливаемся, выносливость дотикивает до максимума, маркер уходит — и дальше

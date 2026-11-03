@@ -9,11 +9,12 @@
   components:
   - type: Action
     useDelay: 25
-    icon:
-      sprite: _Duty/Objects/Weapons/Melee/halberd.rsi
-      state: icon
     itemIconStyle: NoItem
     priority: -1
+  - type: Sprite
+    sprite: _Duty/Objects/Weapons/Melee/halberd.rsi
+    layers:
+    - state: icon
   - type: TargetAction
     checkCanAccess: false
     range: 0

@@ -32,20 +32,20 @@ namespace Content.Server._Duty.FireAgony;
 /// (ИС-чат + сетевой сигнал звука клиенту) и попапы, приближение камеры. Сцена рвётся при
 /// потухании / <see cref="FireAgonyComponent.SafetyTimeout"/> / крите-смерти.
 /// </summary>
-public sealed class FireAgonySystem : EntitySystem
+public sealed partial class FireAgonySystem : EntitySystem
 {
-    [Dependency] private readonly SharedStunSystem _stun = default!;
-    [Dependency] private readonly FlammableSystem _flammable = default!;
-    [Dependency] private readonly ChatSystem _chat = default!;
-    [Dependency] private readonly SharedContentEyeSystem _eye = default!;
-    [Dependency] private readonly MobStateSystem _mobState = default!;
-    [Dependency] private readonly SharedPopupSystem _popup = default!;
-    [Dependency] private readonly SharedHandsSystem _hands = default!;
-    [Dependency] private readonly ThrowingSystem _throwing = default!;
-    [Dependency] private readonly SharedAudioSystem _audio = default!;
-    [Dependency] private readonly IRobustRandom _random = default!;
-    [Dependency] private readonly IGameTiming _timing = default!;
-    [Dependency] private readonly InventorySystem _inventory = default!;
+    [Dependency] private SharedStunSystem _stun = default!;
+    [Dependency] private FlammableSystem _flammable = default!;
+    [Dependency] private ChatSystem _chat = default!;
+    [Dependency] private SharedContentEyeSystem _eye = default!;
+    [Dependency] private MobStateSystem _mobState = default!;
+    [Dependency] private SharedPopupSystem _popup = default!;
+    [Dependency] private SharedHandsSystem _hands = default!;
+    [Dependency] private ThrowingSystem _throwing = default!;
+    [Dependency] private SharedAudioSystem _audio = default!;
+    [Dependency] private IRobustRandom _random = default!;
+    [Dependency] private IGameTiming _timing = default!;
+    [Dependency] private InventorySystem _inventory = default!;
 
     private EntityQuery<FlammableComponent> _flammableQuery;
     private EntityQuery<InventoryComponent> _inventoryQuery;
@@ -199,6 +199,10 @@ public sealed class FireAgonySystem : EntitySystem
         // При крите/смерти stun снимается движком сам; нам остаётся оборвать сцену (флаг + камера).
         if (args.NewMobState is MobState.Critical or MobState.Dead)
             EndScene(ent, ent.Comp, releaseParalyze: false);
+        // Софт-крит stun не снимает, а крик агонии поверх звуков софт-крита неуместен —
+        // обрываем сцену и отпускаем паралич сами.
+        else if (args.NewMobState == MobState.SoftCritical)
+            EndScene(ent, ent.Comp);
     }
 
     /// <summary>

@@ -26,16 +26,16 @@ namespace Content.Server._Duty.Trauma.Systems;
 /// Успех стабилизирует самую тяжёлую незашинированную зону (ускоренное сращивание, меньше штраф);
 /// провал — боль, крик и урон пациенту. Полное сращение всё равно идёт временем (см. FractureSystem).
 /// </summary>
-public sealed class FractureTreatmentSystem : EntitySystem
+public sealed partial class FractureTreatmentSystem : EntitySystem
 {
-    [Dependency] private readonly SharedDoAfterSystem _doAfter = default!;
-    [Dependency] private readonly DamageableSystem _damageable = default!;
-    [Dependency] private readonly SharedPopupSystem _popup = default!;
-    [Dependency] private readonly IRobustRandom _random = default!;
-    [Dependency] private readonly FractureSystem _fracture = default!;
-    [Dependency] private readonly SharedHandsSystem _hands = default!;
-    [Dependency] private readonly SharedStackSystem _stack = default!;
-    [Dependency] private readonly TagSystem _tag = default!;
+    [Dependency] private SharedDoAfterSystem _doAfter = default!;
+    [Dependency] private DamageableSystem _damageable = default!;
+    [Dependency] private SharedPopupSystem _popup = default!;
+    [Dependency] private IRobustRandom _random = default!;
+    [Dependency] private FractureSystem _fracture = default!;
+    [Dependency] private SharedHandsSystem _hands = default!;
+    [Dependency] private SharedStackSystem _stack = default!;
+    [Dependency] private TagSystem _tag = default!;
 
     // ── Тюнинг (Phase 6). ──────────────────────────────────────────────────────
     private static readonly TimeSpan SplintTime = TimeSpan.FromSeconds(10);

@@ -19,10 +19,10 @@ namespace Content.Client._Duty.Trauma;
 /// Реализовано смещением глаза (<see cref="GetEyeOffsetEvent"/>), а не шейдером — не требует
 /// новых ассетов и складывается с прочими смещениями камеры (отдача и т.п.).
 /// </summary>
-public sealed class BrainTraumaVisualsSystem : EntitySystem
+public sealed partial class BrainTraumaVisualsSystem : EntitySystem
 {
-    [Dependency] private readonly IGameTiming _timing = default!;
-    [Dependency] private readonly IConfigurationManager _cfg = default!;
+    [Dependency] private IGameTiming _timing = default!;
+    [Dependency] private IConfigurationManager _cfg = default!;
 
     private bool _reducedMotion;
 

@@ -6,6 +6,7 @@ using Robust.Client.UserInterface.XAML;
 using Robust.Shared.IoC;
 using Robust.Shared.Utility;
 using Content.Client.ADT.FlavorText.Rules;
+using Content.Shared._Duty.ErpStatus;
 
 namespace Content.Client.FlavorText;
 
@@ -15,6 +16,7 @@ public sealed partial class FlavorText : Control
     public Action<string>? OnFlavorTextChanged;
     public Action<string>? OnExploitableInfoChanged; // ADT-Tweak: скрытая информация персонажа
     public Action<string>? OnHeadshotUrlChanged;
+    public Action<DutyErpStatus>? OnErpStatusChanged; // _Duty
     public Action? OnPreviewRequested;
 
     // ADT-Tweak-start
@@ -35,6 +37,19 @@ public sealed partial class FlavorText : Control
 
         _rulesAcceptedText = Loc.GetString("flavor-interface-rules-accepted");
         _rulesNotAcceptedText = Loc.GetString("flavor-interface-rules-not-accepted");
+
+        // _Duty-start
+        foreach (var value in Enum.GetValues<DutyErpStatus>())
+        {
+            ErpStatusButton.AddItem(Loc.GetString($"duty-erp-status-option-{value.ToString().ToLower()}"), (int)value);
+        }
+
+        ErpStatusButton.OnItemSelected += args =>
+        {
+            ErpStatusButton.SelectId(args.Id);
+            OnErpStatusChanged?.Invoke((DutyErpStatus)args.Id);
+        };
+        // _Duty-end
 
         RulesButton.OnPressed += _ => OpenRulesPopup(); // ADT-Tweak
 

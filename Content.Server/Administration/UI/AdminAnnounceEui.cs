@@ -1,3 +1,5 @@
+using Content.Shared._Duty.Administration;
+using Content.Server._Duty.Administration;
 using Content.Server.Administration.Managers;
 using Content.Server.Chat;
 using Content.Server.Chat.Managers;
@@ -8,10 +10,10 @@ using Content.Shared.Eui;
 
 namespace Content.Server.Administration.UI
 {
-    public sealed class AdminAnnounceEui : BaseEui
+    public sealed partial class AdminAnnounceEui : BaseEui
     {
-        [Dependency] private readonly IAdminManager _adminManager = default!;
-        [Dependency] private readonly IChatManager _chatManager = default!;
+        [Dependency] private IAdminManager _adminManager = default!;
+        [Dependency] private IChatManager _chatManager = default!;
         private readonly ChatSystem _chatSystem;
 
         public AdminAnnounceEui()
@@ -37,7 +39,7 @@ namespace Content.Server.Administration.UI
             switch (msg)
             {
                 case AdminAnnounceEuiMsg.DoAnnounce doAnnounce:
-                    if (!_adminManager.HasAdminFlag(Player, AdminFlags.Admin))
+                    if (!_adminManager.Can(Player, AdminNodes.ChatAnnounce, AdminFlags.Admin | AdminFlags.Moderator)) // _Duty: узел chat_announce открывает и отправку
                     {
                         Close();
                         break;

@@ -25,7 +25,7 @@
     - gc
     - gc_mode
     - cvar
-    # - fuckrules # ADT-Tweak
+    - fuckrules # _Duty: доступна всем игрокам, как и adminwho
     - midipanic
     - replay_recording_start
     - replay_recording_stop
@@ -87,9 +87,9 @@
     - toggledecals
     - showwallmounts
     - showaccessreaders
-    - fuckrules # ADT-Tweak
 
-- Flags: QUERY
+# _Duty: загрузка файлов и прототипов на сервер — уровень Host (раньше под QUERY, который про запросы)
+- Flags: HOST
   Commands:
     - uploadfile
     - loadprototype
@@ -98,3 +98,7 @@
 - Flags: ADMINCHAT
   Commands:
     - achatwindow
+
+- Flags: ADMIN
+  Commands:
+    - admin_overlay

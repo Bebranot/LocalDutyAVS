@@ -30,14 +30,30 @@
                     </graphics:StyleBoxFlat>
                 </PanelContainer.PanelOverride>
 
-                <RichTextLabel Name="MessageText"
-                               HorizontalExpand="True" />
+                <BoxContainer Orientation="Vertical" HorizontalExpand="True">
+                    <!-- Sender name, group chats only, never shown for our own messages -->
+                    <Label Name="SenderNameLabel"
+                           StyleClasses="LabelSubText"
+                           HorizontalExpand="True"
+                           Visible="False" />
+                    <RichTextLabel Name="MessageText"
+                                   HorizontalExpand="True" />
+                </BoxContainer>
             </PanelContainer>
 
             <!-- Delivery failed text -->
             <Label Name="DeliveryFailedLabel"
                    Text="{Loc nano-chat-delivery-failed}"
                    StyleClasses="LabelSmall"
+                   HorizontalExpand="True"
+                   HorizontalAlignment="Right"
+                   Margin="10 2 10 0"
+                   Visible="False" />
+
+            <!-- Subtle delivered status, own successful messages only -->
+            <Label Name="DeliveredLabel"
+                   Text="{Loc nano-chat-delivered}"
+                   StyleClasses="LabelSubText"
                    HorizontalExpand="True"
                    HorizontalAlignment="Right"
                    Margin="10 2 10 0"

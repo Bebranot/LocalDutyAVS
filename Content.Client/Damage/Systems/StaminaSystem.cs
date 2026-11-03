@@ -13,6 +13,7 @@ public sealed partial class StaminaSystem : SharedStaminaSystem
     [Dependency] private readonly AnimationPlayerSystem _animation = default!;
     [Dependency] private readonly MobStateSystem _mobState = default!;
     [Dependency] private readonly SpriteSystem _sprite = default!;
+    [Dependency] private readonly Content.Client._Duty.Movement.JumpSystem _jump = default!; // _Duty
     [Dependency] private readonly StunSystem _stun = default!; // Clientside Stun System
 
     private const string StaminaAnimationKey = "stamina";
@@ -70,6 +71,11 @@ public sealed partial class StaminaSystem : SharedStaminaSystem
         if (_mobState.IsDead(entity))
             return;
 
+        // _Duty: посреди прыжка Offset — точка в воздухе; усталость не должна запомнить её как исходную,
+        // иначе спрайт после анимации так и остаётся висеть над полом. Ждём приземления.
+        if (_jump.TryGetRestingOffset(entity, out _))
+            return;
+
         entity.Comp.StartOffset = sprite.Offset;
 
         PlayAnimation((entity, entity.Comp, sprite));
@@ -81,7 +87,8 @@ public sealed partial class StaminaSystem : SharedStaminaSystem
             return;
 
         _animation.Stop(entity.Owner, StaminaAnimationKey);
-        entity.Comp1.StartOffset = entity.Comp2.Offset;
+        // _Duty: см. TryStartAnimation — в прыжке исходное смещение берём у прыжка.
+        entity.Comp1.StartOffset = _jump.TryGetRestingOffset(entity.Owner, out var resting) ? resting : entity.Comp2.Offset;
     }
 
     private void OnAnimationCompleted(Entity<StaminaComponent> entity, ref AnimationCompletedEvent args)

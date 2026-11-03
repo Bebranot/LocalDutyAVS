@@ -26,8 +26,6 @@
     equipDelay: 3
     unequipDelay: 10
   - type: IngestionBlocker
-  - type: AddAccentClothing
-    accent: MumbleAccent
   - type: IdentityBlocker
     coverage: MOUTH
 

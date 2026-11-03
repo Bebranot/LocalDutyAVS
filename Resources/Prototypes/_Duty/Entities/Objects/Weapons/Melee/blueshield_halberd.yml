@@ -6,7 +6,6 @@
   description: A special plasma halberd made for the station's Blueshield officer.
   suffix: Duty, Оружие ближнего боя
   components:
-  - type: Sharp
   - type: Execution
     doAfterDuration: 4.0
   - type: Sprite

@@ -16,7 +16,7 @@
   # _Duty-start: ручной монитор экипажа — сущность была, рецепта не было
   - HandheldCrewMonitor
   # _Duty-end
-  - ADTHighVoltageDefibrillator
+  - DutyDefibrillatorLifePak45A # _Duty: вместо ADTHighVoltageDefibrillator
   - ADTReagentAnalyzer
   - ClothingEyesGlassesChemical
 
@@ -57,3 +57,8 @@
   id: ADTThermoTech
   recipes:
   - ADTPatchThermo
+
+- type: latheRecipePack
+  id: ADTMedbeamPack
+  recipes:
+  - ADTWeaponMedbeamCivil

@@ -1,0 +1,26 @@
+# Звуки шагов, перенесённые вместе с тайлами. Идентификаторы с суффиксом PortedDuty.
+
+- type: soundCollection
+  id: FootstepCosmicPortedDuty
+  files:
+  - /Audio/_Duty/Ported/Onyx/CosmicCult/Footsteps/step1.ogg
+  - /Audio/_Duty/Ported/Onyx/CosmicCult/Footsteps/step2.ogg
+  - /Audio/_Duty/Ported/Onyx/CosmicCult/Footsteps/step3.ogg
+  - /Audio/_Duty/Ported/Onyx/CosmicCult/Footsteps/step4.ogg
+  - /Audio/_Duty/Ported/Onyx/CosmicCult/Footsteps/step5.ogg
+
+- type: soundCollection
+  id: FootstepAfganSandPortedDuty
+  files:
+  - /Audio/_Duty/Ported/Afgan/Footsteps/grass1.ogg
+  - /Audio/_Duty/Ported/Afgan/Footsteps/grass2.ogg
+  - /Audio/_Duty/Ported/Afgan/Footsteps/grass3.ogg
+  - /Audio/_Duty/Ported/Afgan/Footsteps/grass4.ogg
+
+- type: soundCollection
+  id: FootstepAfganMetalPortedDuty
+  files:
+  - /Audio/_Duty/Ported/Afgan/Footsteps/plating1.ogg
+  - /Audio/_Duty/Ported/Afgan/Footsteps/plating2.ogg
+  - /Audio/_Duty/Ported/Afgan/Footsteps/plating3.ogg
+  - /Audio/_Duty/Ported/Afgan/Footsteps/plating4.ogg

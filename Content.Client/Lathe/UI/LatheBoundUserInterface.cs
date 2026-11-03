@@ -1,3 +1,4 @@
+using Content.Client._Duty.LatheUi; // _Duty
 using Content.Shared.Lathe;
 using Content.Shared.Research.Components;
 using JetBrains.Annotations;
@@ -9,7 +10,7 @@ namespace Content.Client.Lathe.UI
     public sealed class LatheBoundUserInterface : BoundUserInterface
     {
         [ViewVariables]
-        private LatheMenu? _menu;
+        private DutyLatheMenu? _menu; // _Duty: новое меню станка (старое LatheMenu оставлено для мержей апстрима)
         public LatheBoundUserInterface(EntityUid owner, Enum uiKey) : base(owner, uiKey)
         {
         }
@@ -18,7 +19,7 @@ namespace Content.Client.Lathe.UI
         {
             base.Open();
 
-            _menu = this.CreateWindowCenteredRight<LatheMenu>();
+            _menu = this.CreateWindowCenteredRight<DutyLatheMenu>(); // _Duty
             _menu.SetEntity(Owner);
 
             _menu.OnServerListButtonPressed += _ =>
@@ -43,13 +44,9 @@ namespace Content.Client.Lathe.UI
             switch (state)
             {
                 case LatheUpdateState msg:
-                    if (_menu != null)
-                        _menu.Recipes = msg.Recipes;
-                    _menu?.UpdateBeakerStatus(msg.HasReagentSlot, msg.BeakerInserted); // ADT-Tweak
-                    _menu?.PopulateRecipes();
-                    _menu?.UpdateCategories();
-                    _menu?.PopulateQueueList(msg.Queue);
-                    _menu?.SetQueueInfo(msg.CurrentlyProducing);
+                    // _Duty-start: новое меню обновляется целиком одним вызовом, без пересоздания строк
+                    _menu?.UpdateState(msg);
+                    // _Duty-end
                     break;
             }
         }

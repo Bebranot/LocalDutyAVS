@@ -15,4 +15,4 @@ marking-ResomiFluff-fluff = Резоми Пух тела
 marking-ResomiFluffHead = Резоми Пух на голове
 marking-ResomiFluffHead-fluff_head = Резоми Пух на голове
 marking-ResomiFluffHeadUp = Резоми Пух на голове (верхний)
-marking-ResomiFluffHeadUp-fluff_head_up = Резоми Пух на голове(верхний)
+marking-ResomiFluffHeadUp-fluff_head_up = Резоми Пух на голове (верхний)

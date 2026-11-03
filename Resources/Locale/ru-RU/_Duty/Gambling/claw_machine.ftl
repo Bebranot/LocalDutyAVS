@@ -1,0 +1,3 @@
+clawmachine-fail-self = Вы облажались и выронили игрушку!
+clawmachine-fail-other = { $user } облажался и выронил игрушку!
+clawmachine-fail-generic = Игрушка выпала из крана. Какая жалость...

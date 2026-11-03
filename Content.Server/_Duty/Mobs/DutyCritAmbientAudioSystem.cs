@@ -8,9 +8,9 @@ namespace Content.Server._Duty.Mobs;
 /// _Duty: зацикленное "сердцебиение" (эмбиент-звук) для игрока в крите.
 /// Порт State Ambient из Lost Paradise (#226). Слышно только самому пострадавшему.
 /// </summary>
-public sealed class DutyCritAmbientAudioSystem : EntitySystem
+public sealed partial class DutyCritAmbientAudioSystem : EntitySystem
 {
-    [Dependency] private readonly SharedAudioSystem _audio = default!;
+    [Dependency] private SharedAudioSystem _audio = default!;
 
     // _Duty: старый зацикленный крит-пульс ОТКЛЮЧЁН — его заменила система Heartbeat
     // (Content.{Shared,Server}/_Duty/Heartbeat), которая бьёт штучными сэмплами по уровню

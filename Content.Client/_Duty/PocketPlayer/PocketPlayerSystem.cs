@@ -7,10 +7,10 @@ using Robust.Shared.Prototypes;
 
 namespace Content.Client._Duty.PocketPlayer;
 
-public sealed class PocketPlayerSystem : SharedPocketPlayerSystem
+public sealed partial class PocketPlayerSystem : SharedPocketPlayerSystem
 {
-    [Dependency] private readonly IPrototypeManager _protoManager = default!;
-    [Dependency] private readonly SharedUserInterfaceSystem _uiSystem = default!;
+    [Dependency] private IPrototypeManager _protoManager = default!;
+    [Dependency] private SharedUserInterfaceSystem _uiSystem = default!;
 
     public override void Initialize()
     {

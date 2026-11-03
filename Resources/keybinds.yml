@@ -186,6 +186,9 @@ binds:
 - function: Drop
   type: State
   key: Q
+- function: Jump # _Duty
+  type: State
+  key: Space
 - function: ActivateItemInHand
   type: State
   key: Z
@@ -501,7 +504,7 @@ binds:
   type: State
   key: F8
 - function: ToggleRoundEndSummaryWindow
-  type: Toggle
+  type: State
   key: F9
 - function: OpenSandboxWindow
   type: State
@@ -675,9 +678,8 @@ binds:
 - function: DrawBackItem
   type: State
   key: F
-- function: CMUniqueAction
-  type: State
-  key: Space
+# _Duty: CMUniqueAction (затвор/действие оружия RMC) без клавиши по умолчанию — Space занят прыжком.
+# Назначить можно в настройках управления.
 - function: Resist
   type: State
   key: B

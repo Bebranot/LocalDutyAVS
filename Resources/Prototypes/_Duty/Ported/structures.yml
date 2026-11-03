@@ -1,0 +1,1180 @@
+# Перенесено из Space Onyx и Stalker. Идентификаторы с суффиксом PortedDuty.
+
+- type: entity
+  parent: BaseWall
+  id: WallMarblePortedDuty
+  suffix: Ported
+  components:
+  - type: Sprite
+    sprite: _Duty/Ported/Structures/Walls/marble.rsi
+  - type: Icon
+    sprite: _Duty/Ported/Structures/Walls/marble.rsi
+  - type: RCDDeconstructable
+    cost: 6
+    delay: 8
+    fx: EffectRCDDeconstruct8
+  - type: Destructible
+    thresholds:
+    - trigger:
+        !type:DamageTrigger
+        damage: 500
+      behaviors:
+      - !type:SpawnEntitiesBehavior
+        spawn:
+          Girder:
+            min: 1
+            max: 1
+      - !type:DoActsBehavior
+        acts: [ "Destruction" ]
+  - type: IconSmooth
+    key: walls
+    base: wall
+
+
+- type: entity
+  parent: BaseWall
+  id: WallConcretePortedDuty
+  suffix: Ported
+  components:
+  - type: Sprite
+    sprite: _Duty/Ported/Structures/Walls/concrete.rsi
+  - type: Icon
+    sprite: _Duty/Ported/Structures/Walls/concrete.rsi
+  - type: RCDDeconstructable
+    cost: 6
+    delay: 8
+    fx: EffectRCDDeconstruct8
+  - type: Destructible
+    thresholds:
+    - trigger:
+        !type:DamageTrigger
+        damage: 450
+      behaviors:
+      - !type:SpawnEntitiesBehavior
+        spawn:
+          Girder:
+            min: 1
+            max: 1
+      - !type:DoActsBehavior
+        acts: [ "Destruction" ]
+  - type: IconSmooth
+    key: walls
+    base: concrete
+
+
+- type: entity
+  parent: BaseWall
+  id: WallAbductorPortedDuty
+  suffix: Ported
+  components:
+  - type: Sprite
+    sprite: _Duty/Ported/Structures/Abductor/abductor_wall.rsi
+  - type: Icon
+    sprite: _Duty/Ported/Structures/Abductor/abductor_wall.rsi
+    state: full
+  - type: RCDDeconstructable
+    cost: 6
+    delay: 8
+    fx: EffectRCDDeconstruct8
+  - type: Destructible
+    thresholds:
+    - trigger:
+        !type:DamageTrigger
+        damage: 800
+      behaviors:
+      - !type:SpawnEntitiesBehavior
+        spawn:
+          Girder:
+            min: 1
+            max: 1
+      - !type:DoActsBehavior
+        acts: [ "Destruction" ]
+  - type: IconSmooth
+    key: walls
+    base: state
+
+
+- type: entity
+  parent: BaseWall
+  id: WallStalkerWoodPortedDuty
+  suffix: Ported
+  components:
+  - type: Sprite
+    sprite: _Duty/Ported/Stalker/Structures/Walls/wood.rsi
+  - type: Icon
+    sprite: _Duty/Ported/Stalker/Structures/Walls/wood.rsi
+  - type: RCDDeconstructable
+    cost: 6
+    delay: 8
+    fx: EffectRCDDeconstruct8
+  - type: Destructible
+    thresholds:
+    - trigger:
+        !type:DamageTrigger
+        damage: 400
+      behaviors:
+      - !type:SpawnEntitiesBehavior
+        spawn:
+          Girder:
+            min: 1
+            max: 1
+      - !type:DoActsBehavior
+        acts: [ "Destruction" ]
+  - type: IconSmooth
+    key: walls
+    base: wood
+
+
+- type: entity
+  parent: BaseWall
+  id: WallStalkerSidingPortedDuty
+  suffix: Ported
+  components:
+  - type: Sprite
+    sprite: _Duty/Ported/Stalker/Structures/Walls/siding.rsi
+  - type: Icon
+    sprite: _Duty/Ported/Stalker/Structures/Walls/siding.rsi
+  - type: RCDDeconstructable
+    cost: 6
+    delay: 8
+    fx: EffectRCDDeconstruct8
+  - type: Destructible
+    thresholds:
+    - trigger:
+        !type:DamageTrigger
+        damage: 400
+      behaviors:
+      - !type:SpawnEntitiesBehavior
+        spawn:
+          Girder:
+            min: 1
+            max: 1
+      - !type:DoActsBehavior
+        acts: [ "Destruction" ]
+  - type: IconSmooth
+    key: walls
+    base: siding
+
+
+- type: entity
+  parent: BaseWall
+  id: WallStalkerBrickPortedDuty
+  suffix: Ported
+  components:
+  - type: Sprite
+    sprite: _Duty/Ported/Stalker/Structures/Walls/brick.rsi
+  - type: Icon
+    sprite: _Duty/Ported/Stalker/Structures/Walls/brick.rsi
+  - type: RCDDeconstructable
+    cost: 6
+    delay: 8
+    fx: EffectRCDDeconstruct8
+  - type: Destructible
+    thresholds:
+    - trigger:
+        !type:DamageTrigger
+        damage: 400
+      behaviors:
+      - !type:SpawnEntitiesBehavior
+        spawn:
+          Girder:
+            min: 1
+            max: 1
+      - !type:DoActsBehavior
+        acts: [ "Destruction" ]
+  - type: IconSmooth
+    key: walls
+    base: brick
+
+
+- type: entity
+  parent: BaseWall
+  id: WallStalkerBunkerPortedDuty
+  suffix: Ported
+  components:
+  - type: Sprite
+    sprite: _Duty/Ported/Stalker/Structures/Walls/bunker.rsi
+  - type: Icon
+    sprite: _Duty/Ported/Stalker/Structures/Walls/bunker.rsi
+  - type: RCDDeconstructable
+    cost: 6
+    delay: 8
+    fx: EffectRCDDeconstruct8
+  - type: Destructible
+    thresholds:
+    - trigger:
+        !type:DamageTrigger
+        damage: 400
+      behaviors:
+      - !type:SpawnEntitiesBehavior
+        spawn:
+          Girder:
+            min: 1
+            max: 1
+      - !type:DoActsBehavior
+        acts: [ "Destruction" ]
+  - type: IconSmooth
+    key: walls
+    base: bunker
+
+
+- type: entity
+  parent: BaseWall
+  id: WallStalkerDungeonPortedDuty
+  suffix: Ported
+  components:
+  - type: Sprite
+    sprite: _Duty/Ported/Stalker/Structures/Walls/dungeon.rsi
+  - type: Icon
+    sprite: _Duty/Ported/Stalker/Structures/Walls/dungeon.rsi
+  - type: RCDDeconstructable
+    cost: 6
+    delay: 8
+    fx: EffectRCDDeconstruct8
+  - type: Destructible
+    thresholds:
+    - trigger:
+        !type:DamageTrigger
+        damage: 400
+      behaviors:
+      - !type:SpawnEntitiesBehavior
+        spawn:
+          Girder:
+            min: 1
+            max: 1
+      - !type:DoActsBehavior
+        acts: [ "Destruction" ]
+  - type: IconSmooth
+    key: walls
+    base: dungeon
+
+
+- type: entity
+  parent: BaseWall
+  id: WallStalkerMetalPortedDuty
+  suffix: Ported
+  components:
+  - type: Sprite
+    sprite: _Duty/Ported/Stalker/Structures/Walls/metal.rsi
+  - type: Icon
+    sprite: _Duty/Ported/Stalker/Structures/Walls/metal.rsi
+  - type: RCDDeconstructable
+    cost: 6
+    delay: 8
+    fx: EffectRCDDeconstruct8
+  - type: Destructible
+    thresholds:
+    - trigger:
+        !type:DamageTrigger
+        damage: 400
+      behaviors:
+      - !type:SpawnEntitiesBehavior
+        spawn:
+          Girder:
+            min: 1
+            max: 1
+      - !type:DoActsBehavior
+        acts: [ "Destruction" ]
+  - type: IconSmooth
+    key: walls
+    base: metal
+
+
+- type: entity
+  parent: BaseWall
+  id: WallStalkerRustMetalPortedDuty
+  suffix: Ported
+  components:
+  - type: Sprite
+    sprite: _Duty/Ported/Stalker/Structures/Walls/rustmetal.rsi
+  - type: Icon
+    sprite: _Duty/Ported/Stalker/Structures/Walls/rustmetal.rsi
+  - type: RCDDeconstructable
+    cost: 6
+    delay: 8
+    fx: EffectRCDDeconstruct8
+  - type: Destructible
+    thresholds:
+    - trigger:
+        !type:DamageTrigger
+        damage: 400
+      behaviors:
+      - !type:SpawnEntitiesBehavior
+        spawn:
+          Girder:
+            min: 1
+            max: 1
+      - !type:DoActsBehavior
+        acts: [ "Destruction" ]
+  - type: IconSmooth
+    key: walls
+    base: rustmetal
+
+
+- type: entity
+  parent: BaseWall
+  id: WallStalkerScrapPortedDuty
+  suffix: Ported
+  components:
+  - type: Sprite
+    sprite: _Duty/Ported/Stalker/Structures/Walls/scrap.rsi
+    drawdepth: OverMobs
+  - type: Icon
+    sprite: _Duty/Ported/Stalker/Structures/Walls/scrap.rsi
+  - type: RCDDeconstructable
+    cost: 6
+    delay: 8
+    fx: EffectRCDDeconstruct8
+  - type: Destructible
+    thresholds:
+    - trigger:
+        !type:DamageTrigger
+        damage: 400
+      behaviors:
+      - !type:SpawnEntitiesBehavior
+        spawn:
+          Girder:
+            min: 1
+            max: 1
+      - !type:DoActsBehavior
+        acts: [ "Destruction" ]
+  - type: IconSmooth
+    key: walls
+    base: scrap
+  - type: SpriteFade
+
+
+- type: entity
+  parent: BaseWall
+  id: WallStalkerSewerPortedDuty
+  suffix: Ported
+  components:
+  - type: Sprite
+    sprite: _Duty/Ported/Stalker/Structures/Walls/sewer.rsi
+    drawdepth: OverMobs
+  - type: Icon
+    sprite: _Duty/Ported/Stalker/Structures/Walls/sewer.rsi
+  - type: RCDDeconstructable
+    cost: 6
+    delay: 8
+    fx: EffectRCDDeconstruct8
+  - type: Destructible
+    thresholds:
+    - trigger:
+        !type:DamageTrigger
+        damage: 400
+      behaviors:
+      - !type:SpawnEntitiesBehavior
+        spawn:
+          Girder:
+            min: 1
+            max: 1
+      - !type:DoActsBehavior
+        acts: [ "Destruction" ]
+  - type: IconSmooth
+    key: walls
+    base: sewer
+  - type: SpriteFade
+
+
+- type: entity
+  parent: BaseWall
+  id: WallStalkerReinfMetalPortedDuty
+  suffix: Ported
+  components:
+  - type: Sprite
+    sprite: _Duty/Ported/Stalker/Structures/Walls/rmetal.rsi
+  - type: Icon
+    sprite: _Duty/Ported/Stalker/Structures/Walls/rmetal.rsi
+  - type: RCDDeconstructable
+    cost: 6
+    delay: 8
+    fx: EffectRCDDeconstruct8
+  - type: Destructible
+    thresholds:
+    - trigger:
+        !type:DamageTrigger
+        damage: 400
+      behaviors:
+      - !type:SpawnEntitiesBehavior
+        spawn:
+          Girder:
+            min: 1
+            max: 1
+      - !type:DoActsBehavior
+        acts: [ "Destruction" ]
+  - type: IconSmooth
+    key: walls
+    base: rmetal
+
+
+- type: entity
+  parent: BaseWall
+  id: WallStalkerRustReinfMetalPortedDuty
+  suffix: Ported
+  components:
+  - type: Sprite
+    sprite: _Duty/Ported/Stalker/Structures/Walls/rrmetal.rsi
+  - type: Icon
+    sprite: _Duty/Ported/Stalker/Structures/Walls/rrmetal.rsi
+  - type: RCDDeconstructable
+    cost: 6
+    delay: 8
+    fx: EffectRCDDeconstruct8
+  - type: Destructible
+    thresholds:
+    - trigger:
+        !type:DamageTrigger
+        damage: 400
+      behaviors:
+      - !type:SpawnEntitiesBehavior
+        spawn:
+          Girder:
+            min: 1
+            max: 1
+      - !type:DoActsBehavior
+        acts: [ "Destruction" ]
+  - type: IconSmooth
+    key: walls
+    base: rrmetal
+
+
+- type: entity
+  parent: BaseWall
+  id: WallStalkerVaultPortedDuty
+  suffix: Ported
+  components:
+  - type: Sprite
+    sprite: _Duty/Ported/Stalker/Structures/Walls/vault.rsi
+  - type: Icon
+    sprite: _Duty/Ported/Stalker/Structures/Walls/vault.rsi
+  - type: RCDDeconstructable
+    cost: 6
+    delay: 8
+    fx: EffectRCDDeconstruct8
+  - type: Destructible
+    thresholds:
+    - trigger:
+        !type:DamageTrigger
+        damage: 400
+      behaviors:
+      - !type:SpawnEntitiesBehavior
+        spawn:
+          Girder:
+            min: 1
+            max: 1
+      - !type:DoActsBehavior
+        acts: [ "Destruction" ]
+  - type: IconSmooth
+    key: walls
+    base: vault
+
+
+- type: entity
+  parent: BaseWall
+  id: WallStalkerConcretePortedDuty
+  suffix: Ported
+  components:
+  - type: Sprite
+    sprite: _Duty/Ported/Stalker/Structures/Walls/concrete.rsi
+  - type: Icon
+    sprite: _Duty/Ported/Stalker/Structures/Walls/concrete.rsi
+  - type: RCDDeconstructable
+    cost: 6
+    delay: 8
+    fx: EffectRCDDeconstruct8
+  - type: Destructible
+    thresholds:
+    - trigger:
+        !type:DamageTrigger
+        damage: 400
+      behaviors:
+      - !type:SpawnEntitiesBehavior
+        spawn:
+          Girder:
+            min: 1
+            max: 1
+      - !type:DoActsBehavior
+        acts: [ "Destruction" ]
+  - type: IconSmooth
+    key: walls
+    base: concrete
+
+
+- type: entity
+  parent: BaseWall
+  id: WallStalkerRockPortedDuty
+  suffix: Ported
+  components:
+  - type: Sprite
+    sprite: _Duty/Ported/Stalker/Structures/Walls/rock.rsi
+  - type: Icon
+    sprite: _Duty/Ported/Stalker/Structures/Walls/rock.rsi
+  - type: RCDDeconstructable
+    cost: 6
+    delay: 8
+    fx: EffectRCDDeconstruct8
+  - type: Destructible
+    thresholds:
+    - trigger:
+        !type:DamageTrigger
+        damage: 400
+      behaviors:
+      - !type:SpawnEntitiesBehavior
+        spawn:
+          Girder:
+            min: 1
+            max: 1
+      - !type:DoActsBehavior
+        acts: [ "Destruction" ]
+  - type: IconSmooth
+    key: walls
+    base: rock
+
+
+- type: entity
+  parent: BaseWall
+  id: WallStalkerPrisonPortedDuty
+  suffix: Ported
+  components:
+  - type: Sprite
+    sprite: _Duty/Ported/Stalker/Structures/Walls/prison.rsi
+  - type: Icon
+    sprite: _Duty/Ported/Stalker/Structures/Walls/prison.rsi
+  - type: RCDDeconstructable
+    cost: 6
+    delay: 8
+    fx: EffectRCDDeconstruct8
+  - type: Destructible
+    thresholds:
+    - trigger:
+        !type:DamageTrigger
+        damage: 400
+      behaviors:
+      - !type:SpawnEntitiesBehavior
+        spawn:
+          Girder:
+            min: 1
+            max: 1
+      - !type:DoActsBehavior
+        acts: [ "Destruction" ]
+  - type: IconSmooth
+    key: walls
+    base: prison
+
+
+- type: entity
+  parent: BaseStructure
+  id: WindowStalkerBrickPortedDuty
+  suffix: Ported
+  components:
+  - type: WallMount
+    arc: 360
+  - type: SpriteFade
+  - type: Airtight
+  - type: Tag
+    tags:
+    - Window
+  - type: Physics
+    bodyType: Static
+  - type: Fixtures
+    fixtures:
+      fix1:
+        shape:
+          !type:PhysShapeAabb {}
+        mask:
+        - FullTileMask
+        layer:
+        - GlassLayer
+  - type: Icon
+    sprite: _Duty/Ported/Stalker/Structures/Windows/WindowsBrick.rsi
+    state: icon
+  - type: Sprite
+    sprite: _Duty/Ported/Stalker/Structures/Windows/WindowsBrick.rsi
+    layers:
+    - state: windows
+    drawdepth: Mobs
+  - type: BlockWeather
+
+
+- type: entity
+  parent: BaseStructure
+  id: WindowStalkerBunkerPortedDuty
+  suffix: Ported
+  components:
+  - type: WallMount
+    arc: 360
+  - type: SpriteFade
+  - type: Airtight
+  - type: Tag
+    tags:
+    - Window
+  - type: Physics
+    bodyType: Static
+  - type: Fixtures
+    fixtures:
+      fix1:
+        shape:
+          !type:PhysShapeAabb {}
+        mask:
+        - FullTileMask
+        layer:
+        - GlassLayer
+  - type: Icon
+    sprite: _Duty/Ported/Stalker/Structures/Windows/WindowsBunker.rsi
+    state: icon
+  - type: Sprite
+    sprite: _Duty/Ported/Stalker/Structures/Windows/WindowsBunker.rsi
+    layers:
+    - state: windows
+    drawdepth: Mobs
+  - type: BlockWeather
+
+
+- type: entity
+  parent: BaseStructure
+  id: WindowStalkerConcretePortedDuty
+  suffix: Ported
+  components:
+  - type: WallMount
+    arc: 360
+  - type: SpriteFade
+  - type: Airtight
+  - type: Tag
+    tags:
+    - Window
+  - type: Physics
+    bodyType: Static
+  - type: Fixtures
+    fixtures:
+      fix1:
+        shape:
+          !type:PhysShapeAabb {}
+        mask:
+        - FullTileMask
+        layer:
+        - GlassLayer
+  - type: Icon
+    sprite: _Duty/Ported/Stalker/Structures/Windows/WindowsConcrete.rsi
+    state: icon
+  - type: Sprite
+    sprite: _Duty/Ported/Stalker/Structures/Windows/WindowsConcrete.rsi
+    layers:
+    - state: windows
+    drawdepth: Mobs
+  - type: BlockWeather
+
+
+- type: entity
+  parent: BaseStructure
+  id: WindowStalkerDoorPortedDuty
+  suffix: Ported
+  components:
+  - type: WallMount
+    arc: 360
+  - type: SpriteFade
+  - type: Airtight
+  - type: Tag
+    tags:
+    - Window
+  - type: Physics
+    bodyType: Static
+  - type: Fixtures
+    fixtures:
+      fix1:
+        shape:
+          !type:PhysShapeAabb {}
+        mask:
+        - FullTileMask
+        layer:
+        - GlassLayer
+  - type: Icon
+    sprite: _Duty/Ported/Stalker/Structures/Windows/WindowsDoor.rsi
+    state: icon
+  - type: Sprite
+    sprite: _Duty/Ported/Stalker/Structures/Windows/WindowsDoor.rsi
+    layers:
+    - state: windows
+    drawdepth: Mobs
+  - type: BlockWeather
+
+
+- type: entity
+  parent: BaseStructure
+  id: WindowStalkerDungeonPortedDuty
+  suffix: Ported
+  components:
+  - type: WallMount
+    arc: 360
+  - type: SpriteFade
+  - type: Airtight
+  - type: Tag
+    tags:
+    - Window
+  - type: Physics
+    bodyType: Static
+  - type: Fixtures
+    fixtures:
+      fix1:
+        shape:
+          !type:PhysShapeAabb {}
+        mask:
+        - FullTileMask
+        layer:
+        - GlassLayer
+  - type: Icon
+    sprite: _Duty/Ported/Stalker/Structures/Windows/WindowsDungeon.rsi
+    state: icon
+  - type: Sprite
+    sprite: _Duty/Ported/Stalker/Structures/Windows/WindowsDungeon.rsi
+    layers:
+    - state: windows
+    drawdepth: Mobs
+  - type: BlockWeather
+
+
+- type: entity
+  parent: BaseStructure
+  id: WindowStalkerMetalPortedDuty
+  suffix: Ported
+  components:
+  - type: WallMount
+    arc: 360
+  - type: SpriteFade
+  - type: Airtight
+  - type: Tag
+    tags:
+    - Window
+  - type: Physics
+    bodyType: Static
+  - type: Fixtures
+    fixtures:
+      fix1:
+        shape:
+          !type:PhysShapeAabb {}
+        mask:
+        - FullTileMask
+        layer:
+        - GlassLayer
+  - type: Icon
+    sprite: _Duty/Ported/Stalker/Structures/Windows/WindowsMetal.rsi
+    state: icon
+  - type: Sprite
+    sprite: _Duty/Ported/Stalker/Structures/Windows/WindowsMetal.rsi
+    layers:
+    - state: windows
+    drawdepth: Mobs
+  - type: BlockWeather
+
+
+- type: entity
+  parent: BaseStructure
+  id: WindowStalkerPrisonPortedDuty
+  suffix: Ported
+  components:
+  - type: WallMount
+    arc: 360
+  - type: SpriteFade
+  - type: Airtight
+  - type: Tag
+    tags:
+    - Window
+  - type: Physics
+    bodyType: Static
+  - type: Fixtures
+    fixtures:
+      fix1:
+        shape:
+          !type:PhysShapeAabb {}
+        mask:
+        - FullTileMask
+        layer:
+        - GlassLayer
+  - type: Icon
+    sprite: _Duty/Ported/Stalker/Structures/Windows/WindowsPrison.rsi
+    state: icon
+  - type: Sprite
+    sprite: _Duty/Ported/Stalker/Structures/Windows/WindowsPrison.rsi
+    layers:
+    - state: windows
+    drawdepth: Mobs
+  - type: BlockWeather
+
+
+- type: entity
+  parent: BaseStructure
+  id: WindowStalkerRmetalPortedDuty
+  suffix: Ported
+  components:
+  - type: WallMount
+    arc: 360
+  - type: SpriteFade
+  - type: Airtight
+  - type: Tag
+    tags:
+    - Window
+  - type: Physics
+    bodyType: Static
+  - type: Fixtures
+    fixtures:
+      fix1:
+        shape:
+          !type:PhysShapeAabb {}
+        mask:
+        - FullTileMask
+        layer:
+        - GlassLayer
+  - type: Icon
+    sprite: _Duty/Ported/Stalker/Structures/Windows/WindowsRmetal.rsi
+    state: icon
+  - type: Sprite
+    sprite: _Duty/Ported/Stalker/Structures/Windows/WindowsRmetal.rsi
+    layers:
+    - state: windows
+    drawdepth: Mobs
+  - type: BlockWeather
+
+
+- type: entity
+  parent: BaseStructure
+  id: WindowStalkerRockPortedDuty
+  suffix: Ported
+  components:
+  - type: WallMount
+    arc: 360
+  - type: SpriteFade
+  - type: Airtight
+  - type: Tag
+    tags:
+    - Window
+  - type: Physics
+    bodyType: Static
+  - type: Fixtures
+    fixtures:
+      fix1:
+        shape:
+          !type:PhysShapeAabb {}
+        mask:
+        - FullTileMask
+        layer:
+        - GlassLayer
+  - type: Icon
+    sprite: _Duty/Ported/Stalker/Structures/Windows/WindowsRock.rsi
+    state: icon
+  - type: Sprite
+    sprite: _Duty/Ported/Stalker/Structures/Windows/WindowsRock.rsi
+    layers:
+    - state: windows
+    drawdepth: Mobs
+  - type: BlockWeather
+
+
+- type: entity
+  parent: BaseStructure
+  id: WindowStalkerRrmetalPortedDuty
+  suffix: Ported
+  components:
+  - type: WallMount
+    arc: 360
+  - type: SpriteFade
+  - type: Airtight
+  - type: Tag
+    tags:
+    - Window
+  - type: Physics
+    bodyType: Static
+  - type: Fixtures
+    fixtures:
+      fix1:
+        shape:
+          !type:PhysShapeAabb {}
+        mask:
+        - FullTileMask
+        layer:
+        - GlassLayer
+  - type: Icon
+    sprite: _Duty/Ported/Stalker/Structures/Windows/WindowsRrmetal.rsi
+    state: icon
+  - type: Sprite
+    sprite: _Duty/Ported/Stalker/Structures/Windows/WindowsRrmetal.rsi
+    layers:
+    - state: windows
+    drawdepth: Mobs
+  - type: BlockWeather
+
+
+- type: entity
+  parent: BaseStructure
+  id: WindowStalkerRustmetalPortedDuty
+  suffix: Ported
+  components:
+  - type: WallMount
+    arc: 360
+  - type: SpriteFade
+  - type: Airtight
+  - type: Tag
+    tags:
+    - Window
+  - type: Physics
+    bodyType: Static
+  - type: Fixtures
+    fixtures:
+      fix1:
+        shape:
+          !type:PhysShapeAabb {}
+        mask:
+        - FullTileMask
+        layer:
+        - GlassLayer
+  - type: Icon
+    sprite: _Duty/Ported/Stalker/Structures/Windows/WindowsRustmetal.rsi
+    state: icon
+  - type: Sprite
+    sprite: _Duty/Ported/Stalker/Structures/Windows/WindowsRustmetal.rsi
+    layers:
+    - state: windows
+    drawdepth: Mobs
+  - type: BlockWeather
+
+
+- type: entity
+  parent: BaseStructure
+  id: WindowStalkerScrapPortedDuty
+  suffix: Ported
+  components:
+  - type: WallMount
+    arc: 360
+  - type: SpriteFade
+  - type: Airtight
+  - type: Tag
+    tags:
+    - Window
+  - type: Physics
+    bodyType: Static
+  - type: Fixtures
+    fixtures:
+      fix1:
+        shape:
+          !type:PhysShapeAabb {}
+        mask:
+        - FullTileMask
+        layer:
+        - GlassLayer
+  - type: Icon
+    sprite: _Duty/Ported/Stalker/Structures/Windows/WindowsScrap.rsi
+    state: icon
+  - type: Sprite
+    sprite: _Duty/Ported/Stalker/Structures/Windows/WindowsScrap.rsi
+    layers:
+    - state: windows
+    drawdepth: Mobs
+  - type: BlockWeather
+
+
+- type: entity
+  parent: BaseStructure
+  id: WindowStalkerSewerPortedDuty
+  suffix: Ported
+  components:
+  - type: WallMount
+    arc: 360
+  - type: SpriteFade
+  - type: Airtight
+  - type: Tag
+    tags:
+    - Window
+  - type: Physics
+    bodyType: Static
+  - type: Fixtures
+    fixtures:
+      fix1:
+        shape:
+          !type:PhysShapeAabb {}
+        mask:
+        - FullTileMask
+        layer:
+        - GlassLayer
+  - type: Icon
+    sprite: _Duty/Ported/Stalker/Structures/Windows/WindowsSewer.rsi
+    state: icon
+  - type: Sprite
+    sprite: _Duty/Ported/Stalker/Structures/Windows/WindowsSewer.rsi
+    layers:
+    - state: windows
+    drawdepth: Mobs
+  - type: BlockWeather
+
+
+- type: entity
+  parent: BaseStructure
+  id: WindowStalkerSidingPortedDuty
+  suffix: Ported
+  components:
+  - type: WallMount
+    arc: 360
+  - type: SpriteFade
+  - type: Airtight
+  - type: Tag
+    tags:
+    - Window
+  - type: Physics
+    bodyType: Static
+  - type: Fixtures
+    fixtures:
+      fix1:
+        shape:
+          !type:PhysShapeAabb {}
+        mask:
+        - FullTileMask
+        layer:
+        - GlassLayer
+  - type: Icon
+    sprite: _Duty/Ported/Stalker/Structures/Windows/WindowsSiding.rsi
+    state: icon
+  - type: Sprite
+    sprite: _Duty/Ported/Stalker/Structures/Windows/WindowsSiding.rsi
+    layers:
+    - state: windows
+    drawdepth: Mobs
+  - type: BlockWeather
+
+
+- type: entity
+  parent: BaseStructure
+  id: WindowStalkerVaultPortedDuty
+  suffix: Ported
+  components:
+  - type: WallMount
+    arc: 360
+  - type: SpriteFade
+  - type: Airtight
+  - type: Tag
+    tags:
+    - Window
+  - type: Physics
+    bodyType: Static
+  - type: Fixtures
+    fixtures:
+      fix1:
+        shape:
+          !type:PhysShapeAabb {}
+        mask:
+        - FullTileMask
+        layer:
+        - GlassLayer
+  - type: Icon
+    sprite: _Duty/Ported/Stalker/Structures/Windows/WindowsVault.rsi
+    state: icon
+  - type: Sprite
+    sprite: _Duty/Ported/Stalker/Structures/Windows/WindowsVault.rsi
+    layers:
+    - state: windows
+    drawdepth: Mobs
+  - type: BlockWeather
+
+
+- type: entity
+  id: CatwalkSteelStalkerPortedDuty
+  suffix: Ported
+  placement:
+    mode: SnapgridCenter
+  components:
+  - type: Clickable
+  - type: Sprite
+    sprite: _Duty/Ported/Stalker/Structures/catwalk1.rsi
+    drawdepth: FloorTiles
+  - type: Icon
+    sprite: _Duty/Ported/Stalker/Structures/catwalk1.rsi
+    state: catwalk_preview
+  - type: Transform
+    anchored: true
+  - type: IconSmooth
+    key: catwalk
+    base: catwalk_
+  - type: FootstepModifier
+    footstepSoundCollection:
+      collection: FootstepCatwalk
+      params:
+        volume: 8
+  - type: Tag
+    tags:
+    - Catwalk
+  - type: Damageable
+    damageModifierSet: Metallic
+
+
+- type: entity
+  id: CatwalkRustyStalkerPortedDuty
+  suffix: Ported
+  placement:
+    mode: SnapgridCenter
+  components:
+  - type: Clickable
+  - type: Sprite
+    sprite: _Duty/Ported/Stalker/Structures/catwalk2.rsi
+    drawdepth: FloorTiles
+  - type: Icon
+    sprite: _Duty/Ported/Stalker/Structures/catwalk2.rsi
+    state: catwalk_preview
+  - type: Transform
+    anchored: true
+  - type: IconSmooth
+    key: catwalk
+    base: catwalk_
+  - type: FootstepModifier
+    footstepSoundCollection:
+      collection: FootstepCatwalk
+      params:
+        volume: 8
+  - type: Tag
+    tags:
+    - Catwalk
+  - type: Damageable
+    damageModifierSet: Metallic
+
+
+- type: entity
+  id: CatwalkOldStalkerPortedDuty
+  suffix: Ported
+  placement:
+    mode: SnapgridCenter
+  components:
+  - type: Clickable
+  - type: Sprite
+    sprite: _Duty/Ported/Stalker/Structures/catwalk3.rsi
+    drawdepth: FloorTiles
+  - type: Icon
+    sprite: _Duty/Ported/Stalker/Structures/catwalk3.rsi
+    state: catwalk_preview
+  - type: Transform
+    anchored: true
+  - type: IconSmooth
+    key: catwalk
+    base: catwalk_
+  - type: FootstepModifier
+    footstepSoundCollection:
+      collection: FootstepCatwalk
+      params:
+        volume: 8
+  - type: Tag
+    tags:
+    - Catwalk
+  - type: Damageable
+    damageModifierSet: Metallic
+
+
+- type: entity
+  parent: WallDiagonalBase
+  id: WallAbductorDiagonalPortedDuty
+  suffix: Ported, diagonal
+  components:
+  - type: Sprite
+    sprite: _Duty/Ported/Structures/Abductor/abductor_diagonal.rsi
+    state: state0
+  - type: Icon
+    sprite: _Duty/Ported/Structures/Abductor/abductor_diagonal.rsi
+    state: state0
+  - type: IconSmooth
+    mode: Diagonal
+    key: walls
+    base: state

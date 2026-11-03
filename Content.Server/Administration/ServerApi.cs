@@ -58,27 +58,27 @@ public sealed partial class ServerApi : IPostInjectInit
         CCVars.PanicBunkerCustomReason.Name,
     ];
 
-    [Dependency] private readonly IStatusHost _statusHost = default!;
-    [Dependency] private readonly IConfigurationManager _config = default!;
-    [Dependency] private readonly ISharedPlayerManager _playerManager = default!;
-    [Dependency] private readonly ISharedAdminManager _adminManager = default!;
-    [Dependency] private readonly IGameMapManager _gameMapManager = default!;
-    [Dependency] private readonly IServerNetManager _netManager = default!;
-    [Dependency] private readonly IPrototypeManager _prototypeManager = default!;
-    [Dependency] private readonly IComponentFactory _componentFactory = default!;
-    [Dependency] private readonly ITaskManager _taskManager = default!;
-    [Dependency] private readonly EntityManager _entityManager = default!;
-    [Dependency] private readonly ILogManager _logManager = default!;
-    [Dependency] private readonly IEntitySystemManager _entitySystemManager = default!;
-    [Dependency] private readonly ILocalizationManager _loc = default!;
-    [Dependency] private readonly IAdminManager _admin = default!;
-    [Dependency] private readonly INetConfigurationManager _netConfigManager = default!;
-    [Dependency] private readonly IChatManager _chatManager = default!;
-    [Dependency] private readonly IPlayerLocator _playerLocator = default!;
-    [Dependency] private readonly PlayTimeTrackingManager _playTimeTracking = default!;
-    [Dependency] private readonly IServerDbManager _dbManager = default!;
-    [Dependency] private readonly IBanManager _bans = default!;
-    [Dependency] private readonly IDiscordBanInfoSender _discordBanInfoSender = default!;
+    [Dependency] private IStatusHost _statusHost = default!;
+    [Dependency] private IConfigurationManager _config = default!;
+    [Dependency] private ISharedPlayerManager _playerManager = default!;
+    [Dependency] private ISharedAdminManager _adminManager = default!;
+    [Dependency] private IGameMapManager _gameMapManager = default!;
+    [Dependency] private IServerNetManager _netManager = default!;
+    [Dependency] private IPrototypeManager _prototypeManager = default!;
+    [Dependency] private IComponentFactory _componentFactory = default!;
+    [Dependency] private ITaskManager _taskManager = default!;
+    [Dependency] private EntityManager _entityManager = default!;
+    [Dependency] private ILogManager _logManager = default!;
+    [Dependency] private IEntitySystemManager _entitySystemManager = default!;
+    [Dependency] private ILocalizationManager _loc = default!;
+    [Dependency] private IBanManager _bans = default!;
+    [Dependency] private IAdminManager _admin = default!;
+    [Dependency] private INetConfigurationManager _netConfigManager = default!;
+    [Dependency] private IChatManager _chatManager = default!;
+    [Dependency] private IPlayerLocator _playerLocator = default!;
+    [Dependency] private PlayTimeTrackingManager _playTimeTracking = default!;
+    [Dependency] private IServerDbManager _dbManager = default!;
+    [Dependency] private IDiscordBanInfoSender _discordBanInfoSender = default!;
 
     private string _token = string.Empty;
     private ISawmill _sawmill = default!;
@@ -353,6 +353,17 @@ public sealed partial class ServerApi : IPostInjectInit
                     ErrorCode.PlayerNotFound,
                     HttpStatusCode.UnprocessableContent,
                     "Player not found");
+                return;
+            }
+
+            // _Duty: админов с правом выдавать права и Host через API банить нельзя, как и из консоли
+            if (_admin.IsProtectedFromBan(await _dbManager.GetAdminDataForAsync(located.UserId)))
+            {
+                await RespondError(
+                    context,
+                    ErrorCode.BadRequest,
+                    HttpStatusCode.Forbidden,
+                    "Player is a protected admin and cannot be banned.");
                 return;
             }
 
@@ -907,9 +918,11 @@ public sealed partial class ServerApi : IPostInjectInit
 
         await RunOnMainThread(async () =>
         {
-            if (!uint.TryParse(body.Time, out uint minutes) || minutes < 0)
+            // _Duty: ответ на каждую ошибку, иначе вызывающий висит без ответа; проверка minutes < 0 у uint была мёртвой
+            if (!uint.TryParse(body.Time, out uint minutes))
             {
                 _sawmill.Warning($"ServerApi BAN: {body.Time} is not a valid amount of minutes!");
+                await RespondBadRequest(context, "Time is not a valid amount of minutes");
                 return;
             }
 
@@ -923,6 +936,14 @@ public sealed partial class ServerApi : IPostInjectInit
             if (locatedTarget == null)
             {
                 _sawmill.Warning($"ServerApi BAN: Unable to find a player with name {target}.");
+                await RespondError(context, ErrorCode.PlayerNotFound, HttpStatusCode.UnprocessableContent, "Player not found");
+                return;
+            }
+
+            // _Duty: защита админов, как в консольной команде ban
+            if (_admin.IsProtectedFromBan(await _dbManager.GetAdminDataForAsync(locatedTarget.UserId)))
+            {
+                await RespondError(context, ErrorCode.BadRequest, HttpStatusCode.Forbidden, "Player is a protected admin and cannot be banned.");
                 return;
             }
 
@@ -932,6 +953,7 @@ public sealed partial class ServerApi : IPostInjectInit
             if (_bans == null)
             {
                 _sawmill.Error("ServerApi BAN: _bans (BanManager) is NULL! Cannot process ban.");
+                await RespondError(context, ErrorCode.BadRequest, HttpStatusCode.InternalServerError, "Ban manager is unavailable");
                 return;
             }
 
@@ -945,6 +967,7 @@ public sealed partial class ServerApi : IPostInjectInit
             catch (Exception ex)
             {
                 _sawmill.Error($"ServerApi BAN: Exception while banning {target}: {ex}");
+                await RespondError(context, ErrorCode.BadRequest, HttpStatusCode.InternalServerError, "Ban failed");
                 return;
             }
 

@@ -26,6 +26,11 @@ public sealed partial class CharacterPickerButton : ContainerButton
     /// </summary>
     public event Action? OnDeletePressed;
 
+    /// <summary>
+    /// _Duty: invoked if we should create a copy of the attached character
+    /// </summary>
+    public event Action? OnDuplicatePressed;
+
     public CharacterPickerButton(
         IPrototypeManager prototypeManager,
         ISharedPlayerManager playerMan,
@@ -41,10 +46,10 @@ public sealed partial class CharacterPickerButton : ContainerButton
 
         View.LoadPreview(profile);
 
-        var highPriorityJob = profile.JobPriorities.SingleOrDefault(p => p.Value == JobPriority.High).Key;
-        if (highPriorityJob != default)
+        var highPriorityJob = profile.JobPriorities.FirstOrDefault(p => p.Value == JobPriority.High).Key; // _Duty: SingleOrDefault падал при двух высоких приоритетах
+        if (highPriorityJob != default && prototypeManager.TryIndex(highPriorityJob, out var highJobProto))
         {
-            var jobName = prototypeManager.Index(highPriorityJob).LocalizedName;
+            var jobName = highJobProto.LocalizedName;
             description = $"{description}\n{jobName}";
         }
 
@@ -59,6 +64,8 @@ public sealed partial class CharacterPickerButton : ContainerButton
             Parent?.RemoveChild(ConfirmDeleteButton);
             OnDeletePressed?.Invoke();
         };
+
+        DuplicateButton.OnPressed += _ => OnDuplicatePressed?.Invoke(); // _Duty
 
         DeleteButton.OnPressed += _ =>
         {

@@ -5,12 +5,11 @@
     <Button Name="ChatButton"
             StyleClasses="ButtonSquare"
             HorizontalExpand="True"
-            MaxSize="137 64"
+            MaxHeight="64"
             Margin="0 1">
         <BoxContainer Orientation="Horizontal"
                       HorizontalExpand="True"
                       VerticalExpand="True"
-                      MinWidth="132"
                       Margin="6 4"
                       VerticalAlignment="Center">
             <!-- Unread indicator dot -->
@@ -31,16 +30,23 @@
                           HorizontalExpand="True"
                           VerticalExpand="True"
                           VerticalAlignment="Center">
-                <RichTextLabel Name="NameLabel"
-                               StyleClasses="LabelHeading"
-                               HorizontalExpand="True"
-                               HorizontalAlignment="Center"
-                               VerticalAlignment="Center"
-                               Margin="0 -2 0 0" />
-                <Label Name="JobLabel"
+                <BoxContainer Orientation="Horizontal"
+                              HorizontalExpand="True">
+                    <RichTextLabel Name="NameLabel"
+                                   StyleClasses="LabelHeading"
+                                   HorizontalExpand="True"
+                                   HorizontalAlignment="Center"
+                                   VerticalAlignment="Center"
+                                   Margin="0 -2 0 0" />
+                    <Label Name="TimeLabel"
+                           StyleClasses="LabelSubText"
+                           VerticalAlignment="Center" />
+                </BoxContainer>
+                <!-- Job title until there's history, then the last message preview -->
+                <Label Name="SubtitleLabel"
                        StyleClasses="LabelSubText"
                        HorizontalExpand="True"
-                       ClipText="False"
+                       ClipText="True"
                        HorizontalAlignment="Center" />
             </BoxContainer>
         </BoxContainer>

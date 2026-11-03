@@ -8117,8 +8117,6 @@ entities:
     - type: NanoChatCard
       lastMessageTime: -12706.0004187
       number: 4950
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
 - proto: ADTClothingBeltMilitaryWebbingCBURNFilled
@@ -8162,8 +8160,6 @@ entities:
           - 2098
           - 2099
           - 2100
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: UseDelay
@@ -8190,8 +8186,6 @@ entities:
     - type: Transform
       pos: 22.25058,29.70596
       parent: 3
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
 - proto: ADTClothingEyesWeldingOldStyle
@@ -8202,8 +8196,6 @@ entities:
     - type: Transform
       pos: 2.8757918,9.487382
       parent: 3
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
 - proto: ADTClothingHeadHatBeretBlueshield
@@ -8217,8 +8209,6 @@ entities:
       solutions: null
       containers:
       - food
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: ContainerContainer
@@ -8241,8 +8231,6 @@ entities:
           ents:
           - 2169
           - 2170
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: ActiveRadio
@@ -8269,8 +8257,6 @@ entities:
       solutions: null
       containers:
       - food
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: ContainerContainer
@@ -8289,8 +8275,6 @@ entities:
       solutions: null
       containers:
       - food
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: ContainerContainer
@@ -8319,8 +8303,6 @@ entities:
           showEnts: False
           occludes: True
           ent: 2215
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: UseDelay
@@ -8348,8 +8330,6 @@ entities:
       solutions: null
       containers:
       - food
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: ContainerContainer
@@ -8374,8 +8354,6 @@ entities:
       solutions: null
       containers:
       - food
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: ContainerContainer
@@ -8390,8 +8368,6 @@ entities:
     components:
     - type: Transform
       parent: 2443
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
   - uid: 2449
@@ -8399,8 +8375,6 @@ entities:
     components:
     - type: Transform
       parent: 2443
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
   - uid: 2450
@@ -8408,8 +8382,6 @@ entities:
     components:
     - type: Transform
       parent: 2443
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
   - uid: 2451
@@ -8417,8 +8389,6 @@ entities:
     components:
     - type: Transform
       parent: 2443
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
 - proto: ADTDigitalRedWallIndestructible
@@ -8660,8 +8630,6 @@ entities:
       rotAccumulator: 10
     - type: Temperature
       currentTemperature: 293.1487
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: ContainerContainer
@@ -8680,8 +8648,6 @@ entities:
       solutions: null
       containers:
       - pen
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: ContainerContainer
@@ -8697,8 +8663,6 @@ entities:
       solutions: null
       containers:
       - pen
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: ContainerContainer
@@ -8713,8 +8677,6 @@ entities:
     - type: Transform
       pos: 25.323639,28.931221
       parent: 3
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: Forensics
@@ -8824,8 +8786,6 @@ entities:
     - type: DeviceNetwork
       address: 61DA-9B9A
       receiveFrequency: 1280
-    - type: MeleeWeapon
-      nextAttack: -12706.0004187
 - proto: ADTMedicalAssemblerMachineCircuitBoard
   entities:
   - uid: 1324
@@ -8837,8 +8797,6 @@ entities:
       solutions: null
       containers:
       - food
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: ContainerContainer
@@ -8894,8 +8852,6 @@ entities:
           - 2449
           - 2450
           - 2451
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       angularDamping: 0.05
       linearDamping: 0.05
@@ -8922,8 +8878,6 @@ entities:
       rot: -1.436188817024231 rad
       pos: 264.7037,9.431931
       parent: 1
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       angularDamping: 0.05
       linearDamping: 0.05
@@ -8960,8 +8914,6 @@ entities:
     - type: NanoChatCard
       lastMessageTime: -12706.0004187
       number: 9617
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       angularDamping: 0.05
       linearDamping: 0.05
@@ -8984,8 +8936,6 @@ entities:
           endTime: 0
           startTime: 0
           length: 1.5
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: Forensics
@@ -9014,8 +8964,6 @@ entities:
       solutions: null
       containers:
       - pen
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: ContainerContainer
@@ -9031,8 +8979,6 @@ entities:
       solutions: null
       containers:
       - pen
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: ContainerContainer
@@ -9177,8 +9123,6 @@ entities:
     - type: NanoChatCard
       lastMessageTime: -12706.0004187
       number: 4127
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: Forensics
@@ -9660,8 +9604,6 @@ entities:
       solutions: null
       containers:
       - pen
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: ContainerContainer
@@ -9757,8 +9699,6 @@ entities:
           endTime: 9662.8
           startTime: 9659.8
           length: 3
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: Forensics
@@ -9766,7 +9706,6 @@ entities:
       dnas: []
       fibers: []
       fingerprints: []
-    - type: Sharp
     - type: DisarmMalus
       malus: 0.6
     - type: Execution
@@ -9784,8 +9723,6 @@ entities:
       solutions: null
       containers:
       - food
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       angularDamping: 0.05
       linearDamping: 0.05
@@ -9862,14 +9799,10 @@ entities:
     components:
     - type: Transform
       parent: 1313
-    - type: MeleeWeapon
-      nextAttack: -12706.0004187
     - type: SolutionContainerManager
       solutions: null
       containers:
       - beaker
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: ContainerContainer
@@ -9881,14 +9814,10 @@ entities:
     components:
     - type: Transform
       parent: 1313
-    - type: MeleeWeapon
-      nextAttack: -12706.0004187
     - type: SolutionContainerManager
       solutions: null
       containers:
       - beaker
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: ContainerContainer
@@ -9900,14 +9829,10 @@ entities:
     components:
     - type: Transform
       parent: 1323
-    - type: MeleeWeapon
-      nextAttack: -12706.0004187
     - type: SolutionContainerManager
       solutions: null
       containers:
       - beaker
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: ContainerContainer
@@ -9919,14 +9844,10 @@ entities:
     components:
     - type: Transform
       parent: 1323
-    - type: MeleeWeapon
-      nextAttack: -12706.0004187
     - type: SolutionContainerManager
       solutions: null
       containers:
       - beaker
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: ContainerContainer
@@ -9938,14 +9859,10 @@ entities:
     components:
     - type: Transform
       parent: 1337
-    - type: MeleeWeapon
-      nextAttack: -12706.0004187
     - type: SolutionContainerManager
       solutions: null
       containers:
       - beaker
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: ContainerContainer
@@ -9957,14 +9874,10 @@ entities:
     components:
     - type: Transform
       parent: 1337
-    - type: MeleeWeapon
-      nextAttack: -12706.0004187
     - type: SolutionContainerManager
       solutions: null
       containers:
       - beaker
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: ContainerContainer
@@ -10085,10 +9998,6 @@ entities:
     components:
     - type: Transform
       parent: 2138
-    - type: MeleeWeapon
-      nextAttack: -12706.0004187
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
 - proto: BoxFolderBase
@@ -10116,8 +10025,6 @@ entities:
           ents:
           - 2497
           - 2499
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       angularDamping: 0.05
       linearDamping: 0.05
@@ -10163,8 +10070,6 @@ entities:
           - 283
           - 285
           - 287
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: UseDelay
@@ -10202,8 +10107,6 @@ entities:
           - 293
           - 295
           - 297
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: UseDelay
@@ -10241,8 +10144,6 @@ entities:
           - 196
           - 198
           - 200
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: UseDelay
       delays:
         default:
@@ -10273,8 +10174,6 @@ entities:
           ents:
           - 2460
           - 2462
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       angularDamping: 0.05
       linearDamping: 0.05
@@ -10323,8 +10222,6 @@ entities:
           - 1496
           - 1497
           - 1498
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: UseDelay
@@ -10364,8 +10261,6 @@ entities:
           - 2053
           - 2054
           - 2055
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: UseDelay
@@ -10407,8 +10302,6 @@ entities:
           - 1501
           - 1502
           - 1503
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: UseDelay
@@ -10448,8 +10341,6 @@ entities:
           - 2058
           - 2059
           - 2060
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: UseDelay
@@ -10503,8 +10394,6 @@ entities:
           - 2471
           - 2473
           - 2475
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: UseDelay
@@ -10555,8 +10444,6 @@ entities:
           - 2509
           - 2511
           - 2513
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: UseDelay
@@ -10625,8 +10512,6 @@ entities:
           - 2486
           - 2487
           - 2488
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: UseDelay
@@ -10693,8 +10578,6 @@ entities:
           - 2524
           - 2525
           - 2526
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: UseDelay
@@ -10715,8 +10598,6 @@ entities:
       solutions: null
       containers:
       - pen
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: ContainerContainer
@@ -10732,8 +10613,6 @@ entities:
       solutions: null
       containers:
       - pen
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: ContainerContainer
@@ -10747,8 +10626,6 @@ entities:
     components:
     - type: Transform
       parent: 1410
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
   - uid: 2172
@@ -10756,8 +10633,6 @@ entities:
     components:
     - type: Transform
       parent: 2171
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
 - proto: BurnAutoInjector
@@ -10771,8 +10646,6 @@ entities:
       solutions: null
       containers:
       - pen
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: ContainerContainer
@@ -10788,8 +10661,6 @@ entities:
       solutions: null
       containers:
       - pen
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: ContainerContainer
@@ -14289,8 +14160,6 @@ entities:
       solutions: null
       containers:
       - lvcable
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: ContainerContainer
@@ -14308,8 +14177,6 @@ entities:
       solutions: null
       containers:
       - lvcable
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: ContainerContainer
@@ -14327,8 +14194,6 @@ entities:
       solutions: null
       containers:
       - lvcable
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: ContainerContainer
@@ -14346,8 +14211,6 @@ entities:
       solutions: null
       containers:
       - lvcable
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: ContainerContainer
@@ -14361,16 +14224,12 @@ entities:
     components:
     - type: Transform
       parent: 779
-    - type: MeleeWeapon
-      nextAttack: -12706.0004187
     - type: UseDelay
       delays:
         default:
           endTime: 0
           startTime: 0
           length: 3
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: Forensics
@@ -14383,16 +14242,12 @@ entities:
     components:
     - type: Transform
       parent: 844
-    - type: MeleeWeapon
-      nextAttack: -12706.0004187
     - type: UseDelay
       delays:
         default:
           endTime: 0
           startTime: 0
           length: 3
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: Forensics
@@ -14406,16 +14261,12 @@ entities:
     - type: Transform
       pos: 3.9140415,32.999146
       parent: 3
-    - type: MeleeWeapon
-      nextAttack: -12706.0004187
     - type: UseDelay
       delays:
         default:
           endTime: 0
           startTime: 0
           length: 3
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
 - proto: CableHV
@@ -14529,8 +14380,6 @@ entities:
       solutions: null
       containers:
       - hvcable
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: ContainerContainer
@@ -14548,8 +14397,6 @@ entities:
       solutions: null
       containers:
       - hvcable
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: ContainerContainer
@@ -14569,8 +14416,6 @@ entities:
       solutions: null
       containers:
       - mvcable
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: ContainerContainer
@@ -15210,8 +15055,6 @@ entities:
     components:
     - type: Transform
       parent: 1595
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
   - uid: 1607
@@ -15219,8 +15062,6 @@ entities:
     components:
     - type: Transform
       parent: 1605
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
 - proto: Cautery
@@ -15230,10 +15071,6 @@ entities:
     components:
     - type: Transform
       parent: 1293
-    - type: MeleeWeapon
-      nextAttack: -12706.0004187
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: InsideEntityStorage
@@ -15315,8 +15152,6 @@ entities:
     - type: NanoChatCard
       lastMessageTime: -12706.0004187
       number: 4624
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Forensics
       residues: []
       dnas: []
@@ -15337,10 +15172,6 @@ entities:
       solutions: null
       containers:
       - drink
-    - type: MeleeWeapon
-      nextAttack: -12706.0004187
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: NameModifier
@@ -15362,10 +15193,6 @@ entities:
       solutions: null
       containers:
       - drink
-    - type: MeleeWeapon
-      nextAttack: -12706.0004187
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: NameModifier
@@ -15389,10 +15216,6 @@ entities:
       solutions: null
       containers:
       - drink
-    - type: MeleeWeapon
-      nextAttack: -12706.0004187
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: NameModifier
@@ -15414,10 +15237,6 @@ entities:
       solutions: null
       containers:
       - drink
-    - type: MeleeWeapon
-      nextAttack: -12706.0004187
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: NameModifier
@@ -15441,10 +15260,6 @@ entities:
       solutions: null
       containers:
       - drink
-    - type: MeleeWeapon
-      nextAttack: -12706.0004187
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: NameModifier
@@ -15561,8 +15376,6 @@ entities:
           endTime: 0
           startTime: 0
           length: 0
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
 - proto: ClothingBackpackERTSecurity
@@ -15602,10 +15415,6 @@ entities:
           - 2489
           - 2490
           - 2491
-    - type: UserInterface
-      actors:
-        enum.StorageUiKey.Key:
-        - invalid
     - type: UseDelay
       delays:
         default:
@@ -15620,8 +15429,6 @@ entities:
           endTime: 0
           startTime: 0
           length: 0
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       angularDamping: 0.05
       linearDamping: 0.05
@@ -15684,8 +15491,6 @@ entities:
           endTime: 0
           startTime: 0
           length: 0
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       angularDamping: 0.05
       linearDamping: 0.05
@@ -15734,8 +15539,6 @@ entities:
           - 2081
           - 2083
           - 2085
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: UseDelay
@@ -15780,8 +15583,6 @@ entities:
           - 973
           - 974
           - 977
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: UseDelay
@@ -15825,8 +15626,6 @@ entities:
           - 2123
           - 2124
           - 2127
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: UseDelay
@@ -15869,8 +15668,6 @@ entities:
           - 2148
           - 2149
           - 2152
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: UseDelay
@@ -15920,8 +15717,6 @@ entities:
           - 831
           - 832
           - 834
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: UseDelay
@@ -15945,8 +15740,6 @@ entities:
     components:
     - type: Transform
       parent: 1569
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
 - proto: ClothingEyesGlassesSecurity
@@ -15956,8 +15749,6 @@ entities:
     components:
     - type: Transform
       parent: 967
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: InsideEntityStorage
@@ -15966,8 +15757,6 @@ entities:
     components:
     - type: Transform
       parent: 2108
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
   - uid: 2154
@@ -15975,8 +15764,6 @@ entities:
     components:
     - type: Transform
       parent: 2138
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
 - proto: ClothingEyesHudSecurity
@@ -15986,8 +15773,6 @@ entities:
     components:
     - type: Transform
       parent: 1499
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
   - uid: 1501
@@ -15995,8 +15780,6 @@ entities:
     components:
     - type: Transform
       parent: 1499
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
   - uid: 1502
@@ -16004,8 +15787,6 @@ entities:
     components:
     - type: Transform
       parent: 1499
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
   - uid: 1503
@@ -16013,8 +15794,6 @@ entities:
     components:
     - type: Transform
       parent: 1499
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
   - uid: 2057
@@ -16022,8 +15801,6 @@ entities:
     components:
     - type: Transform
       parent: 2056
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
   - uid: 2058
@@ -16031,8 +15808,6 @@ entities:
     components:
     - type: Transform
       parent: 2056
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
   - uid: 2059
@@ -16040,8 +15815,6 @@ entities:
     components:
     - type: Transform
       parent: 2056
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
   - uid: 2060
@@ -16049,8 +15822,6 @@ entities:
     components:
     - type: Transform
       parent: 2056
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
 - proto: ClothingHandsGlovesColorBlack
@@ -16064,8 +15835,6 @@ entities:
       solutions: null
       containers:
       - food
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: ContainerContainer
@@ -16082,8 +15851,6 @@ entities:
       solutions: null
       containers:
       - food
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: ContainerContainer
@@ -16099,8 +15866,6 @@ entities:
       solutions: null
       containers:
       - food
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: ContainerContainer
@@ -16118,8 +15883,6 @@ entities:
       solutions: null
       containers:
       - food
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: ContainerContainer
@@ -16138,8 +15901,6 @@ entities:
       solutions: null
       containers:
       - food
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: ContainerContainer
@@ -16158,8 +15919,6 @@ entities:
       solutions: null
       containers:
       - food
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: ContainerContainer
@@ -16176,8 +15935,6 @@ entities:
       solutions: null
       containers:
       - food
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: ContainerContainer
@@ -16194,8 +15951,6 @@ entities:
       solutions: null
       containers:
       - food
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: ContainerContainer
@@ -16212,8 +15967,6 @@ entities:
       solutions: null
       containers:
       - food
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: ContainerContainer
@@ -16230,8 +15983,6 @@ entities:
       solutions: null
       containers:
       - food
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: ContainerContainer
@@ -16248,8 +15999,6 @@ entities:
       solutions: null
       containers:
       - food
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: ContainerContainer
@@ -16267,8 +16016,6 @@ entities:
       solutions: null
       containers:
       - food
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: ContainerContainer
@@ -16305,8 +16052,6 @@ entities:
       solutions: null
       containers:
       - food
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: ActionsContainer
@@ -16324,8 +16069,6 @@ entities:
       solutions: null
       containers:
       - food
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: ContainerContainer
@@ -16342,8 +16085,6 @@ entities:
       solutions: null
       containers:
       - food
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: ContainerContainer
@@ -16370,8 +16111,6 @@ entities:
       solutions: null
       containers:
       - food
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: ContainerContainer
@@ -16388,8 +16127,6 @@ entities:
       solutions: null
       containers:
       - food
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: ContainerContainer
@@ -16405,8 +16142,6 @@ entities:
       solutions: null
       containers:
       - food
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: ContainerContainer
@@ -16428,8 +16163,6 @@ entities:
           ents:
           - 992
           - 993
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: ActiveRadio
@@ -16450,8 +16183,6 @@ entities:
           ents:
           - 2130
           - 2131
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: ActiveRadio
@@ -16471,8 +16202,6 @@ entities:
           ents:
           - 2156
           - 2157
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: ActiveRadio
@@ -16486,8 +16215,6 @@ entities:
     components:
     - type: Transform
       parent: 2465
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
   - uid: 2508
@@ -16495,8 +16222,6 @@ entities:
     components:
     - type: Transform
       parent: 2503
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
 - proto: ClothingMaskBreathMedical
@@ -16506,8 +16231,6 @@ entities:
     components:
     - type: Transform
       parent: 1463
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
 - proto: ClothingMaskMuzzle
@@ -16518,8 +16241,6 @@ entities:
     - type: Transform
       pos: 3.382545,33.26239
       parent: 3
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
 - proto: ClothingMaskSterile
@@ -16529,8 +16250,6 @@ entities:
     components:
     - type: Transform
       parent: 1293
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: InsideEntityStorage
@@ -16545,8 +16264,6 @@ entities:
       solutions: null
       containers:
       - food
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: ContainerContainer
@@ -16560,8 +16277,6 @@ entities:
     components:
     - type: Transform
       parent: 967
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: InsideEntityStorage
@@ -16570,8 +16285,6 @@ entities:
     components:
     - type: Transform
       parent: 2108
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
   - uid: 2143
@@ -16579,8 +16292,6 @@ entities:
     components:
     - type: Transform
       parent: 2138
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
 - proto: ClothingOuterBioScientist
@@ -16590,8 +16301,6 @@ entities:
     components:
     - type: Transform
       parent: 1585
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: InsideEntityStorage
@@ -16600,8 +16309,6 @@ entities:
     components:
     - type: Transform
       parent: 1589
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
 - proto: ClothingOuterCoatRD
@@ -16611,8 +16318,6 @@ entities:
     components:
     - type: Transform
       parent: 1569
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: UseDelay
@@ -16631,8 +16336,6 @@ entities:
       rot: 1.5707963267948966 rad
       pos: 22.875458,29.677582
       parent: 3
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
 - proto: ClothingOuterVestHazard
@@ -16642,8 +16345,6 @@ entities:
     components:
     - type: Transform
       parent: 234
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: UseDelay
@@ -16686,8 +16387,6 @@ entities:
       solutions: null
       containers:
       - food
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: ActionsContainer
@@ -16709,8 +16408,6 @@ entities:
       solutions: null
       containers:
       - food
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: ContainerContainer
@@ -16733,8 +16430,6 @@ entities:
       solutions: null
       containers:
       - food
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: ContainerContainer
@@ -16756,8 +16451,6 @@ entities:
       solutions: null
       containers:
       - food
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: ContainerContainer
@@ -16779,8 +16472,6 @@ entities:
       solutions: null
       containers:
       - food
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: ContainerContainer
@@ -16806,8 +16497,6 @@ entities:
       solutions: null
       containers:
       - food
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: ContainerContainer
@@ -16830,8 +16519,6 @@ entities:
       solutions: null
       containers:
       - food
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: ContainerContainer
@@ -16855,8 +16542,6 @@ entities:
       solutions: null
       containers:
       - food
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: ContainerContainer
@@ -16880,8 +16565,6 @@ entities:
       solutions: null
       containers:
       - food
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: ContainerContainer
@@ -16903,8 +16586,6 @@ entities:
       solutions: null
       containers:
       - food
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: ContainerContainer
@@ -16924,10 +16605,6 @@ entities:
     - type: Transform
       pos: 21.173492,30.646809
       parent: 3
-    - type: MeleeWeapon
-      nextAttack: -1112.4337521
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: Forensics
@@ -17178,8 +16855,6 @@ entities:
     - type: LimitedCharges
       lastUpdate: -159.0200091
       lastCharges: 25
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: ContainerContainer
@@ -17202,8 +16877,6 @@ entities:
     - type: LimitedCharges
       lastUpdate: -159.0200091
       lastCharges: 25
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: ContainerContainer
@@ -17259,12 +16932,6 @@ entities:
           - 2549
           - 2551
           - 2537
-    - type: UserInterface
-      actors:
-        enum.StorageUiKey.Key:
-        - invalid
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       angularDamping: 0.05
       linearDamping: 0.05
@@ -17299,8 +16966,6 @@ entities:
     - type: LimitedCharges
       lastUpdate: -159.0200091
       lastCharges: 25
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: ContainerContainer
@@ -17323,8 +16988,6 @@ entities:
     - type: LimitedCharges
       lastUpdate: -159.0200091
       lastCharges: 25
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: ContainerContainer
@@ -17347,8 +17010,6 @@ entities:
     - type: LimitedCharges
       lastUpdate: -159.0200091
       lastCharges: 25
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: ContainerContainer
@@ -17371,8 +17032,6 @@ entities:
     - type: LimitedCharges
       lastUpdate: -128.0504187
       lastCharges: 11
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: ContainerContainer
@@ -17400,8 +17059,6 @@ entities:
     - type: LimitedCharges
       lastUpdate: -159.0200091
       lastCharges: 25
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: ContainerContainer
@@ -17424,8 +17081,6 @@ entities:
     - type: LimitedCharges
       lastUpdate: -159.0200091
       lastCharges: 25
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: ContainerContainer
@@ -17439,10 +17094,6 @@ entities:
     components:
     - type: Transform
       parent: 2464
-    - type: MeleeWeapon
-      nextAttack: -12706.0004187
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
   - uid: 2527
@@ -17450,10 +17101,6 @@ entities:
     components:
     - type: Transform
       parent: 2502
-    - type: MeleeWeapon
-      nextAttack: -12706.0004187
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
 - proto: CrowbarYellow
@@ -17463,10 +17110,6 @@ entities:
     components:
     - type: Transform
       parent: 827
-    - type: MeleeWeapon
-      nextAttack: -12706.0004187
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
 - proto: DebugAPC
@@ -17657,8 +17300,6 @@ entities:
     - type: NanoChatCard
       lastMessageTime: -12706.0004187
       number: 1709
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: InsideEntityStorage
@@ -17669,8 +17310,6 @@ entities:
     components:
     - type: Transform
       parent: 46
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
   - uid: 1080
@@ -17678,8 +17317,6 @@ entities:
     components:
     - type: Transform
       parent: 1079
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
   - uid: 1188
@@ -17687,8 +17324,6 @@ entities:
     components:
     - type: Transform
       parent: 1187
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
   - uid: 1561
@@ -17696,8 +17331,6 @@ entities:
     components:
     - type: Transform
       parent: 1560
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
 - proto: DoorElectronics
@@ -17711,8 +17344,6 @@ entities:
       solutions: null
       containers:
       - food
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: ContainerContainer
@@ -17728,8 +17359,6 @@ entities:
       solutions: null
       containers:
       - food
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: ContainerContainer
@@ -17745,8 +17374,6 @@ entities:
       solutions: null
       containers:
       - food
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: ContainerContainer
@@ -17762,8 +17389,6 @@ entities:
       solutions: null
       containers:
       - food
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: ContainerContainer
@@ -17779,8 +17404,6 @@ entities:
       solutions: null
       containers:
       - food
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: ContainerContainer
@@ -17796,8 +17419,6 @@ entities:
       solutions: null
       containers:
       - food
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: ContainerContainer
@@ -17813,8 +17434,6 @@ entities:
       solutions: null
       containers:
       - food
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: ContainerContainer
@@ -17830,8 +17449,6 @@ entities:
       solutions: null
       containers:
       - food
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: ContainerContainer
@@ -17847,8 +17464,6 @@ entities:
       solutions: null
       containers:
       - food
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: ContainerContainer
@@ -17866,8 +17481,6 @@ entities:
       solutions: null
       containers:
       - food
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: ContainerContainer
@@ -17883,8 +17496,6 @@ entities:
       solutions: null
       containers:
       - food
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: ContainerContainer
@@ -17902,8 +17513,6 @@ entities:
       solutions: null
       containers:
       - food
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: ContainerContainer
@@ -17923,8 +17532,6 @@ entities:
       solutions: null
       containers:
       - food
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: ContainerContainer
@@ -17942,8 +17549,6 @@ entities:
       solutions: null
       containers:
       - food
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: ContainerContainer
@@ -17961,8 +17566,6 @@ entities:
       solutions: null
       containers:
       - food
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: ContainerContainer
@@ -17980,8 +17583,6 @@ entities:
       solutions: null
       containers:
       - food
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: ContainerContainer
@@ -17999,8 +17600,6 @@ entities:
       solutions: null
       containers:
       - food
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: ContainerContainer
@@ -18018,8 +17617,6 @@ entities:
       solutions: null
       containers:
       - food
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: ContainerContainer
@@ -18037,8 +17634,6 @@ entities:
       solutions: null
       containers:
       - food
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: ContainerContainer
@@ -18230,10 +17825,6 @@ entities:
     components:
     - type: Transform
       parent: 1293
-    - type: MeleeWeapon
-      nextAttack: -12706.0004187
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: InsideEntityStorage
@@ -18249,10 +17840,6 @@ entities:
       solutions: null
       containers:
       - drink
-    - type: MeleeWeapon
-      nextAttack: -8721.1504187
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: ContainerContainer
@@ -18279,10 +17866,6 @@ entities:
       - drink
     - type: Label
       currentLabel: вода
-    - type: MeleeWeapon
-      nextAttack: -12706.0004187
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: PressurizedSolution
@@ -18306,10 +17889,6 @@ entities:
       - drink
     - type: Label
       currentLabel: вода
-    - type: MeleeWeapon
-      nextAttack: -12706.0004187
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: PressurizedSolution
@@ -18329,16 +17908,12 @@ entities:
       rot: 1.5707963267948966 rad
       pos: 19.507957,28.675776
       parent: 3
-    - type: MeleeWeapon
-      nextAttack: -12706.0004187
     - type: UseDelay
       delays:
         default:
           endTime: 0
           startTime: 0
           length: 1
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
   - uid: 2457
@@ -18346,16 +17921,12 @@ entities:
     components:
     - type: Transform
       parent: 2456
-    - type: MeleeWeapon
-      nextAttack: -3096.5670854
     - type: UseDelay
       delays:
         default:
           endTime: 0
           startTime: 0
           length: 1
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: Forensics
@@ -18384,10 +17955,6 @@ entities:
           showEnts: False
           occludes: True
           ent: 1597
-    - type: MeleeWeapon
-      nextAttack: -12706.0004187
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: Forensics
@@ -18414,10 +17981,6 @@ entities:
           showEnts: False
           occludes: True
           ent: 1607
-    - type: MeleeWeapon
-      nextAttack: -12706.0004187
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
 - proto: DutyGunSaiga12
@@ -18441,10 +18004,6 @@ entities:
           showEnts: False
           occludes: True
           ent: 1584
-    - type: MeleeWeapon
-      nextAttack: -12706.0004187
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: Forensics
@@ -18471,10 +18030,6 @@ entities:
           showEnts: False
           occludes: True
           ent: 1612
-    - type: MeleeWeapon
-      nextAttack: -12706.0004187
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
 - proto: DutyWeaponCaseHalberdBS
@@ -18491,10 +18046,6 @@ entities:
         2457:
           position: 0,0
           _rotation: South
-    - type: UserInterface
-      actors:
-        enum.StorageUiKey.Key:
-        - invalid
     - type: ContainerContainer
       containers:
         storagebase: !type:Container
@@ -18502,8 +18053,6 @@ entities:
           occludes: True
           ents:
           - 2457
-    - type: EmitSoundOnCollide
-      nextSound: -2664.7004187
     - type: Physics
       angularDamping: 0.05
       linearDamping: 0.05
@@ -18533,8 +18082,6 @@ entities:
       solutions: null
       containers:
       - pen
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: ContainerContainer
@@ -18550,8 +18097,6 @@ entities:
       solutions: null
       containers:
       - pen
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: ContainerContainer
@@ -18567,8 +18112,6 @@ entities:
       solutions: null
       containers:
       - pen
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: ContainerContainer
@@ -18582,8 +18125,6 @@ entities:
     components:
     - type: Transform
       parent: 1463
-    - type: MeleeWeapon
-      nextAttack: -12706.0004187
     - type: UseDelay
       delays:
         gasTank:
@@ -18594,8 +18135,6 @@ entities:
           endTime: 0
           startTime: 0
           length: 1
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
 - proto: EncryptionKeyCentCom
@@ -18605,8 +18144,6 @@ entities:
     components:
     - type: Transform
       parent: 2168
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
 - proto: EncryptionKeyCommon
@@ -18616,8 +18153,6 @@ entities:
     components:
     - type: Transform
       parent: 991
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
   - uid: 2131
@@ -18625,8 +18160,6 @@ entities:
     components:
     - type: Transform
       parent: 2129
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
   - uid: 2157
@@ -18634,8 +18167,6 @@ entities:
     components:
     - type: Transform
       parent: 2155
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
 - proto: EncryptionKeySecurity
@@ -18645,8 +18176,6 @@ entities:
     components:
     - type: Transform
       parent: 991
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
   - uid: 2130
@@ -18654,8 +18183,6 @@ entities:
     components:
     - type: Transform
       parent: 2129
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
   - uid: 2156
@@ -18663,8 +18190,6 @@ entities:
     components:
     - type: Transform
       parent: 2155
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
 - proto: EncryptionKeyStationMaster
@@ -18674,8 +18199,6 @@ entities:
     components:
     - type: Transform
       parent: 2168
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
 - proto: EngineeringIDCard
@@ -18702,8 +18225,6 @@ entities:
     - type: NanoChatCard
       lastMessageTime: -12706.0004187
       number: 2543
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Forensics
       residues: []
       dnas: []
@@ -18716,8 +18237,6 @@ entities:
     components:
     - type: Transform
       parent: 2465
-    - type: MeleeWeapon
-      nextAttack: -12706.0004187
     - type: UseDelay
       delays:
         gasTank:
@@ -18728,8 +18247,6 @@ entities:
           endTime: 0
           startTime: 0
           length: 1
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
   - uid: 2504
@@ -18737,8 +18254,6 @@ entities:
     components:
     - type: Transform
       parent: 2503
-    - type: MeleeWeapon
-      nextAttack: -12706.0004187
     - type: UseDelay
       delays:
         gasTank:
@@ -18749,8 +18264,6 @@ entities:
           endTime: 0
           startTime: 0
           length: 1
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
 - proto: filingCabinetDrawer
@@ -18776,16 +18289,12 @@ entities:
     - type: Transform
       pos: 24.616104,28.461338
       parent: 3
-    - type: MeleeWeapon
-      nextAttack: -1862.6170854
     - type: UseDelay
       delays:
         default:
           endTime: 0
           startTime: 0
           length: 1
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: Forensics
@@ -18804,8 +18313,6 @@ entities:
       solutions: null
       containers:
       - flare
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: ContainerContainer
@@ -18821,8 +18328,6 @@ entities:
       solutions: null
       containers:
       - flare
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: ContainerContainer
@@ -18839,16 +18344,12 @@ entities:
     - type: LimitedCharges
       lastUpdate: -1280.0632389
       lastCharges: 5
-    - type: MeleeWeapon
-      nextAttack: -12706.0004187
     - type: UseDelay
       delays:
         default:
           endTime: 0
           startTime: 0
           length: 4
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
 - proto: FlashlightSeclite
@@ -18861,8 +18362,6 @@ entities:
     - type: HandheldLight
       selfToggleActionEntity: 981
       toggleActionEntity: 980
-    - type: MeleeWeapon
-      nextAttack: -12706.0004187
     - type: ContainerContainer
       containers:
         cell_slot: !type:ContainerSlot
@@ -18875,8 +18374,6 @@ entities:
           ents:
           - 980
           - 981
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: ActionsContainer
@@ -18893,8 +18390,6 @@ entities:
     - type: HandheldLight
       selfToggleActionEntity: 2105
       toggleActionEntity: 2104
-    - type: MeleeWeapon
-      nextAttack: -1296.0848051
     - type: ContainerContainer
       containers:
         cell_slot: !type:ContainerSlot
@@ -18907,8 +18402,6 @@ entities:
           ents:
           - 2104
           - 2105
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: ActionsContainer
@@ -18929,8 +18422,6 @@ entities:
     - type: HandheldLight
       selfToggleActionEntity: 2111
       toggleActionEntity: 2110
-    - type: MeleeWeapon
-      nextAttack: -12706.0004187
     - type: ContainerContainer
       containers:
         cell_slot: !type:ContainerSlot
@@ -18943,8 +18434,6 @@ entities:
           ents:
           - 2110
           - 2111
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: ActionsContainer
@@ -18959,8 +18448,6 @@ entities:
     - type: HandheldLight
       selfToggleActionEntity: 2531
       toggleActionEntity: 2530
-    - type: MeleeWeapon
-      nextAttack: -12706.0004187
     - type: ContainerContainer
       containers:
         cell_slot: !type:ContainerSlot
@@ -18973,8 +18460,6 @@ entities:
           ents:
           - 2530
           - 2531
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: ActionsContainer
@@ -18992,8 +18477,6 @@ entities:
       parent: 1
     - type: Stack
       count: 17
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       angularDamping: 0.05
       linearDamping: 0.05
@@ -19009,8 +18492,6 @@ entities:
       rot: 0.6981238722801208 rad
       pos: 240.38348,-15.280473
       parent: 1
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       angularDamping: 0.05
       linearDamping: 0.05
@@ -19030,8 +18511,6 @@ entities:
       parent: 1
     - type: Stack
       count: 6
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       angularDamping: 0.05
       linearDamping: 0.05
@@ -19174,8 +18653,6 @@ entities:
       solutions: null
       containers:
       - food
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: ContainerContainer
@@ -19201,8 +18678,6 @@ entities:
       rotAccumulator: 20
     - type: Temperature
       currentTemperature: 293.1487
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: ContainerContainer
@@ -19227,8 +18702,6 @@ entities:
       rotAccumulator: 25
     - type: Temperature
       currentTemperature: 293.1487
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: ContainerContainer
@@ -19253,8 +18726,6 @@ entities:
       rotAccumulator: 25
     - type: Temperature
       currentTemperature: 293.1487
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: ContainerContainer
@@ -19281,8 +18752,6 @@ entities:
       currentTemperature: 293.1487
     - type: InternalTemperature
       temperature: 293.04874
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: ContainerContainer
@@ -19309,8 +18778,6 @@ entities:
       rotAccumulator: 15
     - type: Temperature
       currentTemperature: 293.1487
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: ContainerContainer
@@ -19337,8 +18804,6 @@ entities:
       rotAccumulator: 5
     - type: Temperature
       currentTemperature: 293.1487
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: ContainerContainer
@@ -19365,8 +18830,6 @@ entities:
       currentTemperature: 293.1487
     - type: InternalTemperature
       temperature: 293.0488
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: ContainerContainer
@@ -19391,8 +18854,6 @@ entities:
       currentTemperature: 293.1487
     - type: InternalTemperature
       temperature: 293.0488
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: ContainerContainer
@@ -19417,8 +18878,6 @@ entities:
       currentTemperature: 293.1487
     - type: InternalTemperature
       temperature: 293.0488
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: ContainerContainer
@@ -19445,8 +18904,6 @@ entities:
       currentTemperature: 293.1487
     - type: InternalTemperature
       temperature: 293.04892
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: ContainerContainer
@@ -19478,8 +18935,6 @@ entities:
       currentTemperature: 293.1487
     - type: InternalTemperature
       temperature: 293.0488
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: ContainerContainer
@@ -19511,8 +18966,6 @@ entities:
       currentTemperature: 293.1487
     - type: InternalTemperature
       temperature: 293.0488
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: ContainerContainer
@@ -19544,8 +18997,6 @@ entities:
       currentTemperature: 293.1487
     - type: InternalTemperature
       temperature: 293.0488
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: ContainerContainer
@@ -19577,8 +19028,6 @@ entities:
       currentTemperature: 293.1487
     - type: InternalTemperature
       temperature: 293.0488
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: ContainerContainer
@@ -19610,8 +19059,6 @@ entities:
       currentTemperature: 293.1487
     - type: InternalTemperature
       temperature: 293.04877
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: ContainerContainer
@@ -19634,8 +19081,6 @@ entities:
       currentTemperature: 293.1487
     - type: InternalTemperature
       temperature: 293.0489
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: ContainerContainer
@@ -19662,8 +19107,6 @@ entities:
       currentTemperature: 293.1487
     - type: InternalTemperature
       temperature: 293.04892
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: ContainerContainer
@@ -19686,8 +19129,6 @@ entities:
       currentTemperature: 293.1487
     - type: InternalTemperature
       temperature: 293.04892
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: ContainerContainer
@@ -19714,8 +19155,6 @@ entities:
       currentTemperature: 293.1487
     - type: InternalTemperature
       temperature: 293.0488
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: ContainerContainer
@@ -19738,8 +19177,6 @@ entities:
       currentTemperature: 293.1487
     - type: InternalTemperature
       temperature: 293.04877
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: ContainerContainer
@@ -19766,8 +19203,6 @@ entities:
       currentTemperature: 293.1487
     - type: InternalTemperature
       temperature: 293.04877
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: ContainerContainer
@@ -19792,8 +19227,6 @@ entities:
       currentTemperature: 293.1487
     - type: InternalTemperature
       temperature: 293.04877
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: ContainerContainer
@@ -19808,8 +19241,6 @@ entities:
     components:
     - type: Transform
       parent: 2465
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
   - uid: 2505
@@ -19817,8 +19248,6 @@ entities:
     components:
     - type: Transform
       parent: 2503
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
 - proto: GasPipeBend
@@ -19830,10 +19259,6 @@ entities:
       rot: 1.5707963267948966 rad
       pos: 23.5,0.5
       parent: 3
-    - type: MeleeWeapon
-      nextAttack: -12706.0004187
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
 - proto: GasPipeBendAlt1
   entities:
   - uid: 2455
@@ -19846,15 +19271,11 @@ entities:
       parent: 1
     - type: VentCrawlerTube
       connected: False
-    - type: MeleeWeapon
-      nextAttack: -9107.8504187
     - type: Physics
       angularDamping: 0.05
       linearDamping: 0.05
       canCollide: True
       bodyType: Dynamic
-    - type: EmitSoundOnCollide
-      nextSound: -9107.8004187
     - type: Forensics
       residues: []
       dnas: []
@@ -19869,10 +19290,6 @@ entities:
       rot: 1.5707963267948966 rad
       pos: 24.5,0.5
       parent: 3
-    - type: MeleeWeapon
-      nextAttack: -12706.0004187
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
   - uid: 262
     mapInit: true
     components:
@@ -19880,10 +19297,6 @@ entities:
       rot: 3.141592653589793 rad
       pos: 23.5,-0.5
       parent: 3
-    - type: MeleeWeapon
-      nextAttack: -12706.0004187
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
   - uid: 271
     mapInit: true
     components:
@@ -19891,10 +19304,6 @@ entities:
       rot: 3.141592653589793 rad
       pos: 23.5,-1.5
       parent: 3
-    - type: MeleeWeapon
-      nextAttack: -12706.0004187
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
   - uid: 289
     mapInit: true
     components:
@@ -19902,10 +19311,6 @@ entities:
       rot: 3.141592653589793 rad
       pos: 23.5,-2.5
       parent: 3
-    - type: MeleeWeapon
-      nextAttack: -12706.0004187
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
   - uid: 1059
     mapInit: true
     components:
@@ -19913,10 +19318,6 @@ entities:
       rot: -1.5707963267948966 rad
       pos: 25.5,0.5
       parent: 3
-    - type: MeleeWeapon
-      nextAttack: -12706.0004187
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
 - proto: GasVentScrubber
   entities:
   - uid: 187
@@ -19930,8 +19331,6 @@ entities:
       address: Скр-5B2F-05E0
       transmitFrequency: 1621
       receiveFrequency: 1621
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: AtmosMonitor
       trippedThresholds: Pressure
       lastAlarmState: Danger
@@ -20251,8 +19650,6 @@ entities:
     components:
     - type: Transform
       parent: 1410
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
   - uid: 2173
@@ -20260,8 +19657,6 @@ entities:
     components:
     - type: Transform
       parent: 2171
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
 - proto: GravityGenerator
@@ -20283,16 +19678,12 @@ entities:
     components:
     - type: Transform
       parent: 969
-    - type: MeleeWeapon
-      nextAttack: -12706.0004187
     - type: UseDelay
       delays:
         default:
           endTime: 0
           startTime: 0
           length: 3
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
   - uid: 973
@@ -20300,16 +19691,12 @@ entities:
     components:
     - type: Transform
       parent: 969
-    - type: MeleeWeapon
-      nextAttack: -12706.0004187
     - type: UseDelay
       delays:
         default:
           endTime: 0
           startTime: 0
           length: 3
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
   - uid: 1495
@@ -20317,16 +19704,12 @@ entities:
     components:
     - type: Transform
       parent: 1494
-    - type: MeleeWeapon
-      nextAttack: -12706.0004187
     - type: UseDelay
       delays:
         default:
           endTime: 0
           startTime: 0
           length: 3
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
   - uid: 1496
@@ -20334,16 +19717,12 @@ entities:
     components:
     - type: Transform
       parent: 1494
-    - type: MeleeWeapon
-      nextAttack: -12706.0004187
     - type: UseDelay
       delays:
         default:
           endTime: 0
           startTime: 0
           length: 3
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
   - uid: 1497
@@ -20351,16 +19730,12 @@ entities:
     components:
     - type: Transform
       parent: 1494
-    - type: MeleeWeapon
-      nextAttack: -12706.0004187
     - type: UseDelay
       delays:
         default:
           endTime: 0
           startTime: 0
           length: 3
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
   - uid: 1498
@@ -20368,16 +19743,12 @@ entities:
     components:
     - type: Transform
       parent: 1494
-    - type: MeleeWeapon
-      nextAttack: -12706.0004187
     - type: UseDelay
       delays:
         default:
           endTime: 0
           startTime: 0
           length: 3
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
   - uid: 2052
@@ -20385,16 +19756,12 @@ entities:
     components:
     - type: Transform
       parent: 2051
-    - type: MeleeWeapon
-      nextAttack: -12706.0004187
     - type: UseDelay
       delays:
         default:
           endTime: 0
           startTime: 0
           length: 3
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
   - uid: 2053
@@ -20402,16 +19769,12 @@ entities:
     components:
     - type: Transform
       parent: 2051
-    - type: MeleeWeapon
-      nextAttack: -12706.0004187
     - type: UseDelay
       delays:
         default:
           endTime: 0
           startTime: 0
           length: 3
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
   - uid: 2054
@@ -20419,16 +19782,12 @@ entities:
     components:
     - type: Transform
       parent: 2051
-    - type: MeleeWeapon
-      nextAttack: -12706.0004187
     - type: UseDelay
       delays:
         default:
           endTime: 0
           startTime: 0
           length: 3
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
   - uid: 2055
@@ -20436,16 +19795,12 @@ entities:
     components:
     - type: Transform
       parent: 2051
-    - type: MeleeWeapon
-      nextAttack: -12706.0004187
     - type: UseDelay
       delays:
         default:
           endTime: 0
           startTime: 0
           length: 3
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
   - uid: 2122
@@ -20453,16 +19808,12 @@ entities:
     components:
     - type: Transform
       parent: 2119
-    - type: MeleeWeapon
-      nextAttack: -12706.0004187
     - type: UseDelay
       delays:
         default:
           endTime: 0
           startTime: 0
           length: 3
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
   - uid: 2123
@@ -20470,16 +19821,12 @@ entities:
     components:
     - type: Transform
       parent: 2119
-    - type: MeleeWeapon
-      nextAttack: -12706.0004187
     - type: UseDelay
       delays:
         default:
           endTime: 0
           startTime: 0
           length: 3
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
   - uid: 2147
@@ -20487,16 +19834,12 @@ entities:
     components:
     - type: Transform
       parent: 2144
-    - type: MeleeWeapon
-      nextAttack: -12706.0004187
     - type: UseDelay
       delays:
         default:
           endTime: 0
           startTime: 0
           length: 3
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
   - uid: 2148
@@ -20504,16 +19847,12 @@ entities:
     components:
     - type: Transform
       parent: 2144
-    - type: MeleeWeapon
-      nextAttack: -12706.0004187
     - type: UseDelay
       delays:
         default:
           endTime: 0
           startTime: 0
           length: 3
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
 - proto: Hemostat
@@ -20523,8 +19862,6 @@ entities:
     components:
     - type: Transform
       parent: 1293
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: InsideEntityStorage
@@ -20547,8 +19884,6 @@ entities:
           showEnts: False
           occludes: True
           ent: 975
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
   - uid: 986
@@ -20568,8 +19903,6 @@ entities:
           showEnts: False
           occludes: True
           ent: 987
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: InsideEntityStorage
@@ -20590,8 +19923,6 @@ entities:
           showEnts: False
           occludes: True
           ent: 2125
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
   - uid: 2149
@@ -20611,8 +19942,6 @@ entities:
           showEnts: False
           occludes: True
           ent: 2150
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
 - proto: HydroponicsToolHatchet
@@ -20623,10 +19952,6 @@ entities:
     - type: Transform
       pos: 20.594543,-4.091255
       parent: 3
-    - type: MeleeWeapon
-      nextAttack: -10741.5004187
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: Forensics
@@ -20663,8 +19988,6 @@ entities:
           - 916
           - 917
           - 919
-    - type: MeleeWeapon
-      nextAttack: -12706.0004187
     - type: Forensics
       residues: []
       dnas: []
@@ -20692,8 +20015,6 @@ entities:
     components:
     - type: Transform
       parent: 771
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
 - proto: LightTube
@@ -20703,8 +20024,6 @@ entities:
     components:
     - type: Transform
       parent: 11
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
   - uid: 21
@@ -20712,8 +20031,6 @@ entities:
     components:
     - type: Transform
       parent: 20
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
   - uid: 28
@@ -20721,8 +20038,6 @@ entities:
     components:
     - type: Transform
       parent: 27
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
   - uid: 42
@@ -20730,8 +20045,6 @@ entities:
     components:
     - type: Transform
       parent: 41
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
   - uid: 68
@@ -20739,8 +20052,6 @@ entities:
     components:
     - type: Transform
       parent: 67
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
   - uid: 230
@@ -20748,8 +20059,6 @@ entities:
     components:
     - type: Transform
       parent: 229
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
   - uid: 233
@@ -20757,8 +20066,6 @@ entities:
     components:
     - type: Transform
       parent: 232
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
   - uid: 261
@@ -20766,8 +20073,6 @@ entities:
     components:
     - type: Transform
       parent: 260
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
   - uid: 266
@@ -20775,8 +20080,6 @@ entities:
     components:
     - type: Transform
       parent: 265
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
   - uid: 303
@@ -20784,8 +20087,6 @@ entities:
     components:
     - type: Transform
       parent: 302
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
   - uid: 345
@@ -20793,8 +20094,6 @@ entities:
     components:
     - type: Transform
       parent: 344
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
   - uid: 909
@@ -20802,8 +20101,6 @@ entities:
     components:
     - type: Transform
       parent: 908
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
   - uid: 911
@@ -20811,8 +20108,6 @@ entities:
     components:
     - type: Transform
       parent: 910
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
   - uid: 933
@@ -20820,8 +20115,6 @@ entities:
     components:
     - type: Transform
       parent: 932
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
   - uid: 935
@@ -20829,8 +20122,6 @@ entities:
     components:
     - type: Transform
       parent: 934
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
   - uid: 1184
@@ -20838,8 +20129,6 @@ entities:
     components:
     - type: Transform
       parent: 1183
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
   - uid: 1186
@@ -20847,8 +20136,6 @@ entities:
     components:
     - type: Transform
       parent: 1185
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
   - uid: 1193
@@ -20856,8 +20143,6 @@ entities:
     components:
     - type: Transform
       parent: 1192
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
   - uid: 1195
@@ -20865,8 +20150,6 @@ entities:
     components:
     - type: Transform
       parent: 1194
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
   - uid: 1197
@@ -20874,8 +20157,6 @@ entities:
     components:
     - type: Transform
       parent: 1196
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
   - uid: 1199
@@ -20883,8 +20164,6 @@ entities:
     components:
     - type: Transform
       parent: 1198
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
   - uid: 1555
@@ -20892,8 +20171,6 @@ entities:
     components:
     - type: Transform
       parent: 1554
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
   - uid: 1559
@@ -20901,8 +20178,6 @@ entities:
     components:
     - type: Transform
       parent: 1558
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
   - uid: 1710
@@ -20910,8 +20185,6 @@ entities:
     components:
     - type: Transform
       parent: 1709
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
   - uid: 1712
@@ -20919,8 +20192,6 @@ entities:
     components:
     - type: Transform
       parent: 1711
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
   - uid: 1734
@@ -20928,8 +20199,6 @@ entities:
     components:
     - type: Transform
       parent: 1733
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
   - uid: 1736
@@ -20937,8 +20206,6 @@ entities:
     components:
     - type: Transform
       parent: 1735
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
   - uid: 1738
@@ -20946,8 +20213,6 @@ entities:
     components:
     - type: Transform
       parent: 1737
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
   - uid: 1740
@@ -20955,8 +20220,6 @@ entities:
     components:
     - type: Transform
       parent: 1739
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
   - uid: 1742
@@ -20964,8 +20227,6 @@ entities:
     components:
     - type: Transform
       parent: 1741
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
   - uid: 1744
@@ -20973,8 +20234,6 @@ entities:
     components:
     - type: Transform
       parent: 1743
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
   - uid: 1849
@@ -20982,8 +20241,6 @@ entities:
     components:
     - type: Transform
       parent: 1848
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
   - uid: 1851
@@ -20991,8 +20248,6 @@ entities:
     components:
     - type: Transform
       parent: 1850
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
   - uid: 1872
@@ -21000,8 +20255,6 @@ entities:
     components:
     - type: Transform
       parent: 1871
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
   - uid: 1874
@@ -21009,8 +20262,6 @@ entities:
     components:
     - type: Transform
       parent: 1873
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
 - proto: LightTubeCrystalRed
@@ -21020,8 +20271,6 @@ entities:
     components:
     - type: Transform
       parent: 1941
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
   - uid: 1944
@@ -21029,8 +20278,6 @@ entities:
     components:
     - type: Transform
       parent: 1943
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
   - uid: 1946
@@ -21038,8 +20285,6 @@ entities:
     components:
     - type: Transform
       parent: 1945
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
   - uid: 2341
@@ -21047,8 +20292,6 @@ entities:
     components:
     - type: Transform
       parent: 2340
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
   - uid: 2343
@@ -21056,8 +20299,6 @@ entities:
     components:
     - type: Transform
       parent: 2342
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
   - uid: 2345
@@ -21065,8 +20306,6 @@ entities:
     components:
     - type: Transform
       parent: 2344
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
 - proto: LockerFreezer
@@ -21241,10 +20480,6 @@ entities:
       rot: -1.436188817024231 rad
       pos: 252.37817,13.725773
       parent: 1
-    - type: MeleeWeapon
-      nextAttack: -10747.4504187
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       angularDamping: 0.05
       linearDamping: 0.05
@@ -21260,10 +20495,6 @@ entities:
       rot: -0.09810644388198853 rad
       pos: 8.772178,6.069304
       parent: 3
-    - type: MeleeWeapon
-      nextAttack: -12706.0004187
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
   - uid: 2437
     mapInit: true
     components:
@@ -21271,10 +20502,6 @@ entities:
       rot: -1.436188817024231 rad
       pos: 256.28433,25.751148
       parent: 1
-    - type: MeleeWeapon
-      nextAttack: -10744.6004187
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       angularDamping: 0.05
       linearDamping: 0.05
@@ -21290,10 +20517,6 @@ entities:
       rot: -1.436188817024231 rad
       pos: 254.93336,16.480707
       parent: 1
-    - type: MeleeWeapon
-      nextAttack: -10745.8004187
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       angularDamping: 0.05
       linearDamping: 0.05
@@ -21309,10 +20532,6 @@ entities:
       rot: -1.4598225355148315 rad
       pos: 246.20195,23.36934
       parent: 1
-    - type: MeleeWeapon
-      nextAttack: -10750.6004187
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       angularDamping: 0.05
       linearDamping: 0.05
@@ -21328,10 +20547,6 @@ entities:
       rot: -1.436188817024231 rad
       pos: 252.21104,21.47896
       parent: 1
-    - type: MeleeWeapon
-      nextAttack: -10749.4504187
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       angularDamping: 0.05
       linearDamping: 0.05
@@ -21347,10 +20562,6 @@ entities:
       rot: -1.436188817024231 rad
       pos: 251.90364,-2.0134275
       parent: 1
-    - type: MeleeWeapon
-      nextAttack: -10748.4004187
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       angularDamping: 0.05
       linearDamping: 0.05
@@ -21370,8 +20581,6 @@ entities:
       parent: 3
     - type: BallisticAmmoProvider
       unspawnedCount: 30
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
   - uid: 1596
@@ -21381,8 +20590,6 @@ entities:
       parent: 1595
     - type: BallisticAmmoProvider
       unspawnedCount: 30
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: Forensics
@@ -21399,8 +20606,6 @@ entities:
       parent: 3
     - type: BallisticAmmoProvider
       unspawnedCount: 30
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
   - uid: 1601
@@ -21412,8 +20617,6 @@ entities:
       parent: 3
     - type: BallisticAmmoProvider
       unspawnedCount: 30
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
   - uid: 1603
@@ -21425,8 +20628,6 @@ entities:
       parent: 3
     - type: BallisticAmmoProvider
       unspawnedCount: 30
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
   - uid: 1606
@@ -21436,8 +20637,6 @@ entities:
       parent: 1605
     - type: BallisticAmmoProvider
       unspawnedCount: 30
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
 - proto: MagazineLightRifleIncendiary
@@ -21450,8 +20649,6 @@ entities:
       parent: 3
     - type: BallisticAmmoProvider
       unspawnedCount: 30
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
   - uid: 1609
@@ -21463,8 +20660,6 @@ entities:
       parent: 3
     - type: BallisticAmmoProvider
       unspawnedCount: 30
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
 - proto: MagazineShotgun
@@ -21476,8 +20671,6 @@ entities:
       parent: 1582
     - type: BallisticAmmoProvider
       unspawnedCount: 8
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: Forensics
@@ -21494,8 +20687,6 @@ entities:
       parent: 3
     - type: BallisticAmmoProvider
       unspawnedCount: 8
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
   - uid: 1599
@@ -21507,8 +20698,6 @@ entities:
       parent: 3
     - type: BallisticAmmoProvider
       unspawnedCount: 8
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
   - uid: 1611
@@ -21518,8 +20707,6 @@ entities:
       parent: 1610
     - type: BallisticAmmoProvider
       unspawnedCount: 8
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
   - uid: 2098
@@ -21529,8 +20716,6 @@ entities:
       parent: 2094
     - type: BallisticAmmoProvider
       unspawnedCount: 8
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
   - uid: 2099
@@ -21540,8 +20725,6 @@ entities:
       parent: 2094
     - type: BallisticAmmoProvider
       unspawnedCount: 8
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
 - proto: MagazineShotgunIncendiary
@@ -21555,8 +20738,6 @@ entities:
       parent: 3
     - type: BallisticAmmoProvider
       unspawnedCount: 8
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
   - uid: 1604
@@ -21568,8 +20749,6 @@ entities:
       parent: 3
     - type: BallisticAmmoProvider
       unspawnedCount: 8
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
   - uid: 2095
@@ -21579,8 +20758,6 @@ entities:
       parent: 2094
     - type: BallisticAmmoProvider
       unspawnedCount: 8
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
   - uid: 2096
@@ -21590,8 +20767,6 @@ entities:
       parent: 2094
     - type: BallisticAmmoProvider
       unspawnedCount: 8
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
   - uid: 2097
@@ -21601,8 +20776,6 @@ entities:
       parent: 2094
     - type: BallisticAmmoProvider
       unspawnedCount: 8
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
 - proto: MagazineShotgunSlug
@@ -21614,8 +20787,6 @@ entities:
       parent: 2094
     - type: BallisticAmmoProvider
       unspawnedCount: 8
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
 - proto: MedicalTechFab
@@ -21671,8 +20842,6 @@ entities:
       solutions: null
       containers:
       - food
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: ContainerContainer
@@ -21686,8 +20855,6 @@ entities:
     components:
     - type: Transform
       parent: 2066
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
   - uid: 2202
@@ -21695,8 +20862,6 @@ entities:
     components:
     - type: Transform
       parent: 2201
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
 - proto: MedkitBruteFilled
@@ -21731,8 +20896,6 @@ entities:
           - 1412
           - 1413
           - 1424
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: UseDelay
@@ -21771,8 +20934,6 @@ entities:
           - 2173
           - 2174
           - 2185
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: UseDelay
@@ -21815,8 +20976,6 @@ entities:
           - 1360
           - 1361
           - 1372
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: UseDelay
@@ -21865,8 +21024,6 @@ entities:
           - 2071
           - 2073
           - 2075
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: UseDelay
@@ -21913,8 +21070,6 @@ entities:
           - 2206
           - 2208
           - 2210
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: UseDelay
@@ -21961,8 +21116,6 @@ entities:
           - 1466
           - 1468
           - 1470
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: UseDelay
@@ -22004,8 +21157,6 @@ entities:
           - 1386
           - 1388
           - 1399
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: UseDelay
@@ -22051,8 +21202,6 @@ entities:
           - 1442
           - 1444
           - 1455
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: UseDelay
@@ -22069,8 +21218,6 @@ entities:
     components:
     - type: Transform
       parent: 481
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
   - uid: 498
@@ -22078,8 +21225,6 @@ entities:
     components:
     - type: Transform
       parent: 495
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
   - uid: 615
@@ -22089,8 +21234,6 @@ entities:
       parent: 612
     - type: Stack
       count: 3
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
   - uid: 916
@@ -22098,8 +21241,6 @@ entities:
     components:
     - type: Transform
       parent: 913
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
   - uid: 1307
@@ -22109,8 +21250,6 @@ entities:
       parent: 1304
     - type: Stack
       count: 2
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
   - uid: 1318
@@ -22120,8 +21259,6 @@ entities:
       parent: 1313
     - type: Stack
       count: 2
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
   - uid: 1326
@@ -22129,8 +21266,6 @@ entities:
     components:
     - type: Transform
       parent: 1323
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
   - uid: 1340
@@ -22140,8 +21275,6 @@ entities:
       parent: 1337
     - type: Stack
       count: 4
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
 - proto: MicrowaveMachineCircuitboard
@@ -22155,8 +21288,6 @@ entities:
       solutions: null
       containers:
       - food
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: ContainerContainer
@@ -22172,8 +21303,6 @@ entities:
       parent: 827
     - type: NetworkConfigurator
       lastUseAttempt: -12706.0004187
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
 - proto: Ointment
@@ -22183,8 +21312,6 @@ entities:
     components:
     - type: Transform
       parent: 1358
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
   - uid: 1360
@@ -22192,8 +21319,6 @@ entities:
     components:
     - type: Transform
       parent: 1358
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
 - proto: OrganHumanBrain
@@ -22212,8 +21337,6 @@ entities:
       containers:
       - organ
       - food
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       angularDamping: 8
       linearDamping: 8
@@ -22240,8 +21363,6 @@ entities:
       containers:
       - organ
       - food
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       angularDamping: 8
       linearDamping: 8
@@ -22268,8 +21389,6 @@ entities:
       containers:
       - organ
       - food
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       angularDamping: 8
       linearDamping: 8
@@ -22296,8 +21415,6 @@ entities:
       containers:
       - organ
       - food
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       angularDamping: 8
       linearDamping: 8
@@ -22324,8 +21441,6 @@ entities:
       containers:
       - organ
       - food
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       angularDamping: 8
       linearDamping: 8
@@ -22353,8 +21468,6 @@ entities:
       - organ
       - Lung
       - food
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       angularDamping: 8
       linearDamping: 8
@@ -22385,8 +21498,6 @@ entities:
       nextUpdate: 0.4726804
     - type: Metabolizer
       nextUpdate: 12706.4730991
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       angularDamping: 8
       linearDamping: 8
@@ -22416,8 +21527,6 @@ entities:
       solutions: null
       containers:
       - food
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: Fixtures
@@ -22467,8 +21576,6 @@ entities:
       solutions: null
       containers:
       - food
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: Fixtures
@@ -22518,8 +21625,6 @@ entities:
       solutions: null
       containers:
       - food
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: Fixtures
@@ -22569,8 +21674,6 @@ entities:
       solutions: null
       containers:
       - food
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: Fixtures
@@ -22620,8 +21723,6 @@ entities:
       solutions: null
       containers:
       - food
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: Fixtures
@@ -22671,8 +21772,6 @@ entities:
       solutions: null
       containers:
       - food
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: Fixtures
@@ -22722,8 +21821,6 @@ entities:
       solutions: null
       containers:
       - food
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: Fixtures
@@ -22773,8 +21870,6 @@ entities:
       solutions: null
       containers:
       - food
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: Fixtures
@@ -22824,8 +21919,6 @@ entities:
       solutions: null
       containers:
       - food
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: Fixtures
@@ -22934,8 +22027,6 @@ entities:
       solutions: null
       containers:
       - food
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Fixtures
       fixtures:
         fix1:
@@ -22988,8 +22079,6 @@ entities:
       solutions: null
       containers:
       - food
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: Fixtures
@@ -23039,8 +22128,6 @@ entities:
       solutions: null
       containers:
       - food
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: Fixtures
@@ -23090,8 +22177,6 @@ entities:
       solutions: null
       containers:
       - food
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: Fixtures
@@ -23143,8 +22228,6 @@ entities:
       solutions: null
       containers:
       - food
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: Fixtures
@@ -23199,8 +22282,6 @@ entities:
       solutions: null
       containers:
       - rod
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: ContainerContainer
       containers:
         solution@rod: !type:ContainerSlot
@@ -23239,8 +22320,6 @@ entities:
           - 1456
           - 1458
           - 1460
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: NameModifier
@@ -23289,8 +22368,6 @@ entities:
           - 1429
           - 1431
           - 1433
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: NameModifier
@@ -23337,8 +22414,6 @@ entities:
           - 2190
           - 2192
           - 2194
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: NameModifier
@@ -23387,8 +22462,6 @@ entities:
           - 1377
           - 1379
           - 1381
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: NameModifier
@@ -23445,8 +22518,6 @@ entities:
           - 1479
           - 1481
           - 1483
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: NameModifier
@@ -23495,8 +22566,6 @@ entities:
           - 1449
           - 1451
           - 1453
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: NameModifier
@@ -23545,8 +22614,6 @@ entities:
           - 1404
           - 1406
           - 1408
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: NameModifier
@@ -23595,8 +22662,6 @@ entities:
           - 1418
           - 1420
           - 1422
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: NameModifier
@@ -23643,8 +22708,6 @@ entities:
           - 2179
           - 2181
           - 2183
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: NameModifier
@@ -23693,8 +22756,6 @@ entities:
           - 1366
           - 1368
           - 1370
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: NameModifier
@@ -23743,8 +22804,6 @@ entities:
           - 1393
           - 1395
           - 1397
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: NameModifier
@@ -23769,8 +22828,6 @@ entities:
       solutions: null
       containers:
       - food
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: NameModifier
@@ -23790,8 +22847,6 @@ entities:
       solutions: null
       containers:
       - food
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: NameModifier
@@ -23811,8 +22866,6 @@ entities:
       solutions: null
       containers:
       - food
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: NameModifier
@@ -23834,8 +22887,6 @@ entities:
       solutions: null
       containers:
       - food
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: NameModifier
@@ -23855,8 +22906,6 @@ entities:
       solutions: null
       containers:
       - food
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: NameModifier
@@ -23876,8 +22925,6 @@ entities:
       solutions: null
       containers:
       - food
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: NameModifier
@@ -23897,8 +22944,6 @@ entities:
       solutions: null
       containers:
       - food
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: NameModifier
@@ -23918,8 +22963,6 @@ entities:
       solutions: null
       containers:
       - food
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: NameModifier
@@ -23939,8 +22982,6 @@ entities:
       solutions: null
       containers:
       - food
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: NameModifier
@@ -23960,8 +23001,6 @@ entities:
       solutions: null
       containers:
       - food
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: NameModifier
@@ -23981,8 +23020,6 @@ entities:
       solutions: null
       containers:
       - food
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: NameModifier
@@ -24002,8 +23039,6 @@ entities:
       solutions: null
       containers:
       - food
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: NameModifier
@@ -24023,8 +23058,6 @@ entities:
       solutions: null
       containers:
       - food
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: NameModifier
@@ -24046,8 +23079,6 @@ entities:
       solutions: null
       containers:
       - food
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: NameModifier
@@ -24067,8 +23098,6 @@ entities:
       solutions: null
       containers:
       - food
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: NameModifier
@@ -24088,8 +23117,6 @@ entities:
       solutions: null
       containers:
       - food
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: NameModifier
@@ -24109,8 +23136,6 @@ entities:
       solutions: null
       containers:
       - food
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: NameModifier
@@ -24130,8 +23155,6 @@ entities:
       solutions: null
       containers:
       - food
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: NameModifier
@@ -24153,8 +23176,6 @@ entities:
       solutions: null
       containers:
       - food
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: NameModifier
@@ -24174,8 +23195,6 @@ entities:
       solutions: null
       containers:
       - food
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: NameModifier
@@ -24195,8 +23214,6 @@ entities:
       solutions: null
       containers:
       - food
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: NameModifier
@@ -24216,8 +23233,6 @@ entities:
       solutions: null
       containers:
       - food
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: NameModifier
@@ -24237,8 +23252,6 @@ entities:
       solutions: null
       containers:
       - food
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: NameModifier
@@ -24258,8 +23271,6 @@ entities:
       solutions: null
       containers:
       - food
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: NameModifier
@@ -24279,8 +23290,6 @@ entities:
       solutions: null
       containers:
       - food
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: NameModifier
@@ -24302,8 +23311,6 @@ entities:
       solutions: null
       containers:
       - food
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: NameModifier
@@ -24323,8 +23330,6 @@ entities:
       solutions: null
       containers:
       - food
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: NameModifier
@@ -24344,8 +23349,6 @@ entities:
       solutions: null
       containers:
       - food
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: NameModifier
@@ -24365,8 +23368,6 @@ entities:
       solutions: null
       containers:
       - food
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: NameModifier
@@ -24386,8 +23387,6 @@ entities:
       solutions: null
       containers:
       - food
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: NameModifier
@@ -24409,8 +23408,6 @@ entities:
       solutions: null
       containers:
       - food
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: NameModifier
@@ -24430,8 +23427,6 @@ entities:
       solutions: null
       containers:
       - food
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: NameModifier
@@ -24451,8 +23446,6 @@ entities:
       solutions: null
       containers:
       - food
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: NameModifier
@@ -24472,8 +23465,6 @@ entities:
       solutions: null
       containers:
       - food
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: NameModifier
@@ -24493,8 +23484,6 @@ entities:
       solutions: null
       containers:
       - food
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: NameModifier
@@ -24516,8 +23505,6 @@ entities:
       solutions: null
       containers:
       - food
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: NameModifier
@@ -24537,8 +23524,6 @@ entities:
       solutions: null
       containers:
       - food
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: NameModifier
@@ -24558,8 +23543,6 @@ entities:
       solutions: null
       containers:
       - food
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: NameModifier
@@ -24579,8 +23562,6 @@ entities:
       solutions: null
       containers:
       - food
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: NameModifier
@@ -24600,8 +23581,6 @@ entities:
       solutions: null
       containers:
       - food
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: NameModifier
@@ -24621,8 +23600,6 @@ entities:
       solutions: null
       containers:
       - food
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: NameModifier
@@ -24642,8 +23619,6 @@ entities:
       solutions: null
       containers:
       - food
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: NameModifier
@@ -24663,8 +23638,6 @@ entities:
       solutions: null
       containers:
       - food
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: NameModifier
@@ -24684,8 +23657,6 @@ entities:
       solutions: null
       containers:
       - food
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: NameModifier
@@ -24705,8 +23676,6 @@ entities:
       solutions: null
       containers:
       - food
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: NameModifier
@@ -24728,8 +23697,6 @@ entities:
       solutions: null
       containers:
       - food
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: NameModifier
@@ -24749,8 +23716,6 @@ entities:
       solutions: null
       containers:
       - food
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: NameModifier
@@ -24770,8 +23735,6 @@ entities:
       solutions: null
       containers:
       - food
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: NameModifier
@@ -24791,8 +23754,6 @@ entities:
       solutions: null
       containers:
       - food
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: NameModifier
@@ -24812,8 +23773,6 @@ entities:
       solutions: null
       containers:
       - food
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: NameModifier
@@ -24835,8 +23794,6 @@ entities:
       solutions: null
       containers:
       - food
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: NameModifier
@@ -24856,8 +23813,6 @@ entities:
       solutions: null
       containers:
       - food
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: NameModifier
@@ -24877,8 +23832,6 @@ entities:
       solutions: null
       containers:
       - food
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: NameModifier
@@ -24898,8 +23851,6 @@ entities:
       solutions: null
       containers:
       - food
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: NameModifier
@@ -24919,8 +23870,6 @@ entities:
       solutions: null
       containers:
       - food
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: NameModifier
@@ -24936,8 +23885,6 @@ entities:
     components:
     - type: Transform
       parent: 2464
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
   - uid: 2528
@@ -24945,8 +23892,6 @@ entities:
     components:
     - type: Transform
       parent: 2502
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
 - proto: PortableScrubber
@@ -24997,8 +23942,6 @@ entities:
       solutions: null
       containers:
       - food
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: ContainerContainer
@@ -25016,8 +23959,6 @@ entities:
       solutions: null
       containers:
       - battery
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: ContainerContainer
@@ -25033,8 +23974,6 @@ entities:
       solutions: null
       containers:
       - battery
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: ContainerContainer
@@ -25050,8 +23989,6 @@ entities:
       solutions: null
       containers:
       - battery
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: ContainerContainer
@@ -25067,8 +24004,6 @@ entities:
       solutions: null
       containers:
       - battery
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: ContainerContainer
@@ -25084,8 +24019,6 @@ entities:
       solutions: null
       containers:
       - battery
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: ContainerContainer
@@ -25101,8 +24034,6 @@ entities:
       solutions: null
       containers:
       - battery
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: ContainerContainer
@@ -25118,8 +24049,6 @@ entities:
       solutions: null
       containers:
       - battery
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: ContainerContainer
@@ -25135,8 +24064,6 @@ entities:
       solutions: null
       containers:
       - battery
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: ContainerContainer
@@ -25152,8 +24079,6 @@ entities:
       solutions: null
       containers:
       - battery
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: ContainerContainer
@@ -25169,8 +24094,6 @@ entities:
       solutions: null
       containers:
       - battery
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: ContainerContainer
@@ -25188,8 +24111,6 @@ entities:
       solutions: null
       containers:
       - battery
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: ContainerContainer
@@ -25205,8 +24126,6 @@ entities:
       solutions: null
       containers:
       - battery
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: ContainerContainer
@@ -25222,8 +24141,6 @@ entities:
       solutions: null
       containers:
       - battery
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: ContainerContainer
@@ -25239,8 +24156,6 @@ entities:
       solutions: null
       containers:
       - battery
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: ContainerContainer
@@ -25256,8 +24171,6 @@ entities:
       solutions: null
       containers:
       - battery
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: ContainerContainer
@@ -28270,8 +27183,6 @@ entities:
       solutions: null
       containers:
       - pen
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: ContainerContainer
@@ -28285,8 +27196,6 @@ entities:
     components:
     - type: Transform
       parent: 969
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
   - uid: 2127
@@ -28294,8 +27203,6 @@ entities:
     components:
     - type: Transform
       parent: 2119
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
   - uid: 2152
@@ -28303,8 +27210,6 @@ entities:
     components:
     - type: Transform
       parent: 2144
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
 - proto: RailingRound
@@ -28342,8 +27247,6 @@ entities:
     - type: NanoChatCard
       lastMessageTime: -12706.0004187
       number: 1372
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
 - proto: ReagentContainerCornmeal
@@ -28359,10 +27262,6 @@ entities:
       solutions: null
       containers:
       - food
-    - type: MeleeWeapon
-      nextAttack: -12706.0004187
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: ContainerContainer
       containers:
         solution@food: !type:ContainerSlot
@@ -28379,10 +27278,6 @@ entities:
       solutions: null
       containers:
       - food
-    - type: MeleeWeapon
-      nextAttack: -12706.0004187
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: ContainerContainer
@@ -28401,10 +27296,6 @@ entities:
       solutions: null
       containers:
       - food
-    - type: MeleeWeapon
-      nextAttack: -12706.0004187
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: ContainerContainer
@@ -28423,10 +27314,6 @@ entities:
       solutions: null
       containers:
       - food
-    - type: MeleeWeapon
-      nextAttack: -12706.0004187
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: ContainerContainer
@@ -28440,8 +27327,6 @@ entities:
     components:
     - type: Transform
       parent: 2066
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
   - uid: 2203
@@ -28449,8 +27334,6 @@ entities:
     components:
     - type: Transform
       parent: 2201
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
 - proto: ReinforcedWindow
@@ -28573,8 +27456,6 @@ entities:
     components:
     - type: Transform
       parent: 1293
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: InsideEntityStorage
@@ -28586,8 +27467,6 @@ entities:
     - type: Transform
       pos: 2.929528,31.455013
       parent: 3
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: Forensics
@@ -28603,10 +27482,6 @@ entities:
     - type: Transform
       pos: 12.686271,13.492842
       parent: 3
-    - type: MeleeWeapon
-      nextAttack: -12706.0004187
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
 - proto: RubberStampDenied
@@ -28617,10 +27492,6 @@ entities:
     - type: Transform
       pos: 12.317024,13.46446
       parent: 3
-    - type: MeleeWeapon
-      nextAttack: -12706.0004187
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
 - proto: SalvageIDCard
@@ -28647,8 +27518,6 @@ entities:
     - type: NanoChatCard
       lastMessageTime: -12706.0004187
       number: 6089
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: Forensics
@@ -28663,8 +27532,6 @@ entities:
     components:
     - type: Transform
       parent: 1293
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: InsideEntityStorage
@@ -28675,10 +27542,6 @@ entities:
     components:
     - type: Transform
       parent: 1293
-    - type: MeleeWeapon
-      nextAttack: -12706.0004187
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: InsideEntityStorage
@@ -28689,15 +27552,11 @@ entities:
     components:
     - type: Transform
       parent: 827
-    - type: MeleeWeapon
-      nextAttack: -12706.0004187
     - type: RandomSprite
       selected:
         enum.DamageStateVisualLayers.Base:
         - screwdriver
         - '#1861D5FF'
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
 - proto: SecurityWhistle
@@ -28715,8 +27574,6 @@ entities:
           endTime: 11265.45
           startTime: 11262.45
           length: 3
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       angularDamping: 0.05
       linearDamping: 0.05
@@ -28738,8 +27595,6 @@ entities:
       solutions: null
       containers:
       - glass
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: ContainerContainer
@@ -28757,8 +27612,6 @@ entities:
       solutions: null
       containers:
       - glass
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: ContainerContainer
@@ -28776,8 +27629,6 @@ entities:
       solutions: null
       containers:
       - glass
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: ContainerContainer
@@ -28795,8 +27646,6 @@ entities:
       solutions: null
       containers:
       - glass
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: ContainerContainer
@@ -28816,8 +27665,6 @@ entities:
       solutions: null
       containers:
       - steel
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: ContainerContainer
@@ -28835,8 +27682,6 @@ entities:
       solutions: null
       containers:
       - steel
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: ContainerContainer
@@ -28850,8 +27695,6 @@ entities:
     components:
     - type: Transform
       parent: 1582
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
   - uid: 1612
@@ -28859,8 +27702,6 @@ entities:
     components:
     - type: Transform
       parent: 1610
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
 - proto: SignEngineering
@@ -28938,8 +27779,6 @@ entities:
       solutions: null
       containers:
       - food
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: ContainerContainer
@@ -28986,8 +27825,6 @@ entities:
       solutions: null
       containers:
       - food
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: ContainerContainer
@@ -29062,8 +27899,6 @@ entities:
       solutions: null
       containers:
       - food
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: ContainerContainer
       containers:
         solution@food: !type:ContainerSlot
@@ -29113,8 +27948,6 @@ entities:
       solutions: null
       containers:
       - food
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: ContainerContainer
       containers:
         solution@food: !type:ContainerSlot
@@ -29130,8 +27963,6 @@ entities:
       solutions: null
       containers:
       - pen
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: ContainerContainer
@@ -29147,8 +27978,6 @@ entities:
       solutions: null
       containers:
       - pen
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: ContainerContainer
@@ -29312,8 +28141,6 @@ entities:
       solutions: null
       containers:
       - food
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: ContainerContainer
@@ -29327,8 +28154,6 @@ entities:
     components:
     - type: Transform
       parent: 969
-    - type: MeleeWeapon
-      nextAttack: -12706.0004187
     - type: UseDelay
       delays:
         default:
@@ -29339,8 +28164,6 @@ entities:
       solutions: null
       containers:
       - battery
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: ContainerContainer
@@ -29353,8 +28176,6 @@ entities:
     - type: Transform
       pos: 2.8773122,33.595173
       parent: 3
-    - type: MeleeWeapon
-      nextAttack: -12706.0004187
     - type: UseDelay
       delays:
         default:
@@ -29365,8 +28186,6 @@ entities:
       solutions: null
       containers:
       - battery
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: ContainerContainer
@@ -29378,8 +28197,6 @@ entities:
     components:
     - type: Transform
       parent: 2119
-    - type: MeleeWeapon
-      nextAttack: -12706.0004187
     - type: UseDelay
       delays:
         default:
@@ -29390,8 +28207,6 @@ entities:
       solutions: null
       containers:
       - battery
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: ContainerContainer
@@ -29403,8 +28218,6 @@ entities:
     components:
     - type: Transform
       parent: 2144
-    - type: MeleeWeapon
-      nextAttack: -12706.0004187
     - type: UseDelay
       delays:
         default:
@@ -29415,8 +28228,6 @@ entities:
       solutions: null
       containers:
       - battery
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: ContainerContainer
@@ -29432,10 +28243,6 @@ entities:
       rot: 1.5707963267948966 rad
       pos: 19.408546,29.399519
       parent: 3
-    - type: MeleeWeapon
-      nextAttack: -12706.0004187
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
 - proto: SubstationMachineCircuitboard
@@ -29449,8 +28256,6 @@ entities:
       solutions: null
       containers:
       - food
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: ContainerContainer
@@ -29517,8 +28322,6 @@ entities:
       solutions: null
       containers:
       - injector
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: NameModifier
@@ -29542,8 +28345,6 @@ entities:
       solutions: null
       containers:
       - injector
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: NameModifier
@@ -29567,8 +28368,6 @@ entities:
       solutions: null
       containers:
       - injector
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: NameModifier
@@ -29592,8 +28391,6 @@ entities:
       solutions: null
       containers:
       - injector
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: NameModifier
@@ -29819,10 +28616,6 @@ entities:
     components:
     - type: Transform
       parent: 2443
-    - type: MeleeWeapon
-      nextAttack: -12706.0004187
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
   - uid: 2445
@@ -29830,10 +28623,6 @@ entities:
     components:
     - type: Transform
       parent: 2443
-    - type: MeleeWeapon
-      nextAttack: -12706.0004187
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
   - uid: 2446
@@ -29841,10 +28630,6 @@ entities:
     components:
     - type: Transform
       parent: 2443
-    - type: MeleeWeapon
-      nextAttack: -12706.0004187
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
   - uid: 2447
@@ -29852,10 +28637,6 @@ entities:
     components:
     - type: Transform
       parent: 2443
-    - type: MeleeWeapon
-      nextAttack: -12706.0004187
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
   - uid: 2495
@@ -29865,10 +28646,6 @@ entities:
       rot: -1.7721189260482788 rad
       pos: -169.71733,41.380764
       parent: 1
-    - type: MeleeWeapon
-      nextAttack: -3660.8004187
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       angularDamping: 0.05
       linearDamping: 0.05
@@ -29884,10 +28661,6 @@ entities:
     components:
     - type: Transform
       parent: 2061
-    - type: MeleeWeapon
-      nextAttack: -12706.0004187
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: InsideEntityStorage
@@ -29896,10 +28669,6 @@ entities:
     components:
     - type: Transform
       parent: 2063
-    - type: MeleeWeapon
-      nextAttack: -12706.0004187
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: InsideEntityStorage
@@ -33900,12 +32669,8 @@ entities:
     components:
     - type: Transform
       parent: 967
-    - type: MeleeWeapon
-      nextAttack: -12706.0004187
     - type: Gun
       nextFire: -12706.0004187
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: InsideEntityStorage
@@ -33914,12 +32679,8 @@ entities:
     components:
     - type: Transform
       parent: 2108
-    - type: MeleeWeapon
-      nextAttack: -12706.0004187
     - type: Gun
       nextFire: -12706.0004187
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
   - uid: 2139
@@ -33927,12 +32688,8 @@ entities:
     components:
     - type: Transform
       parent: 2138
-    - type: MeleeWeapon
-      nextAttack: -12706.0004187
     - type: Gun
       nextFire: -12706.0004187
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
   - uid: 2196
@@ -33940,12 +32697,8 @@ entities:
     components:
     - type: Transform
       parent: 2167
-    - type: MeleeWeapon
-      nextAttack: -12706.0004187
     - type: Gun
       nextFire: -12706.0004187
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: InsideEntityStorage
@@ -33958,8 +32711,6 @@ entities:
       parent: 967
     - type: Gun
       nextFire: -12706.0004187
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: InsideEntityStorage
@@ -33970,8 +32721,6 @@ entities:
       parent: 2108
     - type: Gun
       nextFire: -12706.0004187
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
   - uid: 2140
@@ -33981,8 +32730,6 @@ entities:
       parent: 2138
     - type: Gun
       nextFire: -12706.0004187
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
 - proto: WeaponTurretXeno
@@ -34109,16 +32856,12 @@ entities:
           endTime: 0
           startTime: 0
           length: 1
-    - type: MeleeWeapon
-      nextAttack: -12706.0004187
     - type: SolutionContainerManager
       solutions: null
       containers:
       - Welder
     - type: Welder
       nextUpdate: 0.0783208
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
     - type: ContainerContainer
@@ -34229,15 +32972,11 @@ entities:
     components:
     - type: Transform
       parent: 827
-    - type: MeleeWeapon
-      nextAttack: -12706.0004187
     - type: RandomSprite
       selected:
         enum.DamageStateVisualLayers.Base:
         - cutters
         - '#1861D5FF'
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
 - proto: Wrench
@@ -34247,10 +32986,6 @@ entities:
     components:
     - type: Transform
       parent: 827
-    - type: MeleeWeapon
-      nextAttack: -12706.0004187
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
 - proto: XenoWardingTower
@@ -34286,16 +33021,12 @@ entities:
     components:
     - type: Transform
       parent: 2477
-    - type: MeleeWeapon
-      nextAttack: -12706.0004187
     - type: UseDelay
       delays:
         default:
           endTime: 0
           startTime: 0
           length: 3
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
   - uid: 2479
@@ -34303,16 +33034,12 @@ entities:
     components:
     - type: Transform
       parent: 2477
-    - type: MeleeWeapon
-      nextAttack: -12706.0004187
     - type: UseDelay
       delays:
         default:
           endTime: 0
           startTime: 0
           length: 3
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
   - uid: 2480
@@ -34320,16 +33047,12 @@ entities:
     components:
     - type: Transform
       parent: 2477
-    - type: MeleeWeapon
-      nextAttack: -12706.0004187
     - type: UseDelay
       delays:
         default:
           endTime: 0
           startTime: 0
           length: 3
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
   - uid: 2481
@@ -34337,16 +33060,12 @@ entities:
     components:
     - type: Transform
       parent: 2477
-    - type: MeleeWeapon
-      nextAttack: -12706.0004187
     - type: UseDelay
       delays:
         default:
           endTime: 0
           startTime: 0
           length: 3
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
   - uid: 2482
@@ -34354,16 +33073,12 @@ entities:
     components:
     - type: Transform
       parent: 2477
-    - type: MeleeWeapon
-      nextAttack: -12706.0004187
     - type: UseDelay
       delays:
         default:
           endTime: 0
           startTime: 0
           length: 3
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
   - uid: 2483
@@ -34371,16 +33086,12 @@ entities:
     components:
     - type: Transform
       parent: 2477
-    - type: MeleeWeapon
-      nextAttack: -12706.0004187
     - type: UseDelay
       delays:
         default:
           endTime: 0
           startTime: 0
           length: 3
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
   - uid: 2484
@@ -34388,16 +33099,12 @@ entities:
     components:
     - type: Transform
       parent: 2477
-    - type: MeleeWeapon
-      nextAttack: -12706.0004187
     - type: UseDelay
       delays:
         default:
           endTime: 0
           startTime: 0
           length: 3
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
   - uid: 2485
@@ -34405,16 +33112,12 @@ entities:
     components:
     - type: Transform
       parent: 2477
-    - type: MeleeWeapon
-      nextAttack: -12706.0004187
     - type: UseDelay
       delays:
         default:
           endTime: 0
           startTime: 0
           length: 3
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
   - uid: 2486
@@ -34422,16 +33125,12 @@ entities:
     components:
     - type: Transform
       parent: 2477
-    - type: MeleeWeapon
-      nextAttack: -12706.0004187
     - type: UseDelay
       delays:
         default:
           endTime: 0
           startTime: 0
           length: 3
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
   - uid: 2487
@@ -34439,16 +33138,12 @@ entities:
     components:
     - type: Transform
       parent: 2477
-    - type: MeleeWeapon
-      nextAttack: -12706.0004187
     - type: UseDelay
       delays:
         default:
           endTime: 0
           startTime: 0
           length: 3
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
   - uid: 2488
@@ -34456,16 +33151,12 @@ entities:
     components:
     - type: Transform
       parent: 2477
-    - type: MeleeWeapon
-      nextAttack: -12706.0004187
     - type: UseDelay
       delays:
         default:
           endTime: 0
           startTime: 0
           length: 3
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
   - uid: 2516
@@ -34473,16 +33164,12 @@ entities:
     components:
     - type: Transform
       parent: 2515
-    - type: MeleeWeapon
-      nextAttack: -12706.0004187
     - type: UseDelay
       delays:
         default:
           endTime: 0
           startTime: 0
           length: 3
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
   - uid: 2517
@@ -34490,16 +33177,12 @@ entities:
     components:
     - type: Transform
       parent: 2515
-    - type: MeleeWeapon
-      nextAttack: -12706.0004187
     - type: UseDelay
       delays:
         default:
           endTime: 0
           startTime: 0
           length: 3
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
   - uid: 2518
@@ -34507,16 +33190,12 @@ entities:
     components:
     - type: Transform
       parent: 2515
-    - type: MeleeWeapon
-      nextAttack: -12706.0004187
     - type: UseDelay
       delays:
         default:
           endTime: 0
           startTime: 0
           length: 3
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
   - uid: 2519
@@ -34524,16 +33203,12 @@ entities:
     components:
     - type: Transform
       parent: 2515
-    - type: MeleeWeapon
-      nextAttack: -12706.0004187
     - type: UseDelay
       delays:
         default:
           endTime: 0
           startTime: 0
           length: 3
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
   - uid: 2520
@@ -34541,16 +33216,12 @@ entities:
     components:
     - type: Transform
       parent: 2515
-    - type: MeleeWeapon
-      nextAttack: -12706.0004187
     - type: UseDelay
       delays:
         default:
           endTime: 0
           startTime: 0
           length: 3
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
   - uid: 2521
@@ -34558,16 +33229,12 @@ entities:
     components:
     - type: Transform
       parent: 2515
-    - type: MeleeWeapon
-      nextAttack: -12706.0004187
     - type: UseDelay
       delays:
         default:
           endTime: 0
           startTime: 0
           length: 3
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
   - uid: 2522
@@ -34575,16 +33242,12 @@ entities:
     components:
     - type: Transform
       parent: 2515
-    - type: MeleeWeapon
-      nextAttack: -12706.0004187
     - type: UseDelay
       delays:
         default:
           endTime: 0
           startTime: 0
           length: 3
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
   - uid: 2523
@@ -34592,16 +33255,12 @@ entities:
     components:
     - type: Transform
       parent: 2515
-    - type: MeleeWeapon
-      nextAttack: -12706.0004187
     - type: UseDelay
       delays:
         default:
           endTime: 0
           startTime: 0
           length: 3
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
   - uid: 2524
@@ -34609,16 +33268,12 @@ entities:
     components:
     - type: Transform
       parent: 2515
-    - type: MeleeWeapon
-      nextAttack: -12706.0004187
     - type: UseDelay
       delays:
         default:
           endTime: 0
           startTime: 0
           length: 3
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
   - uid: 2525
@@ -34626,16 +33281,12 @@ entities:
     components:
     - type: Transform
       parent: 2515
-    - type: MeleeWeapon
-      nextAttack: -12706.0004187
     - type: UseDelay
       delays:
         default:
           endTime: 0
           startTime: 0
           length: 3
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
   - uid: 2526
@@ -34643,16 +33294,12 @@ entities:
     components:
     - type: Transform
       parent: 2515
-    - type: MeleeWeapon
-      nextAttack: -12706.0004187
     - type: UseDelay
       delays:
         default:
           endTime: 0
           startTime: 0
           length: 3
-    - type: EmitSoundOnCollide
-      nextSound: -12706.0004187
     - type: Physics
       canCollide: False
 ...

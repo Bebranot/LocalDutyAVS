@@ -1,4 +1,6 @@
-﻿using System.Collections.Immutable;
+﻿using Content.Shared._Duty.Administration;
+using Content.Server._Duty.Administration;
+using System.Collections.Immutable;
 using System.Linq;
 using System.Threading.Tasks;
 using Content.Server.Administration.Managers;
@@ -12,11 +14,11 @@ using Robust.Shared.Network;
 
 namespace Content.Server.Administration.BanList;
 
-public sealed class BanListEui : BaseEui
+public sealed partial class BanListEui : BaseEui
 {
-    [Dependency] private readonly IAdminManager _admins = default!;
-    [Dependency] private readonly IPlayerLocator _playerLocator = default!;
-    [Dependency] private readonly IServerDbManager _db = default!;
+    [Dependency] private IAdminManager _admins = default!;
+    [Dependency] private IPlayerLocator _playerLocator = default!;
+    [Dependency] private IServerDbManager _db = default!;
 
     public BanListEui()
     {
@@ -49,7 +51,7 @@ public sealed class BanListEui : BaseEui
 
     private void OnPermsChanged(AdminPermsChangedEventArgs args)
     {
-        if (args.Player == Player && !_admins.HasAdminFlag(Player, AdminFlags.Ban))
+        if (args.Player == Player && !_admins.Can(Player, AdminNodes.PlayersBanlist, AdminFlags.Ban) && !_admins.HasAdminFlag(Player, AdminFlags.Ban)) // _Duty: узел списка банов
         {
             Close();
         }

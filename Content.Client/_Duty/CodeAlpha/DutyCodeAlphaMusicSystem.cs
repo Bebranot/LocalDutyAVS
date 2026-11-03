@@ -39,15 +39,15 @@ namespace Content.Client._Duty.CodeAlpha;
 /// PCM) осели бы в памяти клиента до конца сессии после одного раунда с Альфой. Свой кэш их и
 /// греет заранее, и отпускает, когда код снят.
 /// </summary>
-public sealed class DutyCodeAlphaMusicSystem : EntitySystem
+public sealed partial class DutyCodeAlphaMusicSystem : EntitySystem
 {
-    [Dependency] private readonly IAudioManager _audioManager = default!;
-    [Dependency] private readonly IConfigurationManager _cfg = default!;
-    [Dependency] private readonly IGameTiming _timing = default!;
-    [Dependency] private readonly IPlayerManager _player = default!;
-    [Dependency] private readonly IResourceCache _resourceCache = default!;
-    [Dependency] private readonly SharedAudioSystem _audio = default!;
-    [Dependency] private readonly Robust.Client.Audio.AudioSystem _clientAudio = default!;
+    [Dependency] private IAudioManager _audioManager = default!;
+    [Dependency] private IConfigurationManager _cfg = default!;
+    [Dependency] private IGameTiming _timing = default!;
+    [Dependency] private IPlayerManager _player = default!;
+    [Dependency] private IResourceCache _resourceCache = default!;
+    [Dependency] private SharedAudioSystem _audio = default!;
+    [Dependency] private Robust.Client.Audio.AudioSystem _clientAudio = default!;
 
     private static readonly ResPath CalmPath = new(DutyCodeAlphaVisuals.TrackCalm);
     private static readonly ResPath FinalPath = new(DutyCodeAlphaVisuals.TrackFinal);

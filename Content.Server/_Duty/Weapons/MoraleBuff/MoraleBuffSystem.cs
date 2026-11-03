@@ -9,10 +9,10 @@ namespace Content.Server._Duty.Weapons.MoraleBuff;
 /// Жизненный цикл (резист, игнор боли, скорость, очистка алерта) — в общем
 /// <c>SharedMoraleBuffSystem</c>.
 /// </summary>
-public sealed class MoraleBuffSystem : EntitySystem
+public sealed partial class MoraleBuffSystem : EntitySystem
 {
-    [Dependency] private readonly IGameTiming _timing = default!;
-    [Dependency] private readonly AlertsSystem _alerts = default!;
+    [Dependency] private IGameTiming _timing = default!;
+    [Dependency] private AlertsSystem _alerts = default!;
 
     public override void Update(float frameTime)
     {

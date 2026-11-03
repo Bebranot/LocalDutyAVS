@@ -63,6 +63,7 @@ namespace Content.Client.Input
             human.AddFunction(ContentKeyFunctions.Aim); // _Duty
             human.AddFunction(ContentKeyFunctions.Sprint); // _Duty: спринт (третья ступень)
             human.AddFunction(ContentKeyFunctions.Block); // _Duty: блок ближнего удара
+            human.AddFunction(ContentKeyFunctions.Jump); // _Duty: прыжок
             human.AddFunction(ContentKeyFunctions.SwapHands);
             human.AddFunction(ContentKeyFunctions.SwapHandsReverse);
             human.AddFunction(ContentKeyFunctions.Drop);

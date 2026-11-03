@@ -1,9 +1,9 @@
-no-names-military-ertengineer-first-dataset-1 = Техник-лейтенант
-no-names-military-ertengineer-first-dataset-2 = Техник-сержант
+no-names-military-ertengineer-first-dataset-1 = РўРµС…РЅРёРє-Р»РµР№С‚РµРЅР°РЅС‚
+no-names-military-ertengineer-first-dataset-2 = РўРµС…РЅРёРє-СЃРµСЂР¶Р°РЅС‚
 
-no-names-military-ertmedical-first-dataset-1 = Фельдшер
-no-names-military-ertmedical-first-dataset-2 = Старший фельдшер
+no-names-military-ertmedical-first-dataset-1 = Р¤РµР»СЊРґС€РµСЂ
+no-names-military-ertmedical-first-dataset-2 = РЎС‚Р°СЂС€РёР№ С„РµР»СЊРґС€РµСЂ
 
-no-names-military-ert-first-dataset-1 = Капрал
-no-names-military-ert-first-dataset-2 = Сержант
-no-names-military-ert-first-dataset-3 = Лейтенант
+no-names-military-ert-first-dataset-1 = РљР°РїСЂР°Р»
+no-names-military-ert-first-dataset-2 = РЎРµСЂР¶Р°РЅС‚
+no-names-military-ert-first-dataset-3 = Р›РµР№С‚РµРЅР°РЅС‚

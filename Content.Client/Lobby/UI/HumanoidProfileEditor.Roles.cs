@@ -93,6 +93,12 @@ public sealed partial class HumanoidProfileEditor
             ReloadPreview();
         };
 
+        // _Duty: персонализация (портировано из Space Onyx).
+        _loadoutWindow.OnLoadoutCustomizePressed += (loadoutGroup, loadoutProto) =>
+        {
+            OpenLoadoutCustomization(loadoutGroup, loadoutProto, roleLoadout, session, collection);
+        };
+
         JobOverride = jobProto;
         ReloadPreview();
 
@@ -186,7 +192,8 @@ public sealed partial class HumanoidProfileEditor
                 .Where(job => job.SetPreference)
                 .ToArray();
 
-            Array.Sort(jobs, JobUIComparer.Instance);
+            if (JobUIComparer.TryCreate(_prototypeManager, null, out var comparer))
+                Array.Sort(jobs, comparer);
 
             foreach (var job in jobs)
             {

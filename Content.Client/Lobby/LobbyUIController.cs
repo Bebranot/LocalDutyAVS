@@ -33,20 +33,20 @@ namespace Content.Client.Lobby;
 
 public sealed partial class LobbyUIController : UIController, IOnStateEntered<LobbyState>, IOnStateExited<LobbyState>
 {
-    [Dependency] private readonly IClientPreferencesManager _preferencesManager = default!;
-    [Dependency] private readonly IConfigurationManager _configurationManager = default!;
-    [Dependency] private readonly IFileDialogManager _dialogManager = default!;
-    [Dependency] private readonly IPlayerManager _playerManager = default!;
-    [Dependency] private readonly IPrototypeManager _prototypeManager = default!;
-    [Dependency] private readonly IResourceCache _resourceCache = default!;
-    [Dependency] private readonly IStateManager _stateManager = default!;
-    [Dependency] private readonly JobRequirementsManager _requirements = default!;
-    [Dependency] private readonly MarkingManager _markings = default!;
-    [Dependency] private readonly IDynamicTypeFactory _factory = default!;
-    [Dependency] private readonly IEntityManager _entMan = default!;
-    [UISystemDependency] private readonly VisualBodySystem _visualBody = default!;
-    [UISystemDependency] private readonly ClientInventorySystem _inventory = default!;
-    [UISystemDependency] private readonly StationSpawningSystem _spawn = default!;
+    [Dependency] private IClientPreferencesManager _preferencesManager = default!;
+    [Dependency] private IConfigurationManager _configurationManager = default!;
+    [Dependency] private IFileDialogManager _dialogManager = default!;
+    [Dependency] private IPlayerManager _playerManager = default!;
+    [Dependency] private IPrototypeManager _prototypeManager = default!;
+    [Dependency] private IResourceCache _resourceCache = default!;
+    [Dependency] private IStateManager _stateManager = default!;
+    [Dependency] private JobRequirementsManager _requirements = default!;
+    [Dependency] private MarkingManager _markings = default!;
+    [Dependency] private IDynamicTypeFactory _factory = default!;
+    [Dependency] private IEntityManager _entMan = default!;
+    [UISystemDependency] private VisualBodySystem _visualBody = default!;
+    [UISystemDependency] private ClientInventorySystem _inventory = default!;
+    [UISystemDependency] private StationSpawningSystem _spawn = default!;
     [UISystemDependency] private readonly GuidebookSystem _guide = default!;
 
     private CharacterSetupGui? _characterSetup;
@@ -79,8 +79,7 @@ public sealed partial class LobbyUIController : UIController, IOnStateEntered<Lo
         });
 
         _configurationManager.OnValueChanged(CCVars.GameRoleTimers, _ => RefreshProfileEditor());
-        _configurationManager.OnValueChanged(CCVars.GameRoleLoadoutTimers, _ => RefreshProfileEditor());
-        _configurationManager.OnValueChanged(CCVars.GameRoleLoadoutTimers, _ => RefreshProfileEditor());
+        _configurationManager.OnValueChanged(CCVars.GameRoleLoadoutTimers, _ => RefreshProfileEditor()); // _Duty: дубль подписки убран
 
         _configurationManager.OnValueChanged(CCVars.GameRoleWhitelist, _ => RefreshProfileEditor());
     }
@@ -245,10 +244,14 @@ public sealed partial class LobbyUIController : UIController, IOnStateEntered<Lo
         _characterSetupWindow?.Close(); // ADT-Tweak 
     }
 
-    private void OpenSavePanel()
+    private void OpenSavePanel(Action? afterResolved = null)
     {
         if (_savePanel is { IsOpen: true })
             return;
+
+        // _Duty: действие после «сохранить»/«не сохранять» (по умолчанию — закрыть редактор), чтобы то же окно
+        // подтверждения работало и при смене слота персонажа.
+        afterResolved ??= CloseProfileEditor;
 
         _savePanel = new CharacterSetupGuiSavePanel();
 
@@ -258,15 +261,18 @@ public sealed partial class LobbyUIController : UIController, IOnStateEntered<Lo
 
             _savePanel.Close();
 
-            CloseProfileEditor();
+            afterResolved();
         };
 
         _savePanel.NoSaveButton.OnPressed += _ =>
         {
             _savePanel.Close();
 
-            CloseProfileEditor();
+            afterResolved();
         };
+
+        // При отмене слот остаётся прежним — вернём кнопки выбора в исходное состояние.
+        _savePanel.OnClose += () => _characterSetup?.ReloadCharacterPickers();
 
         _savePanel.OpenCentered();
     }
@@ -375,8 +381,21 @@ public sealed partial class LobbyUIController : UIController, IOnStateEntered<Lo
 
         _characterSetup.SelectCharacter += args =>
         {
-            _preferencesManager.SelectCharacter(args);
-            ReloadCharacterSetup();
+            // _Duty-start: повторный клик по текущему слоту ничего не делает, а несохранённые правки не теряются молча.
+            if (EditedSlot == args)
+                return;
+
+            void Switch()
+            {
+                _preferencesManager.SelectCharacter(args);
+                ReloadCharacterSetup();
+            }
+
+            if (_profileEditor is { Profile: not null, IsDirty: true })
+                OpenSavePanel(Switch);
+            else
+                Switch();
+            // _Duty-end
         };
 
         _characterSetup.DeleteCharacter += args =>

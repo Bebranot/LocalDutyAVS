@@ -9,9 +9,9 @@ namespace Content.Server._Duty.ERT;
 /// _Duty: <c>ertcallnow [вариант]</c> — вызывает ОБР немедленно. Без аргумента — шаттл <c>default</c>.
 /// </summary>
 [AdminCommand(AdminFlags.Admin)]
-public sealed class ErtCallNowCommand : IConsoleCommand
+public sealed partial class ErtCallNowCommand : IConsoleCommand
 {
-    [Dependency] private readonly IEntitySystemManager _sysMan = default!;
+    [Dependency] private IEntitySystemManager _sysMan = default!;
 
     public string Command => "ertcallnow";
     public string Description => Loc.GetString("duty-ert-now-description");
@@ -32,9 +32,9 @@ public sealed class ErtCallNowCommand : IConsoleCommand
 /// Без аргумента — шаттл <c>default</c>.
 /// </summary>
 [AdminCommand(AdminFlags.Admin)]
-public sealed class ErtCall5MinCommand : IConsoleCommand
+public sealed partial class ErtCall5MinCommand : IConsoleCommand
 {
-    [Dependency] private readonly IEntitySystemManager _sysMan = default!;
+    [Dependency] private IEntitySystemManager _sysMan = default!;
 
     public string Command => "ertcall5min";
     public string Description => Loc.GetString("duty-ert-5min-description");

@@ -63,6 +63,24 @@ public interface ISharedAdminManager
         return data != null && data.HasFlag(flag, includeDeAdmin);
     }
 
+    // _Duty-start: проверка узла дерева прав
+    /// <summary>
+    ///     Есть ли у игрока узел дерева прав (родитель включает вложенные). Узлы: <c>adminPermission</c> в прототипах.
+    /// </summary>
+    bool HasAdminNode(ICommonSession player, string node, bool includeDeAdmin = false)
+    {
+        var data = GetAdminData(player, includeDeAdmin);
+        return data != null && data.HasNode(node, includeDeAdmin);
+    }
+
+    /// <inheritdoc cref="HasAdminNode(ICommonSession,string,bool)"/>
+    bool HasAdminNode(EntityUid player, string node, bool includeDeAdmin = false)
+    {
+        var data = GetAdminData(player, includeDeAdmin);
+        return data != null && data.HasNode(node, includeDeAdmin);
+    }
+    // _Duty-end
+
     /// <summary>
     ///     Checks if a player is an admin.
     /// </summary>

@@ -12,11 +12,11 @@ namespace Content.Client._Duty.NightVision;
 /// активна ADT-система ПНВ. Состояние определяем по наличию <see cref="NightVisionComponent"/>
 /// (предметный ПНВ добавляет/снимает компонент на вкл/выкл), чтобы не лезть в его [Access].
 /// </summary>
-public sealed class DutyNightVisionOverlay : Overlay
+public sealed partial class DutyNightVisionOverlay : Overlay
 {
-    [Dependency] private readonly IEntityManager _entMan = default!;
-    [Dependency] private readonly IPlayerManager _player = default!;
-    [Dependency] private readonly IPrototypeManager _proto = default!;
+    [Dependency] private IEntityManager _entMan = default!;
+    [Dependency] private IPlayerManager _player = default!;
+    [Dependency] private IPrototypeManager _proto = default!;
 
     private static readonly ProtoId<ShaderPrototype> ShaderId = "DutyNightVision";
     private readonly ShaderInstance _shader;

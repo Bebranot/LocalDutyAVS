@@ -1,6 +1,6 @@
 using Content.Server.Antag;
 using Content.Server.Polymorph.Components;
-using Content.Shared.Mindshield.Components;
+using Content.Shared.Mindshield;
 using Content.Shared.Roles.Components;
 using Robust.Shared.Physics.Events;
 
@@ -8,7 +8,8 @@ namespace Content.Server.Vulpizator.System;
 
 public sealed class VulpizatorSystem : EntitySystem
 {
-    [Dependency] private readonly AntagSelectionSystem _antag = default!;
+    [Dependency] private AntagSelectionSystem _antag = default!;
+    [Dependency] private MindShieldSystem _mindShield = default!;
     public const string Vulpa = "ADTMobRandomVulpkanin";
 
     public override void Initialize()
@@ -25,16 +26,13 @@ public sealed class VulpizatorSystem : EntitySystem
             {
                 return;
             }
-            // _Duty: было в обратном порядке — MetaDataComponent есть практически у ЛЮБОЙ
-            // сущности, так что первая ветка всегда срабатывала и специфичная проверка
-            // MindShieldComponent (предупреждение про майндщит) была недостижима.
-            // Специфичная проверка должна идти первой.
-            if (HasComp<MindShieldComponent>(uid))
+            _mindShield.GetMindshieldStatus(uid, out var isMindshielded, out _);
+            if (isMindshielded)
             {
-                _antag.SendBriefing(uid, Loc.GetString("vulpa-role-mindshild"), Color.Red, null);
+                _antag.SendBriefing(uid, Loc.GetString("vulpa-role-greeting-mindshild"), Color.Red, null);
                 EnsureComp<RoleBriefingComponent>(uid);
             }
-            else if (HasComp<MetaDataComponent>(uid))
+            else
             {
                 _antag.SendBriefing(uid, Loc.GetString("vulpa-role-greeting"), Color.Red, null);
                 EnsureComp<RoleBriefingComponent>(uid);

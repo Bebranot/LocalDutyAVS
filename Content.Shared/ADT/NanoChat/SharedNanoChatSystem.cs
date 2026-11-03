@@ -9,7 +9,13 @@ namespace Content.Shared.ADT.NanoChat;
 /// </summary>
 public abstract class SharedNanoChatSystem : EntitySystem
 {
-    [Dependency] private readonly IGameTiming _timing = default!;
+    [Dependency] private IGameTiming _timing = default!;
+
+    /// <summary>
+    ///     Maximum number of messages kept per conversation. Oldest messages are dropped
+    ///     once this is exceeded so a card's stored history doesn't grow without bound.
+    /// </summary>
+    public const int MaxMessagesPerChat = 300;
 
     public override void Initialize()
     {
@@ -127,6 +133,12 @@ public abstract class SharedNanoChatSystem : EntitySystem
         }
 
         messages.Add(message);
+
+        // Trim oldest messages once we exceed the cap, so a long-running card's history
+        // doesn't grow forever.
+        if (messages.Count > MaxMessagesPerChat)
+            messages.RemoveRange(0, messages.Count - MaxMessagesPerChat);
+
         card.Comp.LastMessageTime = _timing.CurTime;
         Dirty(card);
     }

@@ -1,0 +1,14 @@
+- type: entity
+  parent: BaseAction
+  id: ActionDutyDevourerMassScan
+  name: Mass Scanner Interface
+  description: View a Mass Scanner Interface.
+  components:
+  - type: Action
+    priority: -5
+  - type: Sprite
+    sprite: Objects/Tools/handheld_mass_scanner.rsi
+    layers:
+    - state: icon
+  - type: InstantAction
+    event: !type:ToggleIntrinsicUIEvent { key: enum.RadarConsoleUiKey.Key }

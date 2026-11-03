@@ -148,6 +148,7 @@ namespace Content.Client.Lobby.UI
             _allowFlavorText = _cfgManager.GetCVar(CCVars.FlavorText);
 
             Markings.SetModel(_markingsModel);
+            SetDefaultLanguagesButton.OnPressed += _ => SetDefaultLanguages(); // _Duty: один раз, а не при каждом RefreshLanguages
 
             ImportButton.OnPressed += args =>
             {
@@ -185,8 +186,7 @@ namespace Content.Client.Lobby.UI
 
             NameEdit.OnTextChanged += args => { SetName(args.Text); };
             NameEdit.IsValid = args => args.Length <= _maxNameLength;
-            NameRandomize.OnPressed += args => RandomizeName();
-            RandomizeEverythingButton.OnPressed += args => { RandomizeEverything(); };
+            RandomizeUnlockedButton.OnPressed += args => { RandomizeProfile(); };
             WarningLabel.SetMarkup($"[color=red]{Loc.GetString("humanoid-profile-editor-naming-rules-warning")}[/color]");
 
             #endregion Name
@@ -204,6 +204,16 @@ namespace Content.Client.Lobby.UI
             };
 
             #endregion Sex
+
+            #region Voice
+
+            VoiceButton.OnItemSelected += args =>
+            {
+                VoiceButton.SelectId(args.Id);
+                SetVoice(_voices[args.Id]);
+            };
+
+            #endregion
 
             #region Age
 
@@ -297,6 +307,8 @@ namespace Content.Client.Lobby.UI
                 }
             };
             // ADT Species Window end
+
+            InitializeBodyTypes(); // ADT-Tweak
 
             #region Skin
 
@@ -479,7 +491,7 @@ namespace Content.Client.Lobby.UI
 
             _ttsTab.OnVoiceSelected += voiceId =>
             {
-                SetVoice(voiceId);
+                SetTTSVoice(voiceId);
                 _ttsTab.SetSelectedVoice(voiceId);
             };
 
@@ -495,7 +507,7 @@ namespace Content.Client.Lobby.UI
                 return;
 
             _ttsTab.UpdateControls(Profile, Profile.Sex, Profile.Species); //ADT-tweak: добавлена раса
-            _ttsTab.SetSelectedVoice(Profile.Voice);
+            _ttsTab.SetSelectedVoice(Profile.TTSVoice);
         }
 
         #endregion
@@ -503,6 +515,9 @@ namespace Content.Client.Lobby.UI
 
         private void SetDirty()
         {
+            if (_loadingProfile) // _Duty: итог считается один раз в конце SetProfile
+                return;
+
             // If it equals default then reset the button.
             if (Profile == null || _preferencesManager.Preferences?.SelectedCharacter.MemberwiseEquals(Profile) == true)
             {
@@ -526,6 +541,7 @@ namespace Content.Client.Lobby.UI
                 return;
 
             SpriteView.LoadPreview(Profile, JobOverride, ShowClothes.Pressed);
+            _bodyTypeWindow?.LoadPreview(Profile, JobOverride, ShowClothes.Pressed); // ADT-Tweak
 
             // Check and set the dirty flag to enable the save/reset buttons as appropriate.
             SetDirty();
@@ -551,9 +567,18 @@ namespace Content.Client.Lobby.UI
             IsDirty = false;
             JobOverride = null;
 
+            // _Duty-start: пока загружаем профиль, обработчики контролов не перерисовывают превью и не пересчитывают «грязность»
+            // (раньше это происходило ~5 раз подряд); итог считается один раз в конце.
+            _loadingProfile = true;
+            _lastHeadshotUrl = null;
+            _headshotRequestCts?.Cancel();
+            try
+            {
+            // _Duty-end
             UpdateNameEdit();
             UpdateFlavorTextEdit();
             UpdateSexControls();
+            UpdateVoiceControls();
             UpdateGenderControls();
             UpdateSkinColor();
             UpdateSpawnPriorityControls();
@@ -561,6 +586,7 @@ namespace Content.Client.Lobby.UI
             UpdateEyePickers();
             UpdateSaveButton();
             UpdateMarkings();
+            UpdateBodyTypeControls(); // ADT-Tweak
             UpdateTTSVoicesControls(); // ADT-Tweak
             UpdateBarkVoicesControls(); // ADT Barks
 
@@ -571,23 +597,37 @@ namespace Content.Client.Lobby.UI
             RefreshSpecies();
             RefreshTraits();
             RefreshFlavorText();
-            ReloadPreview();
 
             if (Profile != null)
             {
                 PreferenceUnavailableButton.SelectId((int)Profile.PreferenceUnavailable);
             }
+            // _Duty-start
+            }
+            finally
+            {
+                _loadingProfile = false;
+            }
+
+            ReloadPreview();
+            // _Duty-end
         }
+
+        private bool _loadingProfile; // _Duty
 
         /// <summary>
         /// A slim reload that only updates the entity itself and not any of the job entities, etc.
         /// </summary>
         private void ReloadProfilePreview()
         {
+            if (_loadingProfile) // _Duty
+                return;
+
             if (Profile == null || !_entManager.EntityExists(SpriteView.PreviewDummy))
                 return;
 
             _entManager.System<SharedVisualBodySystem>().ApplyProfileTo(SpriteView.PreviewDummy, Profile);
+            _bodyTypeWindow?.SetProfile(Profile); // ADT-Tweak
 
             // Check and set the dirty flag to enable the save/reset buttons as appropriate.
             SetDirty();
@@ -687,6 +727,11 @@ namespace Content.Client.Lobby.UI
             _loadoutWindow?.Dispose();
             _loadoutWindow = null;
 
+            // ADT-Tweak-Start
+            _bodyTypeWindow?.Dispose();
+            _bodyTypeWindow = null;
+            // ADT-Tweak-End
+
             _headshotRequestCts?.Cancel();
             _headshotRequestCts = null;
 
@@ -707,38 +752,40 @@ namespace Content.Client.Lobby.UI
         }
 
         // ADT-Tweak-Start
-        private void SetVoice(string newVoice)
+        private void SetTTSVoice(string newVoice)
         {
             Profile = Profile?.WithVoice(newVoice);
-            IsDirty = true;
+            SetDirty(); // _Duty: раньше всегда помечало «изменено», даже при возврате к сохранённому голосу
         }
         // ADT-Tweak-End
         // ADT Barks start
         private void SetBarkProto(string prototype)
         {
             Profile = Profile?.WithBarkProto(prototype);
-            ReloadPreview();
-            SetDirty();
+            SetDirty(); // _Duty: ReloadPreview не нужен — барки на внешность не влияют
         }
 
         private void SetBarkPitch(float pitch)
         {
             Profile = Profile?.WithBarkPitch(Math.Clamp(pitch, _cfgManager.GetCVar(ADTCCVars.BarksMinPitch), _cfgManager.GetCVar(ADTCCVars.BarksMaxPitch)));
-            ReloadPreview();
             SetDirty();
         }
 
         private void SetBarkMinVariation(float variation)
         {
-            Profile = Profile?.WithBarkMinVariation(Math.Clamp(variation, _cfgManager.GetCVar(ADTCCVars.BarksMinDelay), Profile.Bark.MaxVar));
-            ReloadPreview();
+            if (Profile is null)
+                return;
+
+            Profile = Profile.WithBarkMinVariation(Math.Clamp(variation, _cfgManager.GetCVar(ADTCCVars.BarksMinDelay), Profile.Bark.MaxVar));
             SetDirty();
         }
 
         private void SetBarkMaxVariation(float variation)
         {
-            Profile = Profile?.WithBarkMaxVariation(Math.Clamp(variation, Profile.Bark.MinVar, _cfgManager.GetCVar(ADTCCVars.BarksMaxDelay)));
-            ReloadPreview();
+            if (Profile is null)
+                return;
+
+            Profile = Profile.WithBarkMaxVariation(Math.Clamp(variation, Profile.Bark.MinVar, _cfgManager.GetCVar(ADTCCVars.BarksMaxDelay)));
             SetDirty();
         }
         // ADT Barks end
@@ -747,6 +794,11 @@ namespace Content.Client.Lobby.UI
         {
             SaveButton.Disabled = Profile is null || !IsDirty;
             ResetButton.Disabled = Profile is null || !IsDirty;
+
+            // _Duty: заметный индикатор несохранённых изменений
+            var dirty = Profile is not null && IsDirty;
+            SaveButton.Text = Loc.GetString("humanoid-profile-editor-save-button") + (dirty ? " *" : string.Empty);
+            SaveButton.ToolTip = dirty ? Loc.GetString("duty-character-unsaved") : null;
         }
 
         private void SetPreviewRotation(Direction direction)

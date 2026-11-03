@@ -11,11 +11,15 @@
         ADTSprayBottleStypticPowder: 3 # ADT-Tweak
         ADTSprayBottleSilverSulfadiazine: 3 # ADT-Tweak
         ADTBloodPackTransfusionFull: 3 # ADT Tweak: Blood IV
-        ChemistryBottleEpinephrine: 3
+        ChemistryBottleEpinephrine: 6
+        ChemistryBottleDexalinPlus: 3
+        ChemistryBottleSaline: 3
         PillCanisterTricordrazine: 2
     ADTVendingCategoryMedEquipment: # ADT-Tweak
         HandheldHealthAnalyzer: 1
         Syringe: 3
+        DutyDefibrillatorLifePak40s: 1 # _Duty
+        DutyDefibGel: 3 # _Duty
   contrabandInventory:
     PillCanisterRandom: 1
 
@@ -73,7 +77,9 @@
         BoxBodyBag: 1
         # Optional / Situational Gear
         BoxBottle: 3
-        Defibrillator: 2 # Easily shared between several people
+#        Defibrillator: 2 # Easily shared between several people # _Duty: заменён на LifePak-40s
+        DutyDefibrillatorLifePak40s: 2 # _Duty
+        DutyDefibGel: 5 # _Duty
         Syringe: 4
     ClothingOuterHospitalGown: 2 # Not a popular item, so less stock
   contrabandInventory:

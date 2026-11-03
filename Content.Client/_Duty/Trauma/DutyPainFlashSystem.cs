@@ -12,13 +12,16 @@ namespace Content.Client._Duty.Trauma;
 /// <see cref="DutyPainFlashEvent"/> и плавно гаснет. Оверлей висит всегда, но сам себя не рисует,
 /// пока сила равна нулю, поэтому добавлять и снимать его на каждую вспышку не нужно.
 /// </summary>
-public sealed class DutyPainFlashSystem : EntitySystem
+public sealed partial class DutyPainFlashSystem : EntitySystem
 {
-    [Dependency] private readonly IOverlayManager _overlay = default!;
+    [Dependency] private IOverlayManager _overlay = default!;
 
     private DutyPainFlashOverlay _flash = default!;
 
+    /// <summary>Пик текущей вспышки и сколько она уже гаснет — Level считается из них каждый кадр.</summary>
+    private float _peak;
     private float _duration;
+    private float _elapsed;
 
     public override void Initialize()
     {
@@ -38,10 +41,17 @@ public sealed class DutyPainFlashSystem : EntitySystem
 
     private void OnPainFlash(DutyPainFlashEvent ev)
     {
-        // Новая вспышка поверх недогасшей — берём максимум, чтобы серия неудач не выглядела
-        // слабее одной.
-        _flash.Level = MathF.Max(_flash.Level, Math.Clamp(ev.Intensity, 0f, 1f));
-        _duration = MathF.Max(_duration, MathF.Max(ev.Duration, 0.1f));
+        var intensity = Math.Clamp(ev.Intensity, 0f, 1f);
+        var duration = MathF.Max(ev.Duration, 0.1f);
+
+        // Новая вспышка поверх недогасшей — не слабее текущего уровня, чтобы серия неудач не
+        // выглядела слабее одной, и с отсчётом затухания заново. Длительность — новой вспышки:
+        // раньше она бралась максимумом и не сбрасывалась, и после одной долгой вспышки все
+        // короткие до конца раунда гасли так же медленно.
+        _peak = MathF.Max(_flash.Level, intensity);
+        _duration = duration;
+        _elapsed = 0f;
+        _flash.Level = _peak;
     }
 
     public override void FrameUpdate(float frameTime)
@@ -51,9 +61,12 @@ public sealed class DutyPainFlashSystem : EntitySystem
         if (_flash.Level <= 0f)
             return;
 
-        _flash.Level -= frameTime / _duration;
+        _elapsed += frameTime;
+        var t = Math.Clamp(_elapsed / _duration, 0f, 1f);
 
-        if (_flash.Level <= 0f)
-            _flash.Level = 0f;
+        // Ease-out: боль бьёт сразу и быстро спадает, а слабый хвост тает мягко, без «обрыва» в
+        // конце, как у линейного затухания.
+        var remaining = 1f - t;
+        _flash.Level = t >= 1f ? 0f : _peak * remaining * remaining;
     }
 }

@@ -16,12 +16,12 @@ namespace Content.Client._Duty.FuryStimulator;
 /// (<c>PlayGlobal</c>) остаётся чистой. Общие предсказываемые эффекты (скорость, оружие) —
 /// в <see cref="SharedFuryStimulatorSystem"/>.
 /// </summary>
-public sealed class FuryStimulatorSystem : SharedFuryStimulatorSystem
+public sealed partial class FuryStimulatorSystem : SharedFuryStimulatorSystem
 {
-    [Dependency] private readonly IOverlayManager _overlay = default!;
-    [Dependency] private readonly IGameTiming _timing = default!;
-    [Dependency] private readonly IPlayerManager _player = default!;
-    [Dependency] private readonly IConfigurationManager _cfg = default!;
+    [Dependency] private IOverlayManager _overlay = default!;
+    [Dependency] private IGameTiming _timing = default!;
+    [Dependency] private IPlayerManager _player = default!;
+    [Dependency] private IConfigurationManager _cfg = default!;
 
     /// <summary>Частота колебаний «восьмёрки», рад/с.</summary>
     private const float ShakeSpeed = 4f;
@@ -69,9 +69,11 @@ public sealed class FuryStimulatorSystem : SharedFuryStimulatorSystem
         }
     }
 
-    public override void Update(float frameTime)
+    // FrameUpdate, а не Update: клиентский Update при повторной симуляции зовётся по нескольку раз
+    // за тик — приглушение доезжало бы тем быстрее, чем выше пинг, и CVar дёргался бы пачкой.
+    public override void FrameUpdate(float frameTime)
     {
-        base.Update(frameTime);
+        base.FrameUpdate(frameTime);
         UpdateMuffle(frameTime);
     }
 
@@ -97,8 +99,14 @@ public sealed class FuryStimulatorSystem : SharedFuryStimulatorSystem
             }
 
             var target = float.Lerp(_baseZOffset, MuffleZOffset, intensity);
-            _curZOffset = MoveTowards(_curZOffset, target, MuffleRampSpeed * frameTime);
-            _cfg.SetCVar(CVars.AudioZOffset, _curZOffset);
+            var next = MoveTowards(_curZOffset, target, MuffleRampSpeed * frameTime);
+
+            // Дошли до цели — не дёргаем CVar каждый кадр: каждая установка будит всех подписчиков.
+            if (!next.Equals(_curZOffset))
+            {
+                _curZOffset = next;
+                _cfg.SetCVar(CVars.AudioZOffset, _curZOffset);
+            }
         }
         else if (_muffling)
         {

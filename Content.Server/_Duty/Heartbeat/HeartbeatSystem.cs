@@ -12,9 +12,9 @@ namespace Content.Server._Duty.Heartbeat;
 /// реальной смене уровня). Воспроизведение звука живёт на клиенте у владельца тела
 /// (<c>Content.Client._Duty.Heartbeat.HeartbeatSystem</c>) и в анализаторе здоровья.
 /// </summary>
-public sealed class HeartbeatSystem : SharedHeartbeatSystem
+public sealed partial class HeartbeatSystem : SharedHeartbeatSystem
 {
-    [Dependency] private readonly IGameTiming _timing = default!;
+    [Dependency] private IGameTiming _timing = default!;
 
     public override void Initialize()
     {

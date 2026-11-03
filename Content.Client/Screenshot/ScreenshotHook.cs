@@ -13,14 +13,14 @@ using SixLabors.ImageSharp.PixelFormats;
 
 namespace Content.Client.Screenshot
 {
-    internal sealed class ScreenshotHook : IScreenshotHook
+    internal sealed partial class ScreenshotHook : IScreenshotHook
     {
         private static readonly ResPath BaseScreenshotPath = new("/Screenshots");
 
-        [Dependency] private readonly IInputManager _inputManager = default!;
-        [Dependency] private readonly IClyde _clyde = default!;
-        [Dependency] private readonly IResourceManager _resourceManager = default!;
-        [Dependency] private readonly IStateManager _stateManager = default!;
+        [Dependency] private IInputManager _inputManager = default!;
+        [Dependency] private IClyde _clyde = default!;
+        [Dependency] private IResourceManager _resourceManager = default!;
+        [Dependency] private IStateManager _stateManager = default!;
 
         private ISawmill _sawmill = default!;
 
@@ -66,6 +66,11 @@ namespace Content.Client.Screenshot
                     {
                         filename = $"{filename}-{i}";
                     }
+
+                    // _Duty: два скриншота за одну секунду дают одинаковое имя — сразу берём
+                    // следующее свободное, а не ловим IOException с простынёй стектрейса в лог.
+                    if (_resourceManager.UserData.Exists(BaseScreenshotPath / $"{filename}.png"))
+                        continue;
 
                     await using var file =
                         _resourceManager.UserData.Open(BaseScreenshotPath / $"{filename}.png", FileMode.CreateNew, FileAccess.Write, FileShare.None);

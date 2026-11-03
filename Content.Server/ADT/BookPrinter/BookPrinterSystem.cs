@@ -33,19 +33,19 @@ namespace Content.Server.ADT.BookPrinter
     [UsedImplicitly]
     public sealed partial class BookPrinterSystem : EntitySystem
     {
-        [Dependency] private readonly IAdminLogManager _adminLogger = default!;
-        [Dependency] private readonly SharedAudioSystem _audio = default!;
-        [Dependency] private readonly SharedAmbientSoundSystem _ambientSoundSystem = default!;
-        [Dependency] private readonly UserInterfaceSystem _userInterfaceSystem = default!;
-        [Dependency] private readonly AppearanceSystem _appearanceSystem = default!;
-        [Dependency] private readonly IChatManager _chatManager = default!;
-        [Dependency] private readonly ItemSlotsSystem _itemSlotsSystem = default!;
-        [Dependency] private readonly AccessReaderSystem _accessReader = default!;
-        [Dependency] private readonly PopupSystem _popupSystem = default!;
-        [Dependency] private readonly MetaDataSystem _metaData = default!;
-        [Dependency] private readonly PaperSystem _paperSystem = default!;
-        [Dependency] private readonly TagSystem _tag = default!;
-        [Dependency] private readonly IGameTiming _gameTiming = default!;
+        [Dependency] private IAdminLogManager _adminLogger = default!;
+        [Dependency] private SharedAudioSystem _audio = default!;
+        [Dependency] private SharedAmbientSoundSystem _ambientSoundSystem = default!;
+        [Dependency] private UserInterfaceSystem _userInterfaceSystem = default!;
+        [Dependency] private AppearanceSystem _appearanceSystem = default!;
+        [Dependency] private IChatManager _chatManager = default!;
+        [Dependency] private ItemSlotsSystem _itemSlotsSystem = default!;
+        [Dependency] private AccessReaderSystem _accessReader = default!;
+        [Dependency] private PopupSystem _popupSystem = default!;
+        [Dependency] private MetaDataSystem _metaData = default!;
+        [Dependency] private PaperSystem _paperSystem = default!;
+        [Dependency] private TagSystem _tag = default!;
+        [Dependency] private IGameTiming _gameTiming = default!;
 
         public readonly List<SharedBookPrinterEntry> BookPrinterEntries = new();
         private readonly GlobalBookPrinterCooldownManager _globalCooldown = new();
@@ -106,7 +106,7 @@ namespace Content.Server.ADT.BookPrinter
 
         private void UpdateVisuals(Entity<BookPrinterComponent> ent)
         {
-            var cartridge = _itemSlotsSystem.GetItemOrNull(ent, "cartridgeSlot");
+            var cartridge = _itemSlotsSystem.GetItemOrNull(ent.Owner, "cartridgeSlot");
             var workInProgress = ent.Comp.WorkType is not null && ent.Comp.WorkTimeRemaining > 0.0f;
 
             _appearanceSystem.SetData(ent, BookPrinterVisualLayers.Working, workInProgress);
@@ -144,8 +144,8 @@ namespace Content.Server.ADT.BookPrinter
 
         private bool IsRoutineAllowed(Entity<BookPrinterComponent> bookPrinter)
         {
-            var bookContainer = _itemSlotsSystem.GetItemOrNull(bookPrinter, "bookSlot");
-            var cartridgeContainer = _itemSlotsSystem.GetItemOrNull(bookPrinter, "cartridgeSlot");
+            var bookContainer = _itemSlotsSystem.GetItemOrNull(bookPrinter.Owner, "bookSlot");
+            var cartridgeContainer = _itemSlotsSystem.GetItemOrNull(bookPrinter.Owner, "cartridgeSlot");
 
             // _Duty: было `cartridgeComp.FullCharge > CartridgeUsage` — это проверка ЁМКОСТИ картриджа,
             // а не текущего заряда, и почти всегда true. Из-за этого при CurrentCharge меньше
@@ -161,7 +161,7 @@ namespace Content.Server.ADT.BookPrinter
 
         private void DecreaseCartridgeCharge(Entity<BookPrinterComponent> bookPrinter)
         {
-            var cartridgeContainer = _itemSlotsSystem.GetItemOrNull(bookPrinter, "cartridgeSlot");
+            var cartridgeContainer = _itemSlotsSystem.GetItemOrNull(bookPrinter.Owner, "cartridgeSlot");
             if (!TryComp<BookPrinterCartridgeComponent>(cartridgeContainer, out var cartridgeComp)
                 || cartridgeComp.CurrentCharge < bookPrinter.Comp.CartridgeUsage)
                 return;
@@ -200,8 +200,8 @@ namespace Content.Server.ADT.BookPrinter
 
         private void UpdateUiState(Entity<BookPrinterComponent> bookPrinter)
         {
-            var bookContainer = _itemSlotsSystem.GetItemOrNull(bookPrinter, "bookSlot");
-            var cartridgeContainer = _itemSlotsSystem.GetItemOrNull(bookPrinter, "cartridgeSlot");
+            var bookContainer = _itemSlotsSystem.GetItemOrNull(bookPrinter.Owner, "bookSlot");
+            var cartridgeContainer = _itemSlotsSystem.GetItemOrNull(bookPrinter.Owner, "cartridgeSlot");
             var bookName = bookContainer is not null ? Name(bookContainer.Value) : null;
             var bookDescription = bookContainer is not null ? Description(bookContainer.Value) : null;
             float? cartridgeCharge = cartridgeContainer is not null ?
@@ -235,13 +235,13 @@ namespace Content.Server.ADT.BookPrinter
 
         private void SetLockOnAllSlots(Entity<BookPrinterComponent> bookPrinter, bool lockValue)
         {
-            _itemSlotsSystem.SetLock(bookPrinter, "cartridgeSlot", lockValue);
-            _itemSlotsSystem.SetLock(bookPrinter, "bookSlot", lockValue);
+            _itemSlotsSystem.SetLock(bookPrinter.Owner, "cartridgeSlot", lockValue);
+            _itemSlotsSystem.SetLock(bookPrinter.Owner, "bookSlot", lockValue);
         }
 
         private void OnClearContainerMessage(Entity<BookPrinterComponent> bookPrinter, ref BookPrinterClearContainerMessage message)
         {
-            var bookContainer = _itemSlotsSystem.GetItemOrNull(bookPrinter, "bookSlot");
+            var bookContainer = _itemSlotsSystem.GetItemOrNull(bookPrinter.Owner, "bookSlot");
             if (bookContainer is not { Valid: true })
                 return;
 
@@ -256,7 +256,7 @@ namespace Content.Server.ADT.BookPrinter
 
         private void OnUploadMessage(Entity<BookPrinterComponent> bookPrinter, ref BookPrinterUploadMessage message)
         {
-            var bookContainer = _itemSlotsSystem.GetItemOrNull(bookPrinter, "bookSlot");
+            var bookContainer = _itemSlotsSystem.GetItemOrNull(bookPrinter.Owner, "bookSlot");
             if (bookContainer is not { Valid: true })
                 return;
 
@@ -281,7 +281,7 @@ namespace Content.Server.ADT.BookPrinter
 
         private void OnPrintBookMessage(Entity<BookPrinterComponent> bookPrinter, ref BookPrinterPrintBookMessage message)
         {
-            var bookContainer = _itemSlotsSystem.GetItemOrNull(bookPrinter, "bookSlot");
+            var bookContainer = _itemSlotsSystem.GetItemOrNull(bookPrinter.Owner, "bookSlot");
             if (bookContainer is not { Valid: true })
                 return;
             if (BookPrinterEntries.Count() < 1)
@@ -303,7 +303,7 @@ namespace Content.Server.ADT.BookPrinter
 
         private void OnCopyPasteMessage(Entity<BookPrinterComponent> bookPrinter, ref BookPrinterCopyPasteMessage message)
         {
-            var bookContainer = _itemSlotsSystem.GetItemOrNull(bookPrinter, "bookSlot");
+            var bookContainer = _itemSlotsSystem.GetItemOrNull(bookPrinter.Owner, "bookSlot");
             if (bookContainer is not { Valid: true })
                 return;
 
@@ -334,7 +334,7 @@ namespace Content.Server.ADT.BookPrinter
 
         private void ProcessTask(Entity<BookPrinterComponent> bookPrinter)
         {
-            var bookContainer = _itemSlotsSystem.GetItemOrNull(bookPrinter, "bookSlot");
+            var bookContainer = _itemSlotsSystem.GetItemOrNull(bookPrinter.Owner, "bookSlot");
 
             if (bookContainer is { Valid: true })
             {

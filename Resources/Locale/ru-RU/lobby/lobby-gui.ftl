@@ -6,3 +6,5 @@ ui-lobby-observe-button = Наблюдать
 ui-lobby-ready-up-button = Готовность
 ui-lobby-online-players-block = Текущие игроки
 ui-lobby-server-info-block = Серверная информация
+# _Duty: ключ кнопки манифеста в лобби отсутствовал — показывался сырой ключ
+ui-lobby-manifest-button = Манифест экипажа

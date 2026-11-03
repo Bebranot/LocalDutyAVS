@@ -1,5 +1,6 @@
 using Content.Server.Medical.Components;
-using Content.Shared.ADT.Addiction;
+using Content.Server.ADT.Addiction; // ADT-Tweak
+using Content.Shared._Duty.Trauma.Systems; // _Duty
 using Content.Shared.Body.Components;
 using Content.Shared.Chemistry.EntitySystems;
 using Content.Shared.Damage.Components;
@@ -21,17 +22,17 @@ using Robust.Shared.Audio.Systems;
 using Robust.Shared.Containers;
 using Robust.Shared.Timing;
 using Content.Server.Body.Systems;
+using Content.Shared.Body.Systems;
 using Content.Shared.Mobs; // _Duty
 using Content.Server._Duty.HealthAnalyzer; // _Duty
 using Content.Shared._Duty.HealthAnalyzer; // _Duty
 using Content.Shared._Duty.Heartbeat; // _Duty
-using Content.Shared._Duty.Trauma.Systems; // _Duty
 using Content.Shared.Inventory;
 using Content.Shared.Verbs;
 
 namespace Content.Server.Medical;
 
-public sealed class HealthAnalyzerSystem : EntitySystem
+public sealed partial class HealthAnalyzerSystem : EntitySystem
 {
     [Dependency] private readonly IGameTiming _timing = default!;
     [Dependency] private readonly PowerCellSystem _cell = default!;
@@ -45,6 +46,7 @@ public sealed class HealthAnalyzerSystem : EntitySystem
     [Dependency] private readonly BloodstreamSystem _bloodstreamSystem = default!;
     [Dependency] private readonly SharedHeartbeatSystem _heartbeat = default!; // _Duty
     [Dependency] private readonly TraumaAnalyzerSystem _traumaAnalyzer = default!; // _Duty
+    [Dependency] private AddictionSystem _addiction = default!; // ADT-Tweak
 
     /// <summary>
     /// _Duty: последнее отправленное сканирующему звуковое состояние пульса, по анализатору.
@@ -405,7 +407,7 @@ public sealed class HealthAnalyzerSystem : EntitySystem
         var bodyTemperature = float.NaN;
 
         if (TryComp<TemperatureComponent>(entity, out var temp))
-            bodyTemperature = temp.CurrentTemperature;
+            bodyTemperature = temp.Temperature;
 
         var bloodAmount = float.NaN;
         var bleeding = false;
@@ -443,22 +445,8 @@ public sealed class HealthAnalyzerSystem : EntitySystem
         }
         // ADT-Tweak end
 
-        // _Duty: тяжёлые травмы (переломы с тирами, вывихи, артериальное кровотечение).
         var traumas = _traumaAnalyzer.GetEntries(entity);
-
-        // ADT-Tweak-Start: список зависимостей пациента (только сформировавшиеся, WasAddicted)
-        List<AddictionInfo>? addictions = null;
-        if (TryComp<AddictionComponent>(entity, out var addictionComp))
-        {
-            foreach (var channel in addictionComp.Channels)
-            {
-                if (!channel.WasAddicted)
-                    continue;
-
-                addictions ??= new List<AddictionInfo>();
-                addictions.Add(new AddictionInfo(channel.Kind, AddictionStage.FromLevel(channel.Level), channel.Permanent));
-            }
-        }
+        var addictions = _addiction.GetAddictionInfo(entity);
         // ADT-Tweak-End
 
         return new HealthAnalyzerUiState(

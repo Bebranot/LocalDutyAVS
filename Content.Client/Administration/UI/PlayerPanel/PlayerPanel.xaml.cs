@@ -1,3 +1,4 @@
+using Content.Shared._Duty.Administration;
 using Content.Client.Administration.Managers;
 using Content.Client.UserInterface.Controls;
 using Content.Shared.Administration;
@@ -99,6 +100,16 @@ public sealed partial class PlayerPanel : FancyWindow
         SharedConnections.Text = Loc.GetString("player-panel-shared-connections", ("sharedConnections", sharedConnections));
     }
 
+    public void SetTrustScore(float trustScore)
+    {
+        TrustScore.Text = Loc.GetString("player-panel-trust-score", ("trustScore", trustScore));
+    }
+
+    public void SetAccountCreationDate(DateTime? date)
+    {
+        AccountCreationDate.Text = date != null ? Loc.GetString("player-panel-account-creation", ("date", date.Value)) : null;
+    }
+
     public void SetPlaytime(TimeSpan playtime)
     {
         Playtime.Text = Loc.GetString("player-panel-playtime",
@@ -130,7 +141,12 @@ public sealed partial class PlayerPanel : FancyWindow
         WhitelistToggle.Disabled =
             !(_adminManager.CanCommand("whitelistadd") && _adminManager.CanCommand("whitelistremove"));
         LogsButton.Disabled = !_adminManager.CanCommand("adminlogs");
-        RejuvenateButton.Disabled = !_adminManager.HasFlag(AdminFlags.Debug);
-        DeleteButton.Disabled = !_adminManager.HasFlag(AdminFlags.Debug);
+        // _Duty-start: как на сервере — узел fun_health/ents_delete либо Debug, выданный напрямую. Клиент не видит, выдан ли
+        // флаг напрямую, поэтому Debug засчитываем только админу без узлов (старая модель прав).
+        var data = _adminManager.GetAdminData();
+        var legacyDebug = data is { Nodes.Count: 0 } && _adminManager.HasFlag(AdminFlags.Debug);
+        RejuvenateButton.Disabled = !(legacyDebug || (data?.HasNode(AdminNodes.FunHealth) ?? false));
+        DeleteButton.Disabled = !(legacyDebug || (data?.HasNode(AdminNodes.EntsDelete) ?? false));
+        // _Duty-end
     }
 }

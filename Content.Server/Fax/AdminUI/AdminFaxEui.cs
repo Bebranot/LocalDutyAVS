@@ -5,15 +5,17 @@ using Content.Shared.Eui;
 using Content.Shared.Fax.Components;
 using Content.Shared.Fax;
 using Content.Shared.Follower;
-using Content.Shared.Ghost;
 using Content.Shared.Paper;
 using Content.Shared.DeviceNetwork.Components;
+using Robust.Server.Console;
+using Content.Shared.Ghost.Components;
 
 namespace Content.Server.Fax.AdminUI;
 
-public sealed class AdminFaxEui : BaseEui
+public sealed partial class AdminFaxEui : BaseEui
 {
-    [Dependency] private readonly IEntityManager _entityManager = default!;
+    [Dependency] private readonly IConGroupController _conGroup = default!; // _Duty
+    [Dependency] private IEntityManager _entityManager = default!;
     private readonly FaxSystem _faxSystem;
     private readonly FollowerSystem _followerSystem;
 
@@ -43,6 +45,16 @@ public sealed class AdminFaxEui : BaseEui
     public override void HandleMessage(EuiMessageBase msg)
     {
         base.HandleMessage(msg);
+
+        // _Duty: права могли отозвать, пока окно было открыто, — без проверки факс отправлялся бы и дальше
+        if (IsShutDown)
+            return;
+
+        if (!_conGroup.CanCommand(Player, "faxui"))
+        {
+            Close();
+            return;
+        }
 
         switch (msg)
         {

@@ -1,49 +1,57 @@
 # Боеприпасы 12.7x55 (АШ-12 / РШ-12) — порт из STALKER-14.
 
 # ── Снаряды ──────────────────────────────────────────────────────────────────
+# Три роли на калибр (см. bases.yml): обычный / бронебойный (БП) / экспансивный.
 - type: entity
   id: Bullet1255PS12A
-  name: bullet (12,7x55)
-  parent: STBaseSPBullet
+  name: bullet (12.7x55)
+  parent: STBaseHRBullet
   categories: [ HideSpawnMenu ]
   components:
   - type: TimedDespawn
     lifetime: 4
   - type: Projectile
-    projectileClass: 1
     damage:
       types:
+        Piercing: 34
         Blunt: 2
         Slash: 2
-        Piercing: 34
   - type: StaminaDamageOnCollide
-    damage: 5
-
-- type: entity
-  id: Bullet1255TP
-  name: bullet (12,7x55)
-  parent: Bullet1255PS12A
-  categories: [ HideSpawnMenu ]
-  components:
-  - type: Projectile
-    projectileClass: 2
-    damage:
-      types:
-        Blunt: 3
-        Slash: 3
-        Piercing: 36
+    damage: 10
+  - type: DutyBallistics
+    armorPenetration: 0.35
+    arteryBonus: 0.02
+    fractureChance: 0.025
 
 - type: entity
   id: Bullet1255BP
-  name: bullet (12,7x55)
+  name: bullet (12.7x55 AP)
   parent: Bullet1255PS12A
   categories: [ HideSpawnMenu ]
   components:
   - type: Projectile
-    projectileClass: 4
     damage:
       types:
-        Piercing: 48
+        Piercing: 31
+  - type: DutyBallistics
+    armorPenetration: 0.65
+    arteryBonus: 0.02
+    fractureChance: 0.025
+
+- type: entity
+  id: Bullet1255HP
+  name: bullet (12.7x55 HP)
+  parent: Bullet1255PS12A
+  categories: [ HideSpawnMenu ]
+  components:
+  - type: Projectile
+    damage:
+      types:
+        Piercing: 26
+        Slash: 10
+        Blunt: 3
+  - type: DutyBallistics
+    arteryBonus: 0.04
 
 # ── Патроны ──────────────────────────────────────────────────────────────────
 - type: entity
@@ -69,7 +77,7 @@
 
 - type: entity
   id: STCartridge1255PS12A
-  name: cartridge 12.7x55 PS12A
+  name: cartridge (12.7x55)
   suffix: "Stalker, STWeapon, Огнестрел"
   parent: BaseSTCartridge1255
   components:
@@ -77,22 +85,37 @@
     proto: Bullet1255PS12A
 
 - type: entity
-  id: STCartridge1255TP
-  name: cartridge 12.7x55 TP
-  suffix: "Stalker, STWeapon, Огнестрел"
-  parent: BaseSTCartridge1255
-  components:
-  - type: CartridgeAmmo
-    proto: Bullet1255TP
-
-- type: entity
   id: STCartridge1255BP
-  name: cartridge 12.7x55 BP
+  name: cartridge (12.7x55 AP)
   suffix: "Stalker, STWeapon, Огнестрел"
   parent: BaseSTCartridge1255
   components:
   - type: CartridgeAmmo
     proto: Bullet1255BP
+  - type: Sprite
+    layers:
+    - state: base
+      map: ["enum.AmmoVisualLayers.Base"]
+    - state: tip
+      map: ["enum.AmmoVisualLayers.Tip"]
+      color: "#2b2b2b"
+
+- type: entity
+  id: STCartridge1255HP
+  name: cartridge (12.7x55 HP)
+  suffix: "Stalker, STWeapon, Огнестрел"
+  parent: BaseSTCartridge1255
+  components:
+  - type: CartridgeAmmo
+    proto: Bullet1255HP
+  - type: Sprite
+    layers:
+    - state: base
+      map: ["enum.AmmoVisualLayers.Base"]
+    - state: tip
+      map: ["enum.AmmoVisualLayers.Tip"]
+      color: "#4f86c6"
+
 
 # ── Магазины ─────────────────────────────────────────────────────────────────
 - type: entity
