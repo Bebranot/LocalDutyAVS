@@ -49143,7 +49143,7 @@ entities:
     - type: Transform
       parent: 2
       pos: -46.5,60.5
-- proto: Defibrillator
+- proto: DutyDefibrillatorLifePak40s
   entities:
   - uid: 6210
     components:

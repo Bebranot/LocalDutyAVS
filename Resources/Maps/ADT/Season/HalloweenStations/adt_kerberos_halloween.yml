@@ -134393,7 +134393,7 @@ entities:
     - type: Transform
       parent: 2
       pos: 51.5,7.5
-- proto: Defibrillator
+- proto: DutyDefibrillatorLifePak40s
   entities:
   - uid: 16668
     components:

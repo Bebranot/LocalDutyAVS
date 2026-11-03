@@ -52090,7 +52090,7 @@ entities:
     - type: Transform
       parent: 2
       pos: 38.5,22.5
-- proto: Defibrillator
+- proto: DutyDefibrillatorLifePak40s
   entities:
   - uid: 7410
     components:

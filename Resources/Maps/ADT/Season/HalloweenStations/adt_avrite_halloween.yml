@@ -181734,7 +181734,7 @@ entities:
       text: Офис смотрителя
     - type: WarpPoint
       location: СБ - Офис смотрителя
-- proto: Defibrillator
+- proto: DutyDefibrillatorLifePak40s
   entities:
   - uid: 22399
     components:
