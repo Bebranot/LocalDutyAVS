@@ -28,6 +28,7 @@
                           ToolTip="{Loc 'ui-options-parallax-low-quality-tooltip'}" />
                 <CheckBox Name="AmbientOcclusionCheckBox" Text="{Loc 'ui-options-ambient-occlusion'}"
                           ToolTip="{Loc 'ui-options-ambient-occlusion-tooltip'}" />
+                <ui:OptionSlider Name="SharpnessSlider" Title="{Loc 'ui-options-sharpness'}" />
 
                 <!-- _Duty-start: режим для слабых устройств и низкая сетевая задержка -->
                 <Label Text="{Loc 'ui-options-duty-performance-label'}" StyleClasses="LabelKeyText"/>
@@ -38,10 +39,6 @@
                 <CheckBox Name="DutyLowLatencyCheckBox" Text="{Loc 'ui-options-duty-low-latency'}"
                           ToolTip="{Loc 'ui-options-duty-low-latency-tooltip'}" />
                 <!-- _Duty-end -->
-                <CheckBox Name="ViewportLowResCheckBox" Text="{Loc 'ui-options-vp-low-res'}" />
-                <CheckBox Name="ParallaxLowQualityCheckBox" Text="{Loc 'ui-options-parallax-low-quality'}" />
-                <CheckBox Name="AmbientOcclusionCheckBox" Text="{Loc 'ui-options-ambient-occlusion'}" />
-                <ui:OptionSlider Name="SharpnessSlider" Title="{Loc 'ui-options-sharpness'}" />
 
                 <!-- Interface -->
                 <Label Text="{Loc 'ui-options-interface-label'}" StyleClasses="LabelKeyText"/>
