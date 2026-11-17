@@ -39,6 +39,9 @@
       "name": "mag-0"
     },
     {
+      "name": "muzzle"
+    },
+    {
       "name": "wielded-inhand-left",
       "directions": 4
     },
