@@ -326,10 +326,11 @@ public abstract class SharedInteractionVerbsSystem : EntitySystem
             return false;
 
         var cooldownTarget = proto.GlobalCooldown ? EntityUid.Invalid : args.Target;
-        if (!comp.Cooldowns.TryGetValue((proto.ID, cooldownTarget), out var cooldown))
+        var index = FindCooldownIndex(comp.Cooldowns, proto.ID, cooldownTarget);
+        if (index < 0)
             return true;
 
-        remainingTime = cooldown - _timing.CurTime;
+        remainingTime = comp.Cooldowns[index].ExpiresAt - _timing.CurTime;
         return remainingTime <= TimeSpan.Zero;
     }
 
@@ -339,15 +340,30 @@ public abstract class SharedInteractionVerbsSystem : EntitySystem
             return;
 
         var cooldownTarget = proto.GlobalCooldown ? EntityUid.Invalid : args.Target;
-        comp.Cooldowns[(proto.ID, cooldownTarget)] = _timing.CurTime + cooldown;
+        var expiresAt = _timing.CurTime + cooldown;
+        var updated = false;
 
         // Заодно чистим старые кулдауны, чтобы не текла память.
-        // TODO: возможно, стоит перейти на List — Dictionary тут явно избыточен.
-        foreach (var (key, time) in comp.Cooldowns.ToArray())
+        for (var i = comp.Cooldowns.Count - 1; i >= 0; i--)
         {
-            if (time < _timing.CurTime)
-                comp.Cooldowns.Remove(key);
+            var entry = comp.Cooldowns[i];
+            if (entry.Proto == proto.ID && entry.Target == cooldownTarget)
+            {
+                if (expiresAt < _timing.CurTime)
+                    comp.Cooldowns.RemoveAt(i);
+                else
+                    comp.Cooldowns[i] = (proto.ID, cooldownTarget, expiresAt);
+
+                updated = true;
+                continue;
+            }
+
+            if (entry.ExpiresAt < _timing.CurTime)
+                comp.Cooldowns.RemoveAt(i);
         }
+
+        if (!updated && expiresAt >= _timing.CurTime)
+            comp.Cooldowns.Add((proto.ID, cooldownTarget, expiresAt));
     }
 
     /// <summary>
@@ -363,7 +379,24 @@ public abstract class SharedInteractionVerbsSystem : EntitySystem
             return;
 
         var cooldownTarget = proto.GlobalCooldown ? EntityUid.Invalid : args.Target;
-        comp.Cooldowns.Remove((proto.ID, cooldownTarget));
+        var index = FindCooldownIndex(comp.Cooldowns, proto.ID, cooldownTarget);
+        if (index >= 0)
+            comp.Cooldowns.RemoveAt(index);
+    }
+
+    private static int FindCooldownIndex(
+        List<(ProtoId<InteractionVerbPrototype> Proto, EntityUid Target, TimeSpan ExpiresAt)> cooldowns,
+        string protoId,
+        EntityUid target)
+    {
+        for (var i = 0; i < cooldowns.Count; i++)
+        {
+            var entry = cooldowns[i];
+            if (entry.Proto == protoId && entry.Target == target)
+                return i;
+        }
+
+        return -1;
     }
 
     /// <summary>
