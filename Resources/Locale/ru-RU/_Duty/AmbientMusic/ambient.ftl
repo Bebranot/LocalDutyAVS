@@ -1,4 +1,4 @@
-﻿# Вкладка настроек
+# Вкладка настроек
 ui-options-tab-duty-ambient = Динамическая музыка
 ui-options-duty-ambient-enable-all = Включить динамическую музыку
 ui-options-duty-ambient-disable-peaceful = Выключить мирную музыку
