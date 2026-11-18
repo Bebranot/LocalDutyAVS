@@ -480,7 +480,10 @@ public sealed class AristocratSystem : EntitySystem
             if (mix.Temperature > freezingTemp)
                 mix.Temperature = freezingTemp;
 
-            mix.Temperature -= 100f;
+            // ADT-Tweak: раньше температура каждый вызов уменьшалась на 100 K без ограничения снизу,
+            // из-за чего газ уходил в отрицательные значения, а мобы рядом (порог холода 0 K) получали
+            // ровно 0 K и валили сервер NaN-ом в TemperatureSystem.
+            mix.Temperature = MathF.Max(Atmospherics.TCMB, mix.Temperature - 100f);
         }
     }
 

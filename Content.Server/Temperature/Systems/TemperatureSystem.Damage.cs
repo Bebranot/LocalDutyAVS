@@ -123,9 +123,19 @@ public sealed partial class TemperatureSystem
             }
 
             var diff = Math.Abs(temperature.Temperature - coldDamageThreshold);
-            var tempDamage =
-                Math.Sqrt(diff * (Math.Pow(entity.Comp.DamageCap.Double(), 2) / coldDamageThreshold));
-            _damageable.TryChangeDamage(entity.Owner, entity.Comp.ColdDamage * tempDamage * deltaTime.TotalSeconds, ignoreResistances: true, interruptsDoAfters: false);
+            // ADT-Tweak start: при coldDamageThreshold <= 0 формула делит на ноль (0 * Infinity = NaN),
+            // а FixedPoint2.New(double) бросает ArithmeticException на NaN и валит весь сервер.
+            // Поэтому урон считаем только для положительного порога и ограничиваем его DamageCap.
+            var tempDamage = 0.0;
+            if (coldDamageThreshold > 0f)
+            {
+                var damageCap = entity.Comp.DamageCap.Double();
+                tempDamage = Math.Min(damageCap, Math.Sqrt(diff * (damageCap * damageCap / coldDamageThreshold)));
+            }
+            // ADT-Tweak end
+
+            if (tempDamage > 0.0)
+                _damageable.TryChangeDamage(entity.Owner, entity.Comp.ColdDamage * tempDamage * deltaTime.TotalSeconds, ignoreResistances: true, interruptsDoAfters: false);
         }
         else if (entity.Comp.TakingDamage)
         {
