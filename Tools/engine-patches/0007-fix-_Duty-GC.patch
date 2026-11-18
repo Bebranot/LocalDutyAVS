@@ -1,0 +1,51 @@
+From 483dee75263f73225dce5c34d27eefbe8e085adf Mon Sep 17 00:00:00 2001
+From: bebra <198430199+Bebranot@users.noreply.github.com>
+Date: Fri, 2 Oct 2026 18:35:35 +0700
+Subject: [PATCH 7/7] =?UTF-8?q?fix(=5FDuty):=20=D0=B2=D0=BA=D0=BB=D1=8E?=
+ =?UTF-8?q?=D1=87=D0=B0=D1=82=D1=8C=20=D1=80=D0=B5=D0=B6=D0=B8=D0=BC=20GC?=
+ =?UTF-8?q?=20=D1=81=20=D0=BD=D0=B8=D0=B7=D0=BA=D0=BE=D0=B9=20=D0=B7=D0=B0?=
+ =?UTF-8?q?=D0=B4=D0=B5=D1=80=D0=B6=D0=BA=D0=BE=D0=B9=20=D1=82=D0=BE=D0=BB?=
+ =?UTF-8?q?=D1=8C=D0=BA=D0=BE=20=D1=83=20=D0=BE=D0=BA=D0=BE=D0=BD=D0=BD?=
+ =?UTF-8?q?=D0=BE=D0=B3=D0=BE=20=D0=BA=D0=BB=D0=B8=D0=B5=D0=BD=D1=82=D0=B0?=
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Режим сборщика мусора общий на весь процесс. Безголовые клиенты
+интеграционных тестов живут в одном процессе с сервером и другими
+парами, и переключение режима из каждого из них влияло на всех.
+Теперь подписка на sys.gc_sustained_low_latency ставится только
+при DisplayMode.Clyde.
+
+(cherry picked from commit c2978d1dff1fb5569527459e839f819864f723f5)
+---
+ Robust.Client/GameController/GameController.cs | 13 +++++++++----
+ 1 file changed, 9 insertions(+), 4 deletions(-)
+
+diff --git a/Robust.Client/GameController/GameController.cs b/Robust.Client/GameController/GameController.cs
+index 9e8da2840..0b5f16b4d 100644
+--- a/Robust.Client/GameController/GameController.cs
++++ b/Robust.Client/GameController/GameController.cs
+@@ -271,10 +271,15 @@ namespace Robust.Client
+ 
+             // _Duty: ставим после стартовой сборки, чтобы она отработала полностью. Дальше блокирующие
+             // полные сборки — главный источник редких длинных фризов у клиента — заменяются фоновыми.
+-            _configurationManager.OnValueChanged(CVars.SysGCSustainedLowLatency, enabled =>
+-                GCSettings.LatencyMode = enabled
+-                    ? GCLatencyMode.SustainedLowLatency
+-                    : GCLatencyMode.Interactive, invokeImmediately: true);
++            // Только для оконного клиента: режим GC общий на весь процесс, а безголовые клиенты
++            // (интеграционные тесты) живут в одном процессе с сервером и десятком других пар.
++            if (displayMode == DisplayMode.Clyde)
++            {
++                _configurationManager.OnValueChanged(CVars.SysGCSustainedLowLatency, enabled =>
++                    GCSettings.LatencyMode = enabled
++                        ? GCLatencyMode.SustainedLowLatency
++                        : GCLatencyMode.Interactive, invokeImmediately: true);
++            }
+ 
+             // Setup main loop
+             if (_mainLoop == null)
+-- 
+2.43.0
+

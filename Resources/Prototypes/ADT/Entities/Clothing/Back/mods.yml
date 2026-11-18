@@ -311,6 +311,7 @@
     sprite: ADT/Clothing/Back/Modsuit/hos.rsi
     state: icon
   - type: ModSuit
+    maxComplexity: 12
     fullyEnabledSound:
       path: /Audio/ADT/Mecha/nominalnano.ogg
     clothingPrototypes:
@@ -417,6 +418,68 @@
       - ADTModsuitModLight
       - ADTModsuitModJetpack
       - ADTModsuitModIsulation
+    requiresBattery: false
+  - type: UserInterface
+    interfaces:
+      enum.ModSuitUiKey.Key:
+        type: ModSuitRadialBoundUserInterface
+      enum.StorageUiKey.Key:
+        type: StorageBoundUserInterface
+      enum.ModSuitMenuUiKey.Key:
+        type: ModSuitMenuBoundUserInterface
+  - type: Clothing
+    quickEquip: false
+    slots:
+    - back
+  - type: WiresPanel
+  - type: ActivatableUIRequiresPanel
+    requireOpen: false
+  - type: DNALocker
+  - type: ContainerContainer
+    containers:
+      mod-modules-container: !type:Container
+        showEnts: False
+        occludes: True
+        ents: []
+      modsuit-part: !type:Container
+        showEnts: False
+        occludes: True
+        ents: []
+      storagebase: !type:Container
+        showEnts: False
+        occludes: True
+        ents: []
+
+- type: entity
+  parent: Clothing
+  id: ADTClothingModsuitBackSyndicateMedic
+  name: syndicate medic MOD control unit
+  description: A suit designed by Gorlex Marauders for field medics, with a built-in defibrillator and health analyzer.
+  components:
+  - type: Sprite
+    sprite: ADT/Clothing/Back/Modsuit/syndicate_medic.rsi
+    state: icon
+  - type: ModSuit
+    backpanelsColor: "#16050599"
+    scrollColor: "#00000000"
+    backgroundPath: "/Textures/ADT/Interface/Backgrounds/Modsuits/syndie_background.png"
+    buttonColors: ["#231212", "#0a0404", "#661515", "#661515"]
+    maxComplexity: 20
+    fullyEnabledSound:
+      path: /Audio/ADT/Mecha/nominalsyndi.ogg
+    clothingPrototypes:
+      head: ADTClothingHeadHelmetModsuitSyndicateMedic
+      gloves: ADTClothingHandsModsuitSyndicateMedic
+      outerClothing: ADTClothingOuterModsuitBodySyndicateMedic
+      shoes: ADTClothingModsuitShoesSyndicateMedic
+    startingModules:
+      - ADTModsuitModStorageSyndie
+      - ADTModsuitModWelding
+      - ADTModsuitModLight
+      - ADTModsuitModJetpack
+      - ADTModsuitModIsulation
+      - ADTModsuitModHealthAnalyzer
+      - ADTModsuitModDefibrillator
     requiresBattery: false
   - type: UserInterface
     interfaces:
@@ -648,6 +711,7 @@
     startingModules:
       - ADTModsuitModStorage
       - ADTModsuitModLight
+      - ADTModsuitModEmpProtection
       - ADTModsuitModIsulation
 
 - type: entity
@@ -743,6 +807,8 @@
     quickEquip: false
     slots:
     - back
+  - type: Item
+    size: Huge
   - type: WiresPanel
   - type: ActivatableUIRequiresPanel
     requireOpen: false

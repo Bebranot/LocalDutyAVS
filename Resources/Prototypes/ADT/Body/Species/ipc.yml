@@ -115,6 +115,8 @@
   - type: DutyStamina
     canGetWinded: false
   - type: Jump # _Duty: по той же причине прыжок из BaseSpeciesMob до ИПЦ не доходил
+  - type: ADTVirusImmune
+    absolute: true
   - type: VisualBody
   - type: PowerCellSlot
     cellSlotId: cell_slot
@@ -140,6 +142,7 @@
   - type: BatterySlotRequiresLock
     itemSlot: cell_slot
   - type: PickupHumans
+    handsRequired: 1
   - type: MobIpc
     disablePointLightOnDeath: true
   - type: InteractionPopup

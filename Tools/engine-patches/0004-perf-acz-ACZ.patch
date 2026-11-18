@@ -1,0 +1,533 @@
+From ba1a8100045b3696fbbd9092f0987d445b3479aa Mon Sep 17 00:00:00 2001
+From: BebraYep <198430199+Bebranot@users.noreply.github.com>
+Date: Fri, 21 Aug 2026 18:51:31 +0700
+Subject: [PATCH 4/7] =?UTF-8?q?perf(acz):=20=D0=B4=D0=B5=D1=80=D0=B6=D0=B0?=
+ =?UTF-8?q?=D1=82=D1=8C=20=D0=B1=D0=BB=D0=BE=D0=B1=20ACZ=20=D0=BD=D0=B0=20?=
+ =?UTF-8?q?=D0=B4=D0=B8=D1=81=D0=BA=D0=B5=20=D0=B8=20=D0=B4=D0=B5=D0=B4?=
+ =?UTF-8?q?=D1=83=D0=BF=D0=BB=D0=B8=D1=86=D0=B8=D1=80=D0=BE=D0=B2=D0=B0?=
+ =?UTF-8?q?=D1=82=D1=8C=20=D0=BE=D0=B4=D0=B8=D0=BD=D0=B0=D0=BA=D0=BE=D0=B2?=
+ =?UTF-8?q?=D1=8B=D0=B5=20=D1=84=D0=B0=D0=B9=D0=BB=D1=8B?=
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Блоб — это всё содержимое клиентского контента, сжатое zstd, и до сих пор он
+целиком лежал в управляемой куче до конца жизни процесса. На нашем контенте
+это +3.1 ГБ приватной памяти сервера после первого же захода через лаунчер
+(замер: 1461 -> 4591 МБ). Плюс каждый байт-в-байт одинаковый файл занимал в
+блобе отдельную копию.
+
+- AczBlobStore: раздача среза блоба. Реализация на файле (позиционные чтения,
+  выдерживают параллельные скачивания) и старая, в куче, как запасная.
+- Дедупликация по BLAKE2b-хешу содержимого: одинаковые файлы делят один слот.
+- После сборки манифеста — компактящий gen2 GC: разовая операция, незачем
+  оставлять раздутую кучу на весь раунд.
+
+Замер после: +479 МБ вместо +3130 МБ, 551 файл дедуплицирован. Отдача
+проверена end-to-end: 47 файлов скачаны, BLAKE2b совпадает с манифестом.
+
+(cherry picked from commit 59c55e3ad44de9f08bee3a260e5eb5b429fb7176)
+---
+ Robust.Server/ServerStatus/AczBlobStore.cs    | 144 +++++++++++++++++
+ .../ServerStatus/StatusHost.Acz.Sources.cs    | 147 ++++++++++++++++--
+ Robust.Server/ServerStatus/StatusHost.Acz.cs  |  30 ++--
+ 3 files changed, 298 insertions(+), 23 deletions(-)
+ create mode 100644 Robust.Server/ServerStatus/AczBlobStore.cs
+
+diff --git a/Robust.Server/ServerStatus/AczBlobStore.cs b/Robust.Server/ServerStatus/AczBlobStore.cs
+new file mode 100644
+index 000000000..993918b0d
+--- /dev/null
++++ b/Robust.Server/ServerStatus/AczBlobStore.cs
+@@ -0,0 +1,144 @@
++using System;
++using System.Buffers;
++using System.IO;
++using System.Threading;
++using System.Threading.Tasks;
++using Microsoft.Win32.SafeHandles;
++
++namespace Robust.Server.ServerStatus;
++
++/// <summary>
++/// Storage for the ACZ blob: the concatenated (usually zstd-compressed) contents of every file the
++/// launcher can download from this server.
++/// </summary>
++/// <remarks>
++/// <para>
++/// This blob is the size of the entire client content set — on a content-heavy server that is
++/// multiple gigabytes — and it is built once and then kept for the rest of the process lifetime.
++/// Where it lives therefore dominates the server's memory footprint.
++/// </para>
++/// <para>
++/// <see cref="AczFileBlobStore"/> keeps it in a file on disk, so it costs no private commit and the
++/// OS is free to drop the pages when they are not being served.
++/// <see cref="AczMemoryBlobStore"/> is the old behaviour of holding it all in the managed heap; it
++/// stays as a fallback for when the file cannot be created.
++/// </para>
++/// </remarks>
++internal abstract class AczBlobStore : IDisposable
++{
++    /// <summary>Total size of the blob.</summary>
++    public abstract long Length { get; }
++
++    /// <summary>
++    /// Writes a slice of the blob to <paramref name="destination"/>. Must tolerate being called
++    /// concurrently — several launchers can be downloading at once.
++    /// </summary>
++    public abstract ValueTask WriteSliceAsync(
++        Stream destination,
++        long offset,
++        int length,
++        CancellationToken cancel = default);
++
++    public virtual void Dispose()
++    {
++    }
++}
++
++/// <summary>
++/// Blob held entirely in the managed heap.
++/// </summary>
++internal sealed class AczMemoryBlobStore : AczBlobStore
++{
++    private readonly ReadOnlySequence<byte> _data;
++
++    public AczMemoryBlobStore(ReadOnlySequence<byte> data)
++    {
++        _data = data;
++    }
++
++    public override long Length => _data.Length;
++
++    public override async ValueTask WriteSliceAsync(
++        Stream destination,
++        long offset,
++        int length,
++        CancellationToken cancel = default)
++    {
++        // Segmented rather than a single array: a >2 GB blob cannot be one byte[].
++        foreach (var segment in _data.Slice(offset, length))
++        {
++            await destination.WriteAsync(segment, cancel);
++        }
++    }
++}
++
++/// <summary>
++/// Blob backed by a file on disk, read with positional reads so concurrent downloads don't need
++/// their own handles.
++/// </summary>
++internal sealed class AczFileBlobStore : AczBlobStore
++{
++    private const int CopyBufferSize = 128 * 1024;
++
++    private readonly SafeFileHandle _handle;
++    private readonly string _path;
++    private readonly long _length;
++
++    public AczFileBlobStore(SafeFileHandle handle, string path, long length)
++    {
++        _handle = handle;
++        _path = path;
++        _length = length;
++    }
++
++    public override long Length => _length;
++
++    public override async ValueTask WriteSliceAsync(
++        Stream destination,
++        long offset,
++        int length,
++        CancellationToken cancel = default)
++    {
++        var buffer = ArrayPool<byte>.Shared.Rent(Math.Min(length, CopyBufferSize));
++        try
++        {
++            var position = offset;
++            var remaining = length;
++
++            while (remaining > 0)
++            {
++                var toRead = Math.Min(remaining, buffer.Length);
++                var read = await RandomAccess.ReadAsync(_handle, buffer.AsMemory(0, toRead), position, cancel);
++
++                if (read == 0)
++                    throw new EndOfStreamException($"ACZ blob file ended early at offset {position}.");
++
++                await destination.WriteAsync(buffer.AsMemory(0, read), cancel);
++
++                position += read;
++                remaining -= read;
++            }
++        }
++        finally
++        {
++            ArrayPool<byte>.Shared.Return(buffer);
++        }
++    }
++
++    public override void Dispose()
++    {
++        _handle.Dispose();
++
++        try
++        {
++            File.Delete(_path);
++        }
++        catch (IOException)
++        {
++            // Best-effort cleanup; a stale blob file is harmless, the next run overwrites it.
++        }
++        catch (UnauthorizedAccessException)
++        {
++        }
++    }
++}
+diff --git a/Robust.Server/ServerStatus/StatusHost.Acz.Sources.cs b/Robust.Server/ServerStatus/StatusHost.Acz.Sources.cs
+index a2784b824..746d81f21 100644
+--- a/Robust.Server/ServerStatus/StatusHost.Acz.Sources.cs
++++ b/Robust.Server/ServerStatus/StatusHost.Acz.Sources.cs
+@@ -1,4 +1,4 @@
+-using System;
++﻿using System;
+ using System.Buffers;
+ using System.Collections.Generic;
+ using System.IO;
+@@ -6,12 +6,14 @@ using System.IO.Compression;
+ using System.Threading;
+ using System.Threading.Tasks;
+ using Microsoft.Extensions.ObjectPool;
++using Microsoft.Win32.SafeHandles;
+ using Robust.Packaging;
+ using Robust.Packaging.AssetProcessing;
+ using Robust.Packaging.AssetProcessing.Passes;
+ using Robust.Shared;
+ using Robust.Shared.Collections;
+ using Robust.Shared.ContentPack;
++using Robust.Shared.Log;
+ using Robust.Shared.Utility;
+ using SpaceWizards.Sodium;
+ 
+@@ -49,7 +51,7 @@ internal sealed partial class StatusHost
+         if (manifestResult == null)
+             return null;
+ 
+-        var (manifestData, manifestEntries, manifestBlobData) = manifestResult!.Value;
++        var (manifestData, manifestEntries, blobStore) = manifestResult!.Value;
+ 
+         var manifestHash = CryptoGenericHashBlake2B.Hash(32, manifestData, ReadOnlySpan<byte>.Empty);
+         var manifestHashString = Convert.ToHexString(manifestHash);
+@@ -79,18 +81,23 @@ internal sealed partial class StatusHost
+             manifestData,
+             manifestCompress,
+             manifestHashString,
+-            manifestBlobData,
++            blobStore,
+             manifestEntries,
+             blobCompress);
+     }
+ 
+-    private async Task<(byte[] manifestData, AczManifestEntry[] entries, ReadOnlySequence<byte> blobData)?> CalcManifestData(
++    private async Task<(byte[] manifestData, AczManifestEntry[] entries, AczBlobStore blobStore)?> CalcManifestData(
+         bool blobCompress,
+         int blobCompressLevel,
+         int blobCompressSaveThresh)
+     {
+         var logger = new PackageLoggerSawmill(_aczPackagingSawmill);
+-        using var writerPass = new AssetPassAczWriter(blobCompress, blobCompressLevel, blobCompressSaveThresh);
++        using var writerPass = new AssetPassAczWriter(
++            blobCompress,
++            blobCompressLevel,
++            blobCompressSaveThresh,
++            GetAczBlobPath(),
++            _aczSawmill);
+ 
+         var result = await SourceAczDictionaryViaFile(writerPass, logger) ||
+                      await SourceAczViaMagic(writerPass, logger);
+@@ -100,7 +107,20 @@ internal sealed partial class StatusHost
+ 
+         await writerPass.FinishedTask;
+ 
+-        return (writerPass.ManifestContent!, writerPass.ManifestEntries!, writerPass.BlobData);
++        return (writerPass.ManifestContent!, writerPass.ManifestEntries!, writerPass.TakeBlobStore());
++    }
++
++    /// <summary>
++    /// Where to spill the ACZ blob so it doesn't have to sit in the managed heap. Null falls back
++    /// to the in-heap store, e.g. when the data dir is virtual.
++    /// </summary>
++    private string? GetAczBlobPath()
++    {
++        var rootDir = _deps.Resolve<IResourceManager>().UserData.RootDir;
++        if (rootDir == null)
++            return null;
++
++        return Path.Combine(rootDir, "acz_blob.bin");
+     }
+ 
+     private async Task<bool> SourceAczDictionaryViaFile(AssetPass pass, IPackageLogger logger)
+@@ -183,10 +203,27 @@ internal sealed partial class StatusHost
+     {
+         private readonly object _lock = new();
+ 
+-        private readonly SequenceMemoryStream _stream = new();
+         private readonly bool _blobCompress;
+         private readonly int _blobCompressLevel;
+         private readonly int _blobCompressSaveThresh;
++        private readonly ISawmill _sawmill;
++
++        /// <summary>File we spill the blob into, or null when falling back to the heap.</summary>
++        private readonly SafeFileHandle? _blobHandle;
++        private readonly string? _blobPath;
++
++        /// <summary>In-heap fallback, only used when <see cref="_blobHandle"/> is null.</summary>
++        private readonly SequenceMemoryStream? _blobMemory;
++
++        private long _blobPosition;
++
++        /// <summary>
++        /// Content hash -> where that exact content already sits in the blob. A content set that has
++        /// the same file under several names (very common with ported audio) would otherwise get one
++        /// copy per name, and every copy costs memory or disk for the life of the process.
++        /// </summary>
++        private readonly Dictionary<string, AczManifestEntry> _dedupe = new();
++        private int _dedupeHits;
+ 
+         private readonly ObjectPool<ZStdCompressionContext> _compressStreamPool =
+             ObjectPool.Create<ZStdCompressionContext>();
+@@ -195,18 +232,52 @@ internal sealed partial class StatusHost
+ 
+         public byte[]? ManifestContent;
+         public AczManifestEntry[]? ManifestEntries;
+-        // _Duty: блоб хранится как ReadOnlySequence (сегменты), а не единый byte[] —
+-        // иначе ACZ > 2 ГБ падает с OverflowException на new byte[len].
+-        public ReadOnlySequence<byte> BlobData;
++
++        private AczBlobStore? _blobStore;
++        private bool _blobStoreTaken;
+ 
+         public AssetPassAczWriter(
+             bool blobCompress,
+             int blobCompressLevel,
+-            int blobCompressSaveThresh)
++            int blobCompressSaveThresh,
++            string? blobPath,
++            ISawmill sawmill)
+         {
+             _blobCompress = blobCompress;
+             _blobCompressLevel = blobCompressLevel;
+             _blobCompressSaveThresh = blobCompressSaveThresh;
++            _sawmill = sawmill;
++
++            if (blobPath != null)
++            {
++                try
++                {
++                    _blobHandle = File.OpenHandle(
++                        blobPath,
++                        FileMode.Create,
++                        FileAccess.ReadWrite,
++                        FileShare.None);
++                    _blobPath = blobPath;
++                }
++                catch (Exception e)
++                {
++                    _sawmill.Warning(
++                        $"Couldn't open '{blobPath}' for the ACZ blob, keeping it in memory instead: {e.Message}");
++                }
++            }
++
++            if (_blobHandle == null)
++                _blobMemory = new SequenceMemoryStream();
++        }
++
++        /// <summary>
++        /// Hands the finished blob store to the caller, who becomes responsible for disposing it.
++        /// </summary>
++        public AczBlobStore TakeBlobStore()
++        {
++            DebugTools.AssertNotNull(_blobStore);
++            _blobStoreTaken = true;
++            return _blobStore!;
+         }
+ 
+         protected override AssetFileAcceptResult AcceptFile(AssetFile file)
+@@ -232,6 +303,23 @@ internal sealed partial class StatusHost
+             }
+ 
+             CryptoGenericHashBlake2B.Hash(entryHash, data, ReadOnlySpan<byte>.Empty);
++            var hashString = Convert.ToHexString(entryHash);
++
++            // Same bytes as a file we already wrote: point at the existing copy instead of appending
++            // a second one. Compression is deterministic, so the stored entry is byte-identical.
++            lock (_lock)
++            {
++                if (_dedupe.TryGetValue(hashString, out var existing))
++                {
++                    _infos.Add(new InProgressAczManifestInfo(existing, file.Path, entryHash));
++                    _dedupeHits += 1;
++
++                    if (dataPool != null)
++                        ArrayPool<byte>.Shared.Return(dataPool);
++
++                    return AssetFileAcceptResult.Consumed;
++                }
++            }
+ 
+             ReadOnlySpan<byte> toWrite;
+ 
+@@ -263,13 +351,16 @@ internal sealed partial class StatusHost
+ 
+             lock (_lock)
+             {
+-                var streamPos = _stream.Position;
+-                _stream.Write(toWrite);
++                var streamPos = _blobPosition;
++                WriteBlob(toWrite, streamPos);
++                _blobPosition += toWrite.Length;
++
+                 var info = new AczManifestEntry(
+                     data.Length,
+                     streamPos,
+                     toWrite.Length == data.Length ? 0 : toWrite.Length);
+ 
++                _dedupe[hashString] = info;
+                 _infos.Add(new InProgressAczManifestInfo(info, file.Path, entryHash));
+             }
+ 
+@@ -282,6 +373,15 @@ internal sealed partial class StatusHost
+             return AssetFileAcceptResult.Consumed;
+         }
+ 
++        /// <summary>Must be called under <see cref="_lock"/>.</summary>
++        private void WriteBlob(ReadOnlySpan<byte> data, long position)
++        {
++            if (_blobHandle != null)
++                RandomAccess.Write(_blobHandle, data, position);
++            else
++                _blobMemory!.Write(data);
++        }
++
+         protected override void AcceptFinished()
+         {
+             _infos.Sort(OnDemandFilePathComparer.Instance);
+@@ -304,13 +404,32 @@ internal sealed partial class StatusHost
+ 
+             ManifestContent = manifestStream.ToArray();
+             ManifestEntries = manifestEntries;
+-            BlobData = _stream.AsSequence;
++
++            if (_blobHandle != null)
++            {
++                _blobStore = new AczFileBlobStore(_blobHandle, _blobPath!, _blobPosition);
++                _sawmill.Info(
++                    "ACZ blob written to disk: {BlobSize} bytes over {FileCount} files ({DedupeHits} deduplicated)",
++                    _blobPosition, _infos.Count, _dedupeHits);
++            }
++            else
++            {
++                _blobStore = new AczMemoryBlobStore(_blobMemory!.AsSequence);
++                _sawmill.Info(
++                    "ACZ blob kept in memory: {BlobSize} bytes over {FileCount} files ({DedupeHits} deduplicated)",
++                    _blobPosition, _infos.Count, _dedupeHits);
++            }
+         }
+ 
+         public void Dispose()
+         {
+             // _compressStreamPool is actually a DisposableObjectPool, which is an internal type.
+             (_compressStreamPool as IDisposable)?.Dispose();
++
++            // If nobody took the store the whole ACZ attempt failed, so don't leave the file handle
++            // (and the file) behind.
++            if (!_blobStoreTaken)
++                _blobStore?.Dispose();
+         }
+     }
+ 
+diff --git a/Robust.Server/ServerStatus/StatusHost.Acz.cs b/Robust.Server/ServerStatus/StatusHost.Acz.cs
+index 2cf3fbc0a..015573d71 100644
+--- a/Robust.Server/ServerStatus/StatusHost.Acz.cs
++++ b/Robust.Server/ServerStatus/StatusHost.Acz.cs
+@@ -1,4 +1,4 @@
+-using System;
++﻿using System;
+ using System.Buffers;
+ using System.Buffers.Binary;
+ using System.Collections;
+@@ -8,6 +8,7 @@ using System.IO;
+ using System.IO.Compression;
+ using System.Net;
+ using System.Net.Http;
++using System.Runtime;
+ using Robust.Shared;
+ using Robust.Shared.Timing;
+ using Robust.Shared.Utility;
+@@ -65,6 +66,7 @@ namespace Robust.Server.ServerStatus
+ 
+             _aczSawmill.Info(reason);
+ 
++            _aczPrepared.BlobStore.Dispose();
+             _aczPrepared = null;
+             _aczPrepareAttempted = false;
+         }
+@@ -296,11 +298,9 @@ namespace Robust.Server.ServerStatus
+ 
+                     await outStream.WriteAsync(fileHeader);
+ 
+-                    // _Duty: раздаём срез из ReadOnlySequence по сегментам — поддержка ACZ > 2 ГБ.
+-                    foreach (var segment in aczInfo.ManifestBlobData.Slice(dataOffset, writeLength))
+-                    {
+-                        await outStream.WriteAsync(segment);
+-                    }
++                    // _Duty: раздаём срез через AczBlobStore — блоб лежит на диске, а не в куче,
++                    // и по длине не ограничен 2 ГБ.
++                    await aczInfo.BlobStore.WriteSliceAsync(outStream, dataOffset, writeLength);
+ 
+                     offset += 4;
+                 }
+@@ -352,6 +352,14 @@ namespace Robust.Server.ServerStatus
+                     }
+ 
+                     _aczPrepared = maybeData;
++
++                    // Building the manifest churns through hundreds of megabytes of pooled buffers
++                    // and compression contexts, and leaves the heap inflated for the rest of the
++                    // process. This runs at most once per process and never on a hot path, so hand
++                    // that memory straight back instead of sitting on it all round.
++                    GCSettings.LargeObjectHeapCompactionMode = GCLargeObjectHeapCompactionMode.CompactOnce;
++                    GC.Collect(2, GCCollectionMode.Aggressive, blocking: true, compacting: true);
++
+                     return maybeData;
+                 }
+                 catch (Exception e)
+@@ -388,18 +396,22 @@ namespace Robust.Server.ServerStatus
+         /// <param name="ManifestData">Data for the content manifest</param>
+         /// <param name="ManifestHash">Hex BLAKE2B 256-bit hash of <see cref="ManifestData"/>.</param>
+         /// <param name="ManifestEntries">Manifest -> zip entry map.</param>
++        /// <param name="BlobStore">
++        /// Where the actual file contents live. Owned by <see cref="StatusHost"/>: disposed when the
++        /// ACZ is invalidated.
++        /// </param>
+         internal sealed record AczManifestInfo(
+             byte[] ManifestData,
+             bool ManifestCompressed,
+             string ManifestHash,
+-            ReadOnlySequence<byte> ManifestBlobData,
++            AczBlobStore BlobStore,
+             AczManifestEntry[] ManifestEntries,
+             bool PreCompressed);
+ 
+         /// <param name="BlobLength">Length of the uncompressed blob.</param>
+-        /// <param name="DataOffset">Offset into <see cref="AczManifestInfo.ManifestBlobData"/> that this blob's (possibly compressed) data starts at.</param>
++        /// <param name="DataOffset">Offset into <see cref="AczManifestInfo.BlobStore"/> that this blob's (possibly compressed) data starts at.</param>
+         /// <param name="DataLength">
+-        /// Length in <see cref="AczManifestInfo.ManifestBlobData"/> for this blob's (possibly compressed) data.
++        /// Length in <see cref="AczManifestInfo.BlobStore"/> for this blob's (possibly compressed) data.
+         /// If this is zero, it means the file is not stored uncompressed and you should use <see cref="BlobLength"/>.
+         /// </param>
+         internal record struct AczManifestEntry(int BlobLength, long DataOffset, int DataLength);
+-- 
+2.43.0
+

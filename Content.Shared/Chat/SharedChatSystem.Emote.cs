@@ -1,4 +1,5 @@
 using System.Collections.Frozen;
+using Content.Shared.ADT.Chat;
 using Content.Shared.Chat.Prototypes;
 using Content.Shared.Speech;
 using Robust.Shared.Audio;
@@ -158,6 +159,14 @@ public abstract partial class SharedChatSystem
         var param = audioParams ?? proto.GeneralParams ?? sound.Params;
         // _Duty: убираем рандомизацию питча ("ускорение"/изменение тона) у всех звуков эмоций (крики и пр.)
         param = param.WithVariation(null);
+
+        // ADT-Tweak-start
+        var overrideEv = new OverrideEmoteSoundEvent(sound, param);
+        RaiseLocalEvent(uid, ref overrideEv);
+
+        if (overrideEv.Cancelled)
+            return true;
+        // ADT-Tweak-end
 
         if (_net.IsServer) // TODO: replace this call with PlayPredicted when chat is predicted.
             _audio.PlayPvs(sound, uid, param);
