@@ -22,9 +22,9 @@ void fragment()
     highp vec2 pixel = floor(UV / TEXTURE_PIXEL_SIZE);
     highp vec2 cell = floor(pixel * 0.5);
     highp vec2 withinCell = mod(pixel, 2.0);
-    highp float patch = dirtHash(cell);
+    highp float dirtpatch = dirtHash(cell);
     highp float edge = dirtHash(cell + withinCell * vec2(19.0, 37.0) + vec2(11.0, 23.0));
-    highp float threshold = fract(patch + (edge - 0.5) * 0.34);
+    highp float threshold = fract(dirtpatch + (edge - 0.5) * 0.34);
 
     if (threshold > coverage)
         discard;

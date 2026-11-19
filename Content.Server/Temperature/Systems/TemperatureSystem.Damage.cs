@@ -123,13 +123,19 @@ public sealed partial class TemperatureSystem
             }
 
             var diff = Math.Abs(temperature.Temperature - coldDamageThreshold);
-            var tempDamage =
-                Math.Sqrt(diff * (Math.Pow(entity.Comp.DamageCap.Double(), 2) / coldDamageThreshold));
-            // _Duty: порог холода <= 0 (бывает у родительских контейнеров) даёт sqrt от отрицательного/0/0 → NaN,
-            // и FixedPoint2.New бросает исключение каждый тик. Такой урон просто пропускаем.
-            if (!double.IsFinite(tempDamage) || tempDamage <= 0)
-                return;
-            _damageable.TryChangeDamage(entity.Owner, entity.Comp.ColdDamage * tempDamage * deltaTime.TotalSeconds, ignoreResistances: true, interruptsDoAfters: false);
+            // _Duty-start: при coldDamageThreshold <= 0 (бывает у родительских контейнеров) формула делит на ноль
+            // и даёт NaN, а FixedPoint2.New(double) бросает исключение каждый тик. Урон считаем только
+            // для положительного порога, ограничиваем DamageCap и отбрасываем нечисловой результат.
+            var tempDamage = 0.0;
+            if (coldDamageThreshold > 0f)
+            {
+                var damageCap = entity.Comp.DamageCap.Double();
+                tempDamage = Math.Min(damageCap, Math.Sqrt(diff * (damageCap * damageCap / coldDamageThreshold)));
+            }
+
+            if (double.IsFinite(tempDamage) && tempDamage > 0.0)
+                _damageable.TryChangeDamage(entity.Owner, entity.Comp.ColdDamage * tempDamage * deltaTime.TotalSeconds, ignoreResistances: true, interruptsDoAfters: false);
+            // _Duty-end
         }
         else if (entity.Comp.TakingDamage)
         {
