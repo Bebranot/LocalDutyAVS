@@ -1,0 +1,39 @@
+# SPDX-FileCopyrightText: 2026 LocalDuty <https://github.com/Bebranot/LocalDuty_Reserve>
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+- type: entity
+  parent: BaseMentalAction
+  id: ActionDutyNeuroMedicRequest
+  name: Запрос медика (11-41)
+  description: Передаёт по каналу службы безопасности экстренный запрос медицинской помощи через нейроинтерфейс.
+  components:
+  - type: Action
+    useDelay: 5
+    itemIconStyle: NoItem
+    raiseOnUser: true
+    priority: -1
+  - type: Sprite
+    sprite: Interface/Actions/actions_borg.rsi
+    layers:
+    - state: treatment-module
+  - type: InstantAction
+    event: !type:DutyNeuroMedicRequestActionEvent
+
+- type: entity
+  parent: BaseMentalAction
+  id: ActionDutyNeuroAcknowledgeOrder
+  name: Принято (10-4)
+  description: Подтверждает выполнение текущего тактического приказа по каналу службы безопасности.
+  components:
+  - type: Action
+    useDelay: 3
+    itemIconStyle: NoItem
+    raiseOnUser: true
+    priority: -2
+  - type: Sprite
+    sprite: Interface/Actions/actions_ai.rsi
+    layers:
+    - state: comms_console
+  - type: InstantAction
+    event: !type:DutyNeuroAcknowledgeOrderActionEvent

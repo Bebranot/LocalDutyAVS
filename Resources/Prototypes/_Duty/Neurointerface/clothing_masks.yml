@@ -1,0 +1,36 @@
+# SPDX-FileCopyrightText: 2026 LocalDuty <https://github.com/Bebranot/LocalDuty_Reserve>
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+- type: entity
+  parent: [ClothingMaskGas, BaseSecurityContraband]
+  id: DutyClothingMaskGasSecurityNeuro
+  name: "тактический противогаз с нейроинтерфейсом"
+  description: "Противогаз службы безопасности со встроенным нейроинтерфейсом NT-SEC: выводит телеметрию отряда, визор СБ и тактические приказы."
+  suffix: Duty, СБ
+  components:
+  - type: Item
+    size: Tiny
+  - type: Sprite
+    sprite: Clothing/Mask/gassecurity.rsi
+  - type: Clothing
+    sprite: Clothing/Mask/gassecurity.rsi
+  - type: Armor
+    modifiers:
+      coefficients:
+        Blunt: 0.95
+        Slash: 0.95
+        Piercing: 0.95
+        Heat: 0.95
+  - type: ShowJobIcons
+  - type: ShowMindShieldIcons
+  - type: ShowCriminalRecordIcons
+  - type: ShowContrabandDetails
+  - type: DutyNeurointerfaceMask
+    defaultSquadCallsign: KILO-9
+  - type: ActionGrant
+    actions:
+    - ActionDutyNeuroMedicRequest
+    - ActionDutyNeuroAcknowledgeOrder
+  - type: ItemActionGrant
+    activeIfWorn: true

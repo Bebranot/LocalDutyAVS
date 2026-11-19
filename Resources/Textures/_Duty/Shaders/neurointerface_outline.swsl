@@ -1,0 +1,39 @@
+// _Duty: обводка соотрядцев нейроинтерфейса NT-SEC.
+// В отличие от ванильного outline.swsl рисует ТОЛЬКО контур (внутренность спрайта прозрачна):
+// оверлей идёт поверх FOV и стен, и полный спрайт «просвечивал» бы бойца целиком.
+// Освещение игнорируется (lightSample = 1), чтобы обводку было видно и в темноте.
+
+uniform highp float outline_width; // = 1.0;
+uniform highp vec4 outline_color; // = vec4(0.24, 0.545, 1.0, 1.0);
+uniform highp float glow_strength; // = 0.45;
+
+highp float maxAlphaAt(highp vec2 uv, highp vec2 ps, highp float w) {
+    highp float m = 0.0;
+    m = max(m, texture2D(TEXTURE, uv + vec2(0.0, -w) * ps).a);
+    m = max(m, texture2D(TEXTURE, uv + vec2(0.0, w) * ps).a);
+    m = max(m, texture2D(TEXTURE, uv + vec2(-w, 0.0) * ps).a);
+    m = max(m, texture2D(TEXTURE, uv + vec2(w, 0.0) * ps).a);
+    m = max(m, texture2D(TEXTURE, uv + vec2(-w, -w) * ps).a);
+    m = max(m, texture2D(TEXTURE, uv + vec2(w, -w) * ps).a);
+    m = max(m, texture2D(TEXTURE, uv + vec2(-w, w) * ps).a);
+    m = max(m, texture2D(TEXTURE, uv + vec2(w, w) * ps).a);
+    return m;
+}
+
+void fragment() {
+    highp vec2 ps = TEXTURE_PIXEL_SIZE;
+    highp float selfAlpha = texture2D(TEXTURE, UV).a;
+
+    // Чёткий контур на outline_width и мягкий ореол на удвоенной ширине — «свечение» без второго прохода.
+    highp float inner = maxAlphaAt(UV, ps, outline_width);
+    highp float outer = maxAlphaAt(UV, ps, outline_width * 2.0);
+
+    highp float ring = max(inner, outer * glow_strength);
+    highp float amount = clamp(ring - selfAlpha, 0.0, 1.0);
+
+    // Финальный проход post-shader движок смешивает как premultiplied alpha: цвет обязан быть уже умножен на альфу,
+    // иначе rgb при нулевой альфе складывается с экраном и весь буфер спрайта светится синим квадратом.
+    highp float alpha = outline_color.a * amount;
+    COLOR = vec4(outline_color.rgb * alpha, alpha);
+    lightSample = vec3(1.0);
+}

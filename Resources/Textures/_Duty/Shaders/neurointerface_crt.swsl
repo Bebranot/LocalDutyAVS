@@ -1,0 +1,33 @@
+// _Duty: голографический CRT-шейдер экрана flatline нейроинтерфейса NT-SEC (HUD перешёл на DutyNeuroLens).
+light_mode unshaded;
+
+uniform highp float glitch_intensity; // 0..1
+uniform highp float alpha; // 0..1
+
+lowp float rand(lowp vec2 n) {
+    return fract(sin(dot(n, vec2(12.9898, 78.233))) * 43758.5453);
+}
+
+void fragment() {
+    highp vec4 base = zTexture(UV);
+
+    // Горизонтальное дрожание и сдвиг строк при глитч-импульсе
+    highp float band = floor(FRAGCOORD.y * 0.25);
+    highp float stepTime = floor(TIME * 22.0);
+    highp float sliceRoll = rand(vec2(band, stepTime));
+    highp float sliceMask = step(0.82 - glitch_intensity * 0.55, sliceRoll) * glitch_intensity;
+    highp float jitter = (rand(vec2(band * 1.7, stepTime)) - 0.5) * 2.0;
+    highp float glitchGlow = abs(jitter) * sliceMask;
+
+    // Тонкие CRT-сканлайны (шаг ~3px)
+    highp float scan = 0.5 + 0.5 * sin(FRAGCOORD.y * 2.1);
+    highp float scanMul = mix(0.84, 1.0, scan);
+
+    // Лёгкое голографическое мерцание
+    highp float flicker = 0.96 + 0.04 * sin(TIME * 17.0) * sin(TIME * 5.3);
+
+    highp vec3 rgb = base.rgb * scanMul + vec3(0.06, 0.24, 0.30) * glitchGlow;
+    highp float outAlpha = clamp(base.a * alpha * flicker + glitchGlow * 0.16 * alpha, 0.0, 1.0);
+
+    COLOR = vec4(rgb, outAlpha);
+}

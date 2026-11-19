@@ -200,6 +200,7 @@
 - type: roleLoadout
   id: JobADTSeniorOfficer
   groups:
+  - DutySecurityNeuroMask # _Duty: нейроинтерфейс NT-SEC
   - Inventory # Corvax-Loadouts
   - GroupTankHarness
   - SecurityHead
@@ -227,6 +228,7 @@
 - type: roleLoadout
   id: JobBrigmedic
   groups:
+  - DutySecurityNeuroMask # _Duty: нейроинтерфейс NT-SEC
   - Inventory # Corvax-Loadouts
   - GroupTankHarness
   # Bridmed spec outfit:
@@ -256,6 +258,7 @@
 - type: roleLoadout
   id: JobADTCorrectionsOfficer
   groups:
+  - DutySecurityNeuroMask # _Duty: нейроинтерфейс NT-SEC
   - Inventory # Corvax-Loadouts
   - GroupTankHarness
   - ADTCorrectionsOfficerHead

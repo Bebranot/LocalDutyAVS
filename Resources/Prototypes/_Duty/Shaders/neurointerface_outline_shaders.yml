@@ -1,0 +1,9 @@
+# _Duty: обводка соотрядцев нейроинтерфейса NT-SEC (рисуется поверх FOV, см. DutyNeuroSquadOutlineOverlay)
+- type: shader
+  id: DutyNeuroSquadOutline
+  kind: source
+  path: "/Textures/_Duty/Shaders/neurointerface_outline.swsl"
+  params:
+    outline_width: 2.0
+    outline_color: "#3D8BFFFF"
+    glow_strength: 0.45
