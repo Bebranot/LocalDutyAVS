@@ -18,7 +18,9 @@ public sealed partial class OwnInteractionVerbsComponent : Component
     [DataField, AutoNetworkedField]
     public List<ProtoId<InteractionVerbPrototype>> AllowedVerbs = new();
 
-    // Слишком волатильно, чтобы сетевать — клиент и сервер ведут этот словарь независимо друг от друга.
+    // _Duty: список вместо словаря — активных кулдаунов на сущности обычно единицы, линейный проход
+    // дешевле хэш-таблицы и позволяет чистить истёкшие записи без аллокации ToArray().
+    // Слишком волатильно, чтобы сетевать — клиент и сервер ведут этот список независимо друг от друга.
     [NonSerialized, ViewVariables]
-    public Dictionary<(ProtoId<InteractionVerbPrototype>, EntityUid), TimeSpan> Cooldowns = new();
+    public List<(ProtoId<InteractionVerbPrototype> Proto, EntityUid Target, TimeSpan ExpiresAt)> Cooldowns = new();
 }
