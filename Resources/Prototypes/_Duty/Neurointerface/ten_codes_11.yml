@@ -1,0 +1,12 @@
+# SPDX-FileCopyrightText: 2026 LocalDuty <https://github.com/Bebranot/LocalDuty_Reserve>
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+# Коды 11-xx, которые отправляет нейроинтерфейс NT-SEC: без прототипа подсветка и подсказка в чате не появляются.
+- type: adtTenCode
+  id: "11-41"
+  description: duty-ten-code-11-41
+
+- type: adtTenCode
+  id: "11-99"
+  description: duty-ten-code-11-99
