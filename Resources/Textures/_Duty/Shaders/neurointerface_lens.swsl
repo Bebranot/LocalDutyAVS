@@ -1,0 +1,32 @@
+// _Duty: шейдер «проекции на линзу» для текста HUD нейроинтерфейса NT-SEC.
+// Работает поверх глифов шрифта и плашек: сканлайны и мерцание гасят альфу (а не только цвет),
+// поэтому полосы видны и на тексте, а не только на подложке.
+light_mode unshaded;
+
+uniform highp float glitch_intensity; // 0..1
+uniform highp float alpha; // 0..1, мерцание проекции (fade даёт Modulate виджета)
+uniform highp float scan_strength; // 0..1, глубина сканлайнов
+
+highp float rand(highp vec2 n) {
+    return fract(sin(dot(n, vec2(12.9898, 78.233))) * 43758.5453);
+}
+
+void fragment() {
+    highp vec4 base = zTexture(UV);
+
+    // Тонкие сканлайны (шаг ~3px)
+    highp float scan = 0.5 + 0.5 * sin(FRAGCOORD.y * 2.1);
+    highp float scanMul = 1.0 - scan_strength * (1.0 - scan);
+
+    // Глитч-полосы: часть строк вспыхивает и проваливается по альфе
+    highp float band = floor(FRAGCOORD.y * 0.25);
+    highp float stepTime = floor(TIME * 22.0);
+    highp float sliceRoll = rand(vec2(band, stepTime));
+    highp float sliceMask = step(0.86 - glitch_intensity * 0.5, sliceRoll) * glitch_intensity;
+    highp float dropout = 1.0 - sliceMask * 0.6 * rand(vec2(band * 3.1, stepTime));
+
+    highp vec3 rgb = base.rgb + vec3(0.05, 0.15, 0.22) * sliceMask;
+    highp float outAlpha = clamp(base.a * alpha * scanMul * dropout, 0.0, 1.0);
+
+    COLOR = vec4(rgb, outAlpha);
+}

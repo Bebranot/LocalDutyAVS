@@ -1,0 +1,10 @@
+# _Duty: шейдеры нейроинтерфейса NT-SEC
+- type: shader
+  id: DutyNeuroCrt
+  kind: source
+  path: "/Textures/_Duty/Shaders/neurointerface_crt.swsl"
+
+- type: shader
+  id: DutyNeuroLens
+  kind: source
+  path: "/Textures/_Duty/Shaders/neurointerface_lens.swsl"

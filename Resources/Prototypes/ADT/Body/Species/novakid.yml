@@ -124,6 +124,8 @@
   id: MobNovakid
   components:
   - type: FireImmunity # _Duty: не горят, состоят из плазмы
+  - type: ADTVirusImmune
+    absolute: true
   - type: Satiation
     satiations:
       Hunger:

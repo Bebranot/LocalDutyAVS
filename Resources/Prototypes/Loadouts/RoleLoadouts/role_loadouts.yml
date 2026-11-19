@@ -94,7 +94,7 @@
   - Trinkets
   - ADTSprayPaints # ADT-Tweak
   - ADTRacialItems # ADT-Tweak
-  #- PassengerJobTrinkets
+  - ADTPassengerJobTrinkets # ADT-Tweak
   - GroupSpeciesBreathTool
   - ADTPersonalLoadoutCivilian # ADT-Tweak personal
   - ADTPersonalLoadoutPlushie # ADT-Tweak personal
@@ -594,7 +594,7 @@
   - AtmosphericTechnicianJumpsuit
   - AtmosphericTechnicianBackpack
   - ADTEngineeringBelt # ADT-TWEAK
-  - ADTEngineeringGlasses # ADT-TWEAK
+  - ADTAtmosphericTechnicianGlasses # ADT-TWEAK
   - AtmosphericTechnicianOuterClothing
   - AtmosphericTechnicianShoes
   - ADTAtmosPDA # ADT tweak
@@ -699,8 +699,10 @@
 - type: roleLoadout
   id: JobHeadOfSecurity
   groups:
+  - DutySecurityNeuroMask # _Duty: нейроинтерфейс NT-SEC
   - Inventory # Corvax-Loadouts
   - HeadofSecurityHead
+  - ADTSecurityMasks # ADT-Tweak
   - SecurityOfficerGlassesADT #ADT-Tweak
   - HeadofSecurityNeck
   - HeadofSecurityJumpsuit
@@ -726,9 +728,11 @@
 - type: roleLoadout
   id: JobWarden
   groups:
+  - DutySecurityNeuroMask # _Duty: нейроинтерфейс NT-SEC
   - Inventory # Corvax-Loadouts
   - WardenHead
   #ADT-Tweak-Start
+  - ADTSecurityMasks # ADT-Tweak
   - SecurityOfficerGlassesADT
   - WardenNeckADT
   #ADT-Tweak-End
@@ -754,9 +758,11 @@
 - type: roleLoadout
   id: JobSecurityOfficer
   groups:
+  - DutySecurityNeuroMask # _Duty: нейроинтерфейс NT-SEC
   - Inventory # Corvax-Loadouts
   - SecurityHead
   #ADT-Tweak-Start
+  - ADTSecurityMasks # ADT-Tweak
   - SecurityOfficerGlassesADT
   - SecurityOfficerNeckADT
     #ADT-Tweak-End
@@ -783,8 +789,10 @@
 - type: roleLoadout
   id: JobDetective
   groups:
+  - DutySecurityNeuroMask # _Duty: нейроинтерфейс NT-SEC
   - Inventory # Corvax-Loadouts
   - DetectiveHead
+  - ADTSecurityMasks # ADT-Tweak
   - SecurityOfficerGlassesADT #ADT-Tweak
   - DetectiveNeck
   - DetectiveJumpsuit
@@ -810,6 +818,7 @@
 - type: roleLoadout
   id: JobSecurityCadet
   groups:
+  - DutySecurityNeuroMask # _Duty: нейроинтерфейс NT-SEC
   - Inventory # Corvax-Loadouts
   - SecurityCadetNeckADT # ADT-Loadouts
   - SecurityCadetJumpsuit

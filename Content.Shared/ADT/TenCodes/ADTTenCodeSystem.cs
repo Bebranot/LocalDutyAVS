@@ -14,7 +14,7 @@ public sealed class ADTTenCodeSystem : EntitySystem
 
     public string Highlight(EntityUid speaker, string message)
     {
-        if (string.IsNullOrEmpty(message) || !message.Contains(ADTTenCodes.Prefix))
+        if (string.IsNullOrEmpty(message) || !message.Contains(ADTTenCodes.Prefix) && !message.Contains(ADTTenCodes.DutyPrefix11)) // _Duty: и коды 11-xx
             return message;
 
         if (!Knows(speaker))

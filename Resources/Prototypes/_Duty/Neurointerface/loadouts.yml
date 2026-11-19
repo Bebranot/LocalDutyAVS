@@ -1,0 +1,33 @@
+# SPDX-FileCopyrightText: 2026 LocalDuty <https://github.com/Bebranot/LocalDuty_Reserve>
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+# Нейроинтерфейс NT-SEC в лодауте всех ролей СБ: маска и планшет отрядов, можно взять оба.
+# Маска занимает слот маски — если выбрать её вместе с маской из группы ADTSecurityMasks, наденется одна.
+- type: loadout
+  id: DutyLoadoutNeuroMask
+  equipment:
+    mask: DutyClothingMaskGasSecurityNeuro
+
+- type: loadout
+  id: DutyLoadoutNeuroTablet
+  storage:
+    back:
+    - DutyNeuroSquadTablet
+
+- type: loadoutGroup
+  id: DutySecurityNeuroMask
+  name: duty-loadout-group-security-neuro
+  minLimit: 0
+  maxLimit: 2
+  loadouts:
+  - DutyLoadoutNeuroMask
+  - DutyLoadoutNeuroTablet
+
+# Категория СБТеха: priority -1 ставит её выше «Оружия» (priority 0).
+- type: vendingMachineCategory
+  id: DutyVendingCategoryNeuro
+  name: duty-vending-category-neuro
+  icon: DutyClothingMaskGasSecurityNeuro
+  accentColor: "#3D8BFF"
+  priority: -1

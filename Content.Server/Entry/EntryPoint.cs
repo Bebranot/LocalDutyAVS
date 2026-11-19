@@ -42,6 +42,7 @@ using Content.Server.ADT.Antag;
 using Content.Server.ADT.Export;
 using Content.Server._Duty.Logging;
 using Content.Server.ADT.JoinQueue;
+using Content.Server.ADT.MapRotation;
 using Content.Shared.Emp;
 
 namespace Content.Server.Entry
@@ -165,6 +166,7 @@ namespace Content.Server.Entry
             IoCManager.Resolve<JoinQueueManager>().Initialize(); // Corvax-Queue
             IoCManager.Resolve<QueueGamesManager>().Initialize(); // ADT-Tweak: queue games
             IoCManager.Resolve<AntagRollBonusManager>().Initialize(); // ADT Antag roll bonus
+            IoCManager.Resolve<MapRotationManager>().Initialize(); // ADT-Tweak
         }
 
         public override void PostInit()

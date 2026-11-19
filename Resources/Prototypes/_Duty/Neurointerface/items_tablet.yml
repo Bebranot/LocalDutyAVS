@@ -1,0 +1,38 @@
+# SPDX-FileCopyrightText: 2026 LocalDuty <https://github.com/Bebranot/LocalDuty_Reserve>
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+- type: entity
+  parent: BaseItem
+  id: DutyNeuroSquadTablet
+  name: планшет управления отрядами
+  description: Тактический планшет нейроинтерфейса NT-SEC для координации отрядов СБ, постановки меток приказов на карте станции, таймеров и задач.
+  suffix: Duty, СБ
+  components:
+  - type: Sprite
+    sprite: Objects/Devices/tablets.rsi
+    layers:
+    - state: tablet
+    - state: syndie
+      shader: unshaded
+  - type: Item
+    size: Small
+    sprite: Objects/Devices/tablets.rsi
+    inhandVisuals:
+      left:
+      - state: inhand-left-syndie
+      right:
+      - state: inhand-right-syndie
+  - type: ActivatableUI
+    inHandsOnly: true
+    singleUser: true
+    key: enum.DutyNeuroUiKey.Tablet
+  - type: UserInterface
+    interfaces:
+      enum.DutyNeuroUiKey.Tablet:
+        type: DutyNeuroTabletBoundUserInterface
+  - type: DutyNeurointerfaceTablet
+    activeSquadId: KILO-9
+  # Смотреть планшет может любой, а управлять отрядами/приказами — только с доступом СБ (проверяет DutyNeurointerfaceSystem).
+  - type: AccessReader
+    access: [["Security"]]

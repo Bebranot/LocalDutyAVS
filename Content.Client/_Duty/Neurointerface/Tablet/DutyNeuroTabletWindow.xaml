@@ -1,0 +1,208 @@
+<ui:DutyNeuroTabletWindow xmlns="https://spacestation14.io"
+                          xmlns:ui="clr-namespace:Content.Client._Duty.Neurointerface.Tablet"
+                          MouseFilter="Stop"
+                          Resizable="False"
+                          SetSize="940 560"
+                          MinSize="940 560">
+    <BoxContainer Orientation="Vertical" HorizontalExpand="True" VerticalExpand="True" Margin="14 10 14 12">
+        <!-- Шапка планшета -->
+        <BoxContainer Orientation="Horizontal" VerticalExpand="False" Margin="0 0 0 8">
+            <PanelContainer Name="LogoBadgePanel" VerticalAlignment="Center" Margin="0 0 10 0">
+                <Label Name="LogoBadgeLabel" Text="{Loc 'duty-neuro-tablet-badge'}" Margin="8 3"/>
+            </PanelContainer>
+
+            <Label Name="HeaderTitleLabel"
+                   Text="{Loc 'duty-neuro-tablet-title'}"
+                   HorizontalExpand="True"
+                   VerticalAlignment="Center"
+                   ClipText="True"/>
+
+            <Label Name="StationNameLabel"
+                   Text="{Loc 'duty-neuro-tablet-station-default'}"
+                   VerticalAlignment="Center"
+                   Margin="8 0 10 0"/>
+
+            <PanelContainer Name="AlertBadgePanel" VerticalAlignment="Center" Margin="0 0 10 0">
+                <Label Name="AlertCodeLabel" Text="" Margin="8 3"/>
+            </PanelContainer>
+
+            <Button Name="CloseButton"
+                    Text="X"
+                    SetSize="28 28"
+                    VerticalAlignment="Center"/>
+        </BoxContainer>
+
+        <PanelContainer Name="HeaderDivider" SetHeight="1" HorizontalExpand="True" Margin="0 0 0 6"/>
+
+        <!-- Полоса вкладок -->
+        <BoxContainer Orientation="Horizontal" VerticalExpand="False" Margin="0 0 0 8" SeparationOverride="6">
+            <BoxContainer Orientation="Vertical" HorizontalExpand="True">
+                <Button Name="TabMonitorBtn" Text="{Loc 'duty-neuro-tablet-tab-monitoring'}" HorizontalExpand="True" SetHeight="30"/>
+                <PanelContainer Name="TabMonitorLine" SetHeight="2" HorizontalExpand="True"/>
+            </BoxContainer>
+            <BoxContainer Orientation="Vertical" HorizontalExpand="True">
+                <Button Name="TabSquadsBtn" Text="{Loc 'duty-neuro-tablet-tab-squads'}" HorizontalExpand="True" SetHeight="30"/>
+                <PanelContainer Name="TabSquadsLine" SetHeight="2" HorizontalExpand="True"/>
+            </BoxContainer>
+            <BoxContainer Orientation="Vertical" HorizontalExpand="True">
+                <Button Name="TabTimersBtn" Text="{Loc 'duty-neuro-tablet-tab-timers'}" HorizontalExpand="True" SetHeight="30"/>
+                <PanelContainer Name="TabTimersLine" SetHeight="2" HorizontalExpand="True"/>
+            </BoxContainer>
+            <BoxContainer Orientation="Vertical" HorizontalExpand="True">
+                <Button Name="TabTasksBtn" Text="{Loc 'duty-neuro-tablet-tab-tasks'}" HorizontalExpand="True" SetHeight="30"/>
+                <PanelContainer Name="TabTasksLine" SetHeight="2" HorizontalExpand="True"/>
+            </BoxContainer>
+        </BoxContainer>
+
+        <!-- Контейнер содержимого вкладок -->
+        <Control HorizontalExpand="True" VerticalExpand="True" RectClipContent="True">
+            <!-- ВКЛАДКА 1: МОНИТОРИНГ -->
+            <BoxContainer Name="TabMonitorContainer" Orientation="Horizontal" HorizontalExpand="True" VerticalExpand="True" SeparationOverride="10">
+                <PanelContainer Name="MapFramePanel" HorizontalExpand="True" VerticalExpand="True" SizeFlagsStretchRatio="0.65">
+                    <BoxContainer Orientation="Vertical" HorizontalExpand="True" VerticalExpand="True" Margin="6 6 6 6">
+                        <BoxContainer Orientation="Horizontal" VerticalExpand="False" Margin="0 0 0 6" SeparationOverride="8">
+                            <Label Name="ZoomValueLabel" Text="" VerticalAlignment="Center" HorizontalExpand="True"/>
+                            <CheckBox Name="ShowBeaconsCheckBox" Text="{Loc 'duty-neuro-tablet-show-beacons'}" Pressed="True" VerticalAlignment="Center"/>
+                            <Button Name="RecenterMapButton" Text="{Loc 'duty-neuro-tablet-recenter'}" SetHeight="24" VerticalAlignment="Center"/>
+                        </BoxContainer>
+
+                        <PanelContainer Name="MapViewportBorder" HorizontalExpand="True" VerticalExpand="True">
+                            <ui:DutyNeuroNavMapControl Name="NavMap" HorizontalExpand="True" VerticalExpand="True"/>
+                        </PanelContainer>
+
+                        <Label Name="MapHintLabel"
+                               Text="{Loc 'duty-neuro-tablet-map-hint'}"
+                               Margin="2 5 2 0"
+                               ClipText="True"/>
+                    </BoxContainer>
+                </PanelContainer>
+
+                <PanelContainer Name="MonitorRightPanel" HorizontalExpand="True" VerticalExpand="True" SizeFlagsStretchRatio="0.35">
+                    <BoxContainer Orientation="Vertical" HorizontalExpand="True" VerticalExpand="True" Margin="8 6 8 6" SeparationOverride="6">
+                        <BoxContainer Orientation="Horizontal" VerticalExpand="False">
+                            <Label Name="MonitorSquadsHeader" Text="{Loc 'duty-neuro-tablet-tab-squads'}" HorizontalExpand="True" VerticalAlignment="Center"/>
+                            <Button Name="QuickAddSquadButton" Text="+" SetSize="26 24" VerticalAlignment="Center"/>
+                        </BoxContainer>
+
+                        <ScrollContainer HorizontalExpand="True" VerticalExpand="True" HScrollEnabled="False" SizeFlagsStretchRatio="0.54">
+                            <BoxContainer Name="MonitorSquadsBox" Orientation="Vertical" HorizontalExpand="True" SeparationOverride="5"/>
+                        </ScrollContainer>
+
+                        <PanelContainer Name="RightDivider" SetHeight="1" HorizontalExpand="True"/>
+
+                        <BoxContainer Orientation="Horizontal" VerticalExpand="False">
+                            <Label Name="ActiveOrdersHeader" Text="{Loc 'duty-neuro-tablet-active-orders'}" HorizontalExpand="True" VerticalAlignment="Center"/>
+                            <Button Name="ClearOrdersButton" Text="{Loc 'duty-neuro-tablet-clear-orders'}" SetHeight="24" VerticalAlignment="Center"/>
+                        </BoxContainer>
+
+                        <ScrollContainer HorizontalExpand="True" VerticalExpand="True" HScrollEnabled="False" SizeFlagsStretchRatio="0.46">
+                            <BoxContainer Name="ActiveOrdersBox" Orientation="Vertical" HorizontalExpand="True" SeparationOverride="4"/>
+                        </ScrollContainer>
+
+                        <BoxContainer Orientation="Horizontal" VerticalExpand="False" SeparationOverride="6" Margin="0 2 0 0">
+                            <Button Name="Callout104Button" Text="10-4" HorizontalExpand="True" SetHeight="28"/>
+                            <Button Name="Callout1141Button" Text="11-41" HorizontalExpand="True" SetHeight="28"/>
+                            <Button Name="Callout1199Button" Text="11-99" HorizontalExpand="True" SetHeight="28"/>
+                        </BoxContainer>
+                    </BoxContainer>
+                </PanelContainer>
+            </BoxContainer>
+
+            <!-- ВКЛАДКА 2: ОТРЯДЫ -->
+            <BoxContainer Name="TabSquadsContainer" Orientation="Vertical" Visible="False" HorizontalExpand="True" VerticalExpand="True" SeparationOverride="8">
+                <PanelContainer Name="SquadToolbarPanel" VerticalExpand="False">
+                    <BoxContainer Orientation="Horizontal" Margin="8 6" SeparationOverride="6">
+                        <LineEdit Name="NewSquadInput" PlaceHolder="{Loc 'duty-neuro-tablet-new-squad-placeholder'}" HorizontalExpand="True" SizeFlagsStretchRatio="0.32"/>
+                        <Button Name="CreateSquadButton" Text="+" SetSize="32 28"/>
+
+                        <Control SetWidth="8"/>
+
+                        <LineEdit Name="RenameSquadInput" PlaceHolder="{Loc 'duty-neuro-tablet-rename-placeholder'}" HorizontalExpand="True" SizeFlagsStretchRatio="0.32"/>
+                        <Button Name="RenameSquadButton" Text="{Loc 'duty-neuro-tablet-rename'}" SetHeight="28"/>
+                        <Button Name="DisbandSquadButton" Text="{Loc 'duty-neuro-tablet-disband'}" SetHeight="28"/>
+                    </BoxContainer>
+                </PanelContainer>
+
+                <ScrollContainer VerticalExpand="False" HorizontalExpand="True" SetHeight="34" VScrollEnabled="False">
+                    <BoxContainer Name="SquadSelectorStrip" Orientation="Horizontal" SeparationOverride="6"/>
+                </ScrollContainer>
+
+                <BoxContainer Orientation="Horizontal" HorizontalExpand="True" VerticalExpand="True" SeparationOverride="10">
+                    <PanelContainer Name="SquadRosterPanel" HorizontalExpand="True" VerticalExpand="True" SizeFlagsStretchRatio="0.50">
+                        <BoxContainer Orientation="Vertical" HorizontalExpand="True" VerticalExpand="True" Margin="8 6" SeparationOverride="6">
+                            <Label Name="SelectedSquadRosterHeader" Text="{Loc 'duty-neuro-tablet-roster-header'}" VerticalExpand="False"/>
+                            <ScrollContainer HorizontalExpand="True" VerticalExpand="True" HScrollEnabled="False">
+                                <BoxContainer Name="SquadRosterBox" Orientation="Vertical" HorizontalExpand="True" SeparationOverride="5"/>
+                            </ScrollContainer>
+                        </BoxContainer>
+                    </PanelContainer>
+
+                    <PanelContainer Name="CrewCandidatesPanel" HorizontalExpand="True" VerticalExpand="True" SizeFlagsStretchRatio="0.50">
+                        <BoxContainer Orientation="Vertical" HorizontalExpand="True" VerticalExpand="True" Margin="8 6" SeparationOverride="6">
+                            <Label Name="CrewCandidatesHeader" Text="{Loc 'duty-neuro-tablet-crew-header'}" VerticalExpand="False"/>
+                            <LineEdit Name="CrewFilterInput" PlaceHolder="{Loc 'duty-neuro-tablet-crew-filter-placeholder'}" HorizontalExpand="True"/>
+                            <ScrollContainer HorizontalExpand="True" VerticalExpand="True" HScrollEnabled="False">
+                                <BoxContainer Name="CrewCandidatesBox" Orientation="Vertical" HorizontalExpand="True" SeparationOverride="5"/>
+                            </ScrollContainer>
+                        </BoxContainer>
+                    </PanelContainer>
+                </BoxContainer>
+            </BoxContainer>
+
+            <!-- ВКЛАДКА 3: ТАЙМЕРЫ -->
+            <BoxContainer Name="TabTimersContainer" Orientation="Vertical" Visible="False" HorizontalExpand="True" VerticalExpand="True" SeparationOverride="8">
+                <PanelContainer Name="TimerCreatePanel" VerticalExpand="False">
+                    <BoxContainer Orientation="Horizontal" Margin="8 8" SeparationOverride="6">
+                        <LineEdit Name="TimerTitleInput" PlaceHolder="{Loc 'duty-neuro-tablet-timer-title-placeholder'}" HorizontalExpand="True" SizeFlagsStretchRatio="0.45"/>
+                        <LineEdit Name="TimerSecondsInput" PlaceHolder="{Loc 'duty-neuro-tablet-timer-seconds-placeholder'}" Text="60" SetWidth="64"/>
+                        <Button Name="Preset15Button" Text="" SetSize="44 28"/>
+                        <Button Name="Preset30Button" Text="" SetSize="44 28"/>
+                        <Button Name="Preset60Button" Text="" SetSize="44 28"/>
+                        <Button Name="Preset120Button" Text="" SetSize="48 28"/>
+                        <Button Name="Preset300Button" Text="" SetSize="48 28"/>
+                        <Button Name="CreateTimerButton" Text="{Loc 'duty-neuro-tablet-timer-create'}" SetHeight="28"/>
+                    </BoxContainer>
+                </PanelContainer>
+
+                <PanelContainer Name="TimersListPanel" HorizontalExpand="True" VerticalExpand="True">
+                    <BoxContainer Orientation="Vertical" HorizontalExpand="True" VerticalExpand="True" Margin="8 6" SeparationOverride="6">
+                        <Label Name="TimersListHeader" Text="{Loc 'duty-neuro-tablet-timers-header'}" VerticalExpand="False"/>
+                        <ScrollContainer HorizontalExpand="True" VerticalExpand="True" HScrollEnabled="False">
+                            <BoxContainer Name="TimersListBox" Orientation="Vertical" HorizontalExpand="True" SeparationOverride="6"/>
+                        </ScrollContainer>
+                    </BoxContainer>
+                </PanelContainer>
+            </BoxContainer>
+
+            <!-- ВКЛАДКА 4: ЗАДАЧИ -->
+            <BoxContainer Name="TabTasksContainer" Orientation="Vertical" Visible="False" HorizontalExpand="True" VerticalExpand="True" SeparationOverride="8">
+                <PanelContainer Name="TaskCreatePanel" VerticalExpand="False">
+                    <BoxContainer Orientation="Vertical" Margin="8 8" SeparationOverride="6">
+                        <BoxContainer Orientation="Horizontal" SeparationOverride="6">
+                            <LineEdit Name="TaskTitleInput" PlaceHolder="{Loc 'duty-neuro-tablet-task-title-placeholder'}" HorizontalExpand="True" SizeFlagsStretchRatio="0.60"/>
+                            <LineEdit Name="TaskAssigneeInput" PlaceHolder="{Loc 'duty-neuro-tablet-task-assignee-placeholder'}" HorizontalExpand="True" SizeFlagsStretchRatio="0.40"/>
+                        </BoxContainer>
+                        <BoxContainer Orientation="Horizontal" SeparationOverride="6">
+                            <LineEdit Name="TaskDescInput" PlaceHolder="{Loc 'duty-neuro-tablet-task-desc-placeholder'}" HorizontalExpand="True"/>
+                            <Button Name="PriorityNormalButton" Text="{Loc 'duty-neuro-tablet-priority-normal'}" SetHeight="28"/>
+                            <Button Name="PriorityHighButton" Text="{Loc 'duty-neuro-tablet-priority-high'}" SetHeight="28"/>
+                            <Button Name="PriorityCriticalButton" Text="{Loc 'duty-neuro-tablet-priority-critical'}" SetHeight="28"/>
+                            <Button Name="CreateTaskButton" Text="{Loc 'duty-neuro-tablet-task-add'}" SetHeight="28"/>
+                        </BoxContainer>
+                    </BoxContainer>
+                </PanelContainer>
+
+                <PanelContainer Name="TasksListPanel" HorizontalExpand="True" VerticalExpand="True">
+                    <BoxContainer Orientation="Vertical" HorizontalExpand="True" VerticalExpand="True" Margin="8 6" SeparationOverride="6">
+                        <Label Name="TasksListHeader" Text="{Loc 'duty-neuro-tablet-tasks-header'}" VerticalExpand="False"/>
+                        <ScrollContainer HorizontalExpand="True" VerticalExpand="True" HScrollEnabled="False">
+                            <BoxContainer Name="TasksListBox" Orientation="Vertical" HorizontalExpand="True" SeparationOverride="6"/>
+                        </ScrollContainer>
+                    </BoxContainer>
+                </PanelContainer>
+            </BoxContainer>
+        </Control>
+    </BoxContainer>
+
+    <ui:DutyNeuroScanlineOverlay HorizontalExpand="True" VerticalExpand="True"/>
+</ui:DutyNeuroTabletWindow>

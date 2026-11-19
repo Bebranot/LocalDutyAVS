@@ -1,6 +1,9 @@
 - type: vendingMachineInventory
   id: SecTechInventory
   startingInventory:
+    DutyVendingCategoryNeuro: # _Duty: нейроинтерфейс NT-SEC — первой категорией
+        DutyClothingMaskGasSecurityNeuro: 6
+        DutyNeuroSquadTablet: 6
     ADTVendingCategoryWeapons: # _Duty
         WeaponPistolMk58: 6
         # MagazinePistolRubber убран: такого прототипа в форке нет, 12 слотов были пустыми.
