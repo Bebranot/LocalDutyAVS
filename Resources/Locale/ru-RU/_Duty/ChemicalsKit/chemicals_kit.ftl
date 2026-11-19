@@ -1,4 +1,4 @@
-﻿# _Duty: набор химикатов для аплинка ядерных оперативников.
+# _Duty: набор химикатов для аплинка ядерных оперативников.
 # Сущности: Resources/Prototypes/_Duty/Entities/Objects/chemicals_kit.yml
 # Лот аплинка: Resources/Prototypes/_Duty/Catalog/uplink_catalog.yml
 duty-uplink-chemicals-kit-name = набор химикатов
