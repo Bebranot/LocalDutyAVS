@@ -14,6 +14,10 @@
   - type: Heartbeat # _Duty: уровень пульса (презентационный звук сердцебиения)
   - type: FireAgony # _Duty: сцена агонии при сильном горении (только у player-controlled)
   - type: DutyStamina # _Duty: пул выносливости для спринта (третья ступень движения)
+  # _Duty: вкладка "Взаимодействовать" в ПКМ-меню. Без компонента на самом пользователе InnateVerb-обработчик
+  # (SharedInteractionVerbsSystem.OnGetOwnVerbs) не вызывается, и вкладка пропадала, пока игрок
+  # не кликнет ПКМ по двери/стене (там EnsureComp в AddAll).
+  - type: OwnInteractionVerbs
   # ADT-Tweak start
   - type: SoftCrit
     speedModifier: 0.35
