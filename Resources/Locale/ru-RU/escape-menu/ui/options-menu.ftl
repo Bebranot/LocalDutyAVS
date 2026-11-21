@@ -371,7 +371,6 @@ ui-options-enable-color-name = Цветные имена персонажей
 ui-options-colorblind-friendly = Режим для дальтоников
 ui-options-colorblind-friendly-tooltip = Заменяет часть цветовых индикаторов на более различимые для дальтоников.
 ui-options-reduced-motion = Снижение интенсивности визуальных эффектов
-ui-options-reduced-motion-tooltip = Убирает или ослабляет тряску экрана, вспышки и другие резкие эффекты.
 ui-options-reduced-motion-tooltip = Показывать для некоторых предметов альтернативные спрайты с меньшим движением.
 ui-options-disable-ai-static = Помехи камер ИИ
 ui-options-disable-ai-static-tooltip = Заменяет эффект помех на камерах ИИ простым градиентом.
