@@ -97,6 +97,10 @@ public sealed partial class ProjectileComponent : Component
     // projectileClass для своей системы точности). Поведения у нас не несёт — только чтобы YAML грузился.
     [DataField]
     public int ProjectileClass;
+    // ADT-Tweak-Start
+    [DataField]
+    public bool IgnoreTargeted;
+    // ADT-Tweak-End
     /// <summary>
     ///     When a projectile has this threshold set, it will continue to penetrate entities until the damage dealt reaches this threshold.
     /// </summary>
