@@ -30,7 +30,7 @@ duty-neuro-callout-ack = 10-4, выполняю поручение.
 duty-neuro-callout-retreat = Отступаю!
 duty-neuro-callout-sos = 11-99, требуется срочное подкрепление на { $zone }!
 duty-neuro-callout-medic = 11-41, требуется медицинская помощь!
-duty-neuro-callout-tracker-crit = Жизненные показатели { $name } критические, требуется немедленная помощь в { $zone }.
+duty-neuro-callout-tracker-crit = Жизненные показатели { $name } критические, требуется немедленная помощь. Локация: { $zone }.
 
 duty-neuro-tablet-title = ПЛАНШЕТ УПРАВЛЕНИЯ ОТРЯДАМИ
 duty-neuro-tablet-tab-monitoring = МОНИТОРИНГ

@@ -352,5 +352,5 @@ BuildChecker/RobustToolbox/
 # C# Dev Kit cache file
 *.lscache
 
-# Локальные заметки по нейроинтерфейсу NT-SEC (референс-видео), не для репозитория
-NEUROINTERFACE_NOTES.md
+# Локальная документация и заметки (идеи, референсы, ИИ-доки) — не для репозитория
+/docs/

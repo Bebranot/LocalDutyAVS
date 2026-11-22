@@ -1,0 +1,12 @@
+# SPDX-FileCopyrightText: 2026 LocalDuty
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+- type: entity
+  parent: DutyImplantSurgeryKitBase
+  id: DutySandevistanSurgeryKit
+  name: операционный набор "Сандевистан"
+  suffix: Duty, Syndicate, Операционный набор
+  description: Стерильный кейс со скальпелем, зажимами и позвоночным нейроускорителем «Сандевистан».
+  components:
+  - type: DutyImplantSurgeryKit
+    implant: ADTSandevistanImplant

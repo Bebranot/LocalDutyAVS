@@ -26,3 +26,10 @@
   id: DutyLazarusSlowdownStatusEffect
   suffix: Duty, Статус-эффект
   name: lazarus aftershock slowdown
+
+# Duty: Подавление нейроперегруза киберимплантов иммуноблокаторами на 5 минут.
+- type: entity
+  parent: MobStatusEffectBase
+  id: StatusEffectDutyImmunoblocker
+  suffix: Duty, Статус-эффект
+  name: immunoblocker suppression

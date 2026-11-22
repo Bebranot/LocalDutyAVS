@@ -160,7 +160,10 @@ public sealed partial class DutyNeurointerfaceSystem : EntitySystem
             subs.Event<DutyNeuroCreateTaskMessage>(OnCreateTask);
             subs.Event<DutyNeuroToggleTaskMessage>(OnToggleTask);
             subs.Event<DutyNeuroDeleteTaskMessage>(OnDeleteTask);
+            subs.Event<DutyNeuroRebootNetworkMessage>(OnRebootNetwork);
         });
+
+        InitializeCyber();
     }
 
     public override void Update(float frameTime)
@@ -183,6 +186,7 @@ public sealed partial class DutyNeurointerfaceSystem : EntitySystem
         _syncAccumulator = 0f;
 
         _squads.CleanupDeletedEntities();
+        PruneNetworkAlerts();
         RebuildCaches();
         RefreshAllWearers();
         RefreshOpenTablets();
@@ -205,38 +209,15 @@ public sealed partial class DutyNeurointerfaceSystem : EntitySystem
 
     #region Mask Equip / Unequip
 
+    // Маска — один из источников нейроинтерфейса (второй — киберимплант): вся логика подключения в AddSource/RemoveSource.
     private void OnMaskEquipped(Entity<DutyNeurointerfaceMaskComponent> ent, ref ClothingGotEquippedEvent args)
     {
-        if (!_mobStateQuery.HasComp(args.Wearer))
-            return;
-
-        // Авто-вступление в отряд — только в момент надевания маски, чтобы «убрать из отряда» работало.
-        _squads.GetOrJoinDefaultSquad(args.Wearer);
-
-        var wearer = EnsureComp<DutyNeurointerfaceWearerComponent>(args.Wearer);
-        wearer.Active = true;
-
-        RequestRefresh(candidatesChanged: true);
+        AddSource(args.Wearer, ent.Owner, ent.Comp.Network);
     }
 
     private void OnMaskUnequipped(Entity<DutyNeurointerfaceMaskComponent> ent, ref ClothingGotUnequippedEvent args)
     {
-        if (TerminatingOrDeleted(args.Wearer))
-            return;
-
-        if (HasOtherNeuroMaskEquipped(args.Wearer, ent.Owner))
-            return;
-
-        RemComp<DutyNeurointerfaceWearerComponent>(args.Wearer);
-        RequestRefresh(candidatesChanged: true);
-    }
-
-    private bool HasOtherNeuroMaskEquipped(EntityUid wearer, EntityUid excludedMask)
-    {
-        if (!_inventory.TryGetSlotEntity(wearer, MaskSlotName, out var equippedMask))
-            return false;
-
-        return equippedMask.Value != excludedMask && _maskQuery.HasComp(equippedMask.Value);
+        RemoveSource(args.Wearer, ent.Owner);
     }
 
     private bool HasNeuroMaskEquipped(EntityUid wearer)
@@ -251,8 +232,15 @@ public sealed partial class DutyNeurointerfaceSystem : EntitySystem
 
     private void OnMedicRequestAction(DutyNeuroMedicRequestActionEvent args)
     {
-        if (args.Handled || !_wearerQuery.HasComp(args.Performer) || _mobState.IsDead(args.Performer))
+        if (args.Handled || !_wearerQuery.TryComp(args.Performer, out var wearer) || _mobState.IsDead(args.Performer))
             return;
+
+        // Погашенная ЭМИ панель не передаёт ничего — как и мёртвая рация.
+        if (wearer.Jammed)
+        {
+            _popup.PopupEntity(Loc.GetString("duty-neuro-jammed-popup"), args.Performer, args.Performer);
+            return;
+        }
 
         if (TrySendCallout(args.Performer, DutyNeuroCalloutType.Medic))
             args.Handled = true;
@@ -260,8 +248,14 @@ public sealed partial class DutyNeurointerfaceSystem : EntitySystem
 
     private void OnAcknowledgeOrderAction(DutyNeuroAcknowledgeOrderActionEvent args)
     {
-        if (args.Handled || !_wearerQuery.HasComp(args.Performer) || _mobState.IsDead(args.Performer))
+        if (args.Handled || !_wearerQuery.TryComp(args.Performer, out var wearer) || _mobState.IsDead(args.Performer))
             return;
+
+        if (wearer.Jammed)
+        {
+            _popup.PopupEntity(Loc.GetString("duty-neuro-jammed-popup"), args.Performer, args.Performer);
+            return;
+        }
 
         if (TrySendCallout(args.Performer, DutyNeuroCalloutType.Acknowledge))
             args.Handled = true;
@@ -278,7 +272,7 @@ public sealed partial class DutyNeurointerfaceSystem : EntitySystem
             return false;
         }
 
-        return _squads.SendSecurityCallout(sender, type, GetLocationName(sender));
+        return _squads.SendSecurityCallout(sender, type, GetLocationName(sender), GetNetwork(sender));
     }
 
     #endregion
@@ -288,13 +282,24 @@ public sealed partial class DutyNeurointerfaceSystem : EntitySystem
     private void OnMobStateChanged(MobStateChangedEvent args)
     {
         var target = args.Target;
-        if (!_wearerQuery.HasComp(target) && !_squads.IsSquadMember(target))
+        var trackerV2 = _trackerV2Query.HasComp(target);
+        if (!trackerV2 && !_wearerQuery.HasComp(target) && !_squads.IsSquadMember(target))
             return;
 
+        // «Призрак в сети» глушит и автоматику трекера: в эфир о нём ничего не уходит.
+        if (IsNeuroGhost(target))
+        {
+            RequestRefresh();
+            return;
+        }
+
         // Статусы носителя выставит ResolveOwnerLifecycle на ближайшем пересчёте; здесь — только мгновенное
-        // радиооповещение, которое не должно ждать тика.
+        // радиооповещение, которое не должно ждать тика. Кулдаун оповещения общий для отряда и трекера v2 —
+        // двойного сообщения не будет.
         if (args.NewMobState is MobState.SoftCritical or MobState.Critical)
-            _squads.TrySendCriticalTrackerAlert(target, GetMemberDisplayName(target), GetLocationName(target));
+            _squads.TrySendCriticalTrackerAlert(target, GetMemberDisplayName(target), GetLocationName(target), GetNetwork(target));
+        else if (args.NewMobState == MobState.Dead && trackerV2)
+            SendTrackerV2DeathAlert(target);
 
         RequestRefresh();
     }
@@ -347,9 +352,18 @@ public sealed partial class DutyNeurointerfaceSystem : EntitySystem
         return false;
     }
 
+    /// <summary>
+    /// Планшет — инструмент NT-SEC: отряды тактической сети Горлекса через него не видны и не управляются
+    /// (иначе подделанным сообщением можно было бы разогнать отряд оперативников).
+    /// </summary>
+    private bool IsTabletSquad(string squadId)
+    {
+        return _squads.TryGetSquad(squadId, out var squad) && squad.Network == DutyNeuroNetwork.NtSec;
+    }
+
     private string EnsureActiveSquad(Entity<DutyNeurointerfaceTabletComponent> ent)
     {
-        if (_squads.TryGetSquad(ent.Comp.ActiveSquadId, out _))
+        if (IsTabletSquad(ent.Comp.ActiveSquadId))
             return ent.Comp.ActiveSquadId;
 
         ent.Comp.ActiveSquadId = _squads.GetFallbackSquadId();
@@ -397,7 +411,7 @@ public sealed partial class DutyNeurointerfaceSystem : EntitySystem
 
     private void OnSelectSquad(Entity<DutyNeurointerfaceTabletComponent> ent, ref DutyNeuroSelectSquadMessage msg)
     {
-        if (!_squads.TryGetSquad(msg.SquadId, out _))
+        if (!IsTabletSquad(msg.SquadId))
             return;
 
         ent.Comp.ActiveSquadId = msg.SquadId;
@@ -421,7 +435,7 @@ public sealed partial class DutyNeurointerfaceSystem : EntitySystem
 
     private void OnRenameSquad(Entity<DutyNeurointerfaceTabletComponent> ent, ref DutyNeuroRenameSquadMessage msg)
     {
-        if (!CheckManageAccess(ent.Owner, msg.Actor))
+        if (!IsTabletSquad(msg.SquadId) || !CheckManageAccess(ent.Owner, msg.Actor))
             return;
 
         if (!_squads.RenameSquad(msg.SquadId, msg.NewCallsign))
@@ -432,7 +446,7 @@ public sealed partial class DutyNeurointerfaceSystem : EntitySystem
 
     private void OnDisbandSquad(Entity<DutyNeurointerfaceTabletComponent> ent, ref DutyNeuroDisbandSquadMessage msg)
     {
-        if (!CheckManageAccess(ent.Owner, msg.Actor))
+        if (!IsTabletSquad(msg.SquadId) || !CheckManageAccess(ent.Owner, msg.Actor))
             return;
 
         if (!_squads.DisbandSquad(msg.SquadId))
@@ -455,12 +469,20 @@ public sealed partial class DutyNeurointerfaceSystem : EntitySystem
 
     private void OnInviteMember(Entity<DutyNeurointerfaceTabletComponent> ent, ref DutyNeuroInviteMemberMessage msg)
     {
-        if (!CheckManageAccess(ent.Owner, msg.Actor))
+        if (!IsTabletSquad(msg.SquadId) || !CheckManageAccess(ent.Owner, msg.Actor))
             return;
 
         var target = GetEntity(msg.TargetEntity);
         if (!IsValidSquadTarget(target))
             return;
+
+        // Боец чужой сети (имплант Горлекса) в отряд NT не встаёт: его HUD всё равно отряд не покажет,
+        // а соотрядцы NT получили бы обводку оперативника.
+        if (_wearerQuery.TryComp(target, out var targetWearer) && targetWearer.Network != DutyNeuroNetwork.NtSec)
+        {
+            _popup.PopupEntity(Loc.GetString("duty-neuro-tablet-foreign-network"), ent.Owner, msg.Actor);
+            return;
+        }
 
         if (!_squads.InviteMember(msg.SquadId, target))
             return;
@@ -470,7 +492,7 @@ public sealed partial class DutyNeurointerfaceSystem : EntitySystem
 
     private void OnRemoveMember(Entity<DutyNeurointerfaceTabletComponent> ent, ref DutyNeuroRemoveMemberMessage msg)
     {
-        if (!CheckManageAccess(ent.Owner, msg.Actor))
+        if (!IsTabletSquad(msg.SquadId) || !CheckManageAccess(ent.Owner, msg.Actor))
             return;
 
         var target = GetEntity(msg.TargetEntity);
@@ -482,11 +504,14 @@ public sealed partial class DutyNeurointerfaceSystem : EntitySystem
 
     private void OnSetLeader(Entity<DutyNeurointerfaceTabletComponent> ent, ref DutyNeuroSetLeaderMessage msg)
     {
-        if (!CheckManageAccess(ent.Owner, msg.Actor))
+        if (!IsTabletSquad(msg.SquadId) || !CheckManageAccess(ent.Owner, msg.Actor))
             return;
 
         var target = GetEntity(msg.TargetEntity);
         if (!IsValidSquadTarget(target))
+            return;
+
+        if (_wearerQuery.TryComp(target, out var targetWearer) && targetWearer.Network != DutyNeuroNetwork.NtSec)
             return;
 
         if (!_squads.SetLeader(msg.SquadId, target))
@@ -579,9 +604,30 @@ public sealed partial class DutyNeurointerfaceSystem : EntitySystem
                 if (TerminatingOrDeleted(member))
                     continue;
 
-                var status = GetMemberStatus(member);
                 var netMember = GetNetEntity(member);
                 var name = GetMemberDisplayName(member);
+
+                // «Призрак в сети»: имя в составе отряда остаётся (его знают), а всё остальное — «НЕТ СИГНАЛА».
+                // Offline — чтобы старые клиенты и логика «живых» его не учитывали; трекера нет.
+                if (IsNeuroGhost(member))
+                {
+                    var ghostEntry = new DutyNeuroSquadMemberEntry(
+                        netMember,
+                        name,
+                        GetJobAndDepartment(member).JobTitle,
+                        DutyNeuroMemberStatus.Offline,
+                        NoSignalText,
+                        0f,
+                        false,
+                        squad.Leader == member,
+                        NoSignal: true);
+
+                    _memberEntries[member] = ghostEntry;
+                    view.Members.Add(ghostEntry);
+                    continue;
+                }
+
+                var status = GetMemberStatus(member);
                 var location = GetLocationName(member);
 
                 var entry = new DutyNeuroSquadMemberEntry(
@@ -608,6 +654,8 @@ public sealed partial class DutyNeurointerfaceSystem : EntitySystem
             _squads.CollectOrders(squad.SquadId, view.Orders);
             _squadViews[squad.SquadId] = view;
         }
+
+        RebuildNetworkTrackers();
     }
 
     private void RefreshAllWearers()
@@ -622,12 +670,21 @@ public sealed partial class DutyNeurointerfaceSystem : EntitySystem
     private void UpdateWearerState(EntityUid uid, DutyNeurointerfaceWearerComponent wearer)
     {
         // Отряд не выдаётся автоматически: боец, которого убрали из отряда, должен остаться без него.
+        // Отряд чужой сети не показываем: сети NT-SEC и Горлекса друг друга не видят.
         SquadView? view = null;
         string callsign;
-        if (_squads.TryGetMemberSquad(uid, out var squad) && _squadViews.TryGetValue(squad.SquadId, out view))
+        if (_squads.TryGetMemberSquad(uid, out var squad) &&
+            squad.Network == wearer.Network &&
+            _squadViews.TryGetValue(squad.SquadId, out view))
+        {
             callsign = squad.Callsign;
+        }
         else
+        {
             callsign = Loc.GetString("duty-neuro-squad-none");
+        }
+
+        var intrusionChanged = ExpireIntrusion(wearer);
 
         var (ownerStatus, statusText, deathTime) = ResolveOwnerLifecycle(uid, wearer.DeathRoundTime);
         var location = _memberEntries.TryGetValue(uid, out var selfEntry) ? selfEntry.Location : GetLocationName(uid);
@@ -650,14 +707,15 @@ public sealed partial class DutyNeurointerfaceSystem : EntitySystem
 
         // В Orders уходят все приказы отряда (до MaxActiveOrders): world-маркеры рисуют все,
         // а HUD сам берёт последние три.
-        var trackers = view?.Trackers ?? EmptyTrackers;
-        var orders = view?.Orders ?? EmptyOrders;
+        // К данным отряда подмешиваются данные всей сети (трекер v2, тревожная кнопка) и ложная метка вторжения.
+        var trackers = ComposeTrackers(wearer, view?.Trackers ?? EmptyTrackers);
+        var orders = ComposeOrders(wearer, view?.Orders ?? EmptyOrders);
 
         var membersChanged = !ListEquals(wearer.SquadMembers, _hudMembersBuffer);
         var trackersChanged = !ListEquals(wearer.Trackers, trackers);
         var ordersChanged = !ListEquals(wearer.Orders, orders);
 
-        var changed = membersChanged || trackersChanged || ordersChanged ||
+        var changed = membersChanged || trackersChanged || ordersChanged || intrusionChanged ||
                       !wearer.Active ||
                       wearer.SquadCallsign != callsign ||
                       wearer.LocationName != location ||
@@ -751,6 +809,10 @@ public sealed partial class DutyNeurointerfaceSystem : EntitySystem
         var result = new List<DutyNeuroSquadSummary>();
         foreach (var squad in _squads.GetAllSquads())
         {
+            // Планшет NT-SEC отряды Горлекса не видит.
+            if (squad.Network != DutyNeuroNetwork.NtSec)
+                continue;
+
             if (!_squadViews.TryGetValue(squad.SquadId, out var view))
                 continue;
 
@@ -823,6 +885,8 @@ public sealed partial class DutyNeurointerfaceSystem : EntitySystem
             tasks,
             GetCrewCandidates(ent));
 
+        state.NetworkIntrusion = IsSquadUnderIntrusion(activeSquadId);
+
         _ui.SetUiState(ent.Owner, DutyNeuroUiKey.Tablet, state);
     }
 
@@ -868,7 +932,10 @@ public sealed partial class DutyNeurointerfaceSystem : EntitySystem
             }
 
             var (jobTitle, deptName) = GetJobAndDepartment(uid);
-            var squadCallsign = _squads.TryGetMemberSquad(uid, out var sq) ? sq.Callsign : null;
+            // Позывной отряда Горлекса в списке экипажа NT выдал бы оперативника.
+            var squadCallsign = _squads.TryGetMemberSquad(uid, out var sq) && sq.Network == DutyNeuroNetwork.NtSec
+                ? sq.Callsign
+                : null;
             var name = _memberEntries.TryGetValue(uid, out var entry) ? entry.Name : GetMemberDisplayName(uid);
 
             list.Add(new DutyNeuroCrewCandidate(

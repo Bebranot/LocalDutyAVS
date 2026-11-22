@@ -25,6 +25,9 @@ public sealed partial class DutyNeuroSquadManagerSystem : EntitySystem
     [Dependency] private RadioSystem _radio = default!;
 
     public const string DefaultSquadCallsign = "KILO-9";
+
+    /// <summary>_Duty: отряд по умолчанию тактической сети Горлекса.</summary>
+    public const string GorlexDefaultSquadCallsign = "GORLEX-1";
     public const int MaxCallsignLength = 16;
 
     /// <summary>
@@ -35,6 +38,9 @@ public sealed partial class DutyNeuroSquadManagerSystem : EntitySystem
     public const int MaxZoneNameLength = 32;
 
     private static readonly ProtoId<RadioChannelPrototype> SecurityChannel = "Security";
+
+    // Тактическая сеть Горлекса говорит в канал оперативников, а не в канал СБ.
+    private static readonly ProtoId<RadioChannelPrototype> SyndicateChannel = "Syndicate";
     private static readonly TimeSpan TrackerAlertCooldown = TimeSpan.FromSeconds(20);
 
     /// <summary>
@@ -69,10 +75,14 @@ public sealed partial class DutyNeuroSquadManagerSystem : EntitySystem
         public EntityUid? Leader { get; set; }
         public List<EntityUid> Members { get; } = new();
 
-        public SquadState(string squadId, string callsign)
+        /// <summary>Сеть отряда: NT-SEC и Горлекс не видят отряды друг друга.</summary>
+        public DutyNeuroNetwork Network { get; }
+
+        public SquadState(string squadId, string callsign, DutyNeuroNetwork network = DutyNeuroNetwork.NtSec)
         {
             SquadId = squadId;
             Callsign = callsign;
+            Network = network;
         }
     }
 
@@ -106,19 +116,35 @@ public sealed partial class DutyNeuroSquadManagerSystem : EntitySystem
     #region Squads
 
     /// <summary>
-    /// Гарантирует существование хотя бы одного отряда (по умолчанию KILO-9).
+    /// Гарантирует существование хотя бы одного отряда сети (NT-SEC — KILO-9, Горлекс — GORLEX-1).
     /// </summary>
-    public SquadState EnsureDefaultSquad()
+    public SquadState EnsureDefaultSquad(DutyNeuroNetwork network = DutyNeuroNetwork.NtSec)
     {
-        if (_squads.TryGetValue(DefaultSquadCallsign, out var existing))
+        var defaultId = GetDefaultCallsign(network);
+        if (_squads.TryGetValue(defaultId, out var existing) && existing.Network == network)
             return existing;
 
         foreach (var squad in _squads.Values)
-            return squad;
+        {
+            if (squad.Network == network)
+                return squad;
+        }
 
-        var created = new SquadState(DefaultSquadCallsign, DefaultSquadCallsign);
+        // Id по умолчанию мог занять отряд другой сети — тогда берём свободный.
+        var squadId = defaultId;
+        while (_squads.ContainsKey(squadId))
+        {
+            squadId = $"SQUAD-{_nextSquadNumericId++}";
+        }
+
+        var created = new SquadState(squadId, defaultId, network);
         _squads[created.SquadId] = created;
         return created;
+    }
+
+    public static string GetDefaultCallsign(DutyNeuroNetwork network)
+    {
+        return network == DutyNeuroNetwork.Gorlex ? GorlexDefaultSquadCallsign : DefaultSquadCallsign;
     }
 
     /// <summary>
@@ -126,12 +152,13 @@ public sealed partial class DutyNeuroSquadManagerSystem : EntitySystem
     /// Вызывать только в момент надевания маски: периодический вызов возвращал бы бойца,
     /// которого командир только что убрал из отряда.
     /// </summary>
-    public SquadState GetOrJoinDefaultSquad(EntityUid member)
+    public SquadState GetOrJoinDefaultSquad(EntityUid member, DutyNeuroNetwork network = DutyNeuroNetwork.NtSec)
     {
-        if (TryGetMemberSquad(member, out var current))
+        // Отряд чужой сети не подходит: при смене источника (трофейная маска, имплант Горлекса) боец переходит в свою сеть.
+        if (TryGetMemberSquad(member, out var current) && current.Network == network)
             return current;
 
-        var fallback = EnsureDefaultSquad();
+        var fallback = EnsureDefaultSquad(network);
         InviteMember(fallback.SquadId, member);
         return fallback;
     }
@@ -164,12 +191,12 @@ public sealed partial class DutyNeuroSquadManagerSystem : EntitySystem
         return _squads.Values;
     }
 
-    public string GetFallbackSquadId()
+    public string GetFallbackSquadId(DutyNeuroNetwork network = DutyNeuroNetwork.NtSec)
     {
-        return EnsureDefaultSquad().SquadId;
+        return EnsureDefaultSquad(network).SquadId;
     }
 
-    public SquadState? CreateSquad(string callsign)
+    public SquadState? CreateSquad(string callsign, DutyNeuroNetwork network = DutyNeuroNetwork.NtSec)
     {
         var clean = SanitizeCallsign(callsign);
         if (string.IsNullOrEmpty(clean))
@@ -181,7 +208,7 @@ public sealed partial class DutyNeuroSquadManagerSystem : EntitySystem
             squadId = $"SQUAD-{_nextSquadNumericId++}";
         }
 
-        var squad = new SquadState(squadId, clean);
+        var squad = new SquadState(squadId, clean, network);
         _squads[squadId] = squad;
         return squad;
     }
@@ -201,8 +228,8 @@ public sealed partial class DutyNeuroSquadManagerSystem : EntitySystem
 
     public bool DisbandSquad(string squadId)
     {
-        // Запрещаем удалять последний отряд, чтобы нейроинтерфейс всегда имел целевой отряд.
-        if (_squads.Count <= 1 || !_squads.TryGetValue(squadId, out var squad))
+        // Запрещаем удалять последний отряд сети, чтобы нейроинтерфейс всегда имел целевой отряд.
+        if (!_squads.TryGetValue(squadId, out var squad) || CountSquads(squad.Network) <= 1)
             return false;
 
         _squads.Remove(squadId);
@@ -214,6 +241,9 @@ public sealed partial class DutyNeuroSquadManagerSystem : EntitySystem
         SquadState? fallback = null;
         foreach (var other in _squads.Values)
         {
+            if (other.Network != squad.Network)
+                continue;
+
             fallback = other;
             break;
         }
@@ -236,6 +266,18 @@ public sealed partial class DutyNeuroSquadManagerSystem : EntitySystem
 
         squad.Members.Clear();
         return true;
+    }
+
+    private int CountSquads(DutyNeuroNetwork network)
+    {
+        var count = 0;
+        foreach (var squad in _squads.Values)
+        {
+            if (squad.Network == network)
+                count++;
+        }
+
+        return count;
     }
 
     public bool InviteMember(string squadId, EntityUid target)
@@ -365,7 +407,7 @@ public sealed partial class DutyNeuroSquadManagerSystem : EntitySystem
         EntityUid author,
         string authorName)
     {
-        if (!_squads.ContainsKey(squadId))
+        if (!_squads.TryGetValue(squadId, out var orderSquad))
             return null;
 
         var cleanZone = string.IsNullOrWhiteSpace(zoneName)
@@ -376,11 +418,11 @@ public sealed partial class DutyNeuroSquadManagerSystem : EntitySystem
         if (orderType == DutyNeuroOrderType.Retreat)
         {
             _orders.RemoveAll(o => o.SquadId == squadId && o.OrderType != DutyNeuroOrderType.Retreat);
-            SendSecurityCallout(author, DutyNeuroCalloutType.Retreat, cleanZone);
+            SendSecurityCallout(author, DutyNeuroCalloutType.Retreat, cleanZone, orderSquad.Network);
         }
         else if (orderType == DutyNeuroOrderType.Sos)
         {
-            SendSecurityCallout(author, DutyNeuroCalloutType.Sos, cleanZone);
+            SendSecurityCallout(author, DutyNeuroCalloutType.Sos, cleanZone, orderSquad.Network);
         }
 
         var entry = new DutyNeuroOrderEntry(
@@ -656,10 +698,30 @@ public sealed partial class DutyNeuroSquadManagerSystem : EntitySystem
     }
 
     /// <summary>
-    /// Отправляет тактический радиосигнал от лица указанной сущности на канал СБ.
+    /// Радиоканал сети — СБ у NT-SEC, канал оперативников у Горлекса.
+    /// </summary>
+    public bool TryGetNetworkChannel(DutyNeuroNetwork network, [NotNullWhen(true)] out RadioChannelPrototype? channel)
+    {
+        return _proto.TryIndex(network == DutyNeuroNetwork.Gorlex ? SyndicateChannel : SecurityChannel, out channel);
+    }
+
+    /// <summary>
+    /// Служебное сообщение сети в её канал (тревожная кнопка, трекер v2). Кулдауны — на вызывающем.
+    /// </summary>
+    public bool SendNetworkRadio(EntityUid source, string message, DutyNeuroNetwork network = DutyNeuroNetwork.NtSec)
+    {
+        if (!Exists(source) || TerminatingOrDeleted(source) || !TryGetNetworkChannel(network, out var channel))
+            return false;
+
+        _radio.SendRadioMessage(source, message, channel, source);
+        return true;
+    }
+
+    /// <summary>
+    /// Отправляет тактический радиосигнал от лица указанной сущности в канал сети (по умолчанию — СБ).
     /// Зона должна приходить уже очищенной сервером — сырой клиентский текст сюда не передавать.
     /// </summary>
-    public bool SendSecurityCallout(EntityUid sender, DutyNeuroCalloutType calloutType, string? zoneName = null)
+    public bool SendSecurityCallout(EntityUid sender, DutyNeuroCalloutType calloutType, string? zoneName = null, DutyNeuroNetwork network = DutyNeuroNetwork.NtSec)
     {
         if (!Exists(sender) || TerminatingOrDeleted(sender))
             return false;
@@ -667,7 +729,7 @@ public sealed partial class DutyNeuroSquadManagerSystem : EntitySystem
         if (IsCalloutOnCooldown(sender))
             return false;
 
-        if (!_proto.TryIndex(SecurityChannel, out var channel))
+        if (!TryGetNetworkChannel(network, out var channel))
             return false;
 
         var zone = string.IsNullOrWhiteSpace(zoneName) ? Loc.GetString("duty-neuro-zone-unknown") : zoneName.Trim();
@@ -689,7 +751,7 @@ public sealed partial class DutyNeuroSquadManagerSystem : EntitySystem
     /// Отправляет автоматическое радиооповещение трекера о критическом состоянии бойца с кулдауном 20 секунд.
     /// Кулдаун отдельный от callout-ов: оповещение автоматическое и не должно глушиться ручными сигналами.
     /// </summary>
-    public bool TrySendCriticalTrackerAlert(EntityUid target, string targetName, string zoneName)
+    public bool TrySendCriticalTrackerAlert(EntityUid target, string targetName, string zoneName, DutyNeuroNetwork network = DutyNeuroNetwork.NtSec)
     {
         if (!Exists(target) || TerminatingOrDeleted(target))
             return false;
@@ -701,7 +763,7 @@ public sealed partial class DutyNeuroSquadManagerSystem : EntitySystem
             return false;
         }
 
-        if (!_proto.TryIndex(SecurityChannel, out var channel))
+        if (!TryGetNetworkChannel(network, out var channel))
             return false;
 
         _lastTrackerAlertTime[target] = now;

@@ -1,0 +1,367 @@
+# SPDX-FileCopyrightText: 2026 LocalDuty
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+# Нейросеть: внутренний нейроинтерфейс NT-SEC, тактическая сеть Горлекса, трекер СБ v2, тревожная кнопка,
+# навигатор, распознаватель угроз, «Призрак в сети», «Червь ICE».
+# Логика — Content.Server/_Duty/Cyberware/Neuro (импланты) и Content.Server/_Duty/Neurointerface (сеть, HUD-данные).
+# Выдача — только админская (спавн-меню).
+
+# ── Нейроинтерфейс NT-SEC (внутренний) ──
+
+- type: entity
+  parent: DutyCyberImplantNTBase
+  id: DutyNeuroNtSecImplant
+  name: имплант "Нейроинтерфейс NT-SEC"
+  description: Внутренняя версия нейроинтерфейса маски СБ. Тот же отряд, статусы и метки, но без маски на лице. ЭМИ гасит панель на время сбоя.
+  components:
+  - type: DutyCyberware
+    moduleName: duty-cyber-module-neuro-ntsec
+    load: 2
+    empSensitive: true
+  - type: DutyNeuroLinkImplant
+    network: NtSec
+    extraActions:
+    - ActionDutyNeuroMedicRequest
+    - ActionDutyNeuroAcknowledgeOrder
+- type: entity
+  parent: DutyImplantSurgeryKitBase
+  id: DutyImplantKitNeuroNtSec
+  suffix: Duty, NT, Операционный набор
+  components:
+  - type: DutyImplantSurgeryKit
+    implant: DutyNeuroNtSecImplant
+
+# ── Тактическая сеть Горлекса ──
+
+- type: entity
+  parent: DutyCyberImplantGorlexBase
+  id: DutyGorlexTacticalNetImplant
+  name: имплант "Тактическая сеть Горлекса"
+  description: Боевой нейролинк мародёров Горлекса. Своя закрытая сеть — отряд, статусы и метки видят только свои. Командир ставит метки прямо из импланта.
+  components:
+  - type: DutyCyberware
+    moduleName: duty-cyber-module-neuro-gorlex
+    load: 2
+    empSensitive: true
+  - type: DutyNeuroLinkImplant
+    network: Gorlex
+    extraActions:
+    - ActionDutyGorlexOrderAssault
+    - ActionDutyGorlexOrderHold
+    - ActionDutyGorlexOrderRetreat
+    - ActionDutyNeuroMedicRequest
+    - ActionDutyNeuroAcknowledgeOrder
+- type: entity
+  parent: DutyImplantSurgeryKitBase
+  id: DutyImplantKitGorlexTacticalNet
+  suffix: Duty, Gorlex, Операционный набор
+  components:
+  - type: DutyImplantSurgeryKit
+    implant: DutyGorlexTacticalNetImplant
+
+# ── Трекер СБ v2 ──
+
+- type: entity
+  parent: DutyCyberImplantNTBase
+  id: DutyTrackerV2Implant
+  name: имплант "Трекер СБ v2"
+  description: Трекер второго поколения. При критическом состоянии метка ТРЕКЕР уходит всей сети NT-SEC, а не только отряду; о смерти носителя сообщает в канал СБ.
+  components:
+  - type: DutyCyberware
+    moduleName: duty-cyber-module-neuro-tracker
+    load: 1
+    empSensitive: true
+  - type: DutyTrackerV2Implant
+- type: entity
+  parent: DutyImplantSurgeryKitBase
+  id: DutyImplantKitTrackerV2
+  suffix: Duty, NT, Операционный набор
+  components:
+  - type: DutyImplantSurgeryKit
+    implant: DutyTrackerV2Implant
+
+# ── Тревожная кнопка ──
+
+- type: entity
+  parent: DutyCyberImplantNTBase
+  id: DutyPanicButtonImplant
+  name: имплант "Тревожная кнопка"
+  description: Нажатие на кость запястья — и в канал СБ уходит 11-99 с локацией, а у всех носителей нейроинтерфейса появляется метка SOS. Перезарядка минута.
+  components:
+  - type: DutyCyberware
+    moduleName: duty-cyber-module-neuro-panic
+    load: 1
+    empSensitive: true
+  - type: DutyPanicButtonImplant
+    cooldown: 60
+    markerDuration: 120
+  - type: SubdermalImplant
+    implantAction: ActionDutyPanicButton
+- type: entity
+  parent: DutyImplantSurgeryKitBase
+  id: DutyImplantKitPanicButton
+  suffix: Duty, NT, Операционный набор
+  components:
+  - type: DutyImplantSurgeryKit
+    implant: DutyPanicButtonImplant
+
+- type: entity
+  parent: BaseAction
+  id: ActionDutyPanicButton
+  name: Тревожная кнопка (11-99)
+  description: Экстренный вызов всей СБ с вашей локацией и меткой SOS.
+  components:
+  - type: Action
+    itemIconStyle: NoItem
+    checkCanInteract: false
+    checkConsciousness: false
+    priority: -20
+  - type: Sprite
+    sprite: Interface/Actions/actions_ai.rsi
+    layers:
+    - state: emergency_on
+  - type: InstantAction
+    event: !type:DutyPanicButtonActionEvent
+
+# ── Навигатор ──
+
+- type: entity
+  parent: DutyCyberImplantNTBase
+  id: DutyNavigatorImplant
+  name: имплант "Навигатор"
+  description: Подключается к станционным маякам и рисует на линзе маршрут до выбранного отдела.
+  components:
+  - type: DutyCyberware
+    moduleName: duty-cyber-module-neuro-navigator
+    load: 1
+    empSensitive: true
+  - type: SubdermalImplant
+    implantAction: ActionDutyNavigator
+  - type: UserInterface
+    interfaces:
+      enum.DutyNavigatorUiKey.Key:
+        type: DutyNavigatorBoundUserInterface
+  - type: DutyNavigatorImplant
+    destinations:
+    - name: duty-navigator-dest-bridge
+      beacons: [ DefaultStationBeaconBridge ]
+      beaconColor: "#FFFF00"
+      icon: { sprite: Interface/Actions/actions_ai.rsi, state: comms_console }
+    - name: duty-navigator-dest-security
+      beacons: [ DefaultStationBeaconSecurity, DefaultStationBeaconBrig ]
+      beaconColor: "#DE3A3A"
+      icon: { sprite: Interface/Actions/actions_ai.rsi, state: station_records }
+    - name: duty-navigator-dest-medbay
+      beacons: [ DefaultStationBeaconMedbay ]
+      beaconColor: "#52B4E9"
+      icon: { sprite: Interface/Actions/actions_borg.rsi, state: treatment-module }
+    - name: duty-navigator-dest-science
+      beacons: [ DefaultStationBeaconRND ]
+      beaconColor: "#D381C9"
+      icon: { sprite: Interface/Actions/actions_borg.rsi, state: anomaly-module }
+    - name: duty-navigator-dest-cargo
+      beacons: [ DefaultStationBeaconCargoBay, DefaultStationBeaconCargoReception ]
+      beaconColor: "#A46106"
+      icon: { sprite: Interface/Actions/actions_borg.rsi, state: appraisal-module }
+    - name: duty-navigator-dest-engineering
+      beacons: [ DefaultStationBeaconEngineering ]
+      beaconColor: "#EFB341"
+      icon: { sprite: Interface/Actions/actions_borg.rsi, state: construction-module }
+    - name: duty-navigator-dest-service
+      beacons: [ DefaultStationBeaconService, DefaultStationBeaconBar, DefaultStationBeaconKitchen ]
+      beaconColor: "#9FED58"
+      icon: { sprite: Interface/Actions/actions_borg.rsi, state: service-module }
+    - name: duty-navigator-dest-evac
+      beacons: [ DefaultStationBeaconEvac ]
+      icon: { sprite: Interface/Actions/actions_ai.rsi, state: emergency_off }
+    - name: duty-navigator-dest-arrivals
+      beacons: [ DefaultStationBeaconArrivals ]
+      icon: { sprite: Interface/Actions/actions_borg.rsi, state: gps-module }
+- type: entity
+  parent: DutyImplantSurgeryKitBase
+  id: DutyImplantKitNavigator
+  suffix: Duty, NT, Операционный набор
+  components:
+  - type: DutyImplantSurgeryKit
+    implant: DutyNavigatorImplant
+
+- type: entity
+  parent: BaseAction
+  id: ActionDutyNavigator
+  name: Навигатор
+  description: Выбрать отдел, до которого проложить маршрут.
+  components:
+  - type: Action
+    itemIconStyle: NoItem
+    checkCanInteract: false
+    priority: -20
+  - type: Sprite
+    sprite: Interface/Actions/pai-map.rsi
+    layers:
+    - state: icon
+  - type: InstantAction
+    event: !type:DutyNavigatorOpenMenuEvent
+
+# ── Распознаватель угроз ──
+
+- type: entity
+  parent: DutyCyberImplantNTBase
+  id: DutyThreatScannerImplant
+  name: имплант "Распознаватель угроз"
+  description: Сверяет лица с криминальной базой станции. Статус — над головой, разыскиваемых и опасных подсвечивает красным контуром.
+  components:
+  - type: DutyCyberware
+    moduleName: duty-cyber-module-neuro-threat
+    load: 2
+    empSensitive: true
+  - type: DutyThreatScannerImplant
+- type: entity
+  parent: DutyImplantSurgeryKitBase
+  id: DutyImplantKitThreatScanner
+  suffix: Duty, NT, Операционный набор
+  components:
+  - type: DutyImplantSurgeryKit
+    implant: DutyThreatScannerImplant
+
+# ── Призрак в сети (Синдикат) ──
+
+- type: entity
+  parent: DutyCyberImplantSyndicateBase
+  id: DutyNeuroGhostImplant
+  name: имплант "Призрак в сети"
+  description: Глушит сигнатуру носителя. Суит-сенсоры, монитор экипажа, трекеры и нейроинтерфейс NT показывают на его месте «НЕТ СИГНАЛА». ЭМИ срывает маскировку на минуту.
+  components:
+  - type: DutyCyberware
+    moduleName: duty-cyber-module-neuro-ghost
+    load: 2
+    empSensitive: true
+  - type: DutyNeuroGhostImplant
+    empExposure: 60
+- type: entity
+  parent: DutyImplantSurgeryKitBase
+  id: DutyImplantKitNeuroGhost
+  suffix: Duty, Syndicate, Операционный набор
+  components:
+  - type: DutyImplantSurgeryKit
+    implant: DutyNeuroGhostImplant
+
+# ── Червь ICE (Синдикат) ──
+
+- type: entity
+  parent: DutyCyberImplantSyndicateBase
+  id: DutyIceWormImplant
+  name: имплант "Червь ICE"
+  description: Взламывает нейроинтерфейс NT-SEC в упор. На двадцать секунд HUD цели сходит с ума и показывает ложную метку. Перезарядка три минуты.
+  components:
+  - type: DutyCyberware
+    moduleName: duty-cyber-module-neuro-ice
+    load: 2
+    empSensitive: true
+  - type: DutyIceWormImplant
+    duration: 20
+    cooldown: 180
+    range: 5
+  - type: SubdermalImplant
+    implantAction: ActionDutyIceWorm
+- type: entity
+  parent: DutyImplantSurgeryKitBase
+  id: DutyImplantKitIceWorm
+  suffix: Duty, Syndicate, Операционный набор
+  components:
+  - type: DutyImplantSurgeryKit
+    implant: DutyIceWormImplant
+
+- type: entity
+  parent: BaseAction
+  id: ActionDutyIceWorm
+  name: Червь ICE
+  description: Запустить червя в нейроинтерфейс NT-SEC цели в пределах пяти шагов.
+  components:
+  - type: Action
+    itemIconStyle: NoItem
+    checkCanInteract: false
+    priority: -20
+  - type: Sprite
+    sprite: Interface/Actions/actions_borg.rsi
+    layers:
+    - state: xenoborg-access-breaker-module
+  - type: TargetAction
+    range: 5
+    checkCanAccess: false
+  - type: EntityTargetAction
+    canTargetSelf: false
+    whitelist:
+      components:
+      - DutyNeurointerfaceWearer
+    event: !type:DutyIceWormActionEvent
+
+# ── Приказы командира Горлекса (WorldTargetAction из импланта сети) ──
+
+- type: entity
+  abstract: true
+  parent: BaseAction
+  id: ActionDutyGorlexOrderBase
+  components:
+  - type: Action
+    itemIconStyle: NoItem
+    checkCanInteract: false
+    useDelay: 2
+    priority: -21
+  - type: TargetAction
+    range: -1
+    checkCanAccess: false
+
+- type: entity
+  parent: ActionDutyGorlexOrderBase
+  id: ActionDutyGorlexOrderAssault
+  name: "Приказ: штурм"
+  description: Поставить отряду метку штурма в выбранной точке. Только для командира.
+  components:
+  - type: Sprite
+    sprite: Interface/Actions/actions_borg.rsi
+    layers:
+    - state: syndicate-weapon-module
+  - type: WorldTargetAction
+    event: !type:DutyGorlexOrderActionEvent
+      order: Assault
+
+- type: entity
+  parent: ActionDutyGorlexOrderBase
+  id: ActionDutyGorlexOrderHold
+  name: "Приказ: удерживать"
+  description: Поставить отряду метку удержания позиции. Только для командира.
+  components:
+  - type: Sprite
+    sprite: Interface/Actions/actions_borg.rsi
+    layers:
+    - state: xenoborg-deflector-module
+  - type: WorldTargetAction
+    event: !type:DutyGorlexOrderActionEvent
+      order: Hold
+
+- type: entity
+  parent: ActionDutyGorlexOrderBase
+  id: ActionDutyGorlexOrderRetreat
+  name: "Приказ: отход"
+  description: Поставить отряду метку точки отхода. Только для командира.
+  components:
+  - type: Sprite
+    sprite: Interface/Actions/actions_borg.rsi
+    layers:
+    - state: xenoborg-space-movement-module
+  - type: WorldTargetAction
+    event: !type:DutyGorlexOrderActionEvent
+      order: Retreat
+
+# ── Звуки-заглушки (список «что достать» — в отчёте) ──
+
+- type: soundCollection
+  id: DutyNeuroPanicBeep
+  files:
+  - /Audio/Machines/warning_buzzer.ogg
+
+- type: soundCollection
+  id: DutyNeuroIntrusion
+  files:
+  - /Audio/Effects/sparks1.ogg
+  - /Audio/Machines/vessel_warning.ogg

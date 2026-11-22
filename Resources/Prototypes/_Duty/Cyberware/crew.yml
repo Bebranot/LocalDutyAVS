@@ -1,0 +1,506 @@
+# SPDX-FileCopyrightText: 2026 LocalDuty
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+# Служебные киберимпланты NT («рабочий инструмент отдела»): бытовые, медицинские, инженерные.
+# Логика — Content.{Shared,Server}/_Duty/Cyberware/Crew. Компоненты носителю выдаёт DutyCyberGrant
+# (только отсутствующие, снимаются только свои), поэтому раса/трейт с тем же компонентом не страдает.
+# Иконки действий и звуки — заглушки, меняются здесь.
+
+# ── Действия ──
+
+- type: entity
+  parent: BaseAction
+  id: DutyActionCyberClock
+  name: Нейрочасы
+  description: Показать время смены и станции.
+  components:
+  - type: Action
+    itemIconStyle: BigAction
+    useDelay: 1
+    checkCanInteract: false
+  - type: Sprite
+    sprite: Actions/Implants/implants.rsi
+    layers:
+    - state: chameleon
+      map: ["enum.ActionVisuals.Icon"]
+  - type: InstantAction
+    event: !type:DutyCrewClockEvent
+
+- type: entity
+  parent: BaseAction
+  id: DutyActionCyberMesonToggle
+  name: Мезонный глаз
+  description: Включить или выключить мезонное зрение.
+  components:
+  - type: Action
+    itemIconStyle: BigAction
+    useDelay: 0.5
+    checkCanInteract: false
+  - type: Sprite
+    sprite: ADT/Interface/Actions/mesonvision.rsi
+    layers:
+    - state: icon_on
+      map: ["enum.ActionVisuals.Icon"]
+  - type: InstantAction
+    event: !type:DutyCyberGrantToggleEvent
+
+- type: entity
+  parent: BaseAction
+  id: DutyActionCyberNightVisionToggle
+  name: Ночное зрение
+  description: Включить или выключить ночное зрение.
+  components:
+  - type: Action
+    itemIconStyle: BigAction
+    useDelay: 0.5
+    checkCanInteract: false
+  - type: Sprite
+    sprite: ADT/Interface/Actions/nightvision.rsi
+    layers:
+    - state: icon_on
+      map: ["enum.ActionVisuals.Icon"]
+  - type: InstantAction
+    event: !type:DutyCyberGrantToggleEvent
+
+- type: entity
+  parent: BaseAction
+  id: DutyActionCyberMagFeetToggle
+  name: Магнитные ступни
+  description: Включить или выключить магнитные ступни.
+  components:
+  - type: Action
+    itemIconStyle: BigAction
+    useDelay: 1
+    checkCanInteract: false
+  - type: Sprite
+    sprite: Actions/Implants/implants.rsi
+    layers:
+    - state: freedom
+      map: ["enum.ActionVisuals.Icon"]
+  - type: InstantAction
+    event: !type:DutyCyberGrantToggleEvent
+
+- type: entity
+  parent: BaseAction
+  id: DutyActionCyberOmnitool
+  name: Раскрыть омнитул
+  description: Раскрыть или убрать встроенный в руку омнитул.
+  components:
+  - type: Action
+    itemIconStyle: BigAction
+    useDelay: 1
+  - type: Sprite
+    sprite: Objects/Tools/omnitool.rsi
+    layers:
+    - state: omnitool-screwing
+      map: ["enum.ActionVisuals.Icon"]
+  - type: InstantAction
+    event: !type:DutyCrewMultitoolEvent
+
+- type: entity
+  parent: BaseAction
+  id: DutyActionCyberAdrenaline
+  name: Выброс адреналина
+  description: Одноразово сбросить оглушение, встать и получить короткий рывок.
+  components:
+  - type: Action
+    itemIconStyle: BigAction
+    checkCanInteract: false
+    priority: -20
+  - type: Sprite
+    sprite: Actions/Implants/implants.rsi
+    layers:
+    - state: explosive
+      map: ["enum.ActionVisuals.Icon"]
+  - type: InstantAction
+    event: !type:DutyCrewAdrenalineEvent
+
+- type: entity
+  parent: BaseAction
+  id: DutyActionCyberRecorder
+  name: Диктофон
+  description: Начать запись своей речи; повторное нажатие печатает расшифровку на бумаге.
+  components:
+  - type: Action
+    itemIconStyle: BigAction
+    useDelay: 1
+    checkCanInteract: false
+  - type: Sprite
+    sprite: Actions/Implants/implants.rsi
+    layers:
+    - state: chameleon
+      map: ["enum.ActionVisuals.Icon"]
+  - type: InstantAction
+    event: !type:DutyCrewRecorderEvent
+
+# ── Инструмент, который раскрывает «Встроенный омнитул» ──
+
+- type: entity
+  parent: Omnitool
+  id: DutyCyberOmnitool
+  name: встроенный омнитул
+  description: Манипулятор, раскрывшийся из ладони. Режимы — отвёртка, лом, ключ, кусачки и мультитул; переключается использованием в руке.
+  categories: [ HideSpawnMenu ]
+  components:
+  - type: Unremoveable
+
+# ── Бытовые и лёгкие ──
+
+- type: entity
+  parent: DutyCyberImplantNTBase
+  id: DutyCyberClockImplant
+  name: имплант "Нейрочасы"
+  description: Вшитые в височную кость часы смены. Самое безобидное кибер-железо, поэтому его ставят первым.
+  components:
+  - type: SubdermalImplant
+    implantAction: DutyActionCyberClock
+  - type: DutyCyberware
+    moduleName: duty-cyber-module-clock
+    load: 1
+  - type: DutyCrewClock
+
+- type: entity
+  parent: DutyCyberImplantNTBase
+  id: DutyCyberMedVisorImplant
+  name: имплант "Мед-визор"
+  description: Медицинский HUD прямо в зрительном нерве. Слот очков остаётся свободным.
+  components:
+  - type: DutyCyberware
+    moduleName: duty-cyber-module-medvisor
+    load: 1
+  - type: DutyCyberGrant
+    components:
+    - type: ShowHealthBars
+    - type: ShowHealthIcons
+
+- type: entity
+  parent: DutyCyberImplantNTBase
+  id: DutyCyberMesonImplant
+  name: имплант "Мезонный глаз"
+  description: Мезонная матрица в глазнице. Под ЭМИ ловит статику и на секунды слепнет.
+  components:
+  - type: SubdermalImplant
+    implantAction: DutyActionCyberMesonToggle
+  - type: DutyCyberware
+    moduleName: duty-cyber-module-meson
+    load: 1
+  - type: DutyCyberGrant
+    toggleable: true
+    empBlind: 3
+    components:
+    - type: MesonVision
+
+- type: entity
+  parent: DutyCyberImplantNTBase
+  id: DutyCyberWeldLensImplant
+  name: имплант "Сварочная линза"
+  description: Светофильтр, вросший в роговицу. Сварка и вспышки больше не страшны, а очки можно оставить в шкафчике.
+  components:
+  - type: DutyCyberware
+    moduleName: duty-cyber-module-weldlens
+    load: 1
+    empSensitive: false
+  - type: DutyCyberGrant
+    components:
+    - type: FlashImmunity
+    - type: EyeProtection
+
+- type: entity
+  parent: DutyCyberImplantNTBase
+  id: DutyCyberChemScannerImplant
+  name: имплант "Хим-анализатор"
+  description: Спектрометр в подушечках пальцев. Показывает состав раствора при осмотре любого контейнера.
+  components:
+  - type: DutyCyberware
+    moduleName: duty-cyber-module-chemscan
+    load: 1
+  - type: DutyCyberGrant
+    components:
+    - type: SolutionScanner
+
+- type: entity
+  parent: DutyCyberImplantNTBase
+  id: DutyCyberLiverImplant
+  name: имплант "Печень-фильтр"
+  description: Пластиковая печень с гарантийной пломбой. Алкоголь действует вдвое слабее.
+  components:
+  - type: DutyCyberware
+    moduleName: duty-cyber-module-liver
+    load: 1
+    empSensitive: false
+  - type: DutyCyberGrant
+    components:
+    - type: LightweightDrunk
+      boozeStrengthMultiplier: 0.5
+
+- type: entity
+  parent: DutyCyberImplantNTBase
+  id: DutyCyberLungFilterImplant
+  name: имплант "Лёгочный фильтр"
+  description: Сменный угольный фильтр в бронхах. Задерживает большую часть плазмы, тритиума и прочей дряни из вдоха. Противогаз не заменяет.
+  components:
+  - type: DutyCyberware
+    moduleName: duty-cyber-module-lungfilter
+    load: 1
+    empSensitive: false
+  - type: DutyCyberGrant
+    components:
+    - type: DutyLungFilterHost
+
+- type: entity
+  parent: DutyCyberImplantNTBase
+  id: DutyCyberThermoImplant
+  name: имплант "Терморегулятор"
+  description: Подкожный теплообменник. Тело медленнее остывает на морозе и медленнее греется в духоте.
+  components:
+  - type: DutyCyberware
+    moduleName: duty-cyber-module-thermo
+    load: 1
+    empSensitive: false
+  - type: DutyCyberGrant
+    components:
+    - type: TemperatureProtection
+      coefficient: 0.5
+
+- type: entity
+  parent: DutyCyberImplantNTBase
+  id: DutyCyberOmnitoolImplant
+  name: имплант "Встроенный омнитул"
+  description: Ладонь раскрывается в омнитул.
+  components:
+  - type: SubdermalImplant
+    implantAction: DutyActionCyberOmnitool
+  - type: DutyCyberware
+    moduleName: duty-cyber-module-omnitool
+    load: 2
+  - type: DutyCrewMultitool
+
+- type: entity
+  parent: DutyCyberImplantNTBase
+  id: DutyCyberMagFeetImplant
+  name: имплант "Магнитные ступни"
+  description: Электромагниты в подошвах. Держат у палубы без ботинок, но шаг становится тяжёлым.
+  components:
+  - type: SubdermalImplant
+    implantAction: DutyActionCyberMagFeetToggle
+  - type: DutyCyberware
+    moduleName: duty-cyber-module-magfeet
+    load: 2
+  - type: DutyMagFeetImplant
+  - type: DutyCyberGrant
+    toggleable: true
+    components:
+    - type: Magboots
+    - type: DutyMagFeetSlow
+      multiplier: 0.8
+
+- type: entity
+  parent: DutyCyberImplantNTBase
+  id: DutyCyberNightVisionImplant
+  name: имплант "Ночное зрение"
+  description: Усилитель света в сетчатке. Темнота больше не помеха, а яркая вспышка бьёт по глазам сильнее.
+  components:
+  - type: SubdermalImplant
+    implantAction: DutyActionCyberNightVisionToggle
+  - type: DutyCyberware
+    moduleName: duty-cyber-module-nightvision
+    load: 2
+  - type: DutyCyberGrant
+    toggleable: true
+    components:
+    - type: NightVision
+      overlay: true
+    - type: DamageEyesOnFlashed
+
+# ── Телесные ──
+
+- type: entity
+  parent: DutyCyberImplantNTBase
+  id: DutyCyberHemostatImplant
+  name: имплант "Гемостат-железа"
+  description: Железа с коагулянтом. Кровотечение закрывается заметно быстрее.
+  components:
+  - type: DutyCyberware
+    moduleName: duty-cyber-module-hemostat
+    load: 1
+  - type: DutyCrewHemostat
+
+- type: entity
+  parent: DutyCyberImplantNTBase
+  id: DutyCyberAdrenalineImplant
+  name: имплант "Адреналин-железа"
+  description: Одноразовый выброс адреналина. Стряхивает оглушение, ставит на ноги и даёт короткий рывок. После срабатывания выгорает.
+  components:
+  - type: SubdermalImplant
+    implantAction: DutyActionCyberAdrenaline
+  - type: DutyCyberware
+    moduleName: duty-cyber-module-adrenaline
+    load: 2
+  - type: DutyCrewAdrenaline
+
+- type: entity
+  parent: DutyCyberImplantNTBase
+  id: DutyCyberEmpShieldImplant
+  name: имплант "Анти-ЭМИ экран"
+  description: Свинцовая сетка вокруг нервных узлов. Гасит электромагнитные импульсы, которые иначе вырубили бы остальное железо.
+  components:
+  - type: DutyCyberware
+    moduleName: duty-cyber-module-empshield
+    load: 2
+    empSensitive: false
+  - type: DutyCrewEmpShield
+
+- type: entity
+  parent: DutyCyberImplantNTBase
+  id: DutyCyberSkeletonImplant
+  name: имплант "Армированный скелет"
+  description: Титановые накладки на кости. Часть переломов не случается вовсе, остальные выходят легче.
+  components:
+  - type: DutyCyberware
+    moduleName: duty-cyber-module-skeleton
+    load: 2
+    empSensitive: false
+  - type: DutyCrewSkeleton
+
+- type: entity
+  parent: DutyCyberImplantNTBase
+  id: DutyCyberRecorderImplant
+  name: имплант "Внутренний диктофон"
+  description: Записывает речь носителя и печатает расшифровку на бумаге. Протоколы, допросы и жалобы в трёх экземплярах.
+  components:
+  - type: SubdermalImplant
+    implantAction: DutyActionCyberRecorder
+  - type: DutyCyberware
+    moduleName: duty-cyber-module-recorder
+    load: 1
+  - type: DutyCrewRecorder
+
+# ── Операционные наборы ──
+
+- type: entity
+  parent: DutyImplantSurgeryKitBase
+  id: DutyImplantKitClock
+  suffix: Duty, NT, Операционный набор
+  components:
+  - type: DutyImplantSurgeryKit
+    implant: DutyCyberClockImplant
+
+- type: entity
+  parent: DutyImplantSurgeryKitBase
+  id: DutyImplantKitMedVisor
+  suffix: Duty, NT, Операционный набор
+  components:
+  - type: DutyImplantSurgeryKit
+    implant: DutyCyberMedVisorImplant
+
+- type: entity
+  parent: DutyImplantSurgeryKitBase
+  id: DutyImplantKitMeson
+  suffix: Duty, NT, Операционный набор
+  components:
+  - type: DutyImplantSurgeryKit
+    implant: DutyCyberMesonImplant
+
+- type: entity
+  parent: DutyImplantSurgeryKitBase
+  id: DutyImplantKitWeldLens
+  suffix: Duty, NT, Операционный набор
+  components:
+  - type: DutyImplantSurgeryKit
+    implant: DutyCyberWeldLensImplant
+
+- type: entity
+  parent: DutyImplantSurgeryKitBase
+  id: DutyImplantKitChemScanner
+  suffix: Duty, NT, Операционный набор
+  components:
+  - type: DutyImplantSurgeryKit
+    implant: DutyCyberChemScannerImplant
+
+- type: entity
+  parent: DutyImplantSurgeryKitBase
+  id: DutyImplantKitLiver
+  suffix: Duty, NT, Операционный набор
+  components:
+  - type: DutyImplantSurgeryKit
+    implant: DutyCyberLiverImplant
+
+- type: entity
+  parent: DutyImplantSurgeryKitBase
+  id: DutyImplantKitLungFilter
+  suffix: Duty, NT, Операционный набор
+  components:
+  - type: DutyImplantSurgeryKit
+    implant: DutyCyberLungFilterImplant
+
+- type: entity
+  parent: DutyImplantSurgeryKitBase
+  id: DutyImplantKitThermo
+  suffix: Duty, NT, Операционный набор
+  components:
+  - type: DutyImplantSurgeryKit
+    implant: DutyCyberThermoImplant
+
+- type: entity
+  parent: DutyImplantSurgeryKitBase
+  id: DutyImplantKitOmnitool
+  suffix: Duty, NT, Операционный набор
+  components:
+  - type: DutyImplantSurgeryKit
+    implant: DutyCyberOmnitoolImplant
+
+- type: entity
+  parent: DutyImplantSurgeryKitBase
+  id: DutyImplantKitMagFeet
+  suffix: Duty, NT, Операционный набор
+  components:
+  - type: DutyImplantSurgeryKit
+    implant: DutyCyberMagFeetImplant
+
+- type: entity
+  parent: DutyImplantSurgeryKitBase
+  id: DutyImplantKitNightVision
+  suffix: Duty, NT, Операционный набор
+  components:
+  - type: DutyImplantSurgeryKit
+    implant: DutyCyberNightVisionImplant
+
+- type: entity
+  parent: DutyImplantSurgeryKitBase
+  id: DutyImplantKitHemostat
+  suffix: Duty, NT, Операционный набор
+  components:
+  - type: DutyImplantSurgeryKit
+    implant: DutyCyberHemostatImplant
+
+- type: entity
+  parent: DutyImplantSurgeryKitBase
+  id: DutyImplantKitAdrenaline
+  suffix: Duty, NT, Операционный набор
+  components:
+  - type: DutyImplantSurgeryKit
+    implant: DutyCyberAdrenalineImplant
+
+- type: entity
+  parent: DutyImplantSurgeryKitBase
+  id: DutyImplantKitEmpShield
+  suffix: Duty, NT, Операционный набор
+  components:
+  - type: DutyImplantSurgeryKit
+    implant: DutyCyberEmpShieldImplant
+
+- type: entity
+  parent: DutyImplantSurgeryKitBase
+  id: DutyImplantKitSkeleton
+  suffix: Duty, NT, Операционный набор
+  components:
+  - type: DutyImplantSurgeryKit
+    implant: DutyCyberSkeletonImplant
+
+- type: entity
+  parent: DutyImplantSurgeryKitBase
+  id: DutyImplantKitRecorder
+  suffix: Duty, NT, Операционный набор
+  components:
+  - type: DutyImplantSurgeryKit
+    implant: DutyCyberRecorderImplant

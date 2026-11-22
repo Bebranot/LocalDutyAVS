@@ -80,7 +80,9 @@ public sealed partial class DutyNeuroWorldMarkersOverlay : Overlay
             return false;
 
         _wearer = wearer;
+        // Под ЭМИ панель погашена — меток нет, даже если сервер их ещё держит.
         return wearer.OwnerStatus != DutyNeuroMemberStatus.Dead &&
+               !wearer.Jammed &&
                wearer.Orders.Count > 0;
     }
 

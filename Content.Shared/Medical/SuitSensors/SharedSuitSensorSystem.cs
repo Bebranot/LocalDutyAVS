@@ -435,6 +435,11 @@ public abstract partial class SharedSuitSensorSystem : EntitySystem
                     coordinates = EntityCoordinates.Invalid;
                 }
 
+                // _Duty-start: «Ошейник» подменяет координаты носителя ложной точкой
+                var dutyFakeEv = new Content.Shared._Duty.Cyberware.Syndicate.DutyFakeTrackerQueryEvent(coordinates);
+                RaiseLocalEvent(sensor.User.Value, ref dutyFakeEv);
+                coordinates = dutyFakeEv.Coordinates;
+                // _Duty-end
                 status.Coordinates = GetNetCoordinates(coordinates);
                 break;
         }

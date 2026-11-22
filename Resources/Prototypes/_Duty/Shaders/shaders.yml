@@ -20,3 +20,9 @@
   id: FuryVision
   kind: source
   path: "/Textures/Shaders/_Duty/fury.swsl"
+
+# _Duty: холодный обесцвеченный тинт для замедленных наблюдателей во время Sandevistan.
+- type: shader
+  id: DutySandevistanDilation
+  kind: source
+  path: "/Textures/_Duty/Shaders/sandevistan_dilation.swsl"

@@ -317,6 +317,14 @@
   components:
     - type: SubdermalImplant
     - type: SandevistanImplant
+    # _Duty: интеграция Sandevistan в DutyCyberware (нагрузка 10, бонус лимита +4)
+    - type: DutyCyberware
+      moduleName: duty-cyber-module-sandevistan
+      faction: Syndicate
+      concealed: true
+      load: 10
+      loadLimitBonus: 4
+      empSensitive: true
 
 - type: entity
   parent: BaseSubdermalImplant

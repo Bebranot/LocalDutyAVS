@@ -1,0 +1,57 @@
+# SPDX-FileCopyrightText: 2026 LocalDuty
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+# Подкожная броня «Панцирь» (NT) и «Чешуя» (Gorlex). Стопка до 3 пластин, общий лимит.
+# Все цифры (резист, шаги замедления, шанс отражения) — в компоненте DutySubdermalArmor на носителе (Content.Shared/_Duty/Cyberware/Armor),
+# на пластине меняется только slowdownFactor.
+
+- type: entity
+  parent: DutyCyberImplantNTBase
+  id: DutySubdermalArmorPlate
+  name: имплант "Панцирь"
+  description: Бронепластина, вживляемая под кожу. До трёх штук — каждая следующая защищает сильнее и замедляет заметнее.
+  components:
+  - type: DutyCyberware
+    moduleName: duty-cyber-module-armor
+    load: 1
+    empSensitive: false
+  - type: DutySubdermalArmorPlate
+    slowdownFactor: 1.0
+
+- type: entity
+  parent: DutyCyberImplantGorlexBase
+  id: DutySubdermalArmorPlateElite
+  name: имплант "Чешуя"
+  description: Облегчённая бронепластина Горлекс. Защищает так же, как «Панцирь», но замедляет вдвое меньше.
+  components:
+  - type: DutyCyberware
+    moduleName: duty-cyber-module-armor-elite
+    load: 1
+    empSensitive: false
+  - type: DutySubdermalArmorPlate
+    slowdownFactor: 0.5
+
+- type: entity
+  parent: DutyImplantSurgeryKitBase
+  id: DutyImplantKitArmor
+  suffix: Duty, NT, Операционный набор
+  components:
+  - type: DutyImplantSurgeryKit
+    implant: DutySubdermalArmorPlate
+
+- type: entity
+  parent: DutyImplantSurgeryKitBase
+  id: DutyImplantKitArmorElite
+  suffix: Duty, Gorlex, Операционный набор
+  components:
+  - type: DutyImplantSurgeryKit
+    implant: DutySubdermalArmorPlateElite
+
+# Звук-заглушка: металлический рикошет. Меняется здесь, в одном месте.
+- type: soundCollection
+  id: DutyArmorPlateRicochet
+  files:
+  - /Audio/Weapons/Guns/Hits/ric1.ogg
+  - /Audio/Weapons/Guns/Hits/ric2.ogg
+  - /Audio/Weapons/Guns/Hits/ric3.ogg
+  - /Audio/Effects/clang.ogg

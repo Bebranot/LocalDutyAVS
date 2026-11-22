@@ -1,0 +1,203 @@
+# SPDX-FileCopyrightText: 2026 LocalDuty
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+# СБ и командование: рефлекторный блок, Лазарь, бодикам, стресс-анализатор, чёрный ящик капитана, нейро-печать, сканер кибернетики.
+# Логика — Content.Shared/Server/_Duty/Cyberware/Security. Выдача — только админская (спавн-меню).
+
+- type: entity
+  parent: DutyCyberImplantNTBase
+  id: DutyReflexBlockImplant
+  name: имплант "Рефлекторный блок"
+  description: Нейрошунт, гасящий часть болевого и мышечного шока. Дубинки и тейзеры бьют по носителю слабее. Гарантийная пломба NT на месте.
+  components:
+  - type: DutyCyberware
+    moduleName: duty-cyber-module-sec-reflex
+    load: 2
+    empSensitive: true
+  - type: DutyReflexBlockImplant
+    staminaCoefficient: 0.7
+- type: entity
+  parent: DutyImplantSurgeryKitBase
+  id: DutyImplantKitReflexBlock
+  suffix: Duty, NT, Операционный набор
+  components:
+  - type: DutyImplantSurgeryKit
+    implant: DutyReflexBlockImplant
+
+- type: entity
+  parent: DutyCyberImplantNTBase
+  id: DutyLazarusImplant
+  name: имплант "Лазарь"
+  description: Аварийный дефибриллятор размером с горошину. Если носитель умер, но тело цело, через двадцать секунд даёт разряд. Одноразовый.
+  components:
+  - type: DutyCyberware
+    moduleName: duty-cyber-module-sec-lazarus
+    load: 3
+    empSensitive: true
+  - type: DutyLazarusImplant
+    delay: 20
+    heal:
+      types:
+        Asphyxiation: -60
+        Bloodloss: -20
+        Poison: -20
+        Blunt: -15
+        Slash: -15
+        Piercing: -15
+        Heat: -15
+        Shock: -15
+- type: entity
+  parent: DutyImplantSurgeryKitBase
+  id: DutyImplantKitLazarus
+  suffix: Duty, NT, Операционный набор
+  components:
+  - type: DutyImplantSurgeryKit
+    implant: DutyLazarusImplant
+
+- type: entity
+  parent: DutyCyberImplantNTBase
+  id: DutyBodycamImplant
+  name: имплант "Бодикам"
+  description: Записывающий модуль службы безопасности. Фиксирует речь и события вокруг офицера, запись можно распечатать для суда.
+  components:
+  - type: DutyCyberware
+    moduleName: duty-cyber-module-sec-bodycam
+    load: 1
+    empSensitive: true
+  - type: DutyBodycamImplant
+    printCooldown: 45
+    keepMinutes: 10
+  - type: SubdermalImplant
+    implantAction: DutyActionBodycamPrint
+- type: entity
+  parent: DutyImplantSurgeryKitBase
+  id: DutyImplantKitBodycam
+  suffix: Duty, NT, Операционный набор
+  components:
+  - type: DutyImplantSurgeryKit
+    implant: DutyBodycamImplant
+
+- type: entity
+  parent: DutyCyberImplantNTBase
+  id: DutyStressAnalyzerImplant
+  name: имплант "Стресс-анализатор"
+  description: Читает пульс собеседника по микродрожанию сонной артерии. Показывает волнение, но не ложь.
+  components:
+  - type: DutyCyberware
+    moduleName: duty-cyber-module-sec-stress
+    load: 1
+    empSensitive: true
+  - type: DutyStressAnalyzerImplant
+- type: entity
+  parent: DutyImplantSurgeryKitBase
+  id: DutyImplantKitStressAnalyzer
+  suffix: Duty, NT, Операционный набор
+  components:
+  - type: DutyImplantSurgeryKit
+    implant: DutyStressAnalyzerImplant
+
+- type: entity
+  parent: DutyCyberImplantNTBase
+  id: DutyBlackBoxCaptainImplant
+  name: имплант "Чёрный ящик капитана"
+  description: Закалённый регистратор. Если носитель погибает, в командный канал уходит координата и запись последних тридцати секунд разговоров вокруг.
+  components:
+  - type: DutyCyberware
+    moduleName: duty-cyber-module-sec-blackbox
+    load: 2
+    empSensitive: false
+  - type: DutyBlackBoxCaptainImplant
+    window: 30
+    channel: Command
+- type: entity
+  parent: DutyImplantSurgeryKitBase
+  id: DutyImplantKitBlackBoxCaptain
+  suffix: Duty, NT, Операционный набор
+  components:
+  - type: DutyImplantSurgeryKit
+    implant: DutyBlackBoxCaptainImplant
+
+- type: entity
+  parent: DutyCyberImplantNTBase
+  id: DutyNeuroSealImplant
+  name: имплант "Нейро-печать СБ"
+  description: Служебная печать доступа под кожей. Шлюзы открываются по нейросигналу, карту не украсть, но можно срезать вместе с рукой хирурга.
+  components:
+  - type: DutyCyberware
+    moduleName: duty-cyber-module-sec-neuroseal
+    load: 2
+    empSensitive: true
+  - type: DutyNeuroSealImplant
+  - type: Access
+    groups:
+    - Security
+- type: entity
+  parent: DutyImplantSurgeryKitBase
+  id: DutyImplantKitNeuroSeal
+  suffix: Duty, NT, Операционный набор
+  components:
+  - type: DutyImplantSurgeryKit
+    implant: DutyNeuroSealImplant
+
+- type: entity
+  parent: DutyCyberImplantNTBase
+  id: DutyNeuroSealCommandImplant
+  name: имплант "Нейро-печать командования"
+  description: Печать доступа уровня командования. Шлюзы не отличают носителя от капитанского ID. Выдаётся только по приказу.
+  components:
+  - type: DutyCyberware
+    moduleName: duty-cyber-module-sec-neuroseal-command
+    load: 2
+    empSensitive: true
+  - type: DutyNeuroSealImplant
+  - type: Access
+    groups:
+    - AllAccess
+- type: entity
+  parent: DutyImplantSurgeryKitBase
+  id: DutyImplantKitNeuroSealCommand
+  suffix: Duty, NT, Операционный набор
+  components:
+  - type: DutyImplantSurgeryKit
+    implant: DutyNeuroSealCommandImplant
+
+- type: entity
+  parent: BaseImplantAction
+  id: DutyActionBodycamPrint
+  name: Распечатать запись бодикама
+  description: Печатает на бумаге журнал речи и событий вокруг вас.
+  components:
+  - type: Action
+    checkCanInteract: false
+    itemIconStyle: BigAction
+    priority: -20
+  - type: Sprite
+    sprite: Actions/Implants/implants.rsi
+    layers:
+    - state: chameleon
+      map: ["enum.ActionVisuals.Icon"]
+
+- type: entity
+  parent: BaseItem
+  id: DutyCyberScanner
+  name: cyber scanner
+  suffix: Duty, NT, Устройство
+  description: A handheld scanner for cybernetic implants.
+  components:
+  - type: Sprite
+    sprite: Objects/Specific/Medical/healthanalyzer.rsi
+    color: "#9fb3c8"
+    layers:
+    - state: icon
+    - state: analyzer
+      shader: unshaded
+  - type: Item
+    sprite: Objects/Specific/Medical/healthanalyzer.rsi
+    heldPrefix: analyzer
+    storedRotation: -90
+  - type: DutyCyberScanner
+
+- type: soundCollection
+  id: DutyLazarusImplantZap
+  files:
+  - /Audio/Items/Defib/defib_zap.ogg

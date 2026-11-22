@@ -399,4 +399,10 @@ public sealed class DutyCCVars
 
     public static readonly CVarDef<float> LatheUiHeight =
         CVarDef.Create("duty.lathe_window_height", 760f, CVar.ARCHIVE | CVar.CLIENTONLY);
+
+    /// <summary>
+    /// Показывать панель киберсистемы (модули, нейронагрузка) у носителя киберимплантов.
+    /// </summary>
+    public static readonly CVarDef<bool> CyberHudEnabled =
+        CVarDef.Create("duty.cyber_hud_enabled", true, CVar.ARCHIVE | CVar.CLIENTONLY);
 }

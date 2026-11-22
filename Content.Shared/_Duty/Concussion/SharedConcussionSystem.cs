@@ -1,3 +1,4 @@
+using Content.Shared._Duty.Cyberware.Gorlex;
 using Content.Shared.Inventory;
 using Robust.Shared.Timing;
 
@@ -59,6 +60,11 @@ public abstract partial class SharedConcussionSystem : EntitySystem
                 best = MathF.Max(best, prot.Reduction);
             }
         }
+
+        // _Duty-start: кибер «Барабанный демпфер» режет набор контузии на самом носителе, без шлема
+        if (TryComp<DutyDrumDamperHostComponent>(uid, out var damper) && damper.Online)
+            best = MathF.Max(best, damper.Reduction);
+        // _Duty-end
 
         return Math.Clamp(best, 0f, 1f);
     }

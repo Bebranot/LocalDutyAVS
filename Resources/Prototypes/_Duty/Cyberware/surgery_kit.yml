@@ -1,0 +1,82 @@
+# SPDX-FileCopyrightText: 2026 LocalDuty
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+# Операционный набор для киберимплантов: этапы вживления/извлечения цепочкой doafter-ов (см. DutyImplantSurgeryKitComponent).
+# Конкретные наборы наследуют DutyImplantSurgeryKitBase и задают только `implant:`.
+
+- type: soundCollection
+  id: DutySurgeryOrgan
+  files:
+  - /Audio/ADT/Medical/Surgery/organ1.ogg
+  - /Audio/ADT/Medical/Surgery/organ2.ogg
+
+- type: entity
+  abstract: true
+  parent: BaseItem
+  id: DutyImplantSurgeryKitBase
+  name: implant surgery kit
+  description: A sterile-ish case with a scalpel, clamps and a pre-loaded implant.
+  components:
+  - type: Sprite
+    sprite: Objects/Specific/Medical/implanter.rsi
+    layers:
+    - state: implanter0
+      map: [ "kit" ]
+  - type: Item
+    sprite: Objects/Specific/Medical/implanter.rsi
+    heldPrefix: implanter
+    size: Small
+  - type: ContainerContainer
+    containers:
+      duty_surgery_kit_implant: !type:ContainerSlot {}
+  - type: Appearance
+  - type: GenericVisualizer
+    visuals:
+      enum.DutyImplantSurgeryKitVisuals.Loaded:
+        kit:
+          True: { state: implanter1 }
+          False: { state: implanter0 }
+  - type: DutyImplantSurgeryKit
+    insertStages:
+    - delay: 3
+      popup: duty-surgery-insert-prep
+    - delay: 4
+      popup: duty-surgery-insert-cut
+      sound:
+        path: /Audio/Weapons/bladeslice.ogg
+      damage:
+        types:
+          Slash: 5
+      bleed: 2
+    - delay: 6
+      popup: duty-surgery-insert-implant
+      sound:
+        collection: DutySurgeryOrgan
+      pain: true
+    - delay: 3
+      popup: duty-surgery-insert-stitch
+      bleed: -2
+    removeStages:
+    - delay: 4
+      popup: duty-surgery-remove-cut
+      sound:
+        path: /Audio/Weapons/bladeslice.ogg
+      damage:
+        types:
+          Slash: 5
+      bleed: 2
+    - delay: 5
+      popup: duty-surgery-remove-extract
+      sound:
+        collection: DutySurgeryOrgan
+      pain: true
+    - delay: 3
+      popup: duty-surgery-remove-stitch
+      bleed: -2
+
+- type: entity
+  parent: DutyImplantSurgeryKitBase
+  id: DutyImplantSurgeryKitEmpty
+  name: implant surgery kit (empty)
+  suffix: Duty, NT, Операционный набор
+  description: An empty implant surgery kit. Can extract cyberware from a patient.

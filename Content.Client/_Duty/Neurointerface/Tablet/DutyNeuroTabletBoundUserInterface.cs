@@ -94,6 +94,9 @@ public sealed class DutyNeuroTabletBoundUserInterface(EntityUid owner, Enum uiKe
 
         _window.OnDeleteTask += taskId =>
             SendMessage(new DutyNeuroDeleteTaskMessage(taskId));
+
+        _window.OnRebootNetwork += () =>
+            SendMessage(new DutyNeuroRebootNetworkMessage());
     }
 
     protected override void UpdateState(BoundUserInterfaceState state)

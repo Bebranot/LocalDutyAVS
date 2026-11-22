@@ -1,0 +1,249 @@
+# SPDX-FileCopyrightText: 2026 LocalDuty
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+# Кибер наёмников (docs/neurointerface/cyberware_ideas.md, раздел 3). Серое железо без маркировки:
+# всё наследует DutyCyberImplantMercenaryBase (concealed — анализатор видит «неопознанный модуль»).
+# Наёмник со спавна несёт «Контракт», «Ограничитель», «Подтверждение» и «Без следа» (см. mercenary_rule.yml);
+# «Мимикрия», «Иглоноготь» и «Протокол стирания» — отдельные наборы для админ-выдачи.
+
+# ── Импланты ──
+
+- type: entity
+  parent: DutyCyberImplantMercenaryBase
+  id: DutyMercContractImplant
+  name: имплант "Контракт"
+  description: Безымянный чип под ухом, прошитый под одного человека. Показывает, где цель, — и больше ничего не знает.
+  components:
+  - type: DutyCyberware
+    moduleName: duty-cyber-module-merc-contract
+    load: 2
+  - type: DutyMercContractImplant
+
+- type: entity
+  parent: DutyCyberImplantMercenaryBase
+  id: DutyMercLimiterImplant
+  name: имплант "Ограничитель"
+  description: Предохранитель сопутствующего ущерба, вшитый заказчиком. Бьёт током за каждого лишнего покойника; на третьем рвёт контракт.
+  components:
+  - type: DutyCyberware
+    moduleName: duty-cyber-module-merc-limiter
+    load: 1
+    # Предохранитель обязан работать и под ЭМИ — иначе гранату ЭМИ купили бы первой.
+    empSensitive: false
+  - type: DutyMercLimiterImplant
+
+- type: entity
+  parent: DutyCyberImplantMercenaryBase
+  id: DutyMercConfirmImplant
+  name: имплант "Подтверждение"
+  description: "Модуль отчёта: фиксирует смерть цели и открывает протокол эвакуации — носитель сгорает вместе с уликами."
+  components:
+  - type: SubdermalImplant
+    implantAction: DutyActionMercEvacuate
+  - type: DutyCyberware
+    moduleName: duty-cyber-module-merc-confirm
+    load: 1
+  - type: DutyMercConfirmImplant
+
+- type: entity
+  parent: DutyCyberImplantMercenaryBase
+  id: DutyMercTracelessImplant
+  name: имплант "Без следа"
+  description: Подкожная плёнка на подушечках пальцев и гаситель шага. Ни отпечатков, ни ворса, ни звука — пока не тряхнёт ЭМИ.
+  components:
+  - type: DutyCyberware
+    moduleName: duty-cyber-module-merc-traceless
+    load: 1
+  - type: DutyMercTracelessImplant
+
+- type: entity
+  parent: DutyCyberImplantMercenaryBase
+  id: DutyMercMimicryImplant
+  name: имплант "Мимикрия"
+  description: Пластичная лицевая сетка. Десять секунд вплотную — и три минуты у тебя чужое лицо. Голос и документы остаются твоими.
+  components:
+  - type: SubdermalImplant
+    implantAction: DutyActionMercMimicry
+  - type: DutyCyberware
+    moduleName: duty-cyber-module-merc-mimicry
+    load: 3
+  - type: DutyMercMimicryImplant
+
+- type: entity
+  parent: DutyCyberImplantMercenaryBase
+  id: DutyMercNeedleNailImplant
+  name: имплант "Иглоноготь"
+  description: Полая игла под ногтем указательного пальца с одной дозой яда. Срабатывает, когда хватаешь кого-то, — один раз.
+  components:
+  - type: DutyCyberware
+    moduleName: duty-cyber-module-merc-needle
+    load: 1
+  - type: DutyMercNeedleNailImplant
+    reagent: Amatoxin
+    amount: 12
+
+- type: entity
+  parent: DutyCyberImplantMercenaryBase
+  id: DutyMercErasureImplant
+  name: имплант "Протокол стирания"
+  description: Термитная нить вдоль всего наёмничьего железа. В плену — сжечь всё, что можно допросить. Себя тоже, но не до смерти.
+  components:
+  - type: SubdermalImplant
+    implantAction: DutyActionMercErasure
+  - type: DutyCyberware
+    moduleName: duty-cyber-module-merc-erasure
+    load: 1
+  - type: DutyMercErasureImplant
+    cuffTime: 120
+    damage:
+      types:
+        Heat: 35
+        Shock: 25
+
+# ── Операционные наборы ──
+
+- type: entity
+  parent: DutyImplantSurgeryKitBase
+  id: DutyImplantKitMercContract
+  suffix: Duty, Mercenary, Операционный набор
+  components:
+  - type: DutyImplantSurgeryKit
+    implant: DutyMercContractImplant
+
+- type: entity
+  parent: DutyImplantSurgeryKitBase
+  id: DutyImplantKitMercLimiter
+  suffix: Duty, Mercenary, Операционный набор
+  components:
+  - type: DutyImplantSurgeryKit
+    implant: DutyMercLimiterImplant
+
+- type: entity
+  parent: DutyImplantSurgeryKitBase
+  id: DutyImplantKitMercConfirm
+  suffix: Duty, Mercenary, Операционный набор
+  components:
+  - type: DutyImplantSurgeryKit
+    implant: DutyMercConfirmImplant
+
+- type: entity
+  parent: DutyImplantSurgeryKitBase
+  id: DutyImplantKitMercTraceless
+  suffix: Duty, Mercenary, Операционный набор
+  components:
+  - type: DutyImplantSurgeryKit
+    implant: DutyMercTracelessImplant
+
+- type: entity
+  parent: DutyImplantSurgeryKitBase
+  id: DutyImplantKitMercMimicry
+  suffix: Duty, Mercenary, Операционный набор
+  components:
+  - type: DutyImplantSurgeryKit
+    implant: DutyMercMimicryImplant
+
+- type: entity
+  parent: DutyImplantSurgeryKitBase
+  id: DutyImplantKitMercNeedleNail
+  suffix: Duty, Mercenary, Операционный набор
+  components:
+  - type: DutyImplantSurgeryKit
+    implant: DutyMercNeedleNailImplant
+
+- type: entity
+  parent: DutyImplantSurgeryKitBase
+  id: DutyImplantKitMercErasure
+  suffix: Duty, Mercenary, Операционный набор
+  components:
+  - type: DutyImplantSurgeryKit
+    implant: DutyMercErasureImplant
+
+# ── Действия ──
+
+- type: entity
+  parent: BaseAction
+  id: DutyActionMercEvacuate
+  name: Эвакуация
+  description: Доступно после закрытия контракта. Носитель и всё, что на нём, выгорают в синей вспышке.
+  components:
+  - type: Action
+    itemIconStyle: BigAction
+    checkCanInteract: false
+    priority: -20
+    useDelay: 5
+  - type: Sprite
+    sprite: Objects/Devices/pinpointer.rsi
+    layers:
+    - state: pinpointer-station
+      map: ["enum.ActionVisuals.Icon"]
+  - type: ConfirmableAction
+    popup: duty-merc-evac-confirm
+  - type: InstantAction
+    event: !type:DutyMercEvacuateActionEvent
+
+- type: entity
+  parent: BaseAction
+  id: DutyActionMercMimicry
+  name: Мимикрия
+  description: Десять секунд вплотную сканировать лицо цели, затем три минуты носить его.
+  components:
+  - type: Action
+    itemIconStyle: BigAction
+    priority: -20
+    useDelay: 3
+  - type: Sprite
+    sprite: Actions/Implants/implants.rsi
+    layers:
+    - state: chameleon
+      map: ["enum.ActionVisuals.Icon"]
+  - type: TargetAction
+    range: 1.5
+  - type: EntityTargetAction
+    canTargetSelf: false
+    event: !type:DutyMercMimicryActionEvent
+    whitelist:
+      components:
+      - HumanoidProfile
+
+- type: entity
+  parent: BaseAction
+  id: DutyActionMercErasure
+  name: Протокол стирания
+  description: Работает после двух минут в наручниках. Плавит всё наёмничье железо и данные контракта; носитель получает тяжёлые ожоги.
+  components:
+  - type: Action
+    itemIconStyle: BigAction
+    checkCanInteract: false
+    priority: -20
+    useDelay: 3
+  - type: Sprite
+    sprite: Actions/Implants/implants.rsi
+    layers:
+    - state: explosive
+      map: ["enum.ActionVisuals.Icon"]
+  - type: ConfirmableAction
+    popup: duty-merc-erasure-confirm
+  - type: InstantAction
+    event: !type:DutyMercErasureActionEvent
+
+# ── Звуки-заглушки. Меняются здесь, в одном месте (список «что достать» — в отчёте). ──
+
+- type: soundCollection
+  id: DutyMercEvac
+  files:
+  - /Audio/Effects/teleport_departure.ogg
+
+- type: soundCollection
+  id: DutyMercContractClosed
+  files:
+  - /Audio/Machines/chime.ogg
+
+- type: soundCollection
+  id: DutyMercMimicryShift
+  files:
+  - /Audio/Effects/Fluids/splat.ogg
+
+- type: soundCollection
+  id: DutyMercErasure
+  files:
+  - /Audio/Effects/sizzle.ogg

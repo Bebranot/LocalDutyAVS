@@ -90,11 +90,12 @@ public sealed class SandevistanTrailOverlay : Overlay
                     const float ownerOverlapRadius = 0.4f;
 
                     handle.SetTransform(Matrix3x2.Identity);
-                    var trailColor = trail.Color;
 
                     foreach (var data in trail.TrailData)
                     {
                         var scale = trail.Scale != 1f ? trail.Scale : data.Scale;
+                        // _Duty: Edgerunners chromatic afterimage gradient (green -> cyan -> yellow -> magenta).
+                        var trailColor = GetEdgerunnersColor(trail, data);
 
                         if (trailColor.A <= 0.01f || scale <= 0.01f || data.MapId != args.MapId)
                             continue;
@@ -132,12 +133,14 @@ public sealed class SandevistanTrailOverlay : Overlay
             if (trail.Sprite == null)
             {
                 handle.SetTransform(Matrix3x2.Identity);
-                var trailColor = trail.Color;
 
                 if (xform.MapID == args.MapId)
                 {
-                    var start = trail.TrailData[^1].Position;
-                    var scale = trail.Scale != 1f ? trail.Scale : trail.TrailData[^1].Scale;
+                    var lastData = trail.TrailData[^1];
+                    var start = lastData.Position;
+                    var scale = trail.Scale != 1f ? trail.Scale : lastData.Scale;
+                    // _Duty: Edgerunners chromatic gradient for line trails.
+                    var trailColor = GetEdgerunnersColor(trail, lastData);
                     if (!_occluderSystem.IsOccluded(cameraPos, start, xform.MapID))
                         DrawTrailLine(start, position, trailColor, scale, bounds, handle);
                 }
@@ -151,6 +154,8 @@ public sealed class SandevistanTrailOverlay : Overlay
                     {
                         var midpoint = (data.Position + prevData.Position) * 0.5f;
                         var scale = trail.Scale != 1f ? trail.Scale : data.Scale;
+                        // _Duty: Edgerunners chromatic gradient for line trails.
+                        var trailColor = GetEdgerunnersColor(trail, data);
                         if (!_occluderSystem.IsOccluded(cameraPos, midpoint, data.MapId))
                             DrawTrailLine(prevData.Position, data.Position, trailColor, scale, bounds, handle);
                     }
@@ -161,11 +166,12 @@ public sealed class SandevistanTrailOverlay : Overlay
 
             var textureSize = _sprite.Frame0(trail.Sprite).Size;
             var pos = -(Vector2)textureSize / 2f / EyeManager.PixelsPerMeter;
-            var trailTextureColor = trail.Color;
 
             foreach (var data in trail.TrailData)
             {
                 var scale = trail.Scale != 1f ? trail.Scale : data.Scale;
+                // _Duty: Edgerunners chromatic gradient for sprite trails.
+                var trailTextureColor = GetEdgerunnersColor(trail, data);
 
                 if (trailTextureColor.A <= 0.01f || scale <= 0.01f || data.MapId != args.MapId)
                     continue;
@@ -213,5 +219,29 @@ public sealed class SandevistanTrailOverlay : Overlay
             start + new Vector2(direction.Length(), halfScale));
         var boxRotated = new Box2Rotated(box, angle, start);
         handle.DrawRect(boxRotated, color);
+    }
+
+    // _Duty: Edgerunners chromatic afterimage gradient (green -> cyan -> yellow -> magenta) by particle age.
+    private Color GetEdgerunnersColor(TrailComponent trail, TrailData data)
+    {
+        var lifetime = MathF.Max(trail.Lifetime, 0.05f);
+        var age = (float)(_timing.CurTime - data.SpawnTime).TotalSeconds;
+        var t = Math.Clamp(age / lifetime, 0f, 1f);
+
+        Color green = new(0.05f, 1.00f, 0.50f, 1f);
+        Color cyan = new(0.00f, 0.92f, 1.00f, 1f);
+        Color yellow = new(1.00f, 0.90f, 0.05f, 1f);
+        Color magenta = new(1.00f, 0.12f, 0.58f, 1f);
+
+        Color rgb;
+        if (t < 0.333f)
+            rgb = Color.InterpolateBetween(green, cyan, t / 0.333f);
+        else if (t < 0.666f)
+            rgb = Color.InterpolateBetween(cyan, yellow, (t - 0.333f) / 0.333f);
+        else
+            rgb = Color.InterpolateBetween(yellow, magenta, (t - 0.666f) / 0.334f);
+
+        var alpha = Math.Clamp(data.Color.A * (1f - t * 0.65f), 0f, 1f);
+        return rgb.WithAlpha(alpha);
     }
 }

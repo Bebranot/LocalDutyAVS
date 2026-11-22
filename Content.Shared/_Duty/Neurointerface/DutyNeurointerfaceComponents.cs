@@ -18,6 +18,13 @@ public sealed partial class DutyNeurointerfaceMaskComponent : Component
     /// </summary>
     [DataField]
     public string DefaultSquadCallsign = "KILO-9";
+
+    /// <summary>
+    /// _Duty: сеть, к которой подключает маска. Источник «маска» ничем не отличается от импланта —
+    /// см. <c>DutyNeurointerfaceSystem.AddSource</c>.
+    /// </summary>
+    [DataField]
+    public DutyNeuroNetwork Network = DutyNeuroNetwork.NtSec;
 }
 
 /// <summary>
@@ -46,12 +53,43 @@ public sealed partial class DutyNeurointerfaceTabletComponent : Component
 }
 
 /// <summary>
-/// _Duty: компонент состояния нейроинтерфейса на носителе маски.
-/// Остаётся на теле после смерти до снятия маски для отображения экрана flatline.
+/// _Duty: компонент состояния нейроинтерфейса на носителе.
+/// Источников два вида — маска и киберимплант (NT-SEC внутренний, тактическая сеть Горлекса); компонент живёт,
+/// пока есть хоть один источник (<see cref="Sources"/>), в том числе после смерти — ради экрана flatline.
 /// </summary>
-[RegisterComponent, NetworkedComponent, AutoGenerateComponentState(true)]
+[RegisterComponent, NetworkedComponent, AutoGenerateComponentState(true), AutoGenerateComponentPause]
 public sealed partial class DutyNeurointerfaceWearerComponent : Component
 {
+    /// <summary>
+    /// Источники нейроинтерфейса (маска или имплант) и сеть каждого. Только сервер.
+    /// </summary>
+    [ViewVariables]
+    public Dictionary<EntityUid, DutyNeuroNetwork> Sources = new();
+
+    /// <summary>
+    /// Сеть носителя: отряды, приказы и радиоканал. Имплант важнее маски — он в черепе, маску можно украсть.
+    /// </summary>
+    [AutoNetworkedField]
+    public DutyNeuroNetwork Network = DutyNeuroNetwork.NtSec;
+
+    /// <summary>
+    /// Панель погашена сбоем (ЭМИ по импланту). Компонент при этом остаётся: отряд, flatline и приказы не теряются.
+    /// </summary>
+    [AutoNetworkedField]
+    public bool Jammed;
+
+    /// <summary>
+    /// До какого момента HUD взломан «Червём ICE»: скрамбл строк, ложная метка, «ВТОРЖЕНИЕ».
+    /// </summary>
+    [AutoNetworkedField, AutoPausedField]
+    public TimeSpan? IntrusionUntil;
+
+    /// <summary>
+    /// Ложная метка вторжения; сервер подмешивает её в <see cref="Orders"/> до конца <see cref="IntrusionUntil"/>.
+    /// </summary>
+    [ViewVariables]
+    public DutyNeuroOrderEntry? FakeOrder;
+
     /// <summary>
     /// Активен ли HUD нейроинтерфейса (маска надета на лицо).
     /// </summary>

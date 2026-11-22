@@ -28,6 +28,11 @@ public sealed class DutyNeuroTabletBuiState : BoundUserInterfaceState
     public List<DutyNeuroTaskEntry> Tasks = new();
     public List<DutyNeuroCrewCandidate> CrewCandidates = new();
 
+    /// <summary>
+    /// _Duty: в активном отряде кто-то под «Червём ICE» — планшет подсвечивает кнопку перезагрузки сети.
+    /// </summary>
+    public bool NetworkIntrusion;
+
     public DutyNeuroTabletBuiState()
     {
     }
@@ -228,3 +233,9 @@ public sealed class DutyNeuroDeleteTaskMessage(int taskId) : BoundUserInterfaceM
 {
     public int TaskId { get; } = taskId;
 }
+
+/// <summary>
+/// _Duty: перезагрузка нейросети активного отряда — снимает «Червя ICE» со всех бойцов отряда.
+/// </summary>
+[Serializable, NetSerializable]
+public sealed class DutyNeuroRebootNetworkMessage : BoundUserInterfaceMessage;

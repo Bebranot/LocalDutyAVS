@@ -1,0 +1,86 @@
+# SPDX-FileCopyrightText: 2026 LocalDuty
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+# Общая база киберимплантов _Duty (docs/neurointerface/cyberware_ideas.md).
+# Каждый имплант — наследник одной из фракционных баз: фракция красит HUD и решает, видят ли его сканеры.
+# Выдача пока только админская: импланты и операционные наборы — в спавн-меню с суффиксом «Duty, <фракция>».
+
+- type: entity
+  abstract: true
+  parent: BaseSubdermalImplant
+  id: DutyCyberImplantBase
+  components:
+  - type: DutyCyberware
+    moduleName: duty-cyber-module-unknown
+
+- type: entity
+  abstract: true
+  parent: DutyCyberImplantBase
+  id: DutyCyberImplantNTBase
+  suffix: Duty, NT, Имплант
+  components:
+  - type: DutyCyberware
+    faction: NanoTrasen
+    moduleName: duty-cyber-module-unknown
+
+- type: entity
+  abstract: true
+  parent: DutyCyberImplantBase
+  id: DutyCyberImplantGorlexBase
+  suffix: Duty, Gorlex, Имплант
+  components:
+  - type: DutyCyberware
+    faction: Gorlex
+    moduleName: duty-cyber-module-unknown
+
+- type: entity
+  abstract: true
+  parent: DutyCyberImplantBase
+  id: DutyCyberImplantSyndicateBase
+  suffix: Duty, Syndicate, Имплант
+  components:
+  - type: DutyCyberware
+    faction: Syndicate
+    concealed: true
+    moduleName: duty-cyber-module-unknown
+
+- type: entity
+  abstract: true
+  parent: DutyCyberImplantBase
+  id: DutyCyberImplantCybersunBase
+  suffix: Duty, Syndicate, Cybersun, Имплант
+  components:
+  - type: DutyCyberware
+    faction: Cybersun
+    concealed: true
+    moduleName: duty-cyber-module-unknown
+
+- type: entity
+  abstract: true
+  parent: DutyCyberImplantBase
+  id: DutyCyberImplantMercenaryBase
+  suffix: Duty, Mercenary, Имплант
+  components:
+  - type: DutyCyberware
+    faction: Mercenary
+    concealed: true
+    moduleName: duty-cyber-module-unknown
+
+# ── Звуки-заглушки. Меняются здесь, в одном месте (список «что достать» — в отчёте). ──
+
+- type: soundCollection
+  id: DutyCyberEmpGlitch
+  files:
+  - /Audio/Effects/sparks1.ogg
+  - /Audio/Effects/sparks2.ogg
+  - /Audio/Effects/sparks3.ogg
+
+- type: soundCollection
+  id: DutyCyberBoot
+  files:
+  - /Audio/Machines/twobeep.ogg
+
+- type: soundCollection
+  id: DutyCyberDeny
+  files:
+  - /Audio/Machines/quickbeep.ogg

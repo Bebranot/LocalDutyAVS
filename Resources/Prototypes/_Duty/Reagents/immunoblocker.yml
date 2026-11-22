@@ -1,0 +1,36 @@
+# _Duty: Иммуноблокаторы — подавляют симптомы нейроперегруза киберимплантов на 5 минут.
+# Передозировка >= 20u в кровотоке вызывает тяжёлое отравление и асфиксию (5 Asphyxiation + 5 Poison / с).
+- type: reagent
+  id: Immunoblocker
+  name: reagent-name-immunoblocker
+  group: Medicine
+  desc: reagent-desc-immunoblocker
+  physicalDesc: reagent-physical-desc-opaque
+  flavor: medicine
+  color: "#38a3a5"
+  metabolisms:
+    Bloodstream:
+      metabolismRate: 0.5
+      effects:
+      - !type:ModifyStatusEffect
+        effectProto: StatusEffectDutyImmunoblocker
+        time: 300
+        type: Update
+      - !type:HealthChange
+        conditions:
+        - !type:ReagentCondition
+          reagent: Immunoblocker
+          min: 20
+        damage:
+          types:
+            Asphyxiation: 5
+            Poison: 5
+      - !type:PopupMessage
+        conditions:
+        - !type:ReagentCondition
+          reagent: Immunoblocker
+          min: 20
+        type: Local
+        visualType: LargeCaution
+        messages: [ "immunoblocker-overdose-popup" ]
+        probability: 0.25

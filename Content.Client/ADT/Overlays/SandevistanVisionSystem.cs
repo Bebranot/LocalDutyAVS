@@ -11,6 +11,8 @@ public sealed partial class SandevistanVisionSystem : EntitySystem
     [Dependency] private ISharedPlayerManager _playerMan = default!;
 
     private SandevistanVisionOverlay _overlay = default!;
+    // _Duty: track whether overlay is currently registered so fade-out finishes before removal.
+    private bool _overlayActive;
 
     public override void Initialize()
     {
@@ -24,26 +26,55 @@ public sealed partial class SandevistanVisionSystem : EntitySystem
         _overlay = new();
     }
 
+    public override void FrameUpdate(float frameTime)
+    {
+        base.FrameUpdate(frameTime);
+
+        if (!_overlayActive)
+            return;
+
+        var player = _playerMan.LocalEntity;
+        var active = player is { Valid: true } && HasComp<SandevistanVisionComponent>(player.Value);
+        _overlay.UpdateFade(frameTime, active);
+
+        if (!active && _overlay.Strength <= 0.001f)
+        {
+            _overlayMan.RemoveOverlay(_overlay);
+            _overlayActive = false;
+        }
+    }
+
     private void OnSandevistanVisionInit(EntityUid uid, SandevistanVisionComponent component, ComponentInit args)
     {
-        if (uid == _playerMan.LocalEntity)
+        if (uid == _playerMan.LocalEntity && !_overlayActive)
+        {
             _overlayMan.AddOverlay(_overlay);
+            _overlayActive = true;
+        }
     }
 
     private void OnSandevistanVisionShutdown(EntityUid uid, SandevistanVisionComponent component, ComponentShutdown args)
     {
-        if (uid == _playerMan.LocalEntity)
-            _overlayMan.RemoveOverlay(_overlay);
+        // _Duty: let FrameUpdate fade out smoothly before removing overlay.
     }
 
     private void OnPlayerAttached(EntityUid uid, SandevistanVisionComponent component, LocalPlayerAttachedEvent args)
     {
-        _overlayMan.AddOverlay(_overlay);
+        if (!_overlayActive)
+        {
+            _overlayMan.AddOverlay(_overlay);
+            _overlayActive = true;
+        }
     }
 
     private void OnPlayerDetached(EntityUid uid, SandevistanVisionComponent component, LocalPlayerDetachedEvent args)
     {
-        _overlayMan.RemoveOverlay(_overlay);
+        if (_overlayActive)
+        {
+            _overlay.UpdateFade(10f, false);
+            _overlayMan.RemoveOverlay(_overlay);
+            _overlayActive = false;
+        }
     }
 
     private void OnNoVisionFiltersChanged(bool enabled)

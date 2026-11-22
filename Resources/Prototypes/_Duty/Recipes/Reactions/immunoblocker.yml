@@ -1,0 +1,14 @@
+# _Duty: Синтез иммуноблокаторов: Dylovene 1 + Inaprovaline 1 + Carbon 1 + Mercury 1 -> Immunoblocker 4.
+- type: reaction
+  id: Immunoblocker
+  reactants:
+    Dylovene:
+      amount: 1
+    Inaprovaline:
+      amount: 1
+    Carbon:
+      amount: 1
+    Mercury:
+      amount: 1
+  products:
+    Immunoblocker: 4

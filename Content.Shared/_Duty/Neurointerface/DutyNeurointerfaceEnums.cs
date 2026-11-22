@@ -89,3 +89,14 @@ public enum DutyNeuroCalloutType : byte
     Sos,
     Medic
 }
+
+/// <summary>
+/// _Duty: чья это нейросеть. Отряды, приказы и трекеры не пересекаются между сетями:
+/// оперативники Горлекса видят только своих, NT-SEC — только своих. Сеть красит HUD и выбирает радиоканал.
+/// </summary>
+[Serializable, NetSerializable]
+public enum DutyNeuroNetwork : byte
+{
+    NtSec,
+    Gorlex
+}

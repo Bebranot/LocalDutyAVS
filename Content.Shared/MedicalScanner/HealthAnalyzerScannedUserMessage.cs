@@ -39,8 +39,9 @@ public struct HealthAnalyzerUiState
     public List<TraumaAnalyzerEntry>? Traumas; // _Duty - переломы/вывихи/артерия с тирами
     public List<AddictionInfo>? Addictions; // ADT-Tweak - list of addictions inside scanned user
     public List<ADTDiseaseInfo>? Diseases; // ADT-Tweak
+    public List<string>? Implants; // _Duty - готовые строки имплантов («Панцирь ×2», «неопознанный модуль»)
 
-    public HealthAnalyzerUiState(NetEntity? targetEntity, float temperature, float bloodLevel, bool? scanMode, bool? bleeding, bool? unrevivable, List<(string ReagentId, FixedPoint2 Quantity)>? metabolizingReagents = null, MobState? mobState = null, float? healthFraction = null, List<TraumaAnalyzerEntry>? traumas = null, List<AddictionInfo>? addictions = null, List<ADTDiseaseInfo>? diseases = null) // Starlight - added metabolizingReagents parameter
+    public HealthAnalyzerUiState(NetEntity? targetEntity, float temperature, float bloodLevel, bool? scanMode, bool? bleeding, bool? unrevivable, List<(string ReagentId, FixedPoint2 Quantity)>? metabolizingReagents = null, MobState? mobState = null, float? healthFraction = null, List<TraumaAnalyzerEntry>? traumas = null, List<AddictionInfo>? addictions = null, List<ADTDiseaseInfo>? diseases = null, List<string>? implants = null) // _Duty: implants; Starlight - added metabolizingReagents parameter
     {
         TargetEntity = targetEntity;
         Temperature = temperature;
@@ -54,5 +55,6 @@ public struct HealthAnalyzerUiState
         Traumas = traumas; // _Duty
         Addictions = addictions; // ADT-Tweak
         Diseases = diseases; // ADT-Tweak
+        Implants = implants; // _Duty
     }
 }

@@ -1,6 +1,7 @@
 using Content.Shared.ADT.Abilities;
 using Content.Shared.ADT.Trail;
 using Content.Shared.ADT.Sandevistan;
+using Content.Shared._Duty.Sandevistan; // _Duty
 using Content.Shared.Actions;
 using Content.Shared.Damage;
 using Content.Shared.Damage.Systems;
@@ -13,7 +14,7 @@ using Content.Shared.Popups;
 using Content.Shared.Stunnable;
 using Content.Shared.Weapons.Melee;
 using Content.Shared.Weapons.Melee.Events;
-using Robust.Shared.Audio.Systems;
+using Robust.Shared.Player; // _Duty
 using Robust.Shared.Timing;
 using System.Numerics;
 using Content.Shared.Emp;
@@ -23,7 +24,6 @@ namespace Content.Server.ADT.Sandevistan;
 public sealed class SandevistanSystem : EntitySystem
 {
     [Dependency] private SharedActionsSystem _actions = default!;
-    [Dependency] private SharedAudioSystem _audio = default!;
     [Dependency] private DamageableSystem _damageable = default!;
     [Dependency] private SharedJitteringSystem _jittering = default!;
     [Dependency] private MobStateSystem _mobState = default!;
@@ -53,9 +53,12 @@ public sealed class SandevistanSystem : EntitySystem
         var query = EntityQueryEnumerator<ActiveSandevistanUserComponent, SandevistanUserComponent>();
         while (query.MoveNext(out var uid, out _, out var comp))
         {
-            if (comp.DisableAt != null
-                && _timing.CurTime > comp.DisableAt)
-                Disable(uid, comp);
+            if (comp.DisableAt != null && _timing.CurTime > comp.DisableAt)
+            {
+                // _Duty: при штатном завершении не шлём StopImmediate, чтобы доиграл exit-звук
+                Disable(uid, comp, immediate: !comp.GracefulDeactivating);
+                continue;
+            }
 
             if (comp.Trail != null)
             {
@@ -116,16 +119,29 @@ public sealed class SandevistanSystem : EntitySystem
             return;
         }
 
+        // _Duty: нельзя активировать в крите или мёртвым
+        if (ent.Comp.Active == null && !_mobState.IsAlive(ent))
+        {
+            args.Handled = true;
+            return;
+        }
+
         args.Handled = true;
 
         if (ent.Comp.Active != null)
         {
-            _audio.Stop(ent.Comp.RunningSound);
-            _audio.PlayEntity(ent.Comp.EndSound, ent, ent);
-            ent.Comp.DisableAt = _timing.CurTime + ent.Comp.ShiftDelay;
+            // _Duty: повторное нажатие во время 0.6s хвоста не дублирует Deactivate
+            if (ent.Comp.GracefulDeactivating)
+                return;
+
+            ent.Comp.GracefulDeactivating = true;
+            ent.Comp.DisableAt = _timing.CurTime + TimeSpan.FromSeconds(0.6);
+            RaiseNetworkEvent(new SandevistanAudioEvent(GetNetEntity(ent), SandevistanAudioPhase.Deactivate), Filter.Pvs(ent));
             return;
         }
 
+        ent.Comp.GracefulDeactivating = false;
+        ent.Comp.DisableAt = null;
         ent.Comp.Active = EnsureComp<ActiveSandevistanUserComponent>(ent);
         ent.Comp.CurrentLoad = MathF.Max(0, ent.Comp.CurrentLoad + ent.Comp.LoadPerInactiveSecond * (float)(_timing.CurTime - ent.Comp.LastEnabled).TotalSeconds);
         _speed.RefreshMovementSpeedModifiers(ent.Owner);
@@ -146,11 +162,8 @@ public sealed class SandevistanSystem : EntitySystem
         if (!HasComp<SandevistanVisionComponent>(ent))
             ent.Comp.Overlay = AddComp<SandevistanVisionComponent>(ent);
 
-        var audio = _audio.PlayEntity(ent.Comp.StartSound, ent, ent);
-        if (!audio.HasValue)
-            return;
-
-        ent.Comp.RunningSound = audio.Value.Entity;
+        // _Duty: 3-фазное аудио на клиенте (activation -> 3.07s -> idle loop)
+        RaiseNetworkEvent(new SandevistanAudioEvent(GetNetEntity(ent), SandevistanAudioPhase.Activate), Filter.Pvs(ent));
     }
 
     private void OnRefreshSpeed(Entity<SandevistanUserComponent> ent, ref RefreshMovementSpeedModifiersEvent args)
@@ -169,23 +182,29 @@ public sealed class SandevistanSystem : EntitySystem
         weapon.NextAttack -= rate - rate / ent.Comp.AttackSpeedModifier;
     }
 
-    private void OnMobStateChanged(Entity<SandevistanUserComponent> ent, ref MobStateChangedEvent args) =>
-        Disable(ent, ent.Comp);
+    private void OnMobStateChanged(Entity<SandevistanUserComponent> ent, ref MobStateChangedEvent args)
+    {
+        if (args.NewMobState != MobState.Alive)
+            Disable(ent, ent.Comp, immediate: true);
+    }
 
     private void OnShutdown(Entity<SandevistanUserComponent> ent, ref ComponentShutdown args)
     {
-        Disable(ent, ent.Comp);
+        Disable(ent, ent.Comp, immediate: true);
         Del(ent.Comp.ActionUid);
     }
 
-    private void Disable(EntityUid uid, SandevistanUserComponent comp)
+    private void Disable(EntityUid uid, SandevistanUserComponent comp, bool immediate = true)
     {
+        if (comp.Active == null)
+            return;
+
         RemComp<ActiveSandevistanUserComponent>(uid);
         comp.Active = null;
         comp.DisableAt = null;
+        comp.GracefulDeactivating = false;
         comp.LastEnabled = _timing.CurTime;
         comp.ColorAccumulator = 0;
-        _audio.Stop(comp.RunningSound);
         _speed.RefreshMovementSpeedModifiers(uid);
 
         if (comp.Overlay != null)
@@ -199,6 +218,10 @@ public sealed class SandevistanSystem : EntitySystem
             RemComp(uid, comp.Trail);
             comp.Trail = null;
         }
+
+        // _Duty: при экстренной остановке (ЭМИ, смерть, снятие импланта) глушим звук немедленно
+        if (immediate)
+            RaiseNetworkEvent(new SandevistanAudioEvent(GetNetEntity(uid), SandevistanAudioPhase.StopImmediate), Filter.Pvs(uid));
     }
 
     private void OnEmpPulse(Entity<SandevistanUserComponent> ent, ref EmpPulseEvent args)
@@ -213,7 +236,7 @@ public sealed class SandevistanSystem : EntitySystem
             _jittering.DoJitter(uid, TimeSpan.FromSeconds(30f), true);
             _stun.TryAddParalyzeDuration(uid, TimeSpan.FromSeconds(6f));
             Spawn("EffectSparks", Transform(uid).Coordinates);
-            Disable(ent, ent.Comp);
+            Disable(ent, ent.Comp, immediate: true);
         }
     }
 }

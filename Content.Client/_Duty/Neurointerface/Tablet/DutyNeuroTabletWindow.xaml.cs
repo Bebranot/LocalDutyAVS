@@ -134,6 +134,10 @@ public sealed partial class DutyNeuroTabletWindow : BaseWindow
     public event Action<string, string, string, DutyNeuroTaskPriority>? OnCreateTask;
     public event Action<int>? OnToggleTask;
     public event Action<int>? OnDeleteTask;
+    public event Action? OnRebootNetwork;
+
+    /// <summary>Подсветка «перезапуска сети» уже выставлена под это состояние вторжения.</summary>
+    private bool? _rebootHighlighted;
 
     public DutyNeuroTabletWindow()
     {
@@ -214,6 +218,10 @@ public sealed partial class DutyNeuroTabletWindow : BaseWindow
                 state.AlertCodeColor.WithAlpha(0.75f),
                 1);
         }
+
+        // Вторжение «Червя ICE» в отряд — кнопка перезапуска сети загорается тревогой.
+        if (_rebootHighlighted != state.NetworkIntrusion)
+            StyleRebootButton(state.NetworkIntrusion);
 
         if (_entMan.TryGetEntity(state.TargetGrid, out var gridUid) && NavMap.MapUid != gridUid)
         {
@@ -510,6 +518,7 @@ public sealed partial class DutyNeuroTabletWindow : BaseWindow
         StyleButton(Callout104Button, Color.FromHex("#0D2129"), AccentCyanColor.WithAlpha(0.8f), AccentCyanColor, _fontBold11);
         StyleButton(Callout1141Button, Color.FromHex("#291A0B"), AccentOrangeColor.WithAlpha(0.85f), AccentOrangeColor, _fontBold11);
         StyleButton(Callout1199Button, Color.FromHex("#2E0B14"), AccentCrimsonColor, AccentCrimsonColor, _fontBold11);
+        StyleRebootButton(false);
 
         StyleButton(CreateSquadButton, Color.FromHex("#240B12"), BorderRedColor, TextPrimaryColor, _fontBold11);
         StyleButton(RenameSquadButton, CardBgColor, BorderDimRedColor, TextPrimaryColor, _fontRegular10);
@@ -556,6 +565,7 @@ public sealed partial class DutyNeuroTabletWindow : BaseWindow
             OnSendCallout?.Invoke(DutyNeuroCalloutType.Medic, _state?.OwnerLocation);
         Callout1199Button.OnPressed += _ =>
             OnSendCallout?.Invoke(DutyNeuroCalloutType.Sos, _state?.OwnerLocation);
+        RebootNetworkButton.OnPressed += _ => OnRebootNetwork?.Invoke();
 
         CreateSquadButton.OnPressed += _ => SubmitCreateSquad();
         NewSquadInput.OnTextEntered += _ => SubmitCreateSquad();
@@ -1513,6 +1523,15 @@ public sealed partial class DutyNeuroTabletWindow : BaseWindow
             FontColorOverride = TextMutedColor,
             Margin = new Thickness(4f, 4f)
         };
+    }
+
+    private void StyleRebootButton(bool intrusion)
+    {
+        _rebootHighlighted = intrusion;
+        if (intrusion)
+            StyleButton(RebootNetworkButton, Color.FromHex("#3A0A10"), AccentCrimsonColor, Color.FromHex("#FFD6DC"), _fontBold11);
+        else
+            StyleButton(RebootNetworkButton, CardBgColor, BorderDimRedColor, TextPrimaryColor, _fontRegular10);
     }
 
     private static void StyleButton(Button button, Color bg, Color border, Color textColor, Font font)

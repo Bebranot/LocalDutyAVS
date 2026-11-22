@@ -15,7 +15,7 @@ using Robust.Shared.Timing;
 namespace Content.Client._Duty.Neurointerface;
 
 /// <summary>
-/// _Duty: верхне-левый HUD нейроинтерфейса NT-SEC в стиле проекции на линзу визора.
+/// _Duty: верхне-левый HUD нейроинтерфейса (NT-SEC или тактической сети Горлекса — палитра по сети) в стиле проекции на линзу визора.
 /// Без окон и рамок: текст рисуется вручную в <see cref="Draw"/> (свечение, хроматическая аберрация,
 /// сканлайны шейдера DutyNeuroLens), под каждой строкой — узкая тёмная плашка по ширине текста,
 /// чтобы читалось на светлом полу. Анимация расшифровки и последовательность отключения при смерти сохранены.
@@ -73,21 +73,60 @@ public sealed partial class DutyNeuroHudWidget : UIWidget
 
     private static readonly ProtoId<ShaderPrototype> LensShaderId = "DutyNeuroLens";
 
-    private static readonly Color KeyBlue = Color.FromHex("#3D8BFF");
-    private static readonly Color HeaderBlue = Color.FromHex("#4F9BFF");
-    private static readonly Color TimeBlue = Color.FromHex("#7DB6FF");
     private static readonly Color ValueLight = Color.FromHex("#E4F3FF");
-    private static readonly Color LocationLight = Color.FromHex("#CDEBFF");
     private static readonly Color CriticalYellow = Color.FromHex("#FFD166");
     private static readonly Color StatusCritical = Color.FromHex("#FF9F1C");
     private static readonly Color TrackerRed = Color.FromHex("#FF334B");
     private static readonly Color OrderOrange = Color.FromHex("#FF6B3D");
-    private static readonly Color MutedEmpty = Color.FromHex("#7F93B3");
     private static readonly Color PlateColor = new(0.01f, 0.025f, 0.05f, 0.58f);
-    private static readonly Color BarCyan = Color.FromHex("#2CE6FF").WithAlpha(0.8f);
     private static readonly Color BarCrimson = Color.FromHex("#D92B44").WithAlpha(0.8f);
-    private static readonly Color AberrationRed = Color.FromHex("#FF3B5C").WithAlpha(AberrationAlpha);
-    private static readonly Color AberrationCyan = Color.FromHex("#3BE8FF").WithAlpha(AberrationAlpha);
+
+    /// <summary>
+    /// Палитра сети: NT-SEC — синяя линза, Горлекс — красно-ржавая (как Gorlex-скин киберсистемы).
+    /// Тревожные цвета (трекер, крит, приказы) общие: их смысл не должен зависеть от стороны.
+    /// </summary>
+    private sealed class HudPalette
+    {
+        public Color Key;
+        public Color Header;
+        public Color Time;
+        public Color Value;
+        public Color Location;
+        public Color Muted;
+        public Color Bar;
+        public Color AberrationA;
+        public Color AberrationB;
+    }
+
+    private static readonly HudPalette NtSecPalette = new()
+    {
+        Key = Color.FromHex("#3D8BFF"),
+        Header = Color.FromHex("#4F9BFF"),
+        Time = Color.FromHex("#7DB6FF"),
+        Value = ValueLight,
+        Location = Color.FromHex("#CDEBFF"),
+        Muted = Color.FromHex("#7F93B3"),
+        Bar = Color.FromHex("#2CE6FF").WithAlpha(0.8f),
+        AberrationA = Color.FromHex("#FF3B5C").WithAlpha(AberrationAlpha),
+        AberrationB = Color.FromHex("#3BE8FF").WithAlpha(AberrationAlpha),
+    };
+
+    private static readonly HudPalette GorlexPalette = new()
+    {
+        Key = Color.FromHex("#C8553D"),
+        Header = Color.FromHex("#FF5A3C"),
+        Time = Color.FromHex("#FF8A6B"),
+        Value = Color.FromHex("#FFE1D6"),
+        Location = Color.FromHex("#FFCBB8"),
+        Muted = Color.FromHex("#9A6A5C"),
+        Bar = Color.FromHex("#D9302B").WithAlpha(0.85f),
+        AberrationA = Color.FromHex("#FFB000").WithAlpha(AberrationAlpha),
+        AberrationB = Color.FromHex("#7A0F0F").WithAlpha(AberrationAlpha),
+    };
+
+    /// <summary>Как часто червь ICE дёргает строки HUD (с) и сила фонового глитча при вторжении.</summary>
+    private const float IntrusionBurstInterval = 1.1f;
+    private const float IntrusionGlitch = 0.55f;
 
     [Dependency] private IResourceCache _resCache = default!;
     [Dependency] private IPrototypeManager _proto = default!;
@@ -103,7 +142,15 @@ public sealed partial class DutyNeuroHudWidget : UIWidget
     private readonly Font _smallFont;
 
     // Локализованные строки кэшируются один раз: Loc.GetString каждый кадр не зовём.
-    private readonly string _headerText;
+    private readonly string _headerTextNtSec;
+    private readonly string _headerTextGorlex;
+    private string _headerText;
+    private HudPalette _palette = NtSecPalette;
+    private DutyNeuroNetwork _network = DutyNeuroNetwork.NtSec;
+    private readonly string _keyIntrusion;
+    private readonly string _intrusionValue;
+    private readonly string _noSignalMember;
+    private float _intrusionBurstTimer;
     private readonly string _keyFighter;
     private readonly string _keyLocation;
     private readonly string _keyStatus;
@@ -117,7 +164,8 @@ public sealed partial class DutyNeuroHudWidget : UIWidget
     private readonly string[] _allKeys;
 
     private readonly DutyNeuroScrambleText _headerScramble = new(string.Empty, true);
-    private readonly HudRow _locationRow = new(LocationLight);
+    private readonly HudRow _locationRow = new(ValueLight);
+    private readonly HudRow _intrusionRow = new(TrackerRed) { Visible = false };
     private readonly HudRow _statusRow = new(ValueLight);
     private readonly HudRow _codeRow = new(Color.LimeGreen);
 
@@ -230,7 +278,12 @@ public sealed partial class DutyNeuroHudWidget : UIWidget
         MouseFilter = MouseFilterMode.Ignore;
         Visible = false;
 
-        _headerText = Loc.GetString("duty-neuro-hud-header");
+        _headerTextNtSec = Loc.GetString("duty-neuro-hud-header");
+        _headerTextGorlex = Loc.GetString("duty-neuro-hud-header-gorlex");
+        _headerText = _headerTextNtSec;
+        _keyIntrusion = Loc.GetString("duty-neuro-hud-intrusion");
+        _intrusionValue = Loc.GetString("duty-neuro-hud-intrusion-value");
+        _noSignalMember = Loc.GetString("duty-neuro-no-signal");
         _keyFighter = Loc.GetString("duty-neuro-hud-fighter");
         _keyLocation = Loc.GetString("duty-neuro-hud-location");
         _keyStatus = Loc.GetString("duty-neuro-hud-status");
@@ -239,7 +292,7 @@ public sealed partial class DutyNeuroHudWidget : UIWidget
         _keyOrder = Loc.GetString("duty-neuro-hud-order");
         _noSignalsText = Loc.GetString("duty-neuro-hud-no-signals");
         _orderUnknownText = Loc.GetString("duty-neuro-hud-order-unknown");
-        _allKeys = new[] { _keyFighter, _keyLocation, _keyStatus, _keyCode, _keyTracker, _keyOrder };
+        _allKeys = new[] { _keyFighter, _keyLocation, _keyStatus, _keyCode, _keyTracker, _keyOrder, _keyIntrusion };
 
         // Порядок строго по DutyNeuroMemberStatus: Alive, Critical, Dead, Offline.
         _statusTexts = new[]
@@ -302,12 +355,26 @@ public sealed partial class DutyNeuroHudWidget : UIWidget
             return;
         }
 
+        // Сеть сменилась (сняли маску и вставили имплант Горлекса) — другая палитра и шапка.
+        if (wearer.Network != _network)
+        {
+            _network = wearer.Network;
+            _palette = _network == DutyNeuroNetwork.Gorlex ? GorlexPalette : NtSecPalette;
+            _headerText = _network == DutyNeuroNetwork.Gorlex ? _headerTextGorlex : _headerTextNtSec;
+            if (_wasActive && _deathPhase == DeathHudPhase.None)
+                _headerScramble.SetText(_headerText, forceScramble: true);
+        }
+
+        // ЭМИ гасит панель той же последовательностью, что смерть (глитч -> пустой визор -> fade), но без флэтлайна:
+        // звук и оверлей смерти завязаны на OwnerStatus, а не на этот путь.
+        var blackout = wearer.OwnerStatus == DutyNeuroMemberStatus.Dead || wearer.Jammed;
+
         if (!_wasActive)
         {
             _wasActive = true;
 
-            // Вход/реконнект в уже мёртвое тело: сразу скрытое состояние, без повторного глитча и fade-out.
-            if (wearer.OwnerStatus == DutyNeuroMemberStatus.Dead)
+            // Вход/реконнект в уже мёртвое (или заглушённое) тело: сразу скрытое состояние, без повторного глитча и fade-out.
+            if (blackout)
             {
                 EnterHiddenDeadState();
                 return;
@@ -322,8 +389,8 @@ public sealed partial class DutyNeuroHudWidget : UIWidget
             RestoreStaticLabels();
         }
 
-        // Обработка смерти: глитч 0.85с -> очистка текста (пустой визор) -> fade out.
-        if (wearer.OwnerStatus == DutyNeuroMemberStatus.Dead)
+        // Обработка смерти/ЭМИ: глитч 0.85с -> очистка текста (пустой визор) -> fade out.
+        if (blackout)
         {
             UpdateDeathSequence(frameTime);
             UpdateContentSize();
@@ -332,7 +399,7 @@ public sealed partial class DutyNeuroHudWidget : UIWidget
 
         if (_deathPhase != DeathHudPhase.None)
         {
-            // При реанимации восстанавливаем HUD.
+            // При реанимации или конце ЭМИ восстанавливаем HUD.
             _deathPhase = DeathHudPhase.None;
             _deathPhaseTimer = 0f;
             _fadeAlpha = 0f;
@@ -343,6 +410,8 @@ public sealed partial class DutyNeuroHudWidget : UIWidget
         Visible = true;
         _fadeAlpha = MathF.Min(1f, _fadeAlpha + frameTime / FadeInDuration);
         _glitchIntensity = MathF.Max(0f, _glitchIntensity - frameTime * 0.9f);
+
+        UpdateIntrusion(wearer, frameTime);
 
         // Время раунда ЧЧ:ММ — строка меняется раз в минуту, пересобираем только тогда.
         var totalMinutes = (int) Math.Max(0, roundTime.TotalMinutes);
@@ -358,6 +427,7 @@ public sealed partial class DutyNeuroHudWidget : UIWidget
         // Локация, статус, код
         _locationRow.Scramble.SetText(_locationRow.Trunc.Get(wearer.LocationName, LocationMaxLen));
         _locationRow.Scramble.Update(frameTime);
+        _locationRow.ValueColor = _palette.Location;
 
         // Статус берём из enum, а не из StatusText: текст локализован у клиента и не зависит от сервера.
         _statusRow.Scramble.SetText(GetStatusText(wearer.OwnerStatus));
@@ -366,7 +436,7 @@ public sealed partial class DutyNeuroHudWidget : UIWidget
         {
             DutyNeuroMemberStatus.Critical => StatusCritical,
             DutyNeuroMemberStatus.Dead => TrackerRed,
-            _ => ValueLight
+            _ => _palette.Value
         };
 
         _codeRow.Scramble.SetText(_codeRow.Trunc.Get(wearer.AlertCodeName, CodeMaxLen));
@@ -496,6 +566,8 @@ public sealed partial class DutyNeuroHudWidget : UIWidget
         _locationRow.Scramble.Clear();
         _statusRow.Scramble.Clear();
         _codeRow.Scramble.Clear();
+        _intrusionRow.Scramble.Clear();
+        _intrusionRow.Visible = false;
 
         foreach (var row in _memberRows)
             row.Scramble.Clear();
@@ -517,8 +589,9 @@ public sealed partial class DutyNeuroHudWidget : UIWidget
         for (var i = 0; i < members.Count; i++)
         {
             var member = members[i];
-            // Офлайн-бойцы приходят ради обводки, но в списке HUD показываем только тех, кто в игре.
-            if (member.Status is DutyNeuroMemberStatus.Dead or DutyNeuroMemberStatus.Offline)
+            // «Призрак в сети» приходит как Offline + NoSignal: в списке остаётся пустым местом «НЕТ СИГНАЛА».
+            // Обычные офлайн-бойцы приходят только ради обводки, в списке HUD — лишь те, кто в игре.
+            if (!member.NoSignal && member.Status is DutyNeuroMemberStatus.Dead or DutyNeuroMemberStatus.Offline)
                 continue;
 
             if (activeCount >= _memberRows.Count)
@@ -526,11 +599,13 @@ public sealed partial class DutyNeuroHudWidget : UIWidget
 
             var row = _memberRows[activeCount];
             row.Visible = true;
-            row.Scramble.SetText(row.Trunc.Get(member.Name, MemberNameMaxLen));
+            row.Scramble.SetText(member.NoSignal ? _noSignalMember : row.Trunc.Get(member.Name, MemberNameMaxLen));
             row.Scramble.Update(frameTime);
-            row.ValueColor = member.Status == DutyNeuroMemberStatus.Critical
-                ? CriticalYellow
-                : ValueLight;
+            row.ValueColor = member.NoSignal
+                ? _palette.Muted
+                : member.Status == DutyNeuroMemberStatus.Critical
+                    ? CriticalYellow
+                    : _palette.Value;
 
             activeCount++;
         }
@@ -640,6 +715,53 @@ public sealed partial class DutyNeuroHudWidget : UIWidget
         return rows.Count > 0;
     }
 
+    /// <summary>
+    /// «Червь ICE»: пока идёт вторжение — постоянный глитч линзы, рывки расшифровки по строкам
+    /// и строка «ВТОРЖЕНИЕ :: ИСТОЧНИК НЕ ОПРЕДЕЛЁН». Ложная метка приходит с сервера обычным приказом.
+    /// </summary>
+    private void UpdateIntrusion(DutyNeurointerfaceWearerComponent wearer, float frameTime)
+    {
+        var active = wearer.IntrusionUntil is { } until && until > _timing.CurTime;
+        if (!active)
+        {
+            if (_intrusionRow.Visible)
+            {
+                _intrusionRow.Scramble.StartDissolve();
+                _intrusionRow.Scramble.Update(frameTime);
+                if (_intrusionRow.Scramble.IsDissolved)
+                {
+                    _intrusionRow.Visible = false;
+                    _intrusionRow.Scramble.Clear();
+                }
+            }
+
+            _intrusionBurstTimer = 0f;
+            return;
+        }
+
+        if (!_intrusionRow.Visible || _intrusionRow.Scramble.IsDissolving || _intrusionRow.Scramble.IsDissolved)
+        {
+            _intrusionRow.Visible = true;
+            _intrusionRow.Scramble.Clear();
+            _intrusionRow.Scramble.SetText(_intrusionValue, forceScramble: true);
+            _intrusionRow.Scramble.TriggerGlitchBurst(0.6f);
+        }
+
+        _intrusionRow.Scramble.Update(frameTime);
+        _glitchIntensity = MathF.Max(_glitchIntensity, IntrusionGlitch);
+
+        _intrusionBurstTimer -= frameTime;
+        if (_intrusionBurstTimer > 0f)
+            return;
+
+        _intrusionBurstTimer = IntrusionBurstInterval;
+        _headerScramble.TriggerGlitchBurst(0.35f);
+        _locationRow.Scramble.TriggerGlitchBurst(0.5f);
+        _intrusionRow.Scramble.TriggerGlitchBurst(0.3f);
+        foreach (var row in _memberRows)
+            row.Scramble.TriggerGlitchBurst(0.4f);
+    }
+
     private void ResetOnInactive()
     {
         if (!_wasActive && !Visible)
@@ -741,8 +863,8 @@ public sealed partial class DutyNeuroHudWidget : UIWidget
             if (handle != null && right > x0)
             {
                 DrawPlate(handle, x0 + jitter, right + jitter, y, rowH, scale);
-                DrawLensText(handle, _headerFont, new Vector2(x0 + jitter, y + ascent - _headerFont.GetAscent(scale)), title, scale, HeaderBlue);
-                DrawLensText(handle, _timeFont, new Vector2(timeX + jitter, y + ascent - _timeFont.GetAscent(scale)), _roundTimeText, scale, TimeBlue);
+                DrawLensText(handle, _headerFont, new Vector2(x0 + jitter, y + ascent - _headerFont.GetAscent(scale)), title, scale, _palette.Header);
+                DrawLensText(handle, _timeFont, new Vector2(timeX + jitter, y + ascent - _timeFont.GetAscent(scale)), _roundTimeText, scale, _palette.Time);
             }
 
             maxRight = MathF.Max(maxRight, right);
@@ -758,7 +880,7 @@ public sealed partial class DutyNeuroHudWidget : UIWidget
             ProcessRow(handle, ref y, ref maxRight, ref lineIdx, _keyFighter, row, x0, valueX, scale, measureTarget, glitchStep);
         }
 
-        DrawSectionBar(handle, sectionTop, y - rowSpacing, scale, BarCyan);
+        DrawSectionBar(handle, sectionTop, y - rowSpacing, scale, _palette.Bar);
         y += sectionGap;
 
         // --- Секция 2: локация, статус, код тревоги ---
@@ -766,12 +888,18 @@ public sealed partial class DutyNeuroHudWidget : UIWidget
         ProcessRow(handle, ref y, ref maxRight, ref lineIdx, _keyLocation, _locationRow, x0, valueX, scale, measureTarget, glitchStep);
         ProcessRow(handle, ref y, ref maxRight, ref lineIdx, _keyStatus, _statusRow, x0, valueX, scale, measureTarget, glitchStep);
         ProcessRow(handle, ref y, ref maxRight, ref lineIdx, _keyCode, _codeRow, x0, valueX, scale, measureTarget, glitchStep);
-        DrawSectionBar(handle, sectionTop, y - rowSpacing, scale, BarCyan);
+        DrawSectionBar(handle, sectionTop, y - rowSpacing, scale, _palette.Bar);
         y += sectionGap;
 
         // --- Секция 3: трекеры (выше) + тактические метки ---
         sectionTop = y;
         var anyTracker = false;
+        if (_intrusionRow.Visible)
+        {
+            anyTracker = true;
+            ProcessRow(handle, ref y, ref maxRight, ref lineIdx, _keyIntrusion, _intrusionRow, x0, valueX, scale, measureTarget, glitchStep);
+        }
+
         foreach (var row in _trackerRows)
         {
             if (!row.Visible)
@@ -789,7 +917,7 @@ public sealed partial class DutyNeuroHudWidget : UIWidget
             ProcessRow(handle, ref y, ref maxRight, ref lineIdx, _keyOrder, row, x0, valueX, scale, measureTarget, glitchStep);
         }
 
-        if (_emptyAlertVisible)
+        if (_emptyAlertVisible && !_intrusionRow.Visible)
         {
             var rowH = _smallFont.GetHeight(scale);
             var w = MeasureText(_smallFont, _emptyAlertText, scale);
@@ -797,7 +925,7 @@ public sealed partial class DutyNeuroHudWidget : UIWidget
             {
                 var jitter = GetGlitchJitter(lineIdx, glitchStep, scale);
                 DrawPlate(handle, x0 + jitter, x0 + w + jitter, y, rowH, scale);
-                DrawLensText(handle, _smallFont, new Vector2(x0 + jitter, y), _emptyAlertText, scale, MutedEmpty);
+                DrawLensText(handle, _smallFont, new Vector2(x0 + jitter, y), _emptyAlertText, scale, _palette.Muted);
             }
 
             maxRight = MathF.Max(maxRight, x0 + w);
@@ -805,7 +933,7 @@ public sealed partial class DutyNeuroHudWidget : UIWidget
             lineIdx++;
         }
 
-        DrawSectionBar(handle, sectionTop, y - rowSpacing, scale, anyTracker ? BarCrimson : BarCyan);
+        DrawSectionBar(handle, sectionTop, y - rowSpacing, scale, anyTracker ? BarCrimson : _palette.Bar);
 
         var width = maxRight + (PlatePadX + GlitchJitter) * scale;
         var height = y - rowSpacing + PlatePadY * scale;
@@ -844,10 +972,10 @@ public sealed partial class DutyNeuroHudWidget : UIWidget
             if (_keysVisible)
             {
                 var keyY = y + ascent - _keyFont.GetAscent(scale);
-                DrawLensText(handle, _keyFont, new Vector2(x0 + jitter, keyY), key, scale, KeyBlue);
+                DrawLensText(handle, _keyFont, new Vector2(x0 + jitter, keyY), key, scale, _palette.Key);
                 DrawLensText(handle, _keyFont,
                     new Vector2(x0 + _keyColumnPx + KeySeparatorGap * scale + jitter, keyY),
-                    KeySeparator, scale, KeyBlue);
+                    KeySeparator, scale, _palette.Key);
             }
 
             if (valueW > 0f)
@@ -898,7 +1026,7 @@ public sealed partial class DutyNeuroHudWidget : UIWidget
     /// «Проекция на линзу»: мягкое свечение (4 полупрозрачные копии), хроматическая аберрация
     /// (красная и голубая копии со сдвигом) и основной текст поверх.
     /// </summary>
-    private static void DrawLensText(DrawingHandleScreen handle, Font font, Vector2 pos, string text, float scale, Color color)
+    private void DrawLensText(DrawingHandleScreen handle, Font font, Vector2 pos, string text, float scale, Color color)
     {
         if (text.Length == 0)
             return;
@@ -911,8 +1039,8 @@ public sealed partial class DutyNeuroHudWidget : UIWidget
         handle.DrawString(font, pos + new Vector2(0f, glow), text, scale, glowColor);
 
         var ab = AberrationOffset * scale;
-        handle.DrawString(font, pos + new Vector2(-ab, 0f), text, scale, AberrationRed);
-        handle.DrawString(font, pos + new Vector2(ab, 0f), text, scale, AberrationCyan);
+        handle.DrawString(font, pos + new Vector2(-ab, 0f), text, scale, _palette.AberrationA);
+        handle.DrawString(font, pos + new Vector2(ab, 0f), text, scale, _palette.AberrationB);
 
         handle.DrawString(font, pos, text, scale, color);
     }

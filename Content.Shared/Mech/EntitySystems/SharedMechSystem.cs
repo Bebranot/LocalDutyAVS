@@ -174,7 +174,11 @@ public abstract partial class SharedMechSystem : EntitySystem
         if (!Resolve(uid, ref component))
             return;
 
-        var allEquipment = component.EquipmentContainer.ContainedEntities.ToList();
+        // _Duty-start: клинок меха бьёт по ПКМ всегда, выбирать его в цикле незачем (раньше — canBeUsed: false, убран рефактором мехов)
+        var allEquipment = component.EquipmentContainer.ContainedEntities
+            .Where(e => !HasComp<MechMeleeWeaponComponent>(e))
+            .ToList();
+        // _Duty-end
 
         var equipmentIndex = -1;
         if (component.CurrentSelectedEquipment != null)

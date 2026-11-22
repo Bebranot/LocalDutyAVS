@@ -54,6 +54,7 @@
   id: WeaponShotgunBulldog
   description: An automatic magazine-fed shotgun for close-quarters combat. Kicks like a mule on steroids. Uses .50 shotgun shells.
   components:
+  - type: DutyGorlexSmartlinkWeapon # _Duty: метка оружия Горлекса для импланта «Смартлинк»
   - type: Sprite
     sprite: Objects/Weapons/Guns/Shotguns/bulldog.rsi
     layers:

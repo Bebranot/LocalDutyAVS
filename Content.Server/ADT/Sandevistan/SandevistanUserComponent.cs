@@ -72,6 +72,14 @@ public sealed partial class SandevistanUserComponent : Component
     [DataField]
     public float AttackSpeedModifier = 2.4f;
 
+    // _Duty: коэффициент замедления времени на карте для окружающих сущностей
+    [DataField]
+    public float TimeDilationScale = 0.2f;
+
+    // _Duty: идёт ли штатное затухание аудио (0.4s tail + fade), чтобы не обрывать exit-звук
+    [ViewVariables(VVAccess.ReadOnly)]
+    public bool GracefulDeactivating;
+
     [DataField]
     public SoundSpecifier? StartSound = new SoundPathSpecifier("/Audio/ADT/Misc/sande_start.ogg");
 

@@ -28,6 +28,7 @@ using Content.Shared.Body.Systems;
 using Content.Shared.Mobs; // _Duty
 using Content.Server._Duty.HealthAnalyzer; // _Duty
 using Content.Shared._Duty.HealthAnalyzer; // _Duty
+using Content.Shared._Duty.Cyberware.Scanning; // _Duty
 using Content.Shared._Duty.Heartbeat; // _Duty
 using Content.Shared.Inventory;
 using Content.Shared.Verbs;
@@ -48,6 +49,7 @@ public sealed partial class HealthAnalyzerSystem : EntitySystem
     [Dependency] private readonly BloodstreamSystem _bloodstreamSystem = default!;
     [Dependency] private readonly SharedHeartbeatSystem _heartbeat = default!; // _Duty
     [Dependency] private readonly TraumaAnalyzerSystem _traumaAnalyzer = default!; // _Duty
+    [Dependency] private readonly DutyCyberScanSystem _cyberScan = default!; // _Duty
     [Dependency] private AddictionSystem _addiction = default!; // ADT-Tweak
     [Dependency] private ADTDiseaseSystem _disease = default!; // ADT-Tweak
 
@@ -458,6 +460,8 @@ public sealed partial class HealthAnalyzerSystem : EntitySystem
         var diseases = _disease.GetScannerDiseases(entity);
         // ADT-Tweak-End
 
+        var implants = _cyberScan.GetImplantLines(entity); // _Duty
+
         return new HealthAnalyzerUiState(
             GetNetEntity(entity),
             bodyTemperature,
@@ -470,7 +474,8 @@ public sealed partial class HealthAnalyzerSystem : EntitySystem
             healthFraction, // _Duty
             traumas, // _Duty
             addictions, // ADT-Tweak
-            diseases // ADT-Tweak
+            diseases, // ADT-Tweak
+            implants // _Duty
         );
     }
 }

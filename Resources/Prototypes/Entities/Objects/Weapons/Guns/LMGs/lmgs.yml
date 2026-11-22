@@ -81,6 +81,7 @@
   parent: [BaseWeaponLightMachineGun, BaseSyndicateContraband, ADTBaseAttachableHolder] # adt tweak
   description: A rather traditionally made LMG with a pleasantly lacquered wooden pistol grip. Uses .30 rifle ammo.
   components:
+  - type: DutyGorlexSmartlinkWeapon # _Duty: метка оружия Горлекса для импланта «Смартлинк»
   - type: Sprite
     sprite: Objects/Weapons/Guns/LMGs/l6.rsi
     layers:

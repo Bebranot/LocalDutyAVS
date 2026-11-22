@@ -1,0 +1,246 @@
+# SPDX-FileCopyrightText: 2026 LocalDuty
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+# Импланты Синдиката и Cybersun: скрытность и информационная война. Логика — Content.*/_Duty/Cyberware/Syndicate.
+# Все — Concealed (анализатор показывает «неопознанный модуль»), наборы ставятся через DutyImplantSurgeryKit.
+
+# ── Действия ─────────────────────────────────────────────────
+
+- type: entity
+  parent: BaseAction
+  id: ActionDutyLockpickFingers
+  name: Вскрыть пальцами
+  description: Выпустить отмычки из пальцев и вскрыть шлюз или замок. Долго и шумно.
+  components:
+  - type: Action
+    itemIconStyle: BigAction
+    priority: -20
+    checkCanInteract: true
+  - type: Sprite
+    sprite: Objects/Magic/magicactions.rsi
+    layers:
+    - state: knock
+  - type: EntityTargetAction
+    canTargetSelf: false
+    whitelist:
+      components:
+      - Door
+      - Lock
+    event: !type:DutyLockpickActionEvent
+
+- type: entity
+  parent: BaseAction
+  id: ActionDutyVoiceParasite
+  name: Голосовой паразит
+  description: Выбрать радиоканал и подслушивать его без ключа шифрования.
+  components:
+  - type: Action
+    itemIconStyle: BigAction
+    priority: -20
+    checkCanInteract: false
+  - type: Sprite
+    sprite: Objects/Devices/communication.rsi
+    layers:
+    - state: old-radio
+  - type: InstantAction
+    event: !type:DutyVoiceParasiteActionEvent
+
+- type: entity
+  parent: BaseAction
+  id: ActionDutyAutoInject
+  name: Ввести дозу
+  description: Ввести одну дозу из подкожного порта прямо в кровь.
+  components:
+  - type: Action
+    itemIconStyle: BigAction
+    priority: -20
+    useDelay: 2
+  - type: Sprite
+    sprite: Objects/Specific/Medical/medipen.rsi
+    layers:
+    - state: medipen
+  - type: InstantAction
+    event: !type:DutyAutoInjectActionEvent
+
+- type: entity
+  parent: BaseAction
+  id: ActionDutyFakeTracker
+  name: Ложный маяк
+  description: Зафиксировать ложную точку на мониторах экипажа на вашем текущем месте. Повторное нажатие снимает подмену.
+  components:
+  - type: Action
+    itemIconStyle: BigAction
+    priority: -20
+    checkCanInteract: false
+    useDelay: 3
+  - type: Sprite
+    sprite: Objects/Magic/magicactions.rsi
+    layers:
+    - state: blink
+  - type: InstantAction
+    event: !type:DutyFakeTrackerActionEvent
+
+# ── Импланты ─────────────────────────────────────────────────
+
+- type: entity
+  parent: DutyCyberImplantSyndicateBase
+  id: DutyLockpickFingersImplant
+  name: имплант "Пальцы-отмычки"
+  description: Спиленный серийник и набор складных отмычек в фалангах. Шлюзы от такого не запираются.
+  components:
+  - type: SubdermalImplant
+    implantAction: ActionDutyLockpickFingers
+  - type: DutyCyberware
+    moduleName: duty-cyber-module-lockpick
+    load: 2
+  - type: DutyLockpickFingers
+
+- type: entity
+  parent: DutyCyberImplantSyndicateBase
+  id: DutyChameleonSkinImplant
+  name: имплант "Хамелеон-кожа"
+  description: Пористая плёнка под эпидермисом, копирующая фон. Без маркировки, с самопальной прошивкой.
+  components:
+  - type: DutyCyberware
+    moduleName: duty-cyber-module-chameleon
+    load: 3
+  - type: DutyChameleonSkin
+
+- type: entity
+  parent: DutyCyberImplantCybersunBase
+  id: DutyKerenzikovImplant
+  name: имплант "Керензиков"
+  description: "Рефлекторный контур Cybersun Industries. Дорогая, элегантная работа: тело само знает, куда не лететь пуле."
+  components:
+  - type: DutyCyberware
+    moduleName: duty-cyber-module-kerenzikov
+    load: 3
+  - type: DutyKerenzikov
+
+- type: entity
+  parent: DutyCyberImplantSyndicateBase
+  id: DutyVoiceParasiteImplant
+  name: имплант "Голосовой паразит"
+  description: Кустарный приёмник у основания черепа. Слушает чужие частоты и не просит ключей.
+  components:
+  - type: SubdermalImplant
+    implantAction: ActionDutyVoiceParasite
+  - type: DutyCyberware
+    moduleName: duty-cyber-module-parasite
+    load: 2
+  - type: DutyVoiceParasite
+    channels:
+    - Common
+    - Command
+    - Security
+    - Engineering
+    - Medical
+    - Science
+    - Supply
+    - Service
+    noiseSound: !type:SoundCollectionSpecifier
+      collection: DutyVoiceParasiteNoise
+      params:
+        volume: -14
+  - type: UserInterface
+    interfaces:
+      enum.DutyVoiceParasiteUiKey.Key:
+        type: DutyVoiceParasiteBoundUserInterface
+
+- type: entity
+  parent: DutyCyberImplantSyndicateBase
+  id: DutyAutoInjectorImplant
+  name: имплант "Подкожный автоинъектор"
+  description: Резервуар на три дозы с портом под кожей. Заправляется шприцем — порт заметен, если знать, куда смотреть.
+  components:
+  - type: SubdermalImplant
+    implantAction: ActionDutyAutoInject
+  - type: DutyCyberware
+    moduleName: duty-cyber-module-autoinjector
+    load: 1
+  - type: DutyAutoInjector
+    doseVolume: 10
+    maxDoses: 3
+    initial:
+      Stimulants: 30
+
+- type: entity
+  parent: DutyCyberImplantSyndicateBase
+  id: DutyFakeTrackerImplant
+  name: имплант "Ошейник"
+  description: "Поддельный трекер под маркой NT: отдаёт мониторам экипажа красивую, но чужую точку на карте."
+  components:
+  - type: SubdermalImplant
+    implantAction: ActionDutyFakeTracker
+  - type: DutyCyberware
+    moduleName: duty-cyber-module-faketracker
+    load: 1
+  - type: DutyFakeTracker
+
+# ── Операционные наборы ──────────────────────────────────────
+
+- type: entity
+  parent: DutyImplantSurgeryKitBase
+  id: DutyImplantKitLockpickFingers
+  suffix: Duty, Syndicate, Операционный набор
+  components:
+  - type: DutyImplantSurgeryKit
+    implant: DutyLockpickFingersImplant
+
+- type: entity
+  parent: DutyImplantSurgeryKitBase
+  id: DutyImplantKitChameleonSkin
+  suffix: Duty, Syndicate, Операционный набор
+  components:
+  - type: DutyImplantSurgeryKit
+    implant: DutyChameleonSkinImplant
+
+- type: entity
+  parent: DutyImplantSurgeryKitBase
+  id: DutyImplantKitKerenzikov
+  suffix: Duty, Syndicate, Cybersun, Операционный набор
+  components:
+  - type: DutyImplantSurgeryKit
+    implant: DutyKerenzikovImplant
+
+- type: entity
+  parent: DutyImplantSurgeryKitBase
+  id: DutyImplantKitVoiceParasite
+  suffix: Duty, Syndicate, Операционный набор
+  components:
+  - type: DutyImplantSurgeryKit
+    implant: DutyVoiceParasiteImplant
+
+- type: entity
+  parent: DutyImplantSurgeryKitBase
+  id: DutyImplantKitAutoInjector
+  suffix: Duty, Syndicate, Операционный набор
+  components:
+  - type: DutyImplantSurgeryKit
+    implant: DutyAutoInjectorImplant
+
+- type: entity
+  parent: DutyImplantSurgeryKitBase
+  id: DutyImplantKitFakeTracker
+  suffix: Duty, Syndicate, Операционный набор
+  components:
+  - type: DutyImplantSurgeryKit
+    implant: DutyFakeTrackerImplant
+
+# ── Звуки-заглушки (список «что достать» — в отчёте) ─────────
+
+- type: soundCollection
+  id: DutyLockpickAlarm
+  files:
+  - /Audio/Machines/airlock_emergencyon.ogg
+  - /Audio/Machines/airlock_deny.ogg
+
+- type: soundCollection
+  id: DutyLockpickLocker
+  files:
+  - /Audio/Machines/airlock_creaking.ogg
+
+- type: soundCollection
+  id: DutyVoiceParasiteNoise
+  files:
+  - /Audio/ADT/hallucinations/radio_static.ogg

@@ -254,7 +254,36 @@ public sealed partial class HealthAnalyzerControl : BoxContainer
         DrawAddictions(state.Addictions);
         DrawDiseases(state.Diseases); // ADT-Tweak
         // ADT-Tweak end
+        DrawImplants(state.Implants); // _Duty
     }
+
+    // _Duty-start: блок «Импланты» (строки уже свёрнуты и локализованы сервером)
+    private void DrawImplants(List<string>? implants)
+    {
+        ImplantsContainer.RemoveAllChildren();
+
+        var hasImplants = implants != null && implants.Count > 0;
+
+        ImplantsDivider.Visible = hasImplants;
+        ImplantsContainer.Visible = hasImplants;
+
+        if (!hasImplants || implants == null)
+            return;
+
+        ImplantsContainer.AddChild(CreateSectionTitle(
+            Loc.GetString("health-analyzer-window-implants-title"),
+            Color.FromHex("#6cb4c4")));
+
+        foreach (var line in implants)
+        {
+            ImplantsContainer.AddChild(new Label
+            {
+                Text = line,
+                Margin = new Thickness(4, 1, 0, 1),
+            });
+        }
+    }
+    // _Duty-end
 
     // _Duty: строка травмы для анализатора. Локализуется на клиенте по структурным данным.
     private static string FormatTrauma(TraumaAnalyzerEntry trauma)
@@ -313,6 +342,8 @@ public sealed partial class HealthAnalyzerControl : BoxContainer
         DiseasesDivider.Visible = false;
         DiseasesContainer.Visible = false;
         // ADT-Tweak-End
+        ImplantsDivider.Visible = false; // _Duty
+        ImplantsContainer.Visible = false; // _Duty
     }
 
     private void DrawDiagnosticGroups(

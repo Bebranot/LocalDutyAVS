@@ -1,0 +1,122 @@
+# SPDX-FileCopyrightText: 2026 LocalDuty
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+# Ивент «контракт наёмника»: админ-команда `contract <ckey>` добавляет и запускает правило DutyMercenaryContract.
+# Схема как у ниндзя: AntagSelection (selectionTime: Never) ставит гост-роль в космосе у станции цели,
+# тело (профиль игрока, AntagLoadProfileRule) появляется только когда роль взяли.
+# Снаряжение временное — набор ядерного оперативника + скафандр Синдиката; своё будет позже.
+
+- type: antag
+  id: DutyMercenary
+  name: duty-merc-antag-name
+  antagonist: true
+  setPreference: false
+  objective: duty-merc-antag-objective
+  tags:
+  - OffStation
+  - Midround
+
+- type: antagSpecifier
+  parent: RestrictedAntag
+  id: DutyMercenary
+  spawnerPrototype: SpawnPointGhostDutyMercenary
+  pickPlayer: false
+  startingGear: DutyMercenaryGear
+  roleLoadout:
+  - RoleSurvivalNukie
+  components:
+  - type: NpcFactionMember
+    factions:
+    - Syndicate
+  mindRoles:
+  - MindRoleDutyMercenary
+
+- type: entity
+  parent: BaseMindRoleAntag
+  id: MindRoleDutyMercenary
+  name: Роль наёмника
+  components:
+  - type: MindRole
+    antagPrototype: DutyMercenary
+    subtype: duty-merc-role-subtype
+    exclusiveAntag: true
+  - type: DutyMercenaryRole
+
+- type: entity
+  categories: [ HideSpawnMenu, Spawner ]
+  parent: BaseAntagSpawner
+  id: SpawnPointGhostDutyMercenary
+  components:
+  - type: GhostRole
+    name: duty-merc-ghost-role-name
+    description: duty-merc-ghost-role-desc
+    rules: duty-merc-ghost-role-rules
+    mindRoles:
+    - MindRoleDutyMercenary
+    raffle:
+      settings: default
+  - type: Sprite
+    sprite: Markers/jobs.rsi
+    layers:
+    - state: green
+    - sprite: Objects/Weapons/Guns/Pistols/viper.rsi
+      state: icon
+
+# Временное снаряжение: базовый набор ядерного оперативника без аплинка + скафандр, маска, джетпак, пинпоинтер на станцию.
+- type: startingGear
+  id: DutyMercenaryGear
+  equipment:
+    jumpsuit: ClothingUniformJumpsuitOperative
+    back: ClothingBackpackDuffelSyndicate
+    mask: ClothingMaskGasSyndicate
+    ears: ClothingHeadsetAltSyndicate
+    gloves: ClothingHandsGlovesCombat
+    outerClothing: ClothingOuterHardsuitSyndie
+    suitstorage: JetpackBlackFilled
+    shoes: ClothingShoesBootsCombatFilled
+    id: SyndiOperativePDA
+    belt: ClothingBeltMilitaryWebbing
+  storage:
+    back:
+    - WeaponPistolViper
+    - PinpointerStation
+
+- type: entity
+  parent: BaseAntagGhostRoleRule
+  id: DutyMercenaryContract
+  components:
+  - type: DutyMercenaryRule
+    spawnDistance: 25
+    implants:
+    - DutyMercContractImplant
+    - DutyMercLimiterImplant
+    - DutyMercConfirmImplant
+    - DutyMercTracelessImplant
+  - type: AntagLoadProfileRule
+  - type: AntagSelection
+    agentName: duty-merc-round-end-agent-name
+    antags:
+    - !type:FixedAntagCount
+      proto: DutyMercenary
+
+- type: objectiveIssuer
+  id: DutyMercenaryBroker
+  name: duty-merc-objective-issuer
+
+- type: entity
+  parent: BaseTargetObjective
+  id: DutyMercenaryKillContractObjective
+  description: Цель должна умереть. Без лишних трупов — за них ответит «Ограничитель».
+  components:
+  - type: Objective
+    difficulty: 2
+    issuer: DutyMercenaryBroker
+    unique: false
+    icon:
+      sprite: Objects/Weapons/Guns/Pistols/viper.rsi
+      state: icon
+  - type: TargetObjective
+    title: duty-merc-objective-title
+  - type: DutyMercContractObjective
+  - type: KillPersonCondition
+    requireDead: true

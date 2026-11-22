@@ -27,6 +27,8 @@ public sealed partial class DutyNeuroSquadOutlineOverlay : Overlay
 
     private static readonly Color AllyColor = Color.FromHex("#3D8BFF");
     private static readonly Color CriticalColor = Color.FromHex("#FFA51F");
+    /// <summary>Своих в тактической сети Горлекса обводим ржавым — под палитру их HUD.</summary>
+    private static readonly Color GorlexAllyColor = Color.FromHex("#D9302B");
 
     // Запас к видимой области: позиция — центр сущности, а спрайт выступает за неё.
     private const float BoundsMargin = 2f;
@@ -39,6 +41,7 @@ public sealed partial class DutyNeuroSquadOutlineOverlay : Overlay
     // сбросе батча, и перекраска одного инстанса посреди кадра окрасила бы всех одинаково.
     private readonly ShaderInstance _allyShader;
     private readonly ShaderInstance _criticalShader;
+    private readonly ShaderInstance _gorlexShader;
 
     private readonly SpriteSystem _sprite;
     private readonly SharedTransformSystem _transform;
@@ -49,6 +52,7 @@ public sealed partial class DutyNeuroSquadOutlineOverlay : Overlay
     // Готовые списки post-шейдеров: создаются один раз, чтобы не аллоцировать в Draw.
     private readonly SpriteComponent.PostShaderEntry[] _allyPost;
     private readonly SpriteComponent.PostShaderEntry[] _criticalPost;
+    private readonly SpriteComponent.PostShaderEntry[] _gorlexPost;
 
     private EntityUid _local;
     private DutyNeurointerfaceWearerComponent? _wearer;
@@ -70,9 +74,12 @@ public sealed partial class DutyNeuroSquadOutlineOverlay : Overlay
         _allyShader.SetParameter("outline_color", AllyColor);
         _criticalShader = proto.InstanceUnique();
         _criticalShader.SetParameter("outline_color", CriticalColor);
+        _gorlexShader = proto.InstanceUnique();
+        _gorlexShader.SetParameter("outline_color", GorlexAllyColor);
 
         _allyPost = new[] { new SpriteComponent.PostShaderEntry(PostShaderId, _allyShader) };
         _criticalPost = new[] { new SpriteComponent.PostShaderEntry(PostShaderId, _criticalShader) };
+        _gorlexPost = new[] { new SpriteComponent.PostShaderEntry(PostShaderId, _gorlexShader) };
     }
 
     protected override bool BeforeDraw(in OverlayDrawArgs args)
@@ -84,7 +91,8 @@ public sealed partial class DutyNeuroSquadOutlineOverlay : Overlay
             return false;
 
         // Мёртвому носителю нейроинтерфейс уже ничего не показывает (идёт flatline).
-        if (wearer.OwnerStatus == DutyNeuroMemberStatus.Dead || wearer.SquadMembers.Count == 0)
+        // Под ЭМИ панель погашена целиком — обводка тоже.
+        if (wearer.OwnerStatus == DutyNeuroMemberStatus.Dead || wearer.Jammed || wearer.SquadMembers.Count == 0)
             return false;
 
         _wearer = wearer;
@@ -104,12 +112,15 @@ public sealed partial class DutyNeuroSquadOutlineOverlay : Overlay
         var pulse = 0.8f + 0.2f * MathF.Sin((float) _timing.RealTime.TotalSeconds * 3f);
         _allyShader.SetParameter("outline_color", AllyColor.WithAlpha(pulse));
         _criticalShader.SetParameter("outline_color", CriticalColor.WithAlpha(pulse));
+        _gorlexShader.SetParameter("outline_color", GorlexAllyColor.WithAlpha(pulse));
+        var allyPost = _wearer.Network == DutyNeuroNetwork.Gorlex ? _gorlexPost : _allyPost;
 
         foreach (var member in _wearer.SquadMembers)
         {
             // Мёртвых сервер уже отфильтровал, но запись могла прийти до обновления статуса.
             // Офлайн (SSD, тело без игрока) обводим: соотрядца надо найти и тогда, когда он не за клавиатурой.
-            if (member.Status == DutyNeuroMemberStatus.Dead)
+            // «Призрак в сети» не даёт сигнала — и контура тоже.
+            if (member.Status == DutyNeuroMemberStatus.Dead || member.NoSignal)
                 continue;
 
             // Вне PVS сущности на клиенте нет — тогда просто не рисуем.
@@ -131,7 +142,7 @@ public sealed partial class DutyNeuroSquadOutlineOverlay : Overlay
             if (!visible.Contains(position))
                 continue;
 
-            var post = member.Status == DutyNeuroMemberStatus.Critical ? _criticalPost : _allyPost;
+            var post = member.Status == DutyNeuroMemberStatus.Critical ? _criticalPost : allyPost;
             DrawOutline(handle, post, (uid, sprite), eyeRotation, rotation, position);
         }
 

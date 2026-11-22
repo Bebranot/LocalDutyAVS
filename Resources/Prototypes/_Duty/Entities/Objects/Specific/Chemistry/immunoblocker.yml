@@ -1,0 +1,48 @@
+# _Duty: Баночка с таблетками иммуноблокаторов (активируется на Z / в руке как еда, 10 доз по 5u)
+# и стандартная мензурка/флакон для шприцев.
+- type: entity
+  parent: [SolutionFood, BaseItem]
+  id: DutyImmunoblockerBottle
+  name: immunoblocker bottle
+  suffix: Duty, Медицина
+  description: A canister of neuro-immunosuppressant tablets that suppress cyberware overload for 5 minutes.
+  components:
+  - type: Sprite
+    sprite: Objects/Specific/Chemistry/pills_canister.rsi
+    state: pill_canister
+  - type: Item
+    size: Tiny
+    sprite: Objects/Specific/Chemistry/pills_canister.rsi
+  - type: Solution
+    solution:
+      maxVol: 50
+      canReact: false
+      reagents:
+      - ReagentId: Immunoblocker
+        Quantity: 50
+  - type: Edible
+    edible: Pill
+    solution: food
+    transferAmount: 5
+    delay: 0.6
+    forceFeedDelay: 3
+    destroyOnEmpty: false
+    utensil: None
+  - type: ExaminableSolution
+    solution: food
+    exactVolume: true
+  - type: StaticPrice
+    price: 150
+
+- type: entity
+  id: DutyChemistryBottleImmunoblocker
+  suffix: Duty, immunoblocker
+  parent: BaseChemistryBottleFilled
+  components:
+  - type: Label
+    localizedLabel: reagent-name-immunoblocker
+  - type: Solution
+    solution:
+      reagents:
+      - ReagentId: Immunoblocker
+        Quantity: 30

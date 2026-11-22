@@ -1,0 +1,133 @@
+# SPDX-FileCopyrightText: 2026 LocalDuty
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+# Импланты Мародёров Горлекса. Поведение — Content.*/_Duty/Cyberware/Gorlex, цифры — в компонентах ниже.
+# Железо тяжёлое, красное и без изящества: нейронагрузка высокая, ЭМИ бьёт по всему, кроме «мяса».
+
+- type: entity
+  parent: DutyCyberImplantGorlexBase
+  id: DutyBloodLoopImplant
+  name: имплант "Кровавый контур"
+  description: Контур из военного хлама, гонящий кровь в обход всего, что болит. Один раз вытащит из крита — и выставит счёт.
+  components:
+  - type: DutyCyberware
+    moduleName: duty-cyber-module-bloodloop
+    load: 3
+  - type: DutyBloodLoop
+
+- type: entity
+  parent: DutyCyberImplantGorlexBase
+  id: DutyDrumDamperImplant
+  name: имплант "Барабанный демпфер"
+  description: "Гасит удар по барабанным перепонкам. Платой идёт шёпот: тихая речь доходит обрывками."
+  components:
+  - type: DutyCyberware
+    moduleName: duty-cyber-module-drumdamper
+    load: 2
+  - type: DutyDrumDamper
+
+- type: entity
+  parent: DutyCyberImplantGorlexBase
+  id: DutySmartlinkImplant
+  name: имплант "Смартлинк"
+  description: Связь «мозг–ствол» на трофейной частоте Горлекса. Работает только с оружием, помеченным их клеймом, а под ЭМИ превращает руки в студень.
+  components:
+  - type: DutyCyberware
+    moduleName: duty-cyber-module-smartlink
+    load: 2
+  - type: DutySmartlink
+
+- type: entity
+  parent: DutyCyberImplantGorlexBase
+  id: DutyGorlexThermalImplant
+  name: имплант "Термовизор"
+  description: Тепловая матрица, вросшая в зрительный нерв. Видит тёплое сквозь переборки, жрёт калории и ненавидит вспышки.
+  components:
+  - type: DutyCyberware
+    moduleName: duty-cyber-module-thermal
+    load: 2
+  - type: SubdermalImplant
+    implantAction: DutyActionGorlexThermal
+  - type: DutyGorlexThermal
+
+- type: entity
+  parent: DutyCyberImplantGorlexBase
+  id: DutyBlackBoxImplant
+  name: имплант "Чёрный ящик"
+  description: Самописец в грудине. Когда оперативник умирает, ящик успевает сообщить своим где, кто и когда. Мёртвого можно допросить мультитулом.
+  components:
+  - type: DutyCyberware
+    moduleName: duty-cyber-module-blackbox
+    load: 1
+  - type: DutyBlackBox
+
+- type: entity
+  id: DutyActionGorlexThermal
+  parent: BaseAction
+  categories: [ HideSpawnMenu ]
+  name: Термовизор
+  description: Включает или выключает тепловое зрение.
+  components:
+  - type: Action
+    itemIconStyle: BigAction
+    useDelay: 0.5
+    checkCanInteract: false
+  - type: Sprite
+    sprite: ADT/Interface/Actions/thermalvision.rsi
+    layers:
+    - state: icon_on
+      map: ["enum.ActionVisuals.Icon"]
+    - state: icon_off
+      map: ["enum.ActionVisuals.IconToggled"]
+      visible: false
+  - type: InstantAction
+    event: !type:DutyGorlexThermalToggleEvent
+
+# ── Операционные наборы ──
+
+- type: entity
+  parent: DutyImplantSurgeryKitBase
+  id: DutyImplantKitBloodLoop
+  suffix: Duty, Gorlex, Операционный набор
+  components:
+  - type: DutyImplantSurgeryKit
+    implant: DutyBloodLoopImplant
+
+- type: entity
+  parent: DutyImplantSurgeryKitBase
+  id: DutyImplantKitDrumDamper
+  suffix: Duty, Gorlex, Операционный набор
+  components:
+  - type: DutyImplantSurgeryKit
+    implant: DutyDrumDamperImplant
+
+- type: entity
+  parent: DutyImplantSurgeryKitBase
+  id: DutyImplantKitSmartlink
+  suffix: Duty, Gorlex, Операционный набор
+  components:
+  - type: DutyImplantSurgeryKit
+    implant: DutySmartlinkImplant
+
+- type: entity
+  parent: DutyImplantSurgeryKitBase
+  id: DutyImplantKitGorlexThermal
+  suffix: Duty, Gorlex, Операционный набор
+  components:
+  - type: DutyImplantSurgeryKit
+    implant: DutyGorlexThermalImplant
+
+- type: entity
+  parent: DutyImplantSurgeryKitBase
+  id: DutyImplantKitBlackBox
+  suffix: Duty, Gorlex, Операционный набор
+  components:
+  - type: DutyImplantSurgeryKit
+    implant: DutyBlackBoxImplant
+
+# Звук-заглушка рывка «Кровавого контура». Меняется здесь, в одном месте.
+- type: soundCollection
+  id: DutyGorlexBloodLoop
+  files:
+  - /Audio/Effects/sparks4.ogg
+  - /Audio/Machines/buzz-two.ogg

@@ -9,6 +9,8 @@ namespace Content.Shared._Duty.Neurointerface;
 
 /// <summary>
 /// _Duty: данные о бойце отряда для отображения на HUD и в тактическом планшете.
+/// <see cref="NoSignal"/> — боец под «Призраком в сети»: вместо данных HUD и планшет пишут «НЕТ СИГНАЛА»,
+/// а обводка и точка на карте его не выдают (статус в записи — Offline, локация — заглушка).
 /// </summary>
 [Serializable, NetSerializable]
 public sealed record DutyNeuroSquadMemberEntry(
@@ -19,7 +21,8 @@ public sealed record DutyNeuroSquadMemberEntry(
     string Location,
     float HealthPercent,
     bool HasTrackerImplant,
-    bool IsLeader);
+    bool IsLeader,
+    bool NoSignal = false);
 
 /// <summary>
 /// _Duty: запись о цели с имплантом-трекером для отображения на HUD.

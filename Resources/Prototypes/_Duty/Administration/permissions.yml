@@ -627,6 +627,7 @@
   - nukearm
   - nukecodes
   - dutycodealpha
+  - contract
   - startsingularityengine
   - ftldisk
   toolshed:
@@ -648,6 +649,7 @@
   - clearbluespacelockerlinks
   - linkbodies
   - unlinkbodies
+  - dutycyberimplant
   toolshed:
   - solution
   - storage
@@ -846,7 +848,6 @@
   legacy: [Debug]
   commands:
   - addaction
-  - addinternalresource
   - addview
   - chunkinfo
   - cldbglyr

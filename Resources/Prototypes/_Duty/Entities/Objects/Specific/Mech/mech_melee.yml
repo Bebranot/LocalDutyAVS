@@ -19,8 +19,7 @@
     state: e_sword
   - type: Item
     size: Large
-  - type: MechEquipment
-    canBeUsed: false # всегда доступен через ПКМ-релей, в цикле выбора оборудования не нужен
+  - type: MechEquipment # в цикл выбора не попадает (SharedMechSystem.CycleEquipment) — бьёт по ПКМ всегда
   - type: MechMeleeWeapon
   - type: Gun
     useKey: true # "пустой" Gun нужен только чтобы клиентская MeleeWeaponSystem не дублировала LMB-атаку (см. Content.Client/Weapons/Melee/MeleeWeaponSystem.cs: Gun+UseKey ⇒ LMB не делает light-attack)

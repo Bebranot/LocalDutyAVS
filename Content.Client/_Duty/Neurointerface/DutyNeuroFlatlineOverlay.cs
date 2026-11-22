@@ -4,6 +4,7 @@
 
 using System.Numerics;
 using Content.Client.Resources;
+using Content.Shared._Duty.Neurointerface;
 using Robust.Client.Graphics;
 using Robust.Client.ResourceManagement;
 using Robust.Client.UserInterface;
@@ -45,6 +46,8 @@ public sealed partial class DutyNeuroFlatlineOverlay : Overlay
     // Локализованные строки — один раз, а не каждый кадр.
     private readonly string _titleText;
     private readonly string _prefixText;
+    private readonly string _prefixTextGorlex;
+    private DutyNeuroNetwork _subTextNetwork;
     private readonly string _hintText;
 
     private DutyNeuroClientSystem? _clientSystem;
@@ -62,6 +65,7 @@ public sealed partial class DutyNeuroFlatlineOverlay : Overlay
 
         _titleText = Loc.GetString("duty-neuro-flatline-title");
         _prefixText = Loc.GetString("duty-neuro-flatline-prefix");
+        _prefixTextGorlex = Loc.GetString("duty-neuro-flatline-prefix-gorlex");
         _hintText = Loc.GetString("duty-neuro-hud-flatline-hint");
 
         _crtShader = _proto.Index(CrtShaderId).InstanceUnique();
@@ -133,11 +137,13 @@ public sealed partial class DutyNeuroFlatlineOverlay : Overlay
             deathTime = TimeSpan.Zero;
 
         var totalSeconds = (int) deathTime.TotalSeconds;
-        if (totalSeconds != _subTextSeconds)
+        if (totalSeconds != _subTextSeconds || wearer.Network != _subTextNetwork)
         {
             _subTextSeconds = totalSeconds;
+            _subTextNetwork = wearer.Network;
             var time = $"{totalSeconds / 3600:00}:{totalSeconds / 60 % 60:00}:{totalSeconds % 60:00}";
-            _subText = Loc.GetString("duty-neuro-hud-flatline-line", ("prefix", _prefixText), ("time", time));
+            var prefix = wearer.Network == DutyNeuroNetwork.Gorlex ? _prefixTextGorlex : _prefixText;
+            _subText = Loc.GetString("duty-neuro-hud-flatline-line", ("prefix", prefix), ("time", time));
         }
 
         var subDims = handle.GetDimensions(_monoFont, _subText, uiScale);

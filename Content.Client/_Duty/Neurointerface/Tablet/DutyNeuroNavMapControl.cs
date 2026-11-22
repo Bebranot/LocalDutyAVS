@@ -349,6 +349,10 @@ public sealed partial class DutyNeuroNavMapControl : NavMapControl
         for (var i = 0; i < _members.Count; i++)
         {
             var member = _members[i];
+            // «Призрак в сети»: позиции нет — на карте пусто, в списке отряда «НЕТ СИГНАЛА».
+            if (member.NoSignal)
+                continue;
+
             if (!TryGetMemberGridPos(member, i, navMap, invGridMatrix, out var gridLocalPos))
                 continue;
 

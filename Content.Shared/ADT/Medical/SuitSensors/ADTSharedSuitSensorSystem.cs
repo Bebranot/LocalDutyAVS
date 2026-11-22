@@ -449,6 +449,11 @@ public abstract class ADTSharedSuitSensorSystem : EntitySystem
         }
         // ADT-Tweak End
 
+        // _Duty-start: «Призрак в сети» — носитель выпадает из мониторинга, пока маскировку не сорвал ЭМИ
+        if (TryComp<Content.Shared._Duty.Cyberware.Neuro.DutyNeuroGhostComponent>(sensor.User.Value, out var dutyGhost) && dutyGhost.Hidden)
+            return null;
+        // _Duty-end
+
         // try to get mobs id from ID slot
         var userName = Loc.GetString("suit-sensor-component-unknown-name");
         var userJob = Loc.GetString("suit-sensor-component-unknown-job");
@@ -538,6 +543,11 @@ public abstract class ADTSharedSuitSensorSystem : EntitySystem
                     coordinates = EntityCoordinates.Invalid;
                 }
 
+                // _Duty-start: «Ошейник» подменяет координаты носителя ложной точкой
+                var dutyFakeEv = new Content.Shared._Duty.Cyberware.Syndicate.DutyFakeTrackerQueryEvent(coordinates);
+                RaiseLocalEvent(sensor.User.Value, ref dutyFakeEv);
+                coordinates = dutyFakeEv.Coordinates;
+                // _Duty-end
                 status.Coordinates = GetNetCoordinates(coordinates);
                 break;
             }

@@ -103,6 +103,7 @@
                             <Button Name="Callout104Button" Text="10-4" HorizontalExpand="True" SetHeight="28"/>
                             <Button Name="Callout1141Button" Text="11-41" HorizontalExpand="True" SetHeight="28"/>
                             <Button Name="Callout1199Button" Text="11-99" HorizontalExpand="True" SetHeight="28"/>
+                            <Button Name="RebootNetworkButton" Text="{Loc 'duty-neuro-tablet-reboot-network'}" HorizontalExpand="True" SetHeight="28"/>
                         </BoxContainer>
                     </BoxContainer>
                 </PanelContainer>
