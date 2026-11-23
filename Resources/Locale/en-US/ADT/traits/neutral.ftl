@@ -54,7 +54,8 @@ trait-soft-walk-name = Soft Walk
 trait-soft-walk-desc = You walk very quietly, your footsteps are barely audible.
 
 trait-freerunning-name = Freerunning
-trait-freerunning-desc = You can efficiently navigate urban environments, jumping over obstacles.
+# _Duty: freerunning no longer duplicates Parkour
+trait-freerunning-desc = You know how to break a fall: you get up twice as fast after being knocked down, and forcing yourself up costs less stamina.
 
 trait-sprinter-name = Sprinter
 trait-sprinter-desc = You can run slightly faster than others.

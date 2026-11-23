@@ -16,7 +16,8 @@ public abstract class SharedQuirksSystem : EntitySystem
 
     public override void Initialize()
     {
-        SubscribeLocalEvent<FreerunningComponent, CheckClimbSpeedModifiersEvent>(OnFreerunningClimbTimeModify);
+        // _Duty: фрираннинг дублировал трейт «Паркур» (тоже ускорял залезание), теперь он про подъём после падения — см. _Duty/Traits/FreerunningSystem
+        // SubscribeLocalEvent<FreerunningComponent, CheckClimbSpeedModifiersEvent>(OnFreerunningClimbTimeModify);
 
         SubscribeLocalEvent<SprinterComponent, ComponentInit>(OnSprinterComponentInit);
         SubscribeLocalEvent<SprinterComponent, RefreshMovementSpeedModifiersEvent>(OnRefreshMovespeed);
