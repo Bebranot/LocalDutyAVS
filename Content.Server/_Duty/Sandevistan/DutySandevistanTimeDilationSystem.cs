@@ -32,9 +32,25 @@ public sealed class DutySandevistanTimeDilationSystem : EntitySystem
     private readonly List<EntityUid> _toRemoveDilated = new();
     private readonly List<EntityUid> _toRestoreProjectiles = new();
 
+    // Полный проход по мобам/оружию/DoAfter — тысячи сущностей, поэтому не каждый тик: события старта/конца
+    // активности и смены карты и так зовут ReconcileMapDilation сразу, а таймер лишь подхватывает новые
+    // сущности (заспавненные, вошедшие на карту, выброшенные из рук). Снаряды быстрые — их обрабатываем каждый тик.
+    private const float FullReconcileInterval = 0.5f;
+    private float _reconcileAccumulator;
+
+    private EntityQuery<ActiveSandevistanUserComponent> _activeQuery;
+    private EntityQuery<SandevistanTimeDilatedComponent> _dilatedQuery;
+    private EntityQuery<SandevistanSlowedProjectileComponent> _slowedQuery;
+    private EntityQuery<GhostComponent> _ghostQuery;
+
     public override void Initialize()
     {
         base.Initialize();
+
+        _activeQuery = GetEntityQuery<ActiveSandevistanUserComponent>();
+        _dilatedQuery = GetEntityQuery<SandevistanTimeDilatedComponent>();
+        _slowedQuery = GetEntityQuery<SandevistanSlowedProjectileComponent>();
+        _ghostQuery = GetEntityQuery<GhostComponent>();
 
         SubscribeLocalEvent<ActiveSandevistanUserComponent, ComponentStartup>(OnActiveUserStartup);
         SubscribeLocalEvent<ActiveSandevistanUserComponent, ComponentShutdown>(OnActiveUserShutdown);
@@ -52,8 +68,23 @@ public sealed class DutySandevistanTimeDilationSystem : EntitySystem
     {
         base.Update(frameTime);
 
-        if (HasAnyActiveOrDilated())
+        if (!HasAnyActiveOrDilated())
+        {
+            _reconcileAccumulator = 0f;
+            return;
+        }
+
+        _reconcileAccumulator += frameTime;
+        if (_reconcileAccumulator >= FullReconcileInterval)
+        {
+            _reconcileAccumulator = 0f;
             ReconcileMapDilation();
+            return;
+        }
+
+        // Между полными проходами — только снаряды по уже известным активным картам.
+        if (_activeMaps.Count > 0)
+            UpdateProjectiles();
     }
 
     private bool HasAnyActiveOrDilated()
@@ -89,7 +120,15 @@ public sealed class DutySandevistanTimeDilationSystem : EntitySystem
     private void OnDilatedParentChanged(Entity<SandevistanTimeDilatedComponent> ent, ref EntParentChangedMessage args)
     {
         if (args.OldMapId != args.Transform.MapUid)
+        {
             ReconcileMapDilation();
+            return;
+        }
+
+        // Предмет взял активный пользователь — снимаем замедление сразу, а не ждём полного прохода,
+        // иначе его оружие до полсекунды стреляло бы замедленно.
+        if (args.Transform.ParentUid.IsValid() && IsActiveSandevistanUser(args.Transform.ParentUid))
+            RemCompDeferred<SandevistanTimeDilatedComponent>(ent);
     }
 
     private void OnSlowedProjectileParentChanged(Entity<SandevistanSlowedProjectileComponent> ent, ref EntParentChangedMessage args)
@@ -164,7 +203,7 @@ public sealed class DutySandevistanTimeDilationSystem : EntitySystem
             if (TerminatingOrDeleted(uid) ||
                 IsActiveSandevistanUser(uid) ||
                 (xform.ParentUid.IsValid() && IsActiveSandevistanUser(xform.ParentUid)) ||
-                HasComp<GhostComponent>(uid) ||
+                _ghostQuery.HasComp(uid) ||
                 !_activeMaps.TryGetValue(xform.MapID, out var targetScale))
             {
                 _toRemoveDilated.Add(uid);
@@ -208,6 +247,15 @@ public sealed class DutySandevistanTimeDilationSystem : EntitySystem
             TryApplyDilation(uid, xform);
         }
 
+        UpdateProjectiles();
+    }
+
+    /// <summary>
+    /// Восстанавливает снаряды, покинувшие активные карты, и замедляет новые. Дёшево (снарядов в полёте мало),
+    /// поэтому вызывается каждый тик, пока есть активные карты.
+    /// </summary>
+    private void UpdateProjectiles()
+    {
         // 3. Восстанавливаем снаряды, вышедшие за пределы активных карт
         _toRestoreProjectiles.Clear();
         var slowedProjQuery = EntityQueryEnumerator<SandevistanSlowedProjectileComponent, TransformComponent>();
@@ -226,7 +274,7 @@ public sealed class DutySandevistanTimeDilationSystem : EntitySystem
         var projQuery = EntityQueryEnumerator<ProjectileComponent, PhysicsComponent, TransformComponent>();
         while (projQuery.MoveNext(out var uid, out _, out var physics, out var xform))
         {
-            if (TerminatingOrDeleted(uid) || HasComp<SandevistanSlowedProjectileComponent>(uid))
+            if (_slowedQuery.HasComp(uid) || TerminatingOrDeleted(uid))
                 continue;
 
             if (!_activeMaps.TryGetValue(xform.MapID, out var scale))
@@ -240,16 +288,18 @@ public sealed class DutySandevistanTimeDilationSystem : EntitySystem
 
     private void TryApplyDilation(EntityUid uid, TransformComponent xform)
     {
-        if (TerminatingOrDeleted(uid) ||
+        // Сначала самая дешёвая проверка — карта; сущности с других карт отсеиваются без обращений к компонентам.
+        if (!_activeMaps.TryGetValue(xform.MapID, out var scale) ||
+            TerminatingOrDeleted(uid) ||
             IsActiveSandevistanUser(uid) ||
             (xform.ParentUid.IsValid() && IsActiveSandevistanUser(xform.ParentUid)) ||
-            HasComp<GhostComponent>(uid) ||
-            !_activeMaps.TryGetValue(xform.MapID, out var scale))
+            _ghostQuery.HasComp(uid))
         {
             return;
         }
 
-        var dilated = EnsureComp<SandevistanTimeDilatedComponent>(uid);
+        if (!_dilatedQuery.TryComp(uid, out var dilated))
+            dilated = EnsureComp<SandevistanTimeDilatedComponent>(uid);
         if (!MathHelper.CloseTo(dilated.TimeScale, scale))
         {
             dilated.TimeScale = scale;
@@ -259,7 +309,7 @@ public sealed class DutySandevistanTimeDilationSystem : EntitySystem
 
     private bool IsActiveSandevistanUser(EntityUid uid)
     {
-        return TryComp<ActiveSandevistanUserComponent>(uid, out var active) &&
+        return _activeQuery.TryComp(uid, out var active) &&
                active.LifeStage < ComponentLifeStage.Stopping;
     }
 

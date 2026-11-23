@@ -18,6 +18,8 @@ public sealed partial class MadnessMaskSystem : EntitySystem
     [Dependency] private StatusEffectsSystem _statusEffect = default!;
     [Dependency] private IRobustRandom _random = default!;
 
+    private readonly HashSet<Entity<StatusEffectsComponent>> _targets = new(); // _Duty: переиспользуемый буфер поиска целей
+
     public override void Update(float frameTime)
     {
         base.Update(frameTime);
@@ -30,8 +32,13 @@ public sealed partial class MadnessMaskSystem : EntitySystem
 
             mask.UpdateAccumulator = 0;
 
-            var lookup = _lookup.GetEntitiesInRange(mask.Owner, 5f);
-            foreach (var look in lookup)
+            // _Duty-start: типизированный поиск по StatusEffectsComponent с переиспользуемым буфером вместо поиска всех
+            // сущностей. DoJitter без StatusEffectsComponent ничего не делает, так что для джиттера поведение то же;
+            // сущность со StaminaComponent, но без StatusEffects, стамину теперь терять не будет (на практике таких нет).
+            _targets.Clear();
+            _lookup.GetEntitiesInRange(Transform(mask.Owner).Coordinates, 5f, _targets);
+            // _Duty-end
+            foreach (var (look, _) in _targets)
             {
                 // heathens exclusive
                 if (_heretic.IsHereticOrGhoul(look))

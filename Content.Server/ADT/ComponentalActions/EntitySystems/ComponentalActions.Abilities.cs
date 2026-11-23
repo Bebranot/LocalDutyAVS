@@ -72,26 +72,41 @@ public sealed partial class ComponentalActionsSystem
     {
         base.Update(frameTime);
 
+        // _Duty-start: лечение стазиса раз в секунду одним объединённым уроном вместо 5 вызовов TryChangeDamage
+        // и 2 вызовов кровотока на каждый тик. Раньше значения в компоненте применялись КАЖДЫЙ тик, поэтому
+        // чтобы скорость лечения в секунду осталась прежней (при 30 TPS), суммы умножаются на 30 * интервал (=30).
+        _stasisHealAccumulator += frameTime;
+        if (_stasisHealAccumulator < StasisHealInterval)
+            return;
+
+        _stasisHealAccumulator -= StasisHealInterval;
+
+        var factor = StasisHealLegacyTps * StasisHealInterval;
+
         var query = EntityQueryEnumerator<StasisHealActComponent>();
         while (query.MoveNext(out var uid, out var stasis))
         {
-            if (stasis.Active)
-            {
-                var damage_brute = new DamageSpecifier(_proto.Index(BruteDamageGroup), stasis.RegenerateBruteHealAmount);
-                var damage_burn = new DamageSpecifier(_proto.Index(BurnDamageGroup), stasis.RegenerateBurnHealAmount);
-                var damage_airloss = new DamageSpecifier(_proto.Index(AirlossDamageGroup), stasis.RegenerateBurnHealAmount);
-                var damage_toxin = new DamageSpecifier(_proto.Index(ToxinDamageGroup), stasis.RegenerateBurnHealAmount);
-                var damage_genetic = new DamageSpecifier(_proto.Index(GeneticDamageGroup), stasis.RegenerateBurnHealAmount);
-                _damageableSystem.TryChangeDamage(uid, damage_brute);
-                _damageableSystem.TryChangeDamage(uid, damage_burn);
-                _damageableSystem.TryChangeDamage(uid, damage_airloss);
-                _damageableSystem.TryChangeDamage(uid, damage_toxin);
-                _damageableSystem.TryChangeDamage(uid, damage_genetic);
-                _bloodstreamSystem.TryModifyBloodLevel(uid, stasis.RegenerateBloodVolumeHealAmount); // give back blood and remove bleeding
-                _bloodstreamSystem.TryModifyBleedAmount(uid, stasis.RegenerateBleedReduceAmount);
-            }
+            if (!stasis.Active)
+                continue;
+
+            // Airloss/Toxin/Genetic по-прежнему лечатся значением RegenerateBurnHealAmount, как и в оригинале.
+            var damage = new DamageSpecifier(_proto.Index(BruteDamageGroup), stasis.RegenerateBruteHealAmount)
+                         + new DamageSpecifier(_proto.Index(BurnDamageGroup), stasis.RegenerateBurnHealAmount)
+                         + new DamageSpecifier(_proto.Index(AirlossDamageGroup), stasis.RegenerateBurnHealAmount)
+                         + new DamageSpecifier(_proto.Index(ToxinDamageGroup), stasis.RegenerateBurnHealAmount)
+                         + new DamageSpecifier(_proto.Index(GeneticDamageGroup), stasis.RegenerateBurnHealAmount);
+
+            _damageableSystem.TryChangeDamage(uid, damage * factor);
+            _bloodstreamSystem.TryModifyBloodLevel(uid, stasis.RegenerateBloodVolumeHealAmount * factor); // give back blood and remove bleeding
+            _bloodstreamSystem.TryModifyBleedAmount(uid, stasis.RegenerateBleedReduceAmount * factor);
         }
+        // _Duty-end
     }
+
+    // _Duty: накопитель и константы для лечения стазиса раз в секунду (см. Update)
+    private float _stasisHealAccumulator;
+    private const float StasisHealInterval = 1f;
+    private const float StasisHealLegacyTps = 30f;
     // private List<EntityCoordinates> GetSpawnPositions(TransformComponent casterXform, ComponentalActionsSpawnData data)
     // {
     //     switch (data)
