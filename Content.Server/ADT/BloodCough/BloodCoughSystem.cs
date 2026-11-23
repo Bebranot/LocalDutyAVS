@@ -122,7 +122,7 @@ public sealed class BloodCoughSystem : EntitySystem
     /// </summary>
     private float GetCoughIntervalMultiplier(EntityUid uid)
     {
-        var ev = new BloodCoughIntervalModifierEvent();
+        var ev = new BloodCoughIntervalModifierEvent(1f); // _Duty: у struct `new T()` даёт Multiplier = 0, а не 1
         RaiseLocalEvent(uid, ref ev);
         return Math.Clamp(ev.Multiplier, 0.1f, 1f);
     }

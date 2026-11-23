@@ -54,7 +54,9 @@ public sealed partial class ThermalRegulatorSystem : EntitySystem
 
         // TODO: Why do we have two datafields for this if they are only ever used once here?
         // _Duty: хладнокровие (ColdBloodedComponent) урезает метаболический нагрев/согревание/дрожь.
-        var regulation = new ModifyThermalRegulationEvent();
+        // _Duty: множители передаём явно — у struct `new T()` без аргументов даёт default (все нули),
+        // а не значения по умолчанию из primary-конструктора; иначе у всех пропадает нагрев и дрожь.
+        var regulation = new ModifyThermalRegulationEvent(1f, 1f, 1f);
         RaiseLocalEvent(ent.Owner, ref regulation);
         var totalMetabolismTempChange = ent.Comp1.MetabolismHeat * regulation.MetabolismHeatMultiplier - ent.Comp1.RadiatedHeat;
 
