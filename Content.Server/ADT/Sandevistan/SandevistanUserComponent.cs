@@ -84,6 +84,7 @@ public sealed partial class SandevistanUserComponent : Component
     [DataField]
     public float MovementSpeedModifier = 2.1f;
 
+    // _Duty: не используется — множитель скорости атак задан в прототипе StatusEffectDutySandevistanHaste
     [DataField]
     public float AttackSpeedModifier = 2.0f;
 

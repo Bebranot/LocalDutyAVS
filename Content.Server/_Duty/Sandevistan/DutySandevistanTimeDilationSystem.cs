@@ -15,6 +15,7 @@ using Content.Shared.Weapons.Ranged.Components;
 using Robust.Shared.Map;
 using Robust.Shared.Physics.Components;
 using Robust.Shared.Physics.Systems;
+using Robust.Shared.Timing;
 
 namespace Content.Server._Duty.Sandevistan;
 
@@ -27,6 +28,7 @@ public sealed class DutySandevistanTimeDilationSystem : EntitySystem
 {
     [Dependency] private readonly GameTicker _gameTicker = default!;
     [Dependency] private readonly SharedPhysicsSystem _physics = default!;
+    [Dependency] private IGameTiming _timing = default!;
 
     private readonly Dictionary<MapId, float> _activeMaps = new();
     private readonly List<EntityUid> _toRemoveDilated = new();
@@ -58,7 +60,6 @@ public sealed class DutySandevistanTimeDilationSystem : EntitySystem
 
         SubscribeLocalEvent<SandevistanTimeDilatedComponent, EntParentChangedMessage>(OnDilatedParentChanged);
         SubscribeLocalEvent<SandevistanSlowedProjectileComponent, EntParentChangedMessage>(OnSlowedProjectileParentChanged);
-        SubscribeLocalEvent<ProjectileComponent, ComponentStartup>(OnProjectileStartup);
 
         SubscribeLocalEvent<GameRunLevelChangedEvent>(OnRunLevelChanged);
         SubscribeLocalEvent<RoundRestartCleanupEvent>(OnRoundRestartCleanup);
@@ -135,22 +136,6 @@ public sealed class DutySandevistanTimeDilationSystem : EntitySystem
     {
         if (args.OldMapId != args.Transform.MapUid)
             ReconcileMapDilation();
-    }
-
-    private void OnProjectileStartup(Entity<ProjectileComponent> ent, ref ComponentStartup args)
-    {
-        if (_gameTicker.RunLevel != GameRunLevel.InRound)
-            return;
-
-        // Если стрелок уже замедлен дилатацией, GunRefreshModifiersEvent уже умножил ProjectileSpeed на TimeScale.
-        // Ставим маркер заранее, чтобы ReconcileMapDilation не замедлил снаряд повторно.
-        if (ent.Comp.Shooter is { } shooter &&
-            TryComp<SandevistanTimeDilatedComponent>(shooter, out var shooterDilated) &&
-            shooterDilated.LifeStage < ComponentLifeStage.Stopping)
-        {
-            var slowed = EnsureComp<SandevistanSlowedProjectileComponent>(ent);
-            slowed.AppliedScale = Math.Clamp(shooterDilated.TimeScale, 0.05f, 1f);
-        }
     }
 
     private void OnRunLevelChanged(GameRunLevelChangedEvent ev)
@@ -272,7 +257,7 @@ public sealed class DutySandevistanTimeDilationSystem : EntitySystem
 
         // 4. Замедляем новые/летящие снаряды на активных картах
         var projQuery = EntityQueryEnumerator<ProjectileComponent, PhysicsComponent, TransformComponent>();
-        while (projQuery.MoveNext(out var uid, out _, out var physics, out var xform))
+        while (projQuery.MoveNext(out var uid, out var projectile, out var physics, out var xform))
         {
             if (_slowedQuery.HasComp(uid) || TerminatingOrDeleted(uid))
                 continue;
@@ -281,9 +266,42 @@ public sealed class DutySandevistanTimeDilationSystem : EntitySystem
                 continue;
 
             var slowed = EnsureComp<SandevistanSlowedProjectileComponent>(uid);
-            slowed.AppliedScale = scale;
-            _physics.SetLinearVelocity(uid, physics.LinearVelocity * scale, body: physics);
+
+            // Оружие замедленного стрелка уже выпустило снаряд с ProjectileSpeed × TimeScale (GunRefreshModifiersEvent).
+            // Раньше это ловили на ComponentStartup снаряда, но Shooter там ещё не выставлен — пуля замедлялась
+            // второй раз (до 1/16), а RestoreProjectile возвращал её лишь до 1/4: пули «зависали» и не долетали.
+            if (projectile.Weapon is { } weapon &&
+                _dilatedQuery.TryComp(weapon, out var weaponDilated) &&
+                weaponDilated.LifeStage < ComponentLifeStage.Stopping)
+            {
+                slowed.AppliedScale = Math.Clamp(weaponDilated.TimeScale, 0.05f, 1f);
+            }
+            else
+            {
+                slowed.AppliedScale = scale;
+                _physics.SetLinearVelocity(uid, physics.LinearVelocity * scale, body: physics);
+            }
+
+            ExtendShooterGrace((uid, projectile), slowed.AppliedScale);
         }
+    }
+
+    /// <summary>
+    /// Снаряд игнорирует стрелка фиксированное время (обычно 1 с), рассчитанное на полную скорость. Замедленная пуля
+    /// за это время едва отлетает, и разогнанный Сандевистаном стрелок догонял собственные пули и получал их урон.
+    /// Растягиваем окно пропорционально замедлению.
+    /// </summary>
+    private void ExtendShooterGrace(Entity<ProjectileComponent> projectile, float scale)
+    {
+        if (projectile.Comp.WhenToStopIgnoringShooter is not { } until || scale >= 1f)
+            return;
+
+        var now = _timing.CurTime;
+        if (until <= now)
+            return;
+
+        projectile.Comp.WhenToStopIgnoringShooter = now + (until - now) / scale;
+        Dirty(projectile);
     }
 
     private void TryApplyDilation(EntityUid uid, TransformComponent xform)

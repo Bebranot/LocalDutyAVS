@@ -51,6 +51,7 @@ public sealed class SandevistanSystem : EntitySystem
 
     // _Duty: иммуноблокатор и красные предупреждения в чат
     private static readonly EntProtoId ImmunoblockerEffectProto = "StatusEffectDutyImmunoblocker";
+    private static readonly EntProtoId SandevistanHasteEffectProto = "StatusEffectDutySandevistanHaste";
     private static readonly Color OverloadChatColor = Color.FromHex(DutyHealthPhrasesVisuals.ScreamColorHex);
     private static readonly string[] OveruseChatKeys =
     {
@@ -65,7 +66,8 @@ public sealed class SandevistanSystem : EntitySystem
         SubscribeLocalEvent<SandevistanUserComponent, ComponentStartup>(OnStartup);
         SubscribeLocalEvent<SandevistanUserComponent, ToggleSandevistanEvent>(OnToggle);
         SubscribeLocalEvent<SandevistanUserComponent, RefreshMovementSpeedModifiersEvent>(OnRefreshSpeed);
-        SubscribeLocalEvent<SandevistanUserComponent, MeleeAttackEvent>(OnMeleeAttack);
+        // _Duty: ускорение атак перенесено в статус-эффект StatusEffectDutySandevistanHaste. Серверная правка
+        // NextAttack после удара не предсказывалась клиентом — у атакующего удары рассинхронивались с сервером.
         SubscribeLocalEvent<SandevistanUserComponent, MobStateChangedEvent>(OnMobStateChanged);
         SubscribeLocalEvent<SandevistanUserComponent, ComponentShutdown>(OnShutdown);
         SubscribeLocalEvent<SandevistanUserComponent, EmpPulseEvent>(OnEmpPulse);
@@ -252,6 +254,7 @@ public sealed class SandevistanSystem : EntitySystem
         }
 
         ent.Comp.Active = EnsureComp<ActiveSandevistanUserComponent>(ent);
+        _statusEffects.TrySetStatusEffectDuration(ent, SandevistanHasteEffectProto); // _Duty: бессрочно, снимается в Disable
         _speed.RefreshMovementSpeedModifiers(ent.Owner);
 
         if (!HasComp<TrailComponent>(ent))
@@ -284,16 +287,6 @@ public sealed class SandevistanSystem : EntitySystem
             args.ModifySpeed(ent.Comp.CrashSpeedModifier, ent.Comp.CrashSpeedModifier);
     }
 
-    private void OnMeleeAttack(Entity<SandevistanUserComponent> ent, ref MeleeAttackEvent args)
-    {
-        if (ent.Comp.Active == null
-            || !TryComp<MeleeWeaponComponent>(args.Weapon, out var weapon))
-            return;
-
-        var rate = weapon.NextAttack - _timing.CurTime; //weapon.AttackRate; breaks things when multiple systems modify NextAttack
-        weapon.NextAttack -= rate - rate / ent.Comp.AttackSpeedModifier;
-    }
-
     private void OnMobStateChanged(Entity<SandevistanUserComponent> ent, ref MobStateChangedEvent args)
     {
         if (args.NewMobState != MobState.Alive)
@@ -321,6 +314,7 @@ public sealed class SandevistanSystem : EntitySystem
             return;
 
         RemComp<ActiveSandevistanUserComponent>(uid);
+        _statusEffects.TryRemoveStatusEffect(uid, SandevistanHasteEffectProto); // _Duty
         comp.Active = null;
         comp.DisableAt = null;
         comp.GracefulDeactivating = false;

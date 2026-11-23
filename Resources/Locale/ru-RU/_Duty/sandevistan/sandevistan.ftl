@@ -8,3 +8,5 @@ sandevistan-severe-overuse-popup = Критический перегруз не�
 sandevistan-overuse-chat-1 = Мне нужны Иммуноблокаторы.
 sandevistan-overuse-chat-2 = В глазах плывёт... Нервная система на пределе.
 sandevistan-overuse-chat-severe = Всё тело сводит судорогой! Нельзя больше включать...
+
+ent-StatusEffectDutySandevistanHaste = ускорение Сандевистана
