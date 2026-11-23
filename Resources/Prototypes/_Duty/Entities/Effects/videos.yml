@@ -1,0 +1,62 @@
+# Админские «видео»: анимированный RSI 4x3 тайла + звук, удаляются, когда ролик кончился.
+# Новые ролики: кадры 192x144 в RSI-стейт video, звук моно ~-18 LUFS, затем три прототипа как у grisha_p
+# (громкость: базовая 0 дБ, громче на 50% = +3.5 дБ, тише на 25% = -2.5 дБ по амплитуде).
+
+- type: entity
+  id: DutyVideoBase
+  abstract: true
+  name: video
+  components:
+  - type: Transform
+    noRot: true
+  - type: Sprite
+    drawdepth: HighFloorObjects # выше пола и луж, ниже предметов и мобов
+    noRot: true
+    scale: 0.6667, 0.6667 # кадр 192x144 -> 128x96 px = 4x3 тайла
+    layers:
+    - state: video
+      map: [ "video" ]
+      shader: unshaded
+  - type: Clickable # чтобы админ мог удалить раньше времени
+  - type: DutyVideo
+  - type: TimedDespawn
+    lifetime: 20
+
+- type: entity
+  parent: DutyVideoBase
+  id: DutyVideoGrishaP
+  name: video Grisha P.
+  components:
+  - type: Sprite
+    sprite: _Duty/Effects/Videos/grisha_p.rsi
+  - type: EmitSoundOnSpawn
+    sound:
+      path: /Audio/_Duty/Videos/grisha_p.ogg
+      params:
+        maxDistance: 15
+  - type: TimedDespawn
+    lifetime: 19.8
+
+- type: entity
+  parent: DutyVideoGrishaP
+  id: DutyVideoGrishaPLoud
+  suffix: Loud
+  components:
+  - type: EmitSoundOnSpawn
+    sound:
+      path: /Audio/_Duty/Videos/grisha_p.ogg
+      params:
+        maxDistance: 15
+        volume: 3.5
+
+- type: entity
+  parent: DutyVideoGrishaP
+  id: DutyVideoGrishaPQuiet
+  suffix: Quiet
+  components:
+  - type: EmitSoundOnSpawn
+    sound:
+      path: /Audio/_Duty/Videos/grisha_p.ogg
+      params:
+        maxDistance: 15
+        volume: -2.5

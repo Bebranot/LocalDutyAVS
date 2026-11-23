@@ -1,0 +1,10 @@
+ent-DutyVideoBase = видео
+    .desc = Проекция ролика. Исчезнет, когда он закончится.
+ent-DutyVideoGrishaP = видео «Гриша П.»
+    .desc = { ent-DutyVideoBase.desc }
+ent-DutyVideoGrishaPLoud = { ent-DutyVideoGrishaP }
+    .desc = { ent-DutyVideoBase.desc }
+    .suffix = громче
+ent-DutyVideoGrishaPQuiet = { ent-DutyVideoGrishaP }
+    .desc = { ent-DutyVideoBase.desc }
+    .suffix = тише
