@@ -1,0 +1,148 @@
+# SPDX-FileCopyrightText: 2026 LocalDuty
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+# Одноразовые наборы кибер-имплантеров для РДМ: мгновенно вживляют набор модулей и повышают лимит перегруза.
+
+- type: entity
+  abstract: true
+  parent: BaseItem
+  id: DutyBaseCyberPackImplanter
+  name: cyberware pack implanter
+  description: A single-use auto-implanter pre-loaded with a combat cyberware pack.
+  categories: [ DoNotMap ]
+  suffix: Duty, RDM, Имплантер
+  components:
+  - type: Sprite
+    sprite: Objects/Specific/Medical/implanter.rsi
+    state: implanter1
+  - type: Item
+    sprite: Objects/Specific/Medical/implanter.rsi
+    heldPrefix: implanter
+    size: Small
+  - type: DutyCyberPackImplanter
+    oneUse: true
+    injectSound:
+      path: /Audio/Items/hypospray.ogg
+
+# --- NanoTrasen ---
+
+- type: entity
+  parent: DutyBaseCyberPackImplanter
+  id: DutyCyberPackImplanterNtSecurity
+  name: cyberware pack implanter (NT Security Assault)
+  components:
+  - type: DutyCyberPackImplanter
+    guaranteedImplants:
+    - DutySubdermalArmorPlate
+    - DutyNeuroNtSecImplant
+    randomPool:
+    - DutyReflexBlockImplant
+    - DutyThreatScannerImplant
+    - DutyCyberAdrenalineImplant
+    - DutyStressAnalyzerImplant
+    - DutyCyberNightVisionImplant
+    - DutyLazarusImplant
+    randomCount: 2
+    loadLimitBonus: 3
+    oneUse: true
+
+- type: entity
+  parent: DutyBaseCyberPackImplanter
+  id: DutyCyberPackImplanterNtSupport
+  name: cyberware pack implanter (NT Tactical Support)
+  components:
+  - type: DutyCyberPackImplanter
+    guaranteedImplants:
+    - DutySubdermalArmorPlate
+    - DutyCyberHemostatImplant
+    - DutyNavigatorImplant
+    randomPool:
+    - DutyCyberMedVisorImplant
+    - DutyCyberMagFeetImplant
+    - DutyCyberEmpShieldImplant
+    - DutyCyberSkeletonImplant
+    - DutyCyberLungFilterImplant
+    - DutyCyberThermoImplant
+    randomCount: 2
+    loadLimitBonus: 2
+    oneUse: true
+
+- type: entity
+  parent: DutyBaseCyberPackImplanter
+  id: DutyCyberPackImplanterNtElite
+  name: cyberware pack implanter (NT Command Elite)
+  components:
+  - type: DutyCyberPackImplanter
+    guaranteedImplants:
+    - DutySubdermalArmorPlate
+    - DutyCyberAdrenalineImplant
+    - DutyLazarusImplant
+    randomPool:
+    - DutyNeuroSealCommandImplant
+    - DutyThreatScannerImplant
+    - DutyCyberEmpShieldImplant
+    - DutyReflexBlockImplant
+    - DutyCyberSkeletonImplant
+    randomCount: 2
+    loadLimitBonus: 5
+    oneUse: true
+
+# --- Gorlex / Syndicate ---
+
+- type: entity
+  parent: DutyBaseCyberPackImplanter
+  id: DutyCyberPackImplanterGorlexAssault
+  name: cyberware pack implanter (Gorlex Assault)
+  components:
+  - type: DutyCyberPackImplanter
+    guaranteedImplants:
+    - DutySubdermalArmorPlateElite
+    - DutySmartlinkImplant
+    - DutyGorlexTacticalNetImplant
+    randomPool:
+    - DutyDrumDamperImplant
+    - DutyGorlexThermalImplant
+    - DutyBloodLoopImplant
+    - DutyBlackBoxImplant
+    randomCount: 2
+    loadLimitBonus: 5
+    oneUse: true
+
+- type: entity
+  parent: DutyBaseCyberPackImplanter
+  id: DutyCyberPackImplanterSyndicateStealth
+  name: cyberware pack implanter (Syndicate Saboteur)
+  components:
+  - type: DutyCyberPackImplanter
+    guaranteedImplants:
+    - DutySubdermalArmorPlateElite
+    - DutyLockpickFingersImplant
+    - DutyAutoInjectorImplant
+    randomPool:
+    - DutyChameleonSkinImplant
+    - DutyFakeTrackerImplant
+    - DutyVoiceParasiteImplant
+    - DutyNeuroGhostImplant
+    - DutyIceWormImplant
+    randomCount: 2
+    loadLimitBonus: 4
+    oneUse: true
+
+- type: entity
+  parent: DutyBaseCyberPackImplanter
+  id: DutyCyberPackImplanterSyndicateReflex
+  name: cyberware pack implanter (Syndicate Combat Reflex)
+  components:
+  - type: DutyCyberPackImplanter
+    guaranteedImplants:
+    - DutySubdermalArmorPlateElite
+    - DutyKerenzikovImplant
+    - DutyBloodLoopImplant
+    randomPool:
+    - DutySmartlinkImplant
+    - DutyGorlexThermalImplant
+    - DutyDrumDamperImplant
+    - DutyAutoInjectorImplant
+    randomCount: 2
+    loadLimitBonus: 6
+    oneUse: true

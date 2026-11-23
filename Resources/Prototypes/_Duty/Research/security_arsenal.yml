@@ -6,11 +6,11 @@
 # крафт auto-surgeon'а). Гейт первого узла каждой ветки — ThermalWeaponry (Resources/Prototypes/
 # Research/arsenal.yml, позиция 5,0) — обе ветки растут от неё горизонтально вправо.
 
-# ── Сандевистан "Стервятник" ──
+# ── Керензиков ──
 
 - type: technology
-  id: DutySecSandevistanResearchI
-  name: research-technology-duty-sec-sandevistan-1
+  id: DutySecKerenzikovResearchI
+  name: research-technology-duty-sec-kerenzikov-1
   icon:
     sprite: ADT/Objects/Tools/upgrade.rsi
     state: display
@@ -24,8 +24,8 @@
   - ThermalWeaponry
 
 - type: technology
-  id: DutySecSandevistanResearchII
-  name: research-technology-duty-sec-sandevistan-2
+  id: DutySecKerenzikovResearchII
+  name: research-technology-duty-sec-kerenzikov-2
   icon:
     sprite: ADT/Objects/Tools/upgrade.rsi
     state: display
@@ -34,13 +34,13 @@
   cost: 15000
   position: 7,4
   technologyPrerequisites:
-  - DutySecSandevistanResearchI
+  - DutySecKerenzikovResearchI
   requiredTech:
-  - DutySecSandevistanResearchI
+  - DutySecKerenzikovResearchI
 
 - type: technology
-  id: DutySecSandevistanResearchIII
-  name: research-technology-duty-sec-sandevistan-3
+  id: DutySecKerenzikovResearchIII
+  name: research-technology-duty-sec-kerenzikov-3
   icon:
     sprite: ADT/Objects/Tools/upgrade.rsi
     state: display
@@ -49,26 +49,26 @@
   cost: 15000
   position: 8,4
   technologyPrerequisites:
-  - DutySecSandevistanResearchII
+  - DutySecKerenzikovResearchII
   requiredTech:
-  - DutySecSandevistanResearchII
+  - DutySecKerenzikovResearchII
 
 - type: technology
-  id: DutySecSandevistanTech
-  name: research-technology-duty-sec-sandevistan
+  id: DutySecKerenzikovTech
+  name: research-technology-duty-sec-kerenzikov
   icon:
-    sprite: ADT/Interface/Actions/sandevistan.rsi
-    state: icon
+    sprite: Objects/Specific/Medical/implanter.rsi
+    state: implanter1
   discipline: Arsenal
   tier: 3
   cost: 50000
   recipeUnlocks:
-  - DutySecSandevistanAutoSurgeonRecipe
+  - DutySecKerenzikovSurgeryKitRecipe
   position: 9,4
   technologyPrerequisites:
-  - DutySecSandevistanResearchIII
+  - DutySecKerenzikovResearchIII
   requiredTech:
-  - DutySecSandevistanResearchIII
+  - DutySecKerenzikovResearchIII
 
 # ── Клинки "Богомол-Лайт" ──
 

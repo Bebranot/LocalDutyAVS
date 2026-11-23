@@ -107,11 +107,34 @@ public sealed partial class DutyCyberwareSystem : SharedDutyCyberwareSystem
             RefreshHost(host);
     }
 
+    /// <summary>
+    /// _Duty: увеличить постоянный бонус к лимиту нейронагрузки носителя (например, от имплантера-набора) и пересчитать HUD.
+    /// </summary>
+    public void AddLoadLimitBonus(EntityUid target, int bonus)
+    {
+        if (bonus == 0)
+            return;
+
+        var host = EnsureComp<DutyCyberHostComponent>(target);
+        host.ExtraLoadLimit += bonus;
+        Dirty(target, host);
+        RefreshHost(target);
+    }
+
     /// <summary>Пересобрать записи модулей, нагрузку и скин носителя. Зовётся сама на вживление/извлечение.</summary>
     public void RefreshHost(EntityUid host)
     {
         if (!TryComp<ImplantedComponent>(host, out var implanted))
         {
+            if (TryComp<DutyCyberHostComponent>(host, out var bonusOnlyHost) && bonusOnlyHost.ExtraLoadLimit != 0)
+            {
+                bonusOnlyHost.Modules.Clear();
+                bonusOnlyHost.Load = 0;
+                bonusOnlyHost.LoadLimit = DutyCyberHostComponent.BaseLoadLimit + bonusOnlyHost.ExtraLoadLimit;
+                Dirty(host, bonusOnlyHost);
+                return;
+            }
+
             RemCompDeferred<DutyCyberHostComponent>(host);
             return;
         }
@@ -147,6 +170,15 @@ public sealed partial class DutyCyberwareSystem : SharedDutyCyberwareSystem
 
         if (order.Count == 0)
         {
+            if (TryComp<DutyCyberHostComponent>(host, out var bonusOnlyHost) && bonusOnlyHost.ExtraLoadLimit != 0)
+            {
+                bonusOnlyHost.Modules.Clear();
+                bonusOnlyHost.Load = 0;
+                bonusOnlyHost.LoadLimit = DutyCyberHostComponent.BaseLoadLimit + bonusOnlyHost.ExtraLoadLimit;
+                Dirty(host, bonusOnlyHost);
+                return;
+            }
+
             RemCompDeferred<DutyCyberHostComponent>(host);
             return;
         }
@@ -162,8 +194,8 @@ public sealed partial class DutyCyberwareSystem : SharedDutyCyberwareSystem
         }
 
         hostComp.Load = totalLoad;
-        // _Duty: эффективный лимит = базовый (6) + сумма LoadLimitBonus всех имплантов.
-        hostComp.LoadLimit = DutyCyberHostComponent.BaseLoadLimit + totalLimitBonus;
+        // _Duty: эффективный лимит = базовый (6) + ExtraLoadLimit + сумма LoadLimitBonus всех имплантов.
+        hostComp.LoadLimit = DutyCyberHostComponent.BaseLoadLimit + hostComp.ExtraLoadLimit + totalLimitBonus;
         hostComp.Skin = PickSkin(factionLoad);
 
         if (!wasOverloaded && hostComp.Load > hostComp.LoadLimit && !_statusEffects.HasStatusEffect(host, ImmunoblockerEffectProto))
@@ -287,11 +319,18 @@ public sealed partial class DutyCyberwareSystem : SharedDutyCyberwareSystem
                 }
             }
 
+            var hasImmuno = _statusEffects.HasStatusEffect(uid, ImmunoblockerEffectProto);
+            if (host.ImmunoblockerActive != hasImmuno)
+            {
+                host.ImmunoblockerActive = hasImmuno;
+                Dirty(uid, host);
+            }
+
             if (host.Load <= host.LoadLimit || now < host.NextOverloadTick || _mobState.IsDead(uid))
                 continue;
 
             // _Duty: активный статус иммуноблокатора (5 минут) подавляет штрафы и спам нейроперегруза.
-            if (_statusEffects.HasStatusEffect(uid, ImmunoblockerEffectProto))
+            if (hasImmuno)
                 continue;
 
             // Чем сильнее перегруз, тем чаще и злее «киберпсихоз»: 1 сверху — раз в ~25 с, 4+ — раз в ~8 с.

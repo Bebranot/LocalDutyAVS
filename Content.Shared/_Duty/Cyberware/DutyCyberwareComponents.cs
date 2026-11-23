@@ -35,6 +35,19 @@ public enum DutyCyberModuleState : byte
 }
 
 /// <summary>
+/// _Duty: состояние Сандевистана для HUD киберсистемы.
+/// </summary>
+[Serializable, NetSerializable]
+public enum DutySandevistanHudStatus : byte
+{
+    Ready,
+    Active,
+    Cooldown,
+    Crash,
+    Overload
+}
+
+/// <summary>
 /// _Duty: общий маркер киберимпланта (вешается на сущность импланта рядом с SubdermalImplant).
 /// Даёт нейронагрузку, реакцию на ЭМИ и строку «МОДУЛЬ ::» в HUD киберсистемы.
 /// Собственная механика импланта живёт в его компоненте; здесь только то, что общее для всех.
@@ -100,6 +113,10 @@ public sealed partial class DutyCyberHostComponent : Component
     [DataField, AutoNetworkedField]
     public int LoadLimit = BaseLoadLimit;
 
+    // _Duty: постоянный бонус к лимиту нейронагрузки от имплантеров-наборов.
+    [DataField, AutoNetworkedField]
+    public int ExtraLoadLimit;
+
     /// <summary>Фракция железа, которого в теле больше всего, — она красит HUD.</summary>
     [AutoNetworkedField]
     public DutyCyberFaction Skin = DutyCyberFaction.NanoTrasen;
@@ -111,6 +128,25 @@ public sealed partial class DutyCyberHostComponent : Component
     /// <summary>Следующий «тик» эффектов перегруза (только сервер).</summary>
     [DataField, AutoPausedField]
     public TimeSpan NextOverloadTick;
+
+    // _Duty: сетевое состояние Сандевистана и иммуноблокаторов для HUD киберсистемы.
+    [AutoNetworkedField]
+    public bool SandevistanPresent;
+
+    [AutoNetworkedField]
+    public int SandevistanUses;
+
+    [AutoNetworkedField]
+    public int SandevistanSafeLimit = 3;
+
+    [AutoNetworkedField]
+    public DutySandevistanHudStatus SandevistanStatus = DutySandevistanHudStatus.Ready;
+
+    [AutoNetworkedField, AutoPausedField]
+    public TimeSpan? SandevistanCooldownEnd;
+
+    [AutoNetworkedField]
+    public bool ImmunoblockerActive;
 }
 
 /// <summary>

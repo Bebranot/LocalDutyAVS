@@ -98,7 +98,14 @@ public sealed partial class DutyCyberHudWidget : UIWidget
     private readonly string _keyModule;
     private readonly string _keyLoad;
     private readonly string _keyEmp;
+    private readonly string _keySandevistan;
+    private readonly string _keyImmuno;
     private readonly string _overloadText;
+    private readonly string _immunoActiveText;
+    private readonly string _sandeReadyText;
+    private readonly string _sandeActiveText;
+    private readonly string _sandeCrashText;
+    private readonly string _sandeOverloadText;
     private readonly string[] _headerTexts;
     private readonly string[] _stateTexts;
     private readonly string[] _allKeys;
@@ -120,6 +127,14 @@ public sealed partial class DutyCyberHudWidget : UIWidget
     private bool _overloaded;
     private bool _emped;
     private string _empTail = string.Empty;
+
+    private bool _sandePresent;
+    private int _sandeUses;
+    private int _sandeSafeLimit = 3;
+    private DutySandevistanHudStatus _sandeStatus;
+    private TimeSpan? _sandeCooldownEnd;
+    private TimeSpan _curTime;
+    private bool _immunoActive;
 
     private float _keyMetricsScale = -1f;
     private float _keyColumnPx;
@@ -147,8 +162,15 @@ public sealed partial class DutyCyberHudWidget : UIWidget
         _keyModule = Loc.GetString("duty-cyber-hud-module");
         _keyLoad = Loc.GetString("duty-cyber-hud-load");
         _keyEmp = Loc.GetString("duty-cyber-hud-emp");
+        _keySandevistan = Loc.GetString("duty-cyber-hud-sandevistan");
+        _keyImmuno = Loc.GetString("duty-cyber-hud-immuno");
         _overloadText = Loc.GetString("duty-cyber-hud-overload");
-        _allKeys = new[] { _keyModule, _keyLoad, _keyEmp };
+        _immunoActiveText = Loc.GetString("duty-cyber-hud-immuno-active");
+        _sandeReadyText = Loc.GetString("duty-cyber-hud-sande-ready");
+        _sandeActiveText = Loc.GetString("duty-cyber-hud-sande-active");
+        _sandeCrashText = Loc.GetString("duty-cyber-hud-sande-crash");
+        _sandeOverloadText = Loc.GetString("duty-cyber-hud-sande-overload");
+        _allKeys = new[] { _keyModule, _keyLoad, _keyEmp, _keySandevistan, _keyImmuno };
 
         // Порядок строго по DutyCyberFaction.
         _headerTexts = new[]
@@ -183,7 +205,7 @@ public sealed partial class DutyCyberHudWidget : UIWidget
     /// </summary>
     public void UpdateState(DutyCyberHostComponent? host, bool docked, TimeSpan curTime, float frameTime, DutyCyberFaction dockedFaction = DutyCyberFaction.NanoTrasen)
     {
-        if (host == null || host.Modules.Count == 0)
+        if (host == null || (host.Modules.Count == 0 && !host.SandevistanPresent))
         {
             Reset();
             return;
@@ -211,6 +233,14 @@ public sealed partial class DutyCyberHudWidget : UIWidget
         _load = host.Load;
         _loadLimit = Math.Max(1, host.LoadLimit);
         _overloaded = host.Load > host.LoadLimit;
+
+        _sandePresent = host.SandevistanPresent;
+        _sandeUses = host.SandevistanUses;
+        _sandeSafeLimit = Math.Max(1, host.SandevistanSafeLimit);
+        _sandeStatus = host.SandevistanStatus;
+        _sandeCooldownEnd = host.SandevistanCooldownEnd;
+        _curTime = curTime;
+        _immunoActive = host.ImmunoblockerActive;
 
         var empUntil = host.EmpUntil;
         var emped = empUntil is { } until && until > curTime;
@@ -248,6 +278,8 @@ public sealed partial class DutyCyberHudWidget : UIWidget
         for (var i = 0; i < host.Modules.Count; i++)
         {
             var entry = host.Modules[i];
+            if (host.SandevistanPresent && entry.NameLoc == "duty-cyber-module-sandevistan")
+                continue;
             var row = FindRow(entry.NameLoc);
             if (row == null)
             {
@@ -527,6 +559,54 @@ public sealed partial class DutyCyberHudWidget : UIWidget
             lineIdx++;
         }
 
+        // --- _Duty: статус Сандевистана (запуски/лимит + текущая фаза/КД) ---
+        if (_sandePresent)
+        {
+            var usesText = $"{_sandeUses}/{_sandeSafeLimit}";
+            var (statusText, statusColor) = GetSandevistanHudStatus();
+            var usesW = MeasureText(_valueFont, usesText, scale);
+            var sepW = MeasureText(_tailFont, TailSeparator, scale);
+            var tailX = valueX + usesW + TailGap * scale + sepW + TailGap * scale;
+            var tailW = MeasureText(_tailFont, statusText, scale);
+            var right = tailX + tailW;
+
+            if (handle != null)
+            {
+                var jitter = GetGlitchJitter(lineIdx, glitchStep, scale);
+                DrawPlate(handle, x0 + jitter, right + jitter, y, rowH, scale);
+                DrawKey(handle, _keySandevistan, x0 + jitter, y, ascent, scale, lineIdx, glitchStep, valueX);
+
+                var usesColor = _sandeUses > _sandeSafeLimit ? AlarmRed : _palette.Value;
+                DrawLensText(handle, _valueFont, new Vector2(valueX + jitter, y + ascent - _valueFont.GetAscent(scale)), usesText, scale, usesColor);
+
+                var tailY = y + ascent - _tailFont.GetAscent(scale);
+                DrawLensText(handle, _tailFont, new Vector2(valueX + usesW + TailGap * scale + jitter, tailY), TailSeparator, scale, _palette.Key);
+                DrawLensText(handle, _tailFont, new Vector2(tailX + jitter, tailY), statusText, scale, statusColor);
+            }
+
+            maxRight = MathF.Max(maxRight, right);
+            y += rowH + rowSpacing;
+            lineIdx++;
+        }
+
+        // --- _Duty: индикатор активных иммуноблокаторов ---
+        if (_immunoActive)
+        {
+            var right = valueX + MeasureText(_tailFont, _immunoActiveText, scale);
+            var immunoColor = Color.FromHex("#3DDC84");
+            if (handle != null)
+            {
+                var jitter = GetGlitchJitter(lineIdx, glitchStep, scale);
+                DrawPlate(handle, x0 + jitter, right + jitter, y, rowH, scale);
+                DrawKey(handle, _keyImmuno, x0 + jitter, y, ascent, scale, lineIdx, glitchStep, valueX);
+                DrawLensText(handle, _tailFont, new Vector2(valueX + jitter, y + ascent - _tailFont.GetAscent(scale)), _immunoActiveText, scale, immunoColor);
+            }
+
+            maxRight = MathF.Max(maxRight, right);
+            y += rowH + rowSpacing;
+            lineIdx++;
+        }
+
         // --- Модули ---
         foreach (var row in _rows)
         {
@@ -673,6 +753,19 @@ public sealed partial class DutyCyberHudWidget : UIWidget
     }
 
     #endregion
+
+    private (string Text, Color Color) GetSandevistanHudStatus()
+    {
+        return _sandeStatus switch
+        {
+            DutySandevistanHudStatus.Active => (_sandeActiveText, AlarmAmber),
+            DutySandevistanHudStatus.Crash => (_sandeCrashText, AlarmAmber),
+            DutySandevistanHudStatus.Cooldown when _sandeCooldownEnd is { } cd && cd > _curTime =>
+                (Loc.GetString("duty-cyber-hud-sande-cd", ("seconds", Math.Max(1, (int) Math.Ceiling((cd - _curTime).TotalSeconds)))), _palette.Muted),
+            DutySandevistanHudStatus.Overload => (_sandeOverloadText, AlarmRed),
+            _ => (_sandeReadyText, _palette.Header),
+        };
+    }
 
     private static string FormatTimer(TimeSpan span)
     {

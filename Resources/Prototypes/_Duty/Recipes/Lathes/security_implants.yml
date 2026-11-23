@@ -5,8 +5,8 @@
 # Resources/Prototypes/_Duty/Research/security_arsenal.yml, собирается на охранном техфабе (SecurityTechFab).
 
 - type: latheRecipe
-  id: DutySecSandevistanAutoSurgeonRecipe
-  result: DutySecSandevistanAutoSurgeon
+  id: DutySecKerenzikovSurgeryKitRecipe
+  result: DutyImplantKitKerenzikov
   completetime: 10
   materials:
     Steel: 2000

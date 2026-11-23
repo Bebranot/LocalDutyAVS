@@ -57,24 +57,102 @@ public sealed partial class SandevistanUserComponent : Component
     [DataField]
     public float StaminaDamage = 10f;
 
+    // _Duty: каноничный урон нейроперегрузки вместо Blunt: 10
     [DataField]
     public DamageSpecifier Damage = new()
     {
         DamageDict = new()
         {
-            { "Blunt", 10 },
+            { "Cellular", 2.5 },
+            { "Asphyxiation", 3 },
+            { "Heat", 1.5 },
         },
     };
 
+    // _Duty: разовый импульс урона при активации сверх безопасного лимита
     [DataField]
-    public float MovementSpeedModifier = 2.4f;
+    public DamageSpecifier OveruseBurstDamage = new()
+    {
+        DamageDict = new()
+        {
+            { "Cellular", 4 },
+            { "Asphyxiation", 4 },
+        },
+    };
+
+    // _Duty: баланс антагонистов — чуть мягче скорость и дилатация времени
+    [DataField]
+    public float MovementSpeedModifier = 2.1f;
 
     [DataField]
-    public float AttackSpeedModifier = 2.4f;
+    public float AttackSpeedModifier = 2.0f;
 
     // _Duty: коэффициент замедления времени на карте для окружающих сущностей
     [DataField]
-    public float TimeDilationScale = 0.2f;
+    public float TimeDilationScale = 0.25f;
+
+    // _Duty: защита от спама/мерцания — мгновенный скачок нагрузки и обязательный кулдаун
+    [DataField]
+    public float ActivationLoadSpike = 3.5f;
+
+    [DataField]
+    public TimeSpan CooldownBase = TimeSpan.FromSeconds(12);
+
+    [DataField]
+    public float CooldownDurationScale = 1.5f;
+
+    [DataField]
+    public TimeSpan CooldownMin = TimeSpan.FromSeconds(15);
+
+    [DataField]
+    public TimeSpan CooldownMax = TimeSpan.FromSeconds(45);
+
+    [DataField]
+    public TimeSpan SevereLockoutCooldown = TimeSpan.FromSeconds(50);
+
+    [ViewVariables(VVAccess.ReadWrite)]
+    public TimeSpan? CooldownUntil;
+
+    [ViewVariables(VVAccess.ReadOnly)]
+    public TimeSpan ActivatedAt = TimeSpan.Zero;
+
+    // _Duty: счётчик запусков (нейроизнос) и синергия с иммуноблокаторами
+    [ViewVariables(VVAccess.ReadWrite)]
+    public int UsesCount;
+
+    [ViewVariables(VVAccess.ReadOnly)]
+    public float UseDecayElapsed;
+
+    [DataField]
+    public float UseDecayIntervalSeconds = 180f;
+
+    [DataField]
+    public int BaseSafeLimit = 3;
+
+    [DataField]
+    public int ImmunoblockerSafeLimitBonus = 2;
+
+    [DataField]
+    public int OverloadSafeLimitPenalty = 1;
+
+    // _Duty: пост-эффект отката (Post-Use Crash) после выключения сверх лимита
+    [ViewVariables(VVAccess.ReadWrite)]
+    public TimeSpan? CrashUntil;
+
+    [ViewVariables(VVAccess.ReadOnly)]
+    public float CrashStaminaRate;
+
+    [DataField]
+    public TimeSpan CrashDuration = TimeSpan.FromSeconds(5);
+
+    [DataField]
+    public float CrashSpeedModifier = 0.7f;
+
+    [DataField]
+    public float CrashStaminaDrainPerSecond = 8f;
+
+    [DataField]
+    public TimeSpan SevereConvulsionDuration = TimeSpan.FromSeconds(3.5);
 
     // _Duty: идёт ли штатное затухание аудио (0.4s tail + fade), чтобы не обрывать exit-звук
     [ViewVariables(VVAccess.ReadOnly)]

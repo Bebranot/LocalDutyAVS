@@ -28,6 +28,14 @@ duty-cyber-hud-state-active = АКТИВЕН
 duty-cyber-hud-state-cooldown = ПЕРЕЗАРЯДКА
 duty-cyber-hud-state-offline = ОТКЛЮЧЁН
 duty-cyber-hud-state-burned = ВЫГОРЕЛ
+duty-cyber-hud-sandevistan = САНДЕВИСТАН
+duty-cyber-hud-immuno = ИММУНО
+duty-cyber-hud-immuno-active = АКТИВНЫ
+duty-cyber-hud-sande-ready = ГОТОВ
+duty-cyber-hud-sande-active = АКТИВЕН
+duty-cyber-hud-sande-cd = КД {$seconds}с
+duty-cyber-hud-sande-crash = ОТКАТ
+duty-cyber-hud-sande-overload = ПЕРЕГРУЗ!
 
 ## Админ-команда
 
