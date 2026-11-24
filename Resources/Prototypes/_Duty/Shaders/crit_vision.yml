@@ -1,0 +1,10 @@
+# _Duty: шейдеры системы зрения в критическом состоянии.
+- type: shader
+  id: DutyCritVision
+  kind: source
+  path: "/Textures/_Duty/Shaders/crit_vision.swsl"
+
+- type: shader
+  id: DutyCritSilhouette
+  kind: source
+  path: "/Textures/_Duty/Shaders/crit_silhouette.swsl"

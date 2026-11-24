@@ -1,0 +1,36 @@
+// _Duty: полноэкранный шейдер зрения в крите (обесцвечивание, затемнение и мировой радиус обзора).
+light_mode unshaded;
+
+uniform sampler2D SCREEN_TEXTURE;
+uniform highp float desaturate;
+uniform highp float darkness;
+uniform highp float contrast;
+uniform highp float maskStrength;
+uniform highp vec2 eyeCenterPx;
+uniform highp float innerRadiusPx;
+uniform highp float outerRadiusPx;
+
+void fragment() {
+    highp vec2 uv = FRAGCOORD.xy * SCREEN_PIXEL_SIZE.xy;
+    highp vec4 baseCol = zTextureSpec(SCREEN_TEXTURE, uv);
+
+    // Воспринимаемая яркость Rec. 709 для чёткого чёрно-белого зрения в крите.
+    highp float luma = dot(baseCol.rgb, vec3(0.2126, 0.7152, 0.0722));
+    highp vec3 col = mix(baseCol.rgb, vec3(luma), clamp(desaturate, 0.0, 1.0));
+
+    // Лёгкий контраст и заметное затемнение при сохранении читаемости ближнего окружения.
+    highp float c = max(contrast, 1.0);
+    col = clamp((col - 0.5) * c + 0.5, 0.0, 1.0);
+    col *= (1.0 - clamp(darkness, 0.0, 0.95));
+
+    // Контрольный радиальный срез в экранных пикселях (отсекает засветку NightVision/Thermal за радиусом).
+    if (maskStrength > 0.001) {
+        highp float dist = length(FRAGCOORD.xy - eyeCenterPx);
+        highp float range = max(outerRadiusPx - innerRadiusPx, 1.0);
+        highp float t = clamp((dist - innerRadiusPx) / range, 0.0, 1.0);
+        highp float fade = 1.0 - t * t * (3.0 - 2.0 * t);
+        col *= mix(1.0, fade, clamp(maskStrength, 0.0, 1.0));
+    }
+
+    COLOR = vec4(col, baseCol.a);
+}

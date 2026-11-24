@@ -23,7 +23,7 @@ public sealed partial class DamageOverlay : Overlay
 
     public override OverlaySpace Space => OverlaySpace.WorldSpace;
 
-    private readonly ShaderInstance _critShader;
+    // _Duty: _critShader отключён — белый крит-оверлей заменён на CritVision/NaturalDeath
     private readonly ShaderInstance _oxygenShader;
     private readonly ShaderInstance _bruteShader;
 
@@ -52,12 +52,19 @@ public sealed partial class DamageOverlay : Overlay
 
     public float DeadLevel = 1f;
 
+    // _Duty: плавный расчёт радиуса обзора в мировых тайлах для SoftCritical (5.5) и Critical (3.0)
+    private const float CriticalVisionRadiusTiles = 3.0f;
+    private const float SoftCriticalVisionRadiusTiles = 5.5f;
+    private const float InactiveVisionRadiusTiles = 12.0f;
+    private EntityUid? _lastEntity;
+    private float _critDarknessAlpha = 0f;
+    private float _critVisionRadiusTiles = InactiveVisionRadiusTiles;
+
     public DamageOverlay()
     {
         // TODO: Replace
         IoCManager.InjectDependencies(this);
         _oxygenShader = _prototypeManager.Index(CircleMaskShader).InstanceUnique();
-        _critShader = _prototypeManager.Index(CircleMaskShader).InstanceUnique();
         _bruteShader = _prototypeManager.Index(CircleMaskShader).InstanceUnique();
     }
 
@@ -66,11 +73,23 @@ public sealed partial class DamageOverlay : Overlay
         if (!_entityManager.TryGetComponent(_playerManager.LocalEntity, out EyeComponent? eyeComp))
             return;
 
-        if (args.Viewport.Eye != eyeComp.Eye)
+        if (eyeComp.Eye == null || args.Viewport.Eye != eyeComp.Eye) // _Duty: защита от null Eye
             return;
 
         if (!_entityManager.TryGetComponent(_playerManager.LocalEntity, out DamageOverlayComponent? damageComp))
             return;
+
+        // _Duty: сброс сглаженных уровней при смене привязанной сущности (респавн/призрак/вселение)
+        if (_lastEntity != _playerManager.LocalEntity)
+        {
+            _lastEntity = _playerManager.LocalEntity;
+            _oldPainLevel = 0f;
+            _oldOxygenLevel = 0f;
+            _oldCritLevel = 0f;
+            DeadLevel = 1f;
+            _critDarknessAlpha = 0f;
+            _critVisionRadiusTiles = InactiveVisionRadiusTiles;
+        }
 
         State = damageComp.CurrentState;
         CritLevel = damageComp.CritLevel;
@@ -183,40 +202,38 @@ public sealed partial class DamageOverlay : Overlay
             _oldPainLevel = PainLevel;
         }
 
-        level = State is MobState.SoftCritical or MobState.Critical ? 1f : _oldOxygenLevel; // ADT-Tweak
-
-        if (level > 0f)
+        // _Duty: радиус обзора в мировых тайлах (учёт зума и RenderScale) для SoftCritical (5.5) и Critical (3.0)
+        var inCritOrSoft = State is MobState.SoftCritical or MobState.Critical;
+        var targetCritAlpha = inCritOrSoft ? 1f : 0f;
+        var targetCritTiles = State switch
         {
-            float outerMaxLevel = 0.6f * distance;
-            float outerMinLevel = 0.06f * distance;
-            float innerMaxLevel = 0.02f * distance;
-            float innerMinLevel = 0.02f * distance;
+            MobState.Critical => CriticalVisionRadiusTiles,
+            MobState.SoftCritical => SoftCriticalVisionRadiusTiles,
+            _ => InactiveVisionRadiusTiles,
+        };
 
-            var outerRadius = outerMaxLevel - level * (outerMaxLevel - outerMinLevel);
-            var innerRadius = innerMaxLevel - level * (innerMaxLevel - innerMinLevel);
+        if (!MathHelper.CloseTo(_critDarknessAlpha, targetCritAlpha, 0.001f))
+            _critDarknessAlpha += GetDiff(targetCritAlpha - _critDarknessAlpha, lastFrameTime);
+        else
+            _critDarknessAlpha = targetCritAlpha;
 
-            float outerDarkness;
-            float critTime;
+        if (!MathHelper.CloseTo(_critVisionRadiusTiles, targetCritTiles, 0.01f))
+            _critVisionRadiusTiles += GetDiff(targetCritTiles - _critVisionRadiusTiles, lastFrameTime);
+        else
+            _critVisionRadiusTiles = targetCritTiles;
 
-            // If in crit then just fix it; also pulse it very occasionally so they can see more.
-            if (_oldCritLevel > 0f)
-            {
-                var adjustedTime = time * 2f;
-                critTime = MathF.Max(0, MathF.Sin(adjustedTime) + 2 * MathF.Sin(2 * adjustedTime / 4f) + MathF.Sin(adjustedTime / 4f) - 3f);
+        if (inCritOrSoft || _critDarknessAlpha > 0.001f)
+        {
+            var invMatrix = args.Viewport.GetWorldToLocalMatrix();
+            var eyePos = eyeComp.Eye.Position.Position;
+            var p0 = Vector2.Transform(eyePos, invMatrix);
+            var p1 = Vector2.Transform(eyePos + Vector2.UnitX, invMatrix);
+            var pixelsPerTile = MathF.Max(1f, (p1 - p0).Length());
 
-                if (critTime > 0f)
-                {
-                    outerDarkness = 1f - critTime / 1.5f;
-                }
-                else
-                {
-                    outerDarkness = 1f;
-                }
-            }
-            else
-            {
-                outerDarkness = MathF.Min(0.98f, 0.3f * MathF.Log(level) + 1f);
-            }
+            var outerRadius = _critVisionRadiusTiles * pixelsPerTile;
+            var innerRadius = outerRadius * 0.45f;
+            var oxyDarkness = _oldOxygenLevel > 0f ? MathF.Min(0.98f, 0.3f * MathF.Log(_oldOxygenLevel) + 1f) : 0f;
+            var outerDarkness = MathF.Max(_critDarknessAlpha, oxyDarkness);
 
             _oxygenShader.SetParameter("time", 0.0f);
             _oxygenShader.SetParameter("color", new Vector3(0f, 0f, 0f));
@@ -224,36 +241,40 @@ public sealed partial class DamageOverlay : Overlay
             _oxygenShader.SetParameter("innerCircleRadius", innerRadius);
             _oxygenShader.SetParameter("innerCircleMaxRadius", innerRadius);
             _oxygenShader.SetParameter("outerCircleRadius", outerRadius);
-            _oxygenShader.SetParameter("outerCircleMaxRadius", outerRadius + 0.2f * distance);
+            _oxygenShader.SetParameter("outerCircleMaxRadius", outerRadius);
             handle.UseShader(_oxygenShader);
             handle.DrawRect(viewport, Color.White);
         }
-
-        level = State != MobState.Dead ? _oldCritLevel : DeadLevel;
-
-        if (level > 0f)
+        else
         {
-            float outerMaxLevel = 2.0f * distance;
-            float outerMinLevel = 1.0f * distance;
-            float innerMaxLevel = 0.6f * distance;
-            float innerMinLevel = 0.02f * distance;
+            level = _oldOxygenLevel;
 
-            var outerRadius = outerMaxLevel - level * (outerMaxLevel - outerMinLevel);
-            var innerRadius = innerMaxLevel - level * (innerMaxLevel - innerMinLevel);
+            if (level > 0f)
+            {
+                float outerMaxLevel = 0.6f * distance;
+                float outerMinLevel = 0.06f * distance;
+                float innerMaxLevel = 0.02f * distance;
+                float innerMinLevel = 0.02f * distance;
 
-            var pulse = MathF.Max(0f, MathF.Sin(time));
+                var outerRadius = outerMaxLevel - level * (outerMaxLevel - outerMinLevel);
+                var innerRadius = innerMaxLevel - level * (innerMaxLevel - innerMinLevel);
+                var outerDarkness = MathF.Min(0.98f, 0.3f * MathF.Log(level) + 1f);
 
-            // If in crit then just fix it; also pulse it very occasionally so they can see more.
-            _critShader.SetParameter("time", pulse);
-            _critShader.SetParameter("color", new Vector3(1f, 1f, 1f));
-            _critShader.SetParameter("darknessAlphaOuter", 1.0f);
-            _critShader.SetParameter("innerCircleRadius", innerRadius);
-            _critShader.SetParameter("innerCircleMaxRadius", innerRadius + 0.005f * distance);
-            _critShader.SetParameter("outerCircleRadius", outerRadius);
-            _critShader.SetParameter("outerCircleMaxRadius", outerRadius + 0.2f * distance);
-            handle.UseShader(_critShader);
-            handle.DrawRect(viewport, Color.White);
+                _oxygenShader.SetParameter("time", 0.0f);
+                _oxygenShader.SetParameter("color", new Vector3(0f, 0f, 0f));
+                _oxygenShader.SetParameter("darknessAlphaOuter", outerDarkness);
+                _oxygenShader.SetParameter("innerCircleRadius", innerRadius);
+                _oxygenShader.SetParameter("innerCircleMaxRadius", innerRadius);
+                _oxygenShader.SetParameter("outerCircleRadius", outerRadius);
+                _oxygenShader.SetParameter("outerCircleMaxRadius", outerRadius + 0.2f * distance);
+                handle.UseShader(_oxygenShader);
+                handle.DrawRect(viewport, Color.White);
+            }
         }
+
+        // _Duty: белый оверлей _critShader отключён в SoftCritical/Critical/Dead, чтобы не засвечивать
+        // тёмное чёрно-белое крит-зрение и не давать белую вспышку перед NaturalDeathOverlay;
+        // сам расчёт DeadLevel выше сохранён для совместимости.
 
         handle.UseShader(null);
     }

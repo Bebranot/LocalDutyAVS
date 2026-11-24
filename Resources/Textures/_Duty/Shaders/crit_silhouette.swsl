@@ -1,0 +1,50 @@
+// _Duty: post-shader для силуэтов людей в крите в виде приятного ч/б «телевизионного» шума.
+// Использует только общую альфу собранного спрайта (TEXTURE.a) и никогда не читает RGB,
+// поэтому одежда, лицо и детали внешности полностью скрыты.
+
+uniform highp float opacity;
+uniform highp float grainSize;
+uniform highp vec2 eyeCenterPx;
+uniform highp float innerRadiusPx;
+uniform highp float outerRadiusPx;
+
+highp float hash13(highp vec3 p3) {
+    p3 = fract(p3 * vec3(0.1031, 0.1030, 0.0973));
+    p3 += dot(p3, p3.yzx + 33.33);
+    return fract((p3.x + p3.y) * p3.z);
+}
+
+void fragment() {
+    highp float selfAlpha = texture2D(TEXTURE, UV).a;
+    if (selfAlpha <= 0.01 || opacity <= 0.001) {
+        discard;
+    }
+
+    // Не даём силуэту вылезти за границу радиуса видимости крита.
+    highp float dist = length(FRAGCOORD.xy - eyeCenterPx);
+    if (dist >= outerRadiusPx) {
+        discard;
+    }
+
+    highp float radRange = max(outerRadiusPx - innerRadiusPx, 1.0);
+    highp float radT = clamp((dist - innerRadiusPx) / radRange, 0.0, 1.0);
+    highp float radFade = 1.0 - radT * radT * (3.0 - 2.0 * radT);
+
+    // Мягкий аналоговый ТВ-шум (~18 кадров/с) без резкого стробоскопического мерцания.
+    highp float cell = max(grainSize, 1.0);
+    highp vec2 gc = floor(FRAGCOORD.xy / cell);
+    highp float n1 = hash13(vec3(gc, floor(TIME * 18.0)));
+    highp float n2 = hash13(vec3(gc * 0.5 + vec2(17.0, 31.0), floor(TIME * 9.0)));
+    highp float snow = mix(n1, n2, 0.35);
+
+    // Лёгкие горизонтальные сканлайны для телевизионной фактуры.
+    highp float scan = 0.88 + 0.12 * sin(FRAGCOORD.y * 1.4 + TIME * 6.0);
+    highp float lum = mix(0.16, 0.86, snow) * scan;
+
+    highp float shapeMask = smoothstep(0.05, 0.28, selfAlpha);
+    highp float alpha = clamp(shapeMask * opacity * radFade, 0.0, 1.0);
+
+    // Post-shader в RobustToolbox смешивается как premultiplied alpha.
+    COLOR = vec4(vec3(lum) * alpha, alpha);
+    lightSample = vec3(1.0);
+}
