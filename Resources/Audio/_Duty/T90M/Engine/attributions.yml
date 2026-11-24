@@ -1,0 +1,109 @@
+- files: ["brake_squeak.ogg"]
+  license: "Custom"
+  copyright: "Gaijin Entertainment, War Thunder (extracted for private use)"
+  source: "War Thunder game files"
+
+- files: ["engine_broken_loop.ogg"]
+  license: "Custom"
+  copyright: "Gaijin Entertainment, War Thunder (extracted for private use)"
+  source: "War Thunder game files"
+
+- files: ["engine_diesel_hiss_loop.ogg"]
+  license: "Custom"
+  copyright: "Gaijin Entertainment, War Thunder (extracted for private use)"
+  source: "War Thunder game files"
+
+- files: ["engine_distant_loop.ogg"]
+  license: "Custom"
+  copyright: "Gaijin Entertainment, War Thunder (extracted for private use)"
+  source: "War Thunder game files"
+
+- files: ["engine_idle_loop.ogg"]
+  license: "Custom"
+  copyright: "Gaijin Entertainment, War Thunder (extracted for private use)"
+  source: "War Thunder game files"
+
+- files: ["engine_load_1.ogg"]
+  license: "Custom"
+  copyright: "Gaijin Entertainment, War Thunder (extracted for private use)"
+  source: "War Thunder game files"
+
+- files: ["engine_load_2.ogg"]
+  license: "Custom"
+  copyright: "Gaijin Entertainment, War Thunder (extracted for private use)"
+  source: "War Thunder game files"
+
+- files: ["engine_load_3.ogg"]
+  license: "Custom"
+  copyright: "Gaijin Entertainment, War Thunder (extracted for private use)"
+  source: "War Thunder game files"
+
+- files: ["engine_load_4.ogg"]
+  license: "Custom"
+  copyright: "Gaijin Entertainment, War Thunder (extracted for private use)"
+  source: "War Thunder game files"
+
+- files: ["engine_run_high_loop.ogg"]
+  license: "Custom"
+  copyright: "Gaijin Entertainment, War Thunder (extracted for private use)"
+  source: "War Thunder game files"
+
+- files: ["engine_run_mid_loop.ogg"]
+  license: "Custom"
+  copyright: "Gaijin Entertainment, War Thunder (extracted for private use)"
+  source: "War Thunder game files"
+
+- files: ["engine_start.ogg"]
+  license: "Custom"
+  copyright: "Gaijin Entertainment, War Thunder (extracted for private use)"
+  source: "War Thunder game files"
+
+- files: ["engine_stop.ogg"]
+  license: "Custom"
+  copyright: "Gaijin Entertainment, War Thunder (extracted for private use)"
+  source: "War Thunder game files"
+
+- files: ["gears_broken.ogg"]
+  license: "Custom"
+  copyright: "Gaijin Entertainment, War Thunder (extracted for private use)"
+  source: "War Thunder game files"
+
+- files: ["track_hit_end.ogg"]
+  license: "Custom"
+  copyright: "Gaijin Entertainment, War Thunder (extracted for private use)"
+  source: "War Thunder game files"
+
+- files: ["track_hit_middle.ogg"]
+  license: "Custom"
+  copyright: "Gaijin Entertainment, War Thunder (extracted for private use)"
+  source: "War Thunder game files"
+
+- files: ["track_hit_start.ogg"]
+  license: "Custom"
+  copyright: "Gaijin Entertainment, War Thunder (extracted for private use)"
+  source: "War Thunder game files"
+
+- files: ["tracks_fast_loop.ogg"]
+  license: "Custom"
+  copyright: "Gaijin Entertainment, War Thunder (extracted for private use)"
+  source: "War Thunder game files"
+
+- files: ["tracks_mid_loop.ogg"]
+  license: "Custom"
+  copyright: "Gaijin Entertainment, War Thunder (extracted for private use)"
+  source: "War Thunder game files"
+
+- files: ["tracks_screech_1.ogg"]
+  license: "Custom"
+  copyright: "Gaijin Entertainment, War Thunder (extracted for private use)"
+  source: "War Thunder game files"
+
+- files: ["tracks_screech_2.ogg"]
+  license: "Custom"
+  copyright: "Gaijin Entertainment, War Thunder (extracted for private use)"
+  source: "War Thunder game files"
+
+- files: ["tracks_slow_loop.ogg"]
+  license: "Custom"
+  copyright: "Gaijin Entertainment, War Thunder (extracted for private use)"
+  source: "War Thunder game files"

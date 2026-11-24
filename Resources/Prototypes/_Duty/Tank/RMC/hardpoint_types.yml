@@ -1,0 +1,103 @@
+# SPDX-FileCopyrightText: 2026 LocalDuty
+# SPDX-License-Identifier: MIT
+
+# Справочные «типы» хардпоинтов техники RMC. C# ищет их по id (HardpointVehicleFamilyTank,
+# HardpointTypeWheel, HardpointTypeSupport и т.д.), поэтому id оставлены RMC-шные.
+# Семейства Van/APC/Humvee и совместимость SPP* выкинуты: у нас единственная техника — танк.
+
+- type: entity
+  id: HardpointVehicleFamilyTank
+  categories: [ HideSpawnMenu ]
+  components:
+  - type: HardpointVehicleFamily
+
+- type: entity
+  id: HardpointTypeWheel
+  categories: [ HideSpawnMenu ]
+  components:
+  - type: HardpointType
+
+- type: entity
+  id: HardpointTypeTurret
+  categories: [ HideSpawnMenu ]
+  components:
+  - type: HardpointType
+
+- type: entity
+  id: HardpointTypeCannon
+  categories: [ HideSpawnMenu ]
+  components:
+  - type: HardpointType
+
+- type: entity
+  id: HardpointTypeLauncher
+  categories: [ HideSpawnMenu ]
+  components:
+  - type: HardpointType
+
+- type: entity
+  id: HardpointTypeArmor
+  categories: [ HideSpawnMenu ]
+  components:
+  - type: HardpointType
+
+- type: entity
+  id: HardpointTypeSupport
+  categories: [ HideSpawnMenu ]
+  components:
+  - type: HardpointType
+
+- type: entity
+  id: HardpointTypeSecondary
+  categories: [ HideSpawnMenu ]
+  components:
+  - type: HardpointType
+
+- type: entity
+  id: HardpointSlotTypeWheel
+  categories: [ HideSpawnMenu ]
+  components:
+  - type: HardpointSlotType
+    repairRate: 0.033
+
+- type: entity
+  id: HardpointSlotTypeTurret
+  categories: [ HideSpawnMenu ]
+  components:
+  - type: HardpointSlotType
+    repairRate: 0.016
+
+- type: entity
+  id: HardpointSlotTypeCannon
+  categories: [ HideSpawnMenu ]
+  components:
+  - type: HardpointSlotType
+    repairRate: 0.020
+
+- type: entity
+  id: HardpointSlotTypeLauncher
+  categories: [ HideSpawnMenu ]
+  components:
+  - type: HardpointSlotType
+    repairRate: 0.025
+
+- type: entity
+  id: HardpointSlotTypeSupportAttachment
+  categories: [ HideSpawnMenu ]
+  components:
+  - type: HardpointSlotType
+    repairRate: 0.025
+
+- type: entity
+  id: HardpointSlotTypeArmor
+  categories: [ HideSpawnMenu ]
+  components:
+  - type: HardpointSlotType
+    repairRate: 0.014
+
+- type: entity
+  id: HardpointSlotTypeTreads
+  categories: [ HideSpawnMenu ]
+  components:
+  - type: HardpointSlotType
+    repairRate: 0.033

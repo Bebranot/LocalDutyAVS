@@ -1,0 +1,236 @@
+# SPDX-FileCopyrightText: 2026 LocalDuty
+# SPDX-License-Identifier: MIT
+
+# Т-90М: корпус, башня, гусеницы, «Реликт». Основа — SPP-танк RMC.
+# Корпус собирается крафтом пустым (стартовых хардпоинтов нет); башню собирают отдельно и уже с оружием внутри.
+
+- type: damageModifierSet
+  id: DutyVehicleArmorRelikt
+  # Динамическая защита: сильнее всего гасит кумулятив и подкалиберные, хуже — фугас и удары
+  coefficients:
+    Blunt: 0.85
+    Slash: 0.6
+    Piercing: 0.5
+    Structural: 0.5
+    Heat: 0.7
+
+- type: entity
+  parent: VehicleTankBase
+  id: DutyVehicleT90M
+  name: T-90M tank
+  description: A homemade main battle tank.
+  components:
+  - type: Construction
+    graph: DutyT90HullGraph
+    node: hull
+  # Танк проламывает обычные стены/шлюзы/окна (с предохранителем от космоса)
+  - type: DutyTankSmasher
+  - type: Vehicle
+    transferDamage: false
+    requiresHands: false
+  # VehicleLock не ставим: танк самодельный, ездит кто угодно
+  - type: Sprite
+    sprite: _Duty/Tank/t90m.rsi
+  - type: ItemSlots
+    slots:
+      armor:
+        disableEject: true
+        whitelist:
+          components:
+          - HardpointItem
+      primary:
+        disableEject: true
+        whitelist:
+          components:
+          - HardpointItem
+      secondary:
+        disableEject: true
+        whitelist:
+          components:
+          - HardpointItem
+      wheel-1:
+        disableEject: true
+        whitelist:
+          components:
+          - VehicleWheelItem
+  - type: HardpointSlots
+    vehicleFamily: HardpointVehicleFamilyTank
+    slots:
+    - id: armor
+      hardpointType: HardpointTypeArmor
+      slotType: HardpointSlotTypeArmor
+      visualLayer: armor
+      insertDelay: 2.5
+      required: false
+    - id: primary
+      hardpointType: HardpointTypeTurret
+      slotType: HardpointSlotTypeTurret
+      visualLayer: primary
+      insertDelay: 3.0
+      required: false
+    - id: secondary
+      hardpointType: HardpointTypeSecondary
+      visualLayer: secondary
+      insertDelay: 2.5
+      required: false
+    - id: wheel-1
+      hardpointType: HardpointTypeWheel
+      slotType: HardpointSlotTypeTreads
+      insertDelay: 2.0
+  - type: VehicleEnter
+    # экипаж Т-90М — трое: мехвод, наводчик, командир
+    interiorPath: /Maps/_Duty/Tank/t90m_interior.yml
+    enterDoAfter: 1.0
+    exitDoAfter: 1.0
+    maxPassengers: 3
+    entryPoints:
+    - offset: 0,2
+      radius: 1
+      interiorCoords: 0.5,0.5
+
+- type: entity
+  parent: DutyHardpointT90Base
+  id: DutyHardpointT90Tracks
+  name: T-90M running gear
+  description: Heavy tank tracks and road wheels.
+  components:
+  - type: Construction
+    graph: DutyT90TracksGraph
+    node: tracks
+  - type: Sprite
+    sprite: _Duty/Tank/RMC/Structures/Vehicles/hardpoints/tank.rsi
+    state: treads
+  - type: Item
+    size: Ginormous
+  - type: HardpointItem
+    hardpointType: HardpointTypeWheel
+    vehicleFamily: HardpointVehicleFamilyTank
+    slotType: HardpointSlotTypeTreads
+    damageMultiplier: 0.15
+    repairRate: 0.0165
+  - type: HardpointIntegrity
+    maxIntegrity: 400
+  - type: VehicleWheelItem
+
+- type: entity
+  parent: DutyHardpointT90Base
+  id: DutyHardpointT90Relikt
+  name: T-90M Relikt ERA
+  description: Explosive reactive armor blocks for the hull and turret.
+  components:
+  - type: Construction
+    graph: DutyT90ReliktGraph
+    node: relikt
+  - type: Sprite
+    state: reactive_armor
+  - type: HardpointItem
+    hardpointType: HardpointTypeArmor
+    vehicleFamily: HardpointVehicleFamilyTank
+    slotType: HardpointSlotTypeArmor
+    damageMultiplier: 0.5
+    repairRate: 0.007
+  - type: HardpointIntegrity
+    maxIntegrity: 1000
+  - type: VehicleArmorHardpoint
+    modifierSets:
+    - DutyVehicleArmorRelikt
+  - type: HardpointVisual
+    vehicleState: reactive_armor_0
+    damagedVehicleState: reactive_armor_1
+
+- type: entity
+  parent: DutyHardpointT90Base
+  id: DutyHardpointT90Turret
+  name: T-90M turret
+  description: A cast turret with a 125 mm gun and a coaxial machine gun.
+  components:
+  - type: Construction
+    graph: DutyT90TurretGraph
+    node: turret
+  - type: Sprite
+    sprite: _Duty/Tank/t90m.rsi
+    state: tank_turret_0
+  - type: Item
+    size: Ginormous
+  - type: HardpointItem
+    hardpointType: HardpointTypeTurret
+    vehicleFamily: HardpointVehicleFamilyTank
+    slotType: HardpointSlotTypeTurret
+    damageMultiplier: 0.05
+    repairRate: 0.01
+  - type: HardpointIntegrity
+    maxIntegrity: 450
+  - type: VehicleTurret
+    rotateToCursor: true
+    stabilizedRotation: true
+    rotationSpeed: 45
+    showOverlay: true
+    overlayRsi: _Duty/Tank/t90m.rsi
+    overlayState: tank_turret_0
+    overlayDamagedState: tank_turret_1
+    # погон на спрайтах корпуса не в центре кадра; смещение зависит от курса корпуса, не башни
+    useDirectionalOffsets: true
+    pixelOffsetNorth: "0,4"
+    pixelOffsetEast: "6,10"
+    pixelOffsetSouth: "0,1"
+    pixelOffsetWest: "-6,10"
+  - type: ItemSlots
+    slots:
+      turret-cannon:
+        startingItem: DutyHardpointT90CannonAPFSDS
+        disableEject: true
+        whitelist:
+          components:
+          - HardpointItem
+      turret-cannon-he:
+        startingItem: DutyHardpointT90CannonHEFrag
+        disableEject: true
+        whitelist:
+          components:
+          - HardpointItem
+      turret-cannon-heat:
+        startingItem: DutyHardpointT90CannonHEAT
+        disableEject: true
+        whitelist:
+          components:
+          - HardpointItem
+      turret-launcher:
+        startingItem: DutyHardpointT90PKT
+        disableEject: true
+        whitelist:
+          components:
+          - HardpointItem
+  - type: HardpointSlots
+    vehicleFamily: HardpointVehicleFamilyTank
+    slots:
+    # три «ствола» — это три типа снаряда 125 мм: C# держит один тип патрона на хардпоинт
+    - id: turret-cannon
+      hardpointType: HardpointTypeCannon
+      slotType: HardpointSlotTypeCannon
+      required: false
+      insertDelay: 2.0
+    - id: turret-cannon-he
+      hardpointType: HardpointTypeCannon
+      slotType: HardpointSlotTypeCannon
+      required: false
+      insertDelay: 2.0
+    - id: turret-cannon-heat
+      hardpointType: HardpointTypeCannon
+      slotType: HardpointSlotTypeCannon
+      required: false
+      insertDelay: 2.0
+    - id: turret-launcher
+      hardpointType: HardpointTypeLauncher
+      slotType: HardpointSlotTypeLauncher
+      required: false
+      insertDelay: 2.0
+
+# Автомат заряжания внутри: сюда подносят снаряды 125 мм и ленточные ящики
+- type: entity
+  parent: VehicleSPPTankAmmoLoader
+  id: DutyT90AutoLoader
+  name: T-90M autoloader
+  description: A carousel autoloader holding 22 rounds of 125 mm ammunition.
+  components:
+  - type: VehicleAmmoLoader
+    loadDelay: 1.5

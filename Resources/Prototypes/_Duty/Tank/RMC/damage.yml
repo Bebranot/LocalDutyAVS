@@ -1,0 +1,45 @@
+# SPDX-FileCopyrightText: 2026 LocalDuty
+# SPDX-License-Identifier: MIT
+
+# Урон по технике RMC. Контейнер StructuralMarine — как в RMC: брут плюс Heat/Shock/Structural.
+
+- type: damageContainer
+  id: StructuralMarine
+  supportedGroups:
+  - Brute
+  supportedTypes:
+  - Heat
+  - Shock
+  - Structural
+
+- type: damageModifierSet
+  id: StructuralMarine
+
+# Набор корпуса танка: C# подставляет его по id (VehicleFrameTank).
+- type: damageModifierSet
+  id: VehicleFrameTank
+  coefficients:
+    Blunt: 0.8
+    Slash: 0.7
+    Piercing: 0.4
+    Structural: 0.8
+    Heat: 1.5
+
+# Наборы брони хардпоинтов (кислотный/сапёрный ксено-вариант RMC нам ни к чему, оставлены по числам RMC).
+- type: damageModifierSet
+  id: VehicleArmorBallistic
+  coefficients:
+    Blunt: 0.9
+    Slash: 0.603
+    Piercing: 0.603
+    Structural: 0.9
+    Heat: 0.9
+
+- type: damageModifierSet
+  id: VehicleArmorConcussive
+  coefficients:
+    Blunt: 0.603
+    Slash: 0.9
+    Piercing: 0.9
+    Structural: 0.9
+    Heat: 0.9

@@ -1,0 +1,38 @@
+# SPDX-FileCopyrightText: 2026 LocalDuty
+# SPDX-License-Identifier: MIT
+
+# Действия техники. ActionVehicleDeploy и ActionVehicleLock выкинуты: развёртывания у нас нет,
+# а замка на самодельном танке нет (ездит кто угодно).
+# В RMC иконка задаётся полями icon/iconOn у Action; у нас действия — сущности со Sprite (parent: BaseAction).
+
+- type: entity
+  parent: BaseAction
+  id: ActionVehicleToggleView
+  name: Toggle View
+  description: Switch between the interior and exterior view.
+  components:
+  - type: Action
+    itemIconStyle: BigAction
+  - type: Sprite
+    layers:
+    - texture: Interface/Actions/eyeopen.png
+      map: ["enum.ActionVisuals.Icon"]
+    - texture: Interface/Actions/eyeclose.png
+      map: ["enum.ActionVisuals.IconToggled"]
+      visible: false
+  - type: InstantAction
+    event: !type:VehicleToggleViewActionEvent
+
+- type: entity
+  parent: BaseAction
+  id: ActionVehicleSelectHardpoint
+  name: Select Hardpoint
+  description: Select this hardpoint for firing.
+  components:
+  - type: Action
+    autoPopulate: false
+    temporary: false
+    raiseOnUser: true
+    itemIconStyle: BigItem
+  - type: InstantAction
+    event: !type:VehicleHardpointSelectActionEvent

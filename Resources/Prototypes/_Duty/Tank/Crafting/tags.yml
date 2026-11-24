@@ -1,0 +1,52 @@
+# SPDX-FileCopyrightText: 2026 LocalDuty
+# SPDX-License-Identifier: MIT
+
+# Теги узлов самодельного Т-90М: по ним шаги графов крафта отличают деталь от лома.
+
+- type: Tag
+  id: DutyT90CylinderBlock
+
+- type: Tag
+  id: DutyT90Turbocharger
+
+- type: Tag
+  id: DutyT90FuelPump
+
+- type: Tag
+  id: DutyT90Gearbox
+
+- type: Tag
+  id: DutyT90Engine
+
+- type: Tag
+  id: DutyT90BarrelBlank
+
+- type: Tag
+  id: DutyT90Breech
+
+- type: Tag
+  id: DutyT90Autoloader
+
+- type: Tag
+  id: DutyT90Kalina
+
+- type: Tag
+  id: DutyT90PKTM
+
+- type: Tag
+  id: DutyT90Kord
+
+- type: Tag
+  id: DutyT90DUMV
+
+- type: Tag
+  id: DutyT90ShellAPFSDS
+
+- type: Tag
+  id: DutyT90ShellHEFrag
+
+- type: Tag
+  id: DutyT90ShellHEAT
+
+- type: Tag
+  id: DutyT90PropellantCharge

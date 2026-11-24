@@ -1,0 +1,248 @@
+# SPDX-FileCopyrightText: 2026 LocalDuty
+# SPDX-License-Identifier: MIT
+
+# Оружие Т-90М (хардпоинты башни и дистанционная станция Корд).
+# Основа — пушка/спарка SPP-танка RMC. Выкинуто (компонентов у нас нет): GunFireArc, GunMuzzleOffset,
+# GunUseGunOrigin, GunIgnoreContainerOwnerCollision (точку вылета и цель теперь даёт DutyGunAimEvent
+# в башне), GunIFF/UserIFF, RMCWeaponAccuracy, PowerLoaderGrabbable.
+
+- type: soundCollection
+  id: DutyT90CannonFire
+  files:
+  - /Audio/_Duty/T90M/Weapons/cannon_fire_close_1.ogg
+  - /Audio/_Duty/T90M/Weapons/cannon_fire_close_2.ogg
+  - /Audio/_Duty/T90M/Weapons/cannon_fire_close_3.ogg
+
+- type: soundCollection
+  id: DutyT90PKTFire
+  files:
+  - /Audio/_Duty/T90M/Weapons/pkt_shot_1.ogg
+  - /Audio/_Duty/T90M/Weapons/pkt_shot_2.ogg
+
+- type: soundCollection
+  id: DutyT90KordFire
+  files:
+  - /Audio/_Duty/T90M/Weapons/kord_shot_1.ogg
+  - /Audio/_Duty/T90M/Weapons/kord_shot_2.ogg
+
+- type: entity
+  abstract: true
+  parent: BaseItem
+  id: DutyHardpointT90Base
+  components:
+  - type: Sprite
+    sprite: _Duty/Tank/RMC/Structures/Vehicles/hardpoints/spptank.rsi
+  - type: Item
+    size: Huge
+  - type: MultiHandedItem
+
+# Общая часть орудий башни (пушка 2А46М-5 в трёх исполнениях по типу снаряда)
+- type: entity
+  abstract: true
+  parent: DutyHardpointT90Base
+  id: DutyHardpointT90CannonBase
+  name: 2A46M-5 125 mm gun
+  description: A 125 mm smoothbore tank gun fed from the autoloader.
+  components:
+  - type: HardpointItem
+    hardpointType: HardpointTypeCannon
+    vehicleFamily: HardpointVehicleFamilyTank
+    slotType: HardpointSlotTypeCannon
+    damageMultiplier: 0.15
+    repairRate: 0.01
+  - type: HardpointIntegrity
+    maxIntegrity: 500
+  - type: VehicleTurretAttachment
+  - type: ShootAtFixedPoint
+  - type: Gun
+    fireRate: 0.2
+    projectileSpeed: 60
+    selectedMode: SemiAuto
+    availableModes:
+    - SemiAuto
+    soundGunshot:
+      collection: DutyT90CannonFire
+    soundEmpty:
+      path: /Audio/_Duty/T90M/Turret/gun_jammed.ogg
+    cameraRecoilScalar: 0
+  - type: BallisticAmmoProvider
+    cycleable: false
+    soundRack:
+      path: /Audio/_Duty/T90M/Turret/autoloader_ram.ogg
+    soundInsert:
+      path: /Audio/_Duty/T90M/Turret/autoloader_carousel.ogg
+
+# Основная: бронебойный, 8 выстрелов в карусели автомата заряжания
+- type: entity
+  parent: DutyHardpointT90CannonBase
+  id: DutyHardpointT90CannonAPFSDS
+  name: 2A46M-5 gun (APFSDS)
+  components:
+  - type: Sprite
+    state: railgun
+  - type: VehicleTurret
+    fireWhileRotatingGraceDegrees: 180
+    useBarrelDirectionForShots: true
+    offsetRotatesWithTurret: true
+    # ствол нарисован на самой башне, смещение — срез дула (вперёд = -Y)
+    pixelOffset: "0,-52"
+  - type: BallisticAmmoProvider
+    proto: DutyTankRound125APFSDS
+    capacity: 8
+  - type: VehicleHardpointAmmo
+    startEmpty: true
+    magazineSize: 8
+    maxStoredMagazines: 1
+  - type: RefillableByBulletBox
+    bulletType: DutyCartridge125APFSDS
+
+# Осколочно-фугасный, 8 выстрелов (тот же ствол, другой тип снаряда в карусели)
+- type: entity
+  parent: DutyHardpointT90CannonBase
+  id: DutyHardpointT90CannonHEFrag
+  name: 2A46M-5 gun (HE-Frag)
+  components:
+  - type: Sprite
+    state: railgun
+  - type: VehicleTurret
+    fireWhileRotatingGraceDegrees: 180
+    useBarrelDirectionForShots: true
+    offsetRotatesWithTurret: true
+    # ствол нарисован на самой башне, смещение — срез дула (вперёд = -Y)
+    pixelOffset: "0,-52"
+  - type: BallisticAmmoProvider
+    proto: DutyTankRound125HEFrag
+    capacity: 8
+  - type: VehicleHardpointAmmo
+    startEmpty: true
+    magazineSize: 8
+    maxStoredMagazines: 1
+  - type: RefillableByBulletBox
+    bulletType: DutyCartridge125HEFrag
+
+# Кумулятивный, 6 выстрелов (8+8+6 = 22 в автомате заряжания)
+- type: entity
+  parent: DutyHardpointT90CannonBase
+  id: DutyHardpointT90CannonHEAT
+  name: 2A46M-5 gun (HEAT)
+  components:
+  - type: Sprite
+    state: railgun
+  - type: VehicleTurret
+    fireWhileRotatingGraceDegrees: 180
+    useBarrelDirectionForShots: true
+    offsetRotatesWithTurret: true
+    # ствол нарисован на самой башне, смещение — срез дула (вперёд = -Y)
+    pixelOffset: "0,-52"
+  - type: BallisticAmmoProvider
+    proto: DutyTankRound125HEAT
+    capacity: 6
+  - type: VehicleHardpointAmmo
+    startEmpty: true
+    magazineSize: 6
+    maxStoredMagazines: 1
+  - type: RefillableByBulletBox
+    bulletType: DutyCartridge125HEAT
+
+# Спаренный ПКТМ 7.62: патрон — наш ванильный .30 (CartridgeLightRifle), лента 250
+- type: entity
+  parent: DutyHardpointT90Base
+  id: DutyHardpointT90PKT
+  name: PKTM coaxial machine gun
+  description: A 7.62 mm machine gun coaxial with the main gun.
+  components:
+  - type: Sprite
+    state: t60p3m
+  - type: HardpointItem
+    hardpointType: HardpointTypeLauncher
+    vehicleFamily: HardpointVehicleFamilyTank
+    slotType: HardpointSlotTypeLauncher
+    damageMultiplier: 0.15
+    repairRate: 0.01
+  - type: HardpointIntegrity
+    maxIntegrity: 250
+  - type: VehicleTurretAttachment
+  - type: VehicleTurret
+    fireWhileRotatingGraceDegrees: 180
+    useBarrelDirectionForShots: true
+    offsetRotatesWithTurret: true
+    # спарен с пушкой и спрятан в маске: своего оверлея нет
+    pixelOffset: "4,-24"
+  - type: Gun
+    fireRate: 10
+    projectileSpeed: 45
+    selectedMode: FullAuto
+    availableModes:
+    - FullAuto
+    soundGunshot:
+      collection: DutyT90PKTFire
+    cameraRecoilScalar: 0
+  - type: BallisticAmmoProvider
+    cycleable: false
+    proto: CartridgeLightRifle
+    capacity: 250
+  - type: VehicleHardpointAmmo
+    startEmpty: true
+    magazineSize: 250
+    maxStoredMagazines: 1
+  - type: RefillableByBulletBox
+    bulletType: DutyMagazineBelt762Tank
+
+# Дистанционный Корд 12.7 на крыше, им управляет командир
+- type: entity
+  parent: DutyHardpointT90Base
+  id: DutyHardpointT90Kord
+  name: Kord remote weapon station
+  description: A remotely operated 12.7 mm Kord heavy machine gun on the turret roof.
+  components:
+  - type: Construction
+    graph: DutyT90KordGraph
+    node: kord
+  - type: Sprite
+    state: t60p3m
+  - type: HardpointItem
+    hardpointType: HardpointTypeSecondary
+    vehicleFamily: HardpointVehicleFamilyTank
+    damageMultiplier: 0.15
+    repairRate: 0.01
+  - type: HardpointIntegrity
+    maxIntegrity: 200
+  - type: VehicleTurret
+    # дистанционная станция крутится сама за курсором, независимо от башни
+    rotateToCursor: true
+    stabilizedRotation: true
+    rotationSpeed: 90
+    fireWhileRotatingGraceDegrees: 180
+    useBarrelDirectionForShots: true
+    offsetRotatesWithTurret: false
+    useDirectionalOffsets: true
+    pixelOffsetNorth: "0,-10"
+    pixelOffsetEast: "-10,0"
+    pixelOffsetSouth: "0,10"
+    pixelOffsetWest: "10,0"
+    showOverlay: true
+    overlayRsi: _Duty/Tank/t90m.rsi
+    overlayState: t60p3m_0
+    overlayDamagedState: t60p3m_1
+  - type: HardpointVisual
+    vehicleState: t60p3m_0
+    damagedVehicleState: t60p3m_1
+  - type: Gun
+    fireRate: 8
+    projectileSpeed: 50
+    selectedMode: FullAuto
+    availableModes:
+    - FullAuto
+    soundGunshot:
+      collection: DutyT90KordFire
+    cameraRecoilScalar: 0
+  - type: BallisticAmmoProvider
+    cycleable: false
+    proto: DutyTankRound127
+    capacity: 150
+  - type: VehicleHardpointAmmo
+    startEmpty: true
+    magazineSize: 150
+    maxStoredMagazines: 1
+  - type: RefillableByBulletBox
+    bulletType: DutyMagazineBelt127Tank

@@ -1,0 +1,429 @@
+# SPDX-FileCopyrightText: 2026 LocalDuty
+# SPDX-License-Identifier: MIT
+
+# Графы крафта самодельного Т-90М. doAfter в секундах; сумма по графам — в отчёте.
+# SetAnchor перед последним узлом: стапель стоит на анкере, и без этого готовая деталь (и сам танк) осталась бы прикрученной.
+
+- type: constructionGraph
+  id: DutyTankWorkshopGraph
+  start: start
+  graph:
+  - node: start
+    edges:
+    - to: frame
+      steps:
+      - material: Steel
+        amount: 10
+        doAfter: 4
+      - material: MetalRod
+        amount: 5
+        doAfter: 3
+  - node: frame
+    entity: DutyTankWorkshopFrame
+    edges:
+    - to: workshop
+      steps:
+      - tool: Welding
+        doAfter: 6
+      - tag: ADTMicroManipulatorStockPart
+        name: duty-tank-step-motor
+        icon:
+          sprite: Objects/Misc/stock_parts.rsi
+          state: micro_mani
+        doAfter: 3
+      - material: Cable
+        amount: 5
+        doAfter: 3
+      - tool: Screwing
+        doAfter: 4
+  - node: workshop
+    entity: DutyTankWorkshop
+
+- type: constructionGraph
+  id: DutyT90EngineGraph
+  start: start
+  graph:
+  - node: start
+    edges:
+    - to: stand
+      steps:
+      - material: Steel
+        amount: 10
+        doAfter: 4
+      - material: MetalRod
+        amount: 4
+        doAfter: 2
+  - node: stand
+    entity: DutyT90EngineStand
+    edges:
+    - to: engine
+      completed:
+      - !type:SetAnchor
+        value: false
+      steps:
+      - tag: DutyT90CylinderBlock
+        name: duty-tank-step-cylinder-block
+        icon:
+          sprite: Objects/Materials/Scrap/generic.rsi
+          state: junk-firelock-1
+        doAfter: 6
+      - tag: DutyT90Turbocharger
+        name: duty-tank-step-turbocharger
+        icon:
+          sprite: Objects/Materials/Scrap/generic.rsi
+          state: junk-fireextinguisher
+        doAfter: 4
+      - tag: DutyT90FuelPump
+        name: duty-tank-step-fuel-pump
+        icon:
+          sprite: Objects/Materials/Scrap/generic.rsi
+          state: junk-camera
+        doAfter: 4
+      - tag: DutyT90Gearbox
+        name: duty-tank-step-gearbox
+        icon:
+          sprite: Objects/Materials/Scrap/generic.rsi
+          state: junk-firelock-2
+        doAfter: 6
+      - tool: Anchoring
+        doAfter: 8
+  - node: engine
+    entity: DutyT90MEngine
+
+- type: constructionGraph
+  id: DutyT90HullGraph
+  start: start
+  graph:
+  - node: start
+    edges:
+    - to: frame
+      steps:
+      - material: Steel
+        amount: 10
+        doAfter: 4
+      - material: DutyArmorSteel
+        amount: 4
+        doAfter: 4
+  - node: frame
+    entity: DutyT90HullFrame
+    edges:
+    - to: bottom
+      steps:
+      - material: DutyArmorSteel
+        amount: 4
+        doAfter: 4
+      - tool: Welding
+        doAfter: 6
+  - node: bottom
+    entity: DutyT90HullBottom
+    edges:
+    - to: sides
+      steps:
+      - material: DutyArmorSteel
+        amount: 6
+        doAfter: 5
+      - tool: Welding
+        doAfter: 8
+  - node: sides
+    entity: DutyT90HullSides
+    edges:
+    - to: glacis
+      steps:
+      - material: DutyArmorSteel
+        amount: 4
+        doAfter: 4
+      - tool: Welding
+        doAfter: 6
+  - node: glacis
+    entity: DutyT90HullGlacis
+    edges:
+    - to: roof
+      steps:
+      - material: DutyArmorSteel
+        amount: 4
+        doAfter: 4
+      - tool: Welding
+        doAfter: 6
+  - node: roof
+    entity: DutyT90HullRoof
+    edges:
+    - to: hull
+      completed:
+      - !type:SetAnchor
+        value: false
+      steps:
+      - tag: DutyT90Engine
+        name: duty-tank-step-engine
+        icon:
+          sprite: Objects/Materials/Scrap/generic.rsi
+          state: junk-canister-2
+        doAfter: 10
+      - tool: Anchoring
+        doAfter: 8
+      - material: Cable
+        amount: 10
+        doAfter: 4
+      - tool: Screwing
+        doAfter: 5
+      - tool: Welding
+        doAfter: 4
+  - node: hull
+    entity: DutyVehicleT90M
+
+- type: constructionGraph
+  id: DutyT90TurretGraph
+  start: start
+  graph:
+  - node: start
+    edges:
+    - to: box
+      steps:
+      - material: DutyArmorSteel
+        amount: 6
+        doAfter: 5
+      - material: Steel
+        amount: 4
+        doAfter: 3
+  - node: box
+    entity: DutyT90TurretBox
+    edges:
+    - to: gun
+      steps:
+      - tag: DutyT90BarrelBlank
+        name: duty-tank-step-barrel
+        icon:
+          sprite: Objects/Materials/Scrap/generic.rsi
+          state: tube
+        doAfter: 8
+      - tag: DutyT90Breech
+        name: duty-tank-step-breech
+        icon:
+          sprite: Objects/Materials/Scrap/generic.rsi
+          state: junk-canister-1
+        doAfter: 6
+      - tool: Welding
+        doAfter: 8
+      - tool: Anchoring
+        doAfter: 6
+  - node: gun
+    entity: DutyT90TurretGun
+    edges:
+    - to: sights
+      steps:
+      - tag: DutyT90Autoloader
+        name: duty-tank-step-autoloader
+        icon:
+          sprite: Objects/Materials/Scrap/generic.rsi
+          state: junk-jetpack
+        doAfter: 6
+      - tag: DutyT90Kalina
+        name: duty-tank-step-kalina
+        icon:
+          sprite: Objects/Materials/Scrap/generic.rsi
+          state: junk-intercom-1
+        doAfter: 6
+      - material: Cable
+        amount: 5
+        doAfter: 2
+      - tool: Screwing
+        doAfter: 4
+  - node: sights
+    entity: DutyT90TurretSights
+    edges:
+    - to: turret
+      completed:
+      - !type:SetAnchor
+        value: false
+      steps:
+      - tag: DutyT90PKTM
+        name: duty-tank-step-pktm
+        icon:
+          sprite: Objects/Materials/Scrap/generic.rsi
+          state: metal-2
+        doAfter: 5
+      - tool: Welding
+        doAfter: 6
+      - tool: Screwing
+        doAfter: 4
+  - node: turret
+    entity: DutyHardpointT90Turret
+
+- type: constructionGraph
+  id: DutyT90TracksGraph
+  start: start
+  graph:
+  - node: start
+    edges:
+    - to: bogies
+      steps:
+      - material: Steel
+        amount: 8
+        doAfter: 3
+      - material: MetalRod
+        amount: 6
+        doAfter: 2
+  - node: bogies
+    entity: DutyT90TracksBogies
+    edges:
+    - to: side
+      steps:
+      - material: DutyT90RoadWheel
+        amount: 6
+        doAfter: 6
+      - material: DutyT90TrackKit
+        amount: 2
+        doAfter: 8
+      - tool: Anchoring
+        doAfter: 5
+  - node: side
+    entity: DutyT90TracksLeft
+    edges:
+    - to: tracks
+      completed:
+      - !type:SetAnchor
+        value: false
+      steps:
+      - material: DutyT90RoadWheel
+        amount: 6
+        doAfter: 6
+      - material: DutyT90TrackKit
+        amount: 2
+        doAfter: 8
+      - tool: Anchoring
+        doAfter: 5
+      - tool: Welding
+        doAfter: 5
+  - node: tracks
+    entity: DutyHardpointT90Tracks
+
+- type: constructionGraph
+  id: DutyT90ReliktGraph
+  start: start
+  graph:
+  - node: start
+    edges:
+    - to: rack
+      steps:
+      - material: Steel
+        amount: 4
+        doAfter: 3
+      - material: Plasteel
+        amount: 2
+        doAfter: 2
+  - node: rack
+    entity: DutyT90ReliktRack
+    edges:
+    - to: relikt
+      completed:
+      - !type:SetAnchor
+        value: false
+      steps:
+      - material: DutyT90ReliktBlock
+        amount: 8
+        doAfter: 8
+      - tool: Screwing
+        doAfter: 4
+      - material: Cable
+        amount: 3
+        doAfter: 2
+  - node: relikt
+    entity: DutyHardpointT90Relikt
+
+- type: constructionGraph
+  id: DutyT90KordGraph
+  start: start
+  graph:
+  - node: start
+    edges:
+    - to: mount
+      steps:
+      - material: Steel
+        amount: 4
+        doAfter: 3
+      - material: Plasteel
+        amount: 2
+        doAfter: 2
+  - node: mount
+    entity: DutyT90KordMount
+    edges:
+    - to: kord
+      completed:
+      - !type:SetAnchor
+        value: false
+      steps:
+      - tag: DutyT90Kord
+        name: duty-tank-step-kord
+        icon:
+          sprite: Objects/Materials/Scrap/generic.rsi
+          state: metal-1
+        doAfter: 5
+      - tag: DutyT90DUMV
+        name: duty-tank-step-dumv
+        icon:
+          sprite: Objects/Materials/Scrap/generic.rsi
+          state: junk-camera
+        doAfter: 5
+      - tool: Welding
+        doAfter: 4
+      - material: Cable
+        amount: 3
+        doAfter: 2
+      - tool: Screwing
+        doAfter: 3
+  - node: kord
+    entity: DutyHardpointT90Kord
+
+- type: constructionGraph
+  id: DutyT90RoundGraph
+  start: start
+  graph:
+  - node: start
+    edges:
+    - to: apfsds
+      steps:
+      - tag: DutyT90ShellAPFSDS
+        name: duty-tank-step-shell-apfsds
+        icon:
+          sprite: Objects/Weapons/Guns/Ammunition/Explosives/explosives.rsi
+          state: rpg
+        doAfter: 2
+      - tag: DutyT90PropellantCharge
+        name: duty-tank-step-charge
+        icon:
+          sprite: Objects/Materials/Scrap/generic.rsi
+          state: tube-y
+        doAfter: 2
+    - to: hefrag
+      steps:
+      - tag: DutyT90ShellHEFrag
+        name: duty-tank-step-shell-hefrag
+        icon:
+          sprite: Objects/Weapons/Guns/Ammunition/Explosives/explosives.rsi
+          state: frag
+        doAfter: 2
+      - tag: DutyT90PropellantCharge
+        name: duty-tank-step-charge
+        icon:
+          sprite: Objects/Materials/Scrap/generic.rsi
+          state: tube-y
+        doAfter: 2
+    - to: heat
+      steps:
+      - tag: DutyT90ShellHEAT
+        name: duty-tank-step-shell-heat
+        icon:
+          sprite: Objects/Weapons/Guns/Ammunition/Explosives/explosives.rsi
+          state: blast
+        doAfter: 2
+      - tag: DutyT90PropellantCharge
+        name: duty-tank-step-charge
+        icon:
+          sprite: Objects/Materials/Scrap/generic.rsi
+          state: tube-y
+        doAfter: 2
+  - node: apfsds
+    entity: DutyCartridge125APFSDS
+  - node: hefrag
+    entity: DutyCartridge125HEFrag
+  - node: heat
+    entity: DutyCartridge125HEAT

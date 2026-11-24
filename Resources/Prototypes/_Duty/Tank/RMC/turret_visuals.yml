@@ -1,0 +1,19 @@
+# SPDX-FileCopyrightText: 2026 LocalDuty
+# SPDX-License-Identifier: MIT
+
+# Отдельная сущность-башня поверх танка: C# спавнит её по id VehicleTurretVisual.
+# RMCNightVisionVisible выкинут (нет ночного видения RMC).
+- type: entity
+  id: VehicleTurretVisual
+  name: vehicle turret visual
+  components:
+  - type: Tag
+    tags:
+    - HideContextMenu
+  - type: Sprite
+    drawdepth: OverMobs
+    sprite: _Duty/Tank/t90m.rsi
+    layers:
+    - state: tank_turret_0
+      visible: false
+  - type: VehicleTurretVisual

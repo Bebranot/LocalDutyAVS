@@ -1,0 +1,82 @@
+using Content.Shared._Duty.RMCVehicle.Gun;
+using System.Numerics;
+using Content.Shared._RMC14.Weapons.Ranged;
+using Content.Shared.Weapons.Ranged.Events;
+using Content.Shared.Weapons.Ranged.Systems;
+using Robust.Shared.GameObjects;
+using Robust.Shared.Map;
+using Robust.Shared.Maths;
+
+namespace Content.Shared._RMC14.Vehicle;
+
+public sealed class VehicleTurretMuzzleSystem : EntitySystem
+{
+    [Dependency] private readonly SharedTransformSystem _transform = default!;
+    [Dependency] private readonly VehicleTurretSystem _vehicleTurret = default!;
+
+    public override void Initialize()
+    {
+        SubscribeLocalEvent<VehicleTurretMuzzleComponent, DutyGunAimEvent>(OnAttemptShoot);
+        SubscribeLocalEvent<VehicleTurretMuzzleComponent, GunShotEvent>(OnGunShot);
+    }
+
+    private void OnAttemptShoot(Entity<VehicleTurretMuzzleComponent> ent, ref DutyGunAimEvent args)
+    {
+        if (args.Cancelled)
+            return;
+
+        // _Duty: args.FromCoordinates — место стрелка в интерьере, смещение считаем от самой турели
+        var baseCoords = _vehicleTurret.TryGetTurretPose(ent.Owner, out var pose, out _) ? pose : args.FromCoordinates;
+        args.FromCoordinates = GetMuzzleCoordinates(ent.Owner, ent.Comp, baseCoords);
+    }
+
+    private void OnGunShot(Entity<VehicleTurretMuzzleComponent> ent, ref GunShotEvent args)
+    {
+        if (!ent.Comp.Alternate || args.Ammo.Count == 0)
+            return;
+
+        ent.Comp.UseRightNext = !ent.Comp.UseRightNext;
+
+        Dirty(ent);
+    }
+
+    public EntityCoordinates GetMuzzleCoordinates(
+        EntityUid uid,
+        VehicleTurretMuzzleComponent muzzle,
+        EntityCoordinates baseCoords)
+    {
+        var offset = GetWorldOffset(uid, muzzle);
+        return offset == Vector2.Zero ? baseCoords : baseCoords.Offset(offset);
+    }
+
+    public Vector2 GetWorldOffset(
+        EntityUid uid,
+        VehicleTurretMuzzleComponent muzzle,
+        bool? useRightOverride = null)
+    {
+        var baseRotation = _vehicleTurret.TryGetShotBarrelWorldRotation(uid, out var shotRotation)
+            ? shotRotation
+            : _transform.GetWorldRotation(uid);
+        var useRight = useRightOverride ?? (muzzle.Alternate && muzzle.UseRightNext);
+        var offset = GetOffset(muzzle, baseRotation, useRight);
+        return offset == Vector2.Zero ? Vector2.Zero : baseRotation.RotateVec(offset);
+    }
+
+    private Vector2 GetOffset(VehicleTurretMuzzleComponent muzzle, Angle baseRotation, bool useRight)
+    {
+        if (!muzzle.UseDirectionalOffsets)
+        {
+            var baseOffset = useRight ? muzzle.OffsetRight : muzzle.OffsetLeft;
+            return baseOffset;
+        }
+
+        return VehicleTurretDirectionHelpers.GetRenderAlignedCardinalDir(baseRotation) switch
+        {
+            Direction.North => useRight ? muzzle.OffsetRightNorth : muzzle.OffsetLeftNorth,
+            Direction.East => useRight ? muzzle.OffsetRightEast : muzzle.OffsetLeftEast,
+            Direction.South => useRight ? muzzle.OffsetRightSouth : muzzle.OffsetLeftSouth,
+            Direction.West => useRight ? muzzle.OffsetRightWest : muzzle.OffsetLeftWest,
+            _ => useRight ? muzzle.OffsetRight : muzzle.OffsetLeft
+        };
+    }
+}

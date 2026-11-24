@@ -1,0 +1,160 @@
+# SPDX-FileCopyrightText: 2026 LocalDuty
+# SPDX-License-Identifier: MIT
+
+# Служебные сущности интерьера и метки техники.
+# Выкинуто: RMCDropshipBlocked, PlacementReplacement, RMCIgnoreGhostInteractionLimits
+# (системы десантных шаттлов/призраков RMC), а также компонент Vehicle у метки выхода
+# (в RMC он там лишний и у нас сделал бы метку «техникой»).
+
+- type: entity
+  id: VehiclePeekAnchor
+  parent: MarkerBase
+  categories: [ HideSpawnMenu ]
+  components:
+  - type: Physics
+    bodyType: Static
+    canCollide: false
+
+- type: entity
+  id: VehicleExitArea
+  name: vehicle exit marker
+  description: A clickable marker used for vehicle exits.
+  placement:
+    mode: PlaceFree
+  components:
+  - type: Transform
+    anchored: true
+  - type: Clickable
+  - type: InteractionOutline
+  - type: Icon
+    sprite: _Duty/Tank/RMC/Markers/landmarks.rsi
+    state: invisible_wall
+  - type: Sprite
+    drawdepth: LowFloors
+    texture: /Textures/_Duty/Tank/RMC/Tiles/void.png
+  - type: VehicleExit
+  - type: Physics
+    bodyType: Static
+    canCollide: true
+  - type: Fixtures
+    fixtures:
+      marker:
+        shape:
+          !type:PhysShapeAabb
+          bounds: "-0.49,-0.49,0.49,0.49"
+        density: 20000
+        hard: true
+        mask:
+        - FullTileMask
+        layer:
+        - HighImpassable
+        - MidImpassable
+        - LowImpassable
+        - Opaque
+
+# Невидимая стена: блокирует пули и проход, свет пропускает
+- type: entity
+  parent: MarkerBase
+  id: RMCWallInvisibleBulletBlocker
+  name: wall blocker
+  suffix: Projectile Blocker
+  placement:
+    mode: SnapgridCenter
+  components:
+  - type: Sprite
+    sprite: _Duty/Tank/RMC/Markers/landmarks.rsi
+    state: invisible_wall
+  - type: Transform
+    anchored: false
+  - type: Physics
+    bodyType: Static
+  - type: Occluder
+    enabled: false
+  - type: Airtight
+  - type: Fixtures
+    fixtures:
+      fix1:
+        shape:
+          !type:PhysShapeAabb
+          bounds: "-0.5,-0.5,0.5,0.5"
+        hard: true
+        mask:
+        - FullTileMask
+        - MobMask
+        layer:
+        - HighImpassable
+        - MidImpassable
+        - LowImpassable
+        - InteractImpassable
+        - BulletImpassable
+        density: 1000
+
+# То же, но ещё и непрозрачная (режет обзор и свет)
+- type: entity
+  parent: MarkerBase
+  id: RMCWallInvisibleBulletLightBlocker
+  name: wall blocker
+  suffix: Projectile + Light Blocker
+  placement:
+    mode: SnapgridCenter
+  components:
+  - type: Sprite
+    sprite: _Duty/Tank/RMC/Markers/landmarks.rsi
+    state: invisible_wall
+  - type: Transform
+    anchored: false
+  - type: Physics
+    bodyType: Static
+  - type: Occluder
+  - type: Airtight
+  - type: Fixtures
+    fixtures:
+      fix1:
+        shape:
+          !type:PhysShapeAabb
+          bounds: "-0.5,-0.5,0.5,0.5"
+        hard: true
+        mask:
+        - FullTileMask
+        - MobMask
+        layer:
+        - HighImpassable
+        - MidImpassable
+        - LowImpassable
+        - InteractImpassable
+        - BulletImpassable
+        - Opaque
+        density: 1000
+
+# Взрыв уничтоженного танка. В RMC это взрыв типа RMC на 1500 с огнём по тайлам; у нас пол ломать нельзя:
+# свой тип взрыва без разрушения пола и без вакуума.
+- type: explosion
+  id: DutyTankWreck
+  damagePerIntensity:
+    types:
+      Heat: 3
+      Blunt: 4
+      Piercing: 2
+      Structural: 10
+  tileBreakChance: [ 0, 0 ]
+  tileBreakIntensity: [ 0, 15 ]
+  tileBreakRerollReduction: 20
+  lightColor: Orange
+  texturePath: /Textures/Effects/fire.rsi
+  fireStates: 3
+
+- type: entity
+  parent: MarkerBase
+  id: RMCVehicleWreckExplosion
+  name: vehicle wreck explosion
+  suffix: Explodes when triggered
+  placement:
+    mode: SnapgridCenter
+  components:
+  - type: Explosive
+    explosionType: DutyTankWreck
+    totalIntensity: 300
+    intensitySlope: 4
+    maxIntensity: 25
+    maxTileBreak: 0
+    canCreateVacuum: false

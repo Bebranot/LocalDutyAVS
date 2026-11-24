@@ -1,0 +1,248 @@
+# SPDX-FileCopyrightText: 2026 LocalDuty
+# SPDX-License-Identifier: MIT
+
+# Детали интерьера танка (из RMC: общие + SPP-танк). Родители RMC (CMSeatBase, CMClosetBase,
+# RMCExtinguisherCabinet) заменены нашими базами; InteractionTransparency/RemoveComponents/Corrodible/
+# RMCMesonsNonviewable выкинуты: таких компонентов у нас нет.
+
+- type: entity
+  abstract: true
+  id: VehicleInteriorGeneralBase
+  name: vehicle interior piece
+  description: A decorative vehicle interior fixture.
+  placement:
+    mode: SnapgridCenter
+  components:
+  - type: Sprite
+    sprite: _Duty/Tank/RMC/Structures/Vehicles/Interiors/general.rsi
+    drawdepth: Overdoors
+  - type: InteractionOutline
+  - type: Clickable
+
+- type: entity
+  abstract: true
+  parent: VehicleInteriorGeneralBase
+  id: VehicleInteriorWallMountedBase
+  name: vehicle interior wall mount
+  description: A wall-mounted vehicle interior fixture.
+  placement:
+    mode: PlaceFree
+  components:
+  - type: WallMount
+    arc: 360
+
+# Невидимая стена, не режущая обзор и свет
+- type: entity
+  parent: VehicleInteriorGeneralBase
+  id: VehicleInvisibleWallNoVision
+  name: invisible wall (no vision block)
+  description: An invisible blocking wall for vehicle interiors that does not block vision or light.
+  placement:
+    mode: PlaceFree
+  components:
+  - type: Marker
+  - type: Physics
+    bodyType: Static
+    canCollide: true
+  - type: Fixtures
+    fixtures:
+      fix1:
+        shape:
+          !type:PhysShapeAabb
+          bounds: "-0.49,-0.49,0.49,0.49"
+        density: 20000
+        hard: true
+        mask:
+        - FullTileMask
+        layer:
+        - HighImpassable
+        - MidImpassable
+        - LowImpassable
+  - type: Sprite
+    sprite: _Duty/Tank/RMC/Markers/landmarks.rsi
+    state: invisible_wall
+    drawdepth: Overdoors
+
+# Иллюминатор для подглядывания наружу
+- type: entity
+  parent: VehicleInteriorWallMountedBase
+  id: VehicleViewport
+  name: vehicle viewport
+  description: A small viewport for peering outside.
+  placement:
+    mode: PlaceFree
+  components:
+  - type: Sprite
+    state: viewport
+    drawdepth: Overdoors
+  - type: VehicleViewport
+
+- type: entity
+  parent: VehicleViewport
+  id: VehicleViewportUnanchored
+  name: vehicle viewport
+  description: A small viewport for peering outside.
+  placement:
+    mode: PlaceFree
+  components:
+  - type: Transform
+    anchored: false
+  - type: Physics
+    bodyType: Static
+    canCollide: false
+
+# Огнетушитель: вместо RMC-шкафчика наш ванильный настенный с огнетушителем, с его спрайтами
+- type: entity
+  parent: ExtinguisherCabinetFilled
+  id: VehicleInteriorExtinguisherClosed
+  name: interior extinguisher (closed)
+  placement:
+    mode: PlaceFree
+  components:
+  - type: Transform
+    anchored: false
+  - type: Physics
+    bodyType: Static
+
+# Кресла: родитель SeatBase вместо CMSeatBase
+- type: entity
+  abstract: true
+  parent: SeatBase
+  id: RMCSeatArmoredBase
+  name: armored seat
+  description: A reinforced chair designed for vehicle interiors.
+  placement:
+    mode: PlaceFree
+  components:
+  - type: Physics
+    bodyType: Static
+  - type: Sprite
+    sprite: _Duty/Tank/RMC/Structures/Vehicles/Interiors/general.rsi
+    state: armor_chair
+    drawdepth: BelowMobs
+    noRot: false
+
+- type: entity
+  parent: RMCSeatArmoredBase
+  id: RMCSeatTankDriver
+  name: tank driver seat
+  placement:
+    mode: SnapgridCenter
+  components:
+  - type: VehicleDriverSeat
+  - type: VehicleWeaponsSeat
+    isPrimaryOperatorSeat: false
+    allowUiSelection: false
+    allowHotbarSelection: true
+    allowedHardpointTypes:
+    - HardpointTypeSupport
+  - type: UserInterface
+    interfaces:
+      enum.VehicleWeaponsUiKey.Key:
+        type: VehicleWeaponsBoundUserInterface
+
+- type: entity
+  parent: RMCSeatArmoredBase
+  id: RMCSeatTankGunner
+  name: tank gunner seat
+  placement:
+    mode: SnapgridCenter
+  components:
+  - type: VehicleWeaponsSeat
+    isPrimaryOperatorSeat: true
+    allowUiSelection: true
+    allowHotbarSelection: true
+  - type: UserInterface
+    interfaces:
+      enum.VehicleWeaponsUiKey.Key:
+        type: VehicleWeaponsBoundUserInterface
+
+- type: entity
+  parent: RMCSeatArmoredBase
+  id: RMCSeatTankCommander
+  name: tank commander seat
+  placement:
+    mode: SnapgridCenter
+  components:
+  - type: VehicleWeaponsSeat
+    isPrimaryOperatorSeat: false
+    allowUiSelection: true
+    allowHotbarSelection: true
+    baseViewPvsScale: 0.35
+    baseViewCursorMaxOffset: 5
+    baseViewCursorPvsIncrease: 0.5
+    allowedHardpointTypes:
+    - HardpointTypeSecondary
+  - type: UserInterface
+    interfaces:
+      enum.VehicleWeaponsUiKey.Key:
+        type: VehicleWeaponsBoundUserInterface
+
+# --- SPP-танк: декор ---
+
+- type: entity
+  parent: BaseStructure
+  id: VehicleSPPTankChassis
+  name: SPP tank interior chassis
+  description: A chassis segment for an SPP tank interior.
+  placement:
+    mode: PlaceFree
+  components:
+  - type: Tag
+    tags:
+    - HideContextMenu
+  - type: Sprite
+    sprite: _Duty/Tank/RMC/Structures/Vehicles/Interiors/spptank_chassis.rsi
+    state: spptank_chassis
+    drawdepth: FloorTiles
+  - type: Physics
+    bodyType: Static
+    canCollide: false
+  - type: Fixtures
+    fixtures: {}
+
+- type: entity
+  parent: BaseStructureDynamic
+  id: VehicleSPPTankSmallLocker
+  name: SPP tank small locker
+  description: A small storage locker for SPP tank interiors.
+  placement:
+    mode: PlaceFree
+  components:
+  - type: Transform
+    anchored: false
+  - type: Physics
+    bodyType: Static
+  - type: WallMount
+    arc: 360
+  - type: Sprite
+    sprite: _Duty/Tank/RMC/Structures/Vehicles/Interiors/spptank.rsi
+    drawdepth: Walls
+    layers:
+    - state: small_locker
+      map: ["enum.StorageVisualLayers.Base"]
+  - type: EntityStorage
+  - type: ContainerContainer
+    containers:
+      entity_storage: !type:Container
+  - type: EntityStorageVisuals
+    stateBaseClosed: small_locker
+    stateBaseOpen: small_locker_open
+  - type: Appearance
+  - type: InteractionOutline
+
+- type: entity
+  parent: VehicleInteriorWallMountedBase
+  id: VehicleSPPTankAmmoLoader
+  name: SPP tank ammo loader
+  description: A loader for SPP tank hardpoint ammunition.
+  components:
+  - type: Sprite
+    drawdepth: BelowMobs
+    sprite: _Duty/Tank/RMC/Structures/Vehicles/Interiors/spptank.rsi
+    state: weapons_loader
+  - type: VehicleAmmoLoader
+  - type: UserInterface
+    interfaces:
+      enum.VehicleAmmoLoaderUiKey.Key:
+        type: VehicleAmmoLoaderBoundUserInterface

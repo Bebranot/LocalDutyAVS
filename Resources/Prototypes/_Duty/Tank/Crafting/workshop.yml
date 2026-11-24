@@ -1,0 +1,82 @@
+# SPDX-FileCopyrightText: 2026 LocalDuty
+# SPDX-License-Identifier: MIT
+
+# Самодельный станок танкостроителя: лейт без платы и науки. Строится руками (граф DutyTankWorkshopGraph),
+# жуёт сталь, пласталь, стекло, пластик, золото, серебро, порох и броне-сталь.
+# Металлолом принимается по тегу SalvageScrap, но вставка сработает только когда у лома появится компонент Material
+# (сейчас его нет у BaseScrap, см. отчёт).
+
+- type: entity
+  id: DutyTankWorkshop
+  parent: BaseMachinePowered
+  name: tank workshop
+  description: A lathe welded together from scrap. Turns metal into tank parts, somehow.
+  components:
+  - type: Sprite
+    sprite: _Duty/Tank/workshop.rsi
+    snapCardinals: true
+    layers:
+    - state: idle
+      map: ["enum.LatheVisualLayers.IsRunning"]
+  - type: Appearance
+  - type: Fixtures
+    fixtures:
+      fix1:
+        shape:
+          !type:PhysShapeAabb
+          bounds: "-0.4,-0.4,0.4,0.4"
+        density: 190
+        mask:
+        - MachineMask
+        layer:
+        - MachineLayer
+  - type: Damageable
+    damageModifierSet: StructuralMetallic
+  - type: Injurable
+    damageContainer: StructuralInorganic
+  - type: Destructible
+    thresholds:
+    - trigger:
+        !type:DamageTrigger
+        damage: 250
+      behaviors:
+      - !type:PlaySoundBehavior
+        sound:
+          collection: MetalBreak
+      - !type:DoActsBehavior
+        acts: [ "Destruction" ]
+      - !type:SpawnEntitiesBehavior
+        spawn:
+          SheetSteel1:
+            min: 4
+            max: 8
+  - type: MaterialStorage
+    whitelist:
+      tags:
+      - Sheet
+      - RawMaterial
+      - Ingot
+      - SalvageScrap
+  - type: Lathe
+    producingSound: /Audio/ADT/Machines/lathe_print.ogg
+    idleState: idle
+    runningState: working
+    staticPacks:
+    - DutyTankWorkshopPack
+  - type: ActivatableUI
+    key: enum.LatheUiKey.Key
+  - type: ActivatableUIRequiresPower
+  - type: UserInterface
+    interfaces:
+      enum.LatheUiKey.Key:
+        type: LatheBoundUserInterface
+  - type: ApcPowerReceiver
+    powerLoad: 150
+  - type: PowerState
+    idlePowerDraw: 150
+    workingPowerDraw: 1000
+  - type: StaticPrice
+    price: 600
+  - type: Construction
+    graph: DutyTankWorkshopGraph
+    node: workshop

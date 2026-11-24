@@ -1,0 +1,259 @@
+- files: ["ammo_burn.ogg"]
+  license: "Custom"
+  copyright: "Gaijin Entertainment, War Thunder (extracted for private use)"
+  source: "War Thunder game files"
+
+- files: ["ammo_crack.ogg"]
+  license: "Custom"
+  copyright: "Gaijin Entertainment, War Thunder (extracted for private use)"
+  source: "War Thunder game files"
+
+- files: ["ammo_crackers.ogg"]
+  license: "Custom"
+  copyright: "Gaijin Entertainment, War Thunder (extracted for private use)"
+  source: "War Thunder game files"
+
+- files: ["ammo_detonation.ogg"]
+  license: "Custom"
+  copyright: "Gaijin Entertainment, War Thunder (extracted for private use)"
+  source: "War Thunder game files"
+
+- files: ["bullet_hit_armor.ogg"]
+  license: "Custom"
+  copyright: "Gaijin Entertainment, War Thunder (extracted for private use)"
+  source: "War Thunder game files"
+
+- files: ["collision_bush.ogg"]
+  license: "Custom"
+  copyright: "Gaijin Entertainment, War Thunder (extracted for private use)"
+  source: "War Thunder game files"
+
+- files: ["crash_body_big.ogg"]
+  license: "Custom"
+  copyright: "Gaijin Entertainment, War Thunder (extracted for private use)"
+  source: "War Thunder game files"
+
+- files: ["crash_building_med.ogg"]
+  license: "Custom"
+  copyright: "Gaijin Entertainment, War Thunder (extracted for private use)"
+  source: "War Thunder game files"
+
+- files: ["crash_car_wreck.ogg"]
+  license: "Custom"
+  copyright: "Gaijin Entertainment, War Thunder (extracted for private use)"
+  source: "War Thunder game files"
+
+- files: ["crash_concrete.ogg"]
+  license: "Custom"
+  copyright: "Gaijin Entertainment, War Thunder (extracted for private use)"
+  source: "War Thunder game files"
+
+- files: ["crash_concrete_hit.ogg"]
+  license: "Custom"
+  copyright: "Gaijin Entertainment, War Thunder (extracted for private use)"
+  source: "War Thunder game files"
+
+- files: ["crash_fence.ogg"]
+  license: "Custom"
+  copyright: "Gaijin Entertainment, War Thunder (extracted for private use)"
+  source: "War Thunder game files"
+
+- files: ["crash_metal_debris.ogg"]
+  license: "Custom"
+  copyright: "Gaijin Entertainment, War Thunder (extracted for private use)"
+  source: "War Thunder game files"
+
+- files: ["crash_road_barrier.ogg"]
+  license: "Custom"
+  copyright: "Gaijin Entertainment, War Thunder (extracted for private use)"
+  source: "War Thunder game files"
+
+- files: ["crash_suspension_skew.ogg"]
+  license: "Custom"
+  copyright: "Gaijin Entertainment, War Thunder (extracted for private use)"
+  source: "War Thunder game files"
+
+- files: ["crash_wood.ogg"]
+  license: "Custom"
+  copyright: "Gaijin Entertainment, War Thunder (extracted for private use)"
+  source: "War Thunder game files"
+
+- files: ["explosion_attack.ogg"]
+  license: "Custom"
+  copyright: "Gaijin Entertainment, War Thunder (extracted for private use)"
+  source: "War Thunder game files"
+
+- files: ["explosion_heavy_1.ogg"]
+  license: "Custom"
+  copyright: "Gaijin Entertainment, War Thunder (extracted for private use)"
+  source: "War Thunder game files"
+
+- files: ["explosion_heavy_2.ogg"]
+  license: "Custom"
+  copyright: "Gaijin Entertainment, War Thunder (extracted for private use)"
+  source: "War Thunder game files"
+
+- files: ["explosion_heavy_far.ogg"]
+  license: "Custom"
+  copyright: "Gaijin Entertainment, War Thunder (extracted for private use)"
+  source: "War Thunder game files"
+
+- files: ["extinguisher.ogg"]
+  license: "Custom"
+  copyright: "Gaijin Entertainment, War Thunder (extracted for private use)"
+  source: "War Thunder game files"
+
+- files: ["he_burst_big.ogg"]
+  license: "Custom"
+  copyright: "Gaijin Entertainment, War Thunder (extracted for private use)"
+  source: "War Thunder game files"
+
+- files: ["he_burst_mid.ogg"]
+  license: "Custom"
+  copyright: "Gaijin Entertainment, War Thunder (extracted for private use)"
+  source: "War Thunder game files"
+
+- files: ["he_burst_small.ogg"]
+  license: "Custom"
+  copyright: "Gaijin Entertainment, War Thunder (extracted for private use)"
+  source: "War Thunder game files"
+
+- files: ["hit_big_nopen.ogg"]
+  license: "Custom"
+  copyright: "Gaijin Entertainment, War Thunder (extracted for private use)"
+  source: "War Thunder game files"
+
+- files: ["hit_dull_big.ogg"]
+  license: "Custom"
+  copyright: "Gaijin Entertainment, War Thunder (extracted for private use)"
+  source: "War Thunder game files"
+
+- files: ["hit_hollow.ogg"]
+  license: "Custom"
+  copyright: "Gaijin Entertainment, War Thunder (extracted for private use)"
+  source: "War Thunder game files"
+
+- files: ["hit_inside_big.ogg"]
+  license: "Custom"
+  copyright: "Gaijin Entertainment, War Thunder (extracted for private use)"
+  source: "War Thunder game files"
+
+- files: ["hit_mid_nopen_1.ogg"]
+  license: "Custom"
+  copyright: "Gaijin Entertainment, War Thunder (extracted for private use)"
+  source: "War Thunder game files"
+
+- files: ["hit_mid_nopen_2.ogg"]
+  license: "Custom"
+  copyright: "Gaijin Entertainment, War Thunder (extracted for private use)"
+  source: "War Thunder game files"
+
+- files: ["hit_small.ogg"]
+  license: "Custom"
+  copyright: "Gaijin Entertainment, War Thunder (extracted for private use)"
+  source: "War Thunder game files"
+
+- files: ["module_fire.ogg"]
+  license: "Custom"
+  copyright: "Gaijin Entertainment, War Thunder (extracted for private use)"
+  source: "War Thunder game files"
+
+- files: ["pierce_ap_1.ogg"]
+  license: "Custom"
+  copyright: "Gaijin Entertainment, War Thunder (extracted for private use)"
+  source: "War Thunder game files"
+
+- files: ["pierce_ap_2.ogg"]
+  license: "Custom"
+  copyright: "Gaijin Entertainment, War Thunder (extracted for private use)"
+  source: "War Thunder game files"
+
+- files: ["pierce_aphe.ogg"]
+  license: "Custom"
+  copyright: "Gaijin Entertainment, War Thunder (extracted for private use)"
+  source: "War Thunder game files"
+
+- files: ["pierce_he.ogg"]
+  license: "Custom"
+  copyright: "Gaijin Entertainment, War Thunder (extracted for private use)"
+  source: "War Thunder game files"
+
+- files: ["pierce_heat.ogg"]
+  license: "Custom"
+  copyright: "Gaijin Entertainment, War Thunder (extracted for private use)"
+  source: "War Thunder game files"
+
+- files: ["pierce_kill.ogg"]
+  license: "Custom"
+  copyright: "Gaijin Entertainment, War Thunder (extracted for private use)"
+  source: "War Thunder game files"
+
+- files: ["projectile_impact_inside.ogg"]
+  license: "Custom"
+  copyright: "Gaijin Entertainment, War Thunder (extracted for private use)"
+  source: "War Thunder game files"
+
+- files: ["radiator_punctured.ogg"]
+  license: "Custom"
+  copyright: "Gaijin Entertainment, War Thunder (extracted for private use)"
+  source: "War Thunder game files"
+
+- files: ["radiator_steam.ogg"]
+  license: "Custom"
+  copyright: "Gaijin Entertainment, War Thunder (extracted for private use)"
+  source: "War Thunder game files"
+
+- files: ["repair.ogg"]
+  license: "Custom"
+  copyright: "Gaijin Entertainment, War Thunder (extracted for private use)"
+  source: "War Thunder game files"
+
+- files: ["ricochet_1.ogg"]
+  license: "Custom"
+  copyright: "Gaijin Entertainment, War Thunder (extracted for private use)"
+  source: "War Thunder game files"
+
+- files: ["ricochet_2.ogg"]
+  license: "Custom"
+  copyright: "Gaijin Entertainment, War Thunder (extracted for private use)"
+  source: "War Thunder game files"
+
+- files: ["ricochet_3.ogg"]
+  license: "Custom"
+  copyright: "Gaijin Entertainment, War Thunder (extracted for private use)"
+  source: "War Thunder game files"
+
+- files: ["shell_fall_hull.ogg"]
+  license: "Custom"
+  copyright: "Gaijin Entertainment, War Thunder (extracted for private use)"
+  source: "War Thunder game files"
+
+- files: ["sparks_damaged.ogg"]
+  license: "Custom"
+  copyright: "Gaijin Entertainment, War Thunder (extracted for private use)"
+  source: "War Thunder game files"
+
+- files: ["sparks_damaged_inside.ogg"]
+  license: "Custom"
+  copyright: "Gaijin Entertainment, War Thunder (extracted for private use)"
+  source: "War Thunder game files"
+
+- files: ["tank_explosion_aphe.ogg"]
+  license: "Custom"
+  copyright: "Gaijin Entertainment, War Thunder (extracted for private use)"
+  source: "War Thunder game files"
+
+- files: ["tank_fall_suspension.ogg"]
+  license: "Custom"
+  copyright: "Gaijin Entertainment, War Thunder (extracted for private use)"
+  source: "War Thunder game files"
+
+- files: ["tank_fire_big.ogg"]
+  license: "Custom"
+  copyright: "Gaijin Entertainment, War Thunder (extracted for private use)"
+  source: "War Thunder game files"
+
+- files: ["turret_fall.ogg"]
+  license: "Custom"
+  copyright: "Gaijin Entertainment, War Thunder (extracted for private use)"
+  source: "War Thunder game files"

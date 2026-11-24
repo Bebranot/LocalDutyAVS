@@ -1,0 +1,84 @@
+# SPDX-FileCopyrightText: 2026 LocalDuty
+# SPDX-License-Identifier: MIT
+
+# Рецепты меню конструкции для самодельного Т-90М (категория «Самодельный танк»).
+
+- type: construction
+  abstract: true
+  id: DutyTankBase
+  category: construction-category-duty-tank
+  placementMode: SnapgridCenter
+  conditions:
+  - !type:TileNotBlocked
+
+- type: construction
+  abstract: true
+  parent: DutyTankBase
+  id: DutyTankBaseFree
+  placementMode: PlaceFree
+
+- type: construction
+  abstract: true
+  id: DutyTankBaseItem
+  category: construction-category-duty-tank
+  objectType: Item
+
+- type: construction
+  parent: DutyTankBase
+  id: DutyTankWorkshopRecipe
+  graph: DutyTankWorkshopGraph
+  targetNode: workshop
+
+- type: construction
+  parent: DutyTankBase
+  id: DutyT90EngineRecipe
+  graph: DutyT90EngineGraph
+  targetNode: engine
+
+- type: construction
+  parent: DutyTankBaseFree
+  id: DutyT90HullRecipe
+  graph: DutyT90HullGraph
+  targetNode: hull
+
+- type: construction
+  parent: DutyTankBase
+  id: DutyT90TurretRecipe
+  graph: DutyT90TurretGraph
+  targetNode: turret
+
+- type: construction
+  parent: DutyTankBase
+  id: DutyT90TracksRecipe
+  graph: DutyT90TracksGraph
+  targetNode: tracks
+
+- type: construction
+  parent: DutyTankBase
+  id: DutyT90ReliktRecipe
+  graph: DutyT90ReliktGraph
+  targetNode: relikt
+
+- type: construction
+  parent: DutyTankBase
+  id: DutyT90KordRecipe
+  graph: DutyT90KordGraph
+  targetNode: kord
+
+- type: construction
+  parent: DutyTankBaseItem
+  id: DutyT90RoundAPFSDSRecipe
+  graph: DutyT90RoundGraph
+  targetNode: apfsds
+
+- type: construction
+  parent: DutyTankBaseItem
+  id: DutyT90RoundHEFragRecipe
+  graph: DutyT90RoundGraph
+  targetNode: hefrag
+
+- type: construction
+  parent: DutyTankBaseItem
+  id: DutyT90RoundHEATRecipe
+  graph: DutyT90RoundGraph
+  targetNode: heat

@@ -487,6 +487,7 @@ public sealed partial class ExplosionSystem
             || xform.Anchored
             || throwForce <= 0
             || EntityManager.IsQueuedForDeletion(uid)
+            || HasComp<Content.Shared._RMC14.Vehicle.GridVehicleMoverComponent>(uid) // _Duty: танк не швыряет взрывом
             || !_physicsQuery.TryGetComponent(uid, out var physics)
             || physics.BodyType != BodyType.Dynamic)
             return;

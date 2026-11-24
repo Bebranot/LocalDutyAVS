@@ -1,0 +1,65 @@
+{
+  "version": 1,
+  "license": "CC-BY-SA-3.0",
+  "copyright": "Generated with Google Gemini for LocalDuty",
+  "size": {
+    "x": 32,
+    "y": 32
+  },
+  "states": [
+    {
+      "name": "scrap_pile"
+    },
+    {
+      "name": "armor_plate"
+    },
+    {
+      "name": "engine"
+    },
+    {
+      "name": "track_segment"
+    },
+    {
+      "name": "road_wheel"
+    },
+    {
+      "name": "gun_barrel"
+    },
+    {
+      "name": "autoloader"
+    },
+    {
+      "name": "kalina"
+    },
+    {
+      "name": "pktm"
+    },
+    {
+      "name": "kord"
+    },
+    {
+      "name": "relikt_block"
+    },
+    {
+      "name": "gearbox"
+    },
+    {
+      "name": "shell_apfsds"
+    },
+    {
+      "name": "shell_hefrag"
+    },
+    {
+      "name": "shell_heat"
+    },
+    {
+      "name": "propellant_charge"
+    },
+    {
+      "name": "ammo_box_762"
+    },
+    {
+      "name": "ammo_box_127"
+    }
+  ]
+}

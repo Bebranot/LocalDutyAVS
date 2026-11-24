@@ -1,0 +1,340 @@
+# SPDX-FileCopyrightText: 2026 LocalDuty
+# SPDX-License-Identifier: MIT
+
+# Боеприпасы Т-90М.
+# Схема RMC: хардпоинт держит BallisticAmmoProvider с одним типом патрона (proto), а подвозится боеприпас
+# «ящиками» BulletBox (bulletType = id самого ящика, совпадает с RefillableByBulletBox у оружия).
+# Поэтому снаряд 125 мм — это одновременно предмет-«ящик» на 1 выстрел (его грузят в автомат заряжания),
+# а в стволе лежит служебный патрон DutyTankRound125*.
+# Один хардпоинт = один тип снаряда (C# не умеет смешивать), так что три типа 125 мм — три ствола в башне.
+
+# --- Взрывы: пол не ломаем и вакуум не создаём ---
+
+- type: explosion
+  id: DutyTank125HE
+  damagePerIntensity:
+    types:
+      Heat: 4
+      Blunt: 6
+      Piercing: 5
+      Structural: 8
+  # [0, 0] при intensity [0, 15]: у ванильного TileBreakChance длины массивов должны совпадать
+  tileBreakChance: [ 0, 0 ]
+  tileBreakIntensity: [ 0, 15 ]
+  tileBreakRerollReduction: 20
+  lightColor: Orange
+  texturePath: /Textures/Effects/fire.rsi
+  fireStates: 3
+  sound:
+    path: /Audio/_Duty/T90M/Impacts/he_burst_mid.ogg
+  smallSound:
+    path: /Audio/_Duty/T90M/Impacts/he_burst_small.ogg
+  soundFar:
+    path: /Audio/_Duty/T90M/Impacts/he_burst_big.ogg
+  smallSoundFar:
+    path: /Audio/_Duty/T90M/Impacts/he_burst_small.ogg
+
+- type: explosion
+  id: DutyTank125HEAT
+  damagePerIntensity:
+    types:
+      Heat: 6
+      Blunt: 3
+      Piercing: 6
+      Structural: 14
+  tileBreakChance: [ 0, 0 ]
+  tileBreakIntensity: [ 0, 15 ]
+  tileBreakRerollReduction: 20
+  lightColor: Orange
+  texturePath: /Textures/Effects/fire.rsi
+  fireStates: 3
+  sound:
+    path: /Audio/_Duty/T90M/Impacts/pierce_heat.ogg
+  smallSound:
+    path: /Audio/_Duty/T90M/Impacts/pierce_heat.ogg
+  soundFar:
+    path: /Audio/_Duty/T90M/Impacts/he_burst_mid.ogg
+  smallSoundFar:
+    path: /Audio/_Duty/T90M/Impacts/he_burst_small.ogg
+
+# --- Вспышка 125 мм ---
+
+- type: entity
+  parent: MuzzleFlashEffect
+  id: DutyTankMuzzleFlash
+  categories: [ HideSpawnMenu ]
+  components:
+  - type: Sprite
+    sprite: _Duty/Tank/effects.rsi
+    layers:
+    - state: muzzle_flash
+      shader: unshaded
+
+# --- Пули ---
+
+# Бронебойный подкалиберный: огромный пробой, взрыва нет
+- type: entity
+  parent: BaseBullet
+  id: DutyBullet125APFSDS
+  categories: [ HideSpawnMenu ]
+  name: 125 mm APFSDS dart
+  components:
+  - type: Projectile
+    damage:
+      types:
+        Piercing: 220
+        Structural: 520
+    penetrationThreshold: 700
+    penetrationDamageTypeRequirement:
+    - Structural
+    soundHit:
+      path: /Audio/_Duty/T90M/Impacts/pierce_ap_1.ogg
+  - type: DutyBallistics
+    armorPenetration: 0.95
+    arteryBonus: 0.05
+    fractureChance: 0.1
+
+# Осколочно-фугасный: умеренный прямой урон, малый взрыв
+- type: entity
+  parent: BaseBulletTrigger
+  id: DutyBullet125HEFrag
+  categories: [ HideSpawnMenu ]
+  name: 125 mm HE-Frag shell
+  components:
+  - type: Sprite
+    sprite: Objects/Weapons/Guns/Projectiles/projectiles2.rsi
+    layers:
+    - state: frag
+  - type: Projectile
+    damage:
+      types:
+        Piercing: 60
+        Structural: 80
+    soundHit:
+      path: /Audio/_Duty/T90M/Impacts/he_burst_small.ogg
+  - type: ExplodeOnTrigger
+  - type: Explosive
+    explosionType: DutyTank125HE
+    maxIntensity: 12
+    intensitySlope: 3
+    totalIntensity: 120
+    maxTileBreak: 0
+    canCreateVacuum: false
+  - type: PointLight
+    radius: 3.5
+    color: orange
+    energy: 0.5
+
+# Кумулятивный: большой урон по одной цели и маленький взрыв
+- type: entity
+  parent: BaseBulletTrigger
+  id: DutyBullet125HEAT
+  categories: [ HideSpawnMenu ]
+  name: 125 mm HEAT shell
+  components:
+  - type: Sprite
+    sprite: Objects/Weapons/Guns/Projectiles/projectiles2.rsi
+    layers:
+    - state: frag
+  - type: Projectile
+    damage:
+      types:
+        Piercing: 160
+        Heat: 60
+        Structural: 380
+    penetrationThreshold: 450
+    penetrationDamageTypeRequirement:
+    - Structural
+    soundHit:
+      path: /Audio/_Duty/T90M/Impacts/pierce_heat.ogg
+  - type: DutyBallistics
+    armorPenetration: 0.8
+  - type: ExplodeOnTrigger
+  - type: Explosive
+    explosionType: DutyTank125HEAT
+    maxIntensity: 8
+    intensitySlope: 3
+    totalIntensity: 60
+    maxTileBreak: 0
+    canCreateVacuum: false
+  - type: PointLight
+    radius: 3
+    color: orange
+    energy: 0.5
+
+# Пулемётная пуля 12.7x108 (Корд). Своя: у нас подходящей по весу нет (.60 слишком мощный для очереди).
+- type: entity
+  parent: BaseBullet
+  id: DutyBulletTank127
+  categories: [ HideSpawnMenu ]
+  name: bullet (12.7x108)
+  components:
+  - type: Projectile
+    damage:
+      types:
+        Piercing: 42
+        Structural: 55
+  - type: DutyBallistics
+    armorPenetration: 0.45
+    arteryBonus: 0.02
+    fractureChance: 0.04
+
+# --- Патроны в стволах (служебные, в меню спавна не нужны) ---
+
+- type: entity
+  parent: BaseCartridge
+  id: DutyTankRound125APFSDS
+  categories: [ HideSpawnMenu ]
+  name: 125 mm APFSDS round
+  components:
+  - type: CartridgeAmmo
+    proto: DutyBullet125APFSDS
+    muzzleFlash: DutyTankMuzzleFlash
+  - type: Sprite
+    sprite: Objects/Weapons/Guns/Ammunition/Casings/large_casing.rsi
+    layers:
+    - state: base
+      map: ["enum.AmmoVisualLayers.Base"]
+  - type: Appearance
+  - type: SpentAmmoVisuals
+
+- type: entity
+  parent: DutyTankRound125APFSDS
+  id: DutyTankRound125HEFrag
+  categories: [ HideSpawnMenu ]
+  name: 125 mm HE-Frag round
+  components:
+  - type: CartridgeAmmo
+    proto: DutyBullet125HEFrag
+    muzzleFlash: DutyTankMuzzleFlash
+
+- type: entity
+  parent: DutyTankRound125APFSDS
+  id: DutyTankRound125HEAT
+  categories: [ HideSpawnMenu ]
+  name: 125 mm HEAT round
+  components:
+  - type: CartridgeAmmo
+    proto: DutyBullet125HEAT
+    muzzleFlash: DutyTankMuzzleFlash
+
+- type: entity
+  parent: BaseCartridge
+  id: DutyTankRound127
+  categories: [ HideSpawnMenu ]
+  name: cartridge (12.7x108)
+  components:
+  - type: CartridgeAmmo
+    proto: DutyBulletTank127
+  - type: Sprite
+    sprite: Objects/Weapons/Guns/Ammunition/Casings/large_casing.rsi
+    layers:
+    - state: base
+      map: ["enum.AmmoVisualLayers.Base"]
+  - type: Appearance
+  - type: SpentAmmoVisuals
+
+# --- Снаряды-«ящики» 125 мм (их крафтят и грузят в автомат заряжания) ---
+
+- type: entity
+  abstract: true
+  parent: BaseItem
+  id: DutyTankShellBase
+  components:
+  - type: Item
+    size: Large
+  - type: Sprite
+    sprite: _Duty/Tank/parts.rsi
+    state: shell_apfsds
+
+- type: entity
+  parent: DutyTankShellBase
+  id: DutyCartridge125APFSDS
+  name: 125 mm APFSDS round
+  description: Armor-piercing fin-stabilized shell for the 2A46M-5 gun.
+  components:
+  - type: Construction
+    graph: DutyT90RoundGraph
+    node: apfsds
+  - type: Sprite
+    state: shell_apfsds
+  - type: BulletBox
+    amount: 1
+    max: 1
+    bulletType: DutyCartridge125APFSDS
+    usedIn: T-90M 125 mm gun (APFSDS)
+
+- type: entity
+  parent: DutyTankShellBase
+  id: DutyCartridge125HEFrag
+  name: 125 mm HE-Frag round
+  description: High-explosive fragmentation shell for the 2A46M-5 gun.
+  components:
+  - type: Construction
+    graph: DutyT90RoundGraph
+    node: hefrag
+  - type: Sprite
+    state: shell_hefrag
+  - type: BulletBox
+    amount: 1
+    max: 1
+    bulletType: DutyCartridge125HEFrag
+    usedIn: T-90M 125 mm gun (HE-Frag)
+
+- type: entity
+  parent: DutyTankShellBase
+  id: DutyCartridge125HEAT
+  name: 125 mm HEAT round
+  description: Shaped-charge shell for the 2A46M-5 gun.
+  components:
+  - type: Construction
+    graph: DutyT90RoundGraph
+    node: heat
+  - type: Sprite
+    state: shell_heat
+  - type: BulletBox
+    amount: 1
+    max: 1
+    bulletType: DutyCartridge125HEAT
+    usedIn: T-90M 125 mm gun (HEAT)
+
+# --- Ленточные ящики пулемётов ---
+
+- type: entity
+  abstract: true
+  parent: BaseItem
+  id: DutyTankBeltBoxBase
+  components:
+  - type: Item
+    size: Large
+  - type: Sprite
+    sprite: _Duty/Tank/parts.rsi
+    state: ammo_box_762
+
+- type: entity
+  parent: DutyTankBeltBoxBase
+  id: DutyMagazineBelt762Tank
+  name: 7.62x54R belt box (250)
+  description: A belt box for the PKTM coaxial machine gun.
+  components:
+  - type: Sprite
+    state: ammo_box_762
+  - type: BulletBox
+    amount: 250
+    max: 250
+    bulletType: DutyMagazineBelt762Tank
+    usedIn: T-90M PKTM coaxial machine gun
+
+- type: entity
+  parent: DutyTankBeltBoxBase
+  id: DutyMagazineBelt127Tank
+  name: 12.7x108 belt box (150)
+  description: A belt box for the Kord remote weapon station.
+  components:
+  - type: Sprite
+    state: ammo_box_127
+  - type: BulletBox
+    amount: 150
+    max: 150
+    bulletType: DutyMagazineBelt127Tank
+    usedIn: T-90M Kord remote weapon station

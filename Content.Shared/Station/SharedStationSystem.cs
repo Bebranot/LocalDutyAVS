@@ -174,7 +174,8 @@ public abstract partial class SharedStationSystem : EntitySystem
         {
             foreach (var gridUid in data.Grids)
             {
-                if (Transform(gridUid).MapID == map)
+                // _Duty: грид станции мог быть уже удалён (rmmap), а у клиента — не прийти по PVS: Transform() бросал исключение и срывал тик
+                if (TryComp(gridUid, out TransformComponent? gridXform) && gridXform.MapID == map)
                 {
                     return uid;
                 }

@@ -1,0 +1,17 @@
+# SPDX-FileCopyrightText: 2026 LocalDuty
+# SPDX-License-Identifier: MIT
+
+# C# держит id RMCVehicleKey в VehicleSystem. Замков на технике нет, но прототип должен существовать.
+- type: entity
+  parent: BaseItem
+  id: RMCVehicleKey
+  name: vehicle key
+  description: A vehicle key cut for a specific lock.
+  components:
+  - type: Sprite
+    sprite: _Duty/Tank/RMC/Objects/Misc/vehicle_key.rsi
+    state: key
+  - type: Item
+    size: Tiny
+  - type: VehicleKey
+    mode: Normal

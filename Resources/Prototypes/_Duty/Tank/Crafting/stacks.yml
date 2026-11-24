@@ -1,0 +1,25 @@
+# SPDX-FileCopyrightText: 2026 LocalDuty
+# SPDX-License-Identifier: MIT
+
+# Стаки деталей танка: катки, траки и блоки ДЗ набираются в стопку для шагов крафта.
+
+- type: stack
+  id: DutyT90RoadWheel
+  name: stack-duty-t90-roadwheel
+  icon: { sprite: /Textures/Objects/Materials/Scrap/generic.rsi, state: junk-bucket }
+  spawn: DutyT90RoadWheel
+  maxCount: 12
+
+- type: stack
+  id: DutyT90TrackKit
+  name: stack-duty-t90-trackkit
+  icon: { sprite: /Textures/Objects/Materials/Scrap/generic.rsi, state: metal-3 }
+  spawn: DutyT90TrackKit
+  maxCount: 4
+
+- type: stack
+  id: DutyT90ReliktBlock
+  name: stack-duty-t90-reliktblock
+  icon: { sprite: /Textures/Objects/Materials/Scrap/generic.rsi, state: junk-medkit-1 }
+  spawn: DutyT90ReliktBlock
+  maxCount: 8

@@ -1,0 +1,70 @@
+# SPDX-FileCopyrightText: 2026 LocalDuty
+# SPDX-License-Identifier: MIT
+
+# Броне-сталь: самодельный сплав из стали и пластали, расходник для корпуса и башни Т-90М.
+# Сделан по образцу пластали; спрайт временный (пласталь с тинтом).
+
+- type: material
+  id: DutyArmorSteel
+  stackEntity: SheetDutyArmorSteel1
+  name: materials-duty-armor-steel
+  icon: { sprite: Objects/Materials/Sheets/metal.rsi, state: plasteel }
+  color: "#5b6650"
+  price: 0.6 # смесь стали с пласталью, цена чуть выше пластали
+
+- type: stack
+  parent: BaseSheetStack
+  id: DutyArmorSteel
+  name: stack-duty-armor-steel
+  icon: { sprite: /Textures/Objects/Materials/Sheets/metal.rsi, state: plasteel }
+  spawn: SheetDutyArmorSteel1
+
+- type: entity
+  parent: SheetMetalBase
+  id: SheetDutyArmorSteel
+  name: armor steel
+  description: A crude armor-steel plate forged from whatever was lying around.
+  suffix: Full
+  components:
+  - type: PhysicalComposition
+    materialComposition:
+      DutyArmorSteel: 100
+  - type: Stack
+    stackType: DutyArmorSteel
+    baseLayer: base
+    layerStates:
+    - plasteel
+    - plasteel_2
+    - plasteel_3
+  - type: Sprite
+    state: plasteel_3
+    color: "#5b6650"
+    layers:
+    - state: plasteel_3
+      map: ["base"]
+  - type: Item
+    heldPrefix: plasteel
+
+- type: entity
+  parent: SheetDutyArmorSteel
+  id: SheetDutyArmorSteel10
+  name: armor steel
+  suffix: 10
+  components:
+  - type: Sprite
+    state: plasteel
+  - type: Stack
+    stackType: DutyArmorSteel
+    count: 10
+
+- type: entity
+  parent: SheetDutyArmorSteel
+  id: SheetDutyArmorSteel1
+  name: armor steel
+  suffix: Single
+  components:
+  - type: Sprite
+    state: plasteel
+  - type: Stack
+    stackType: DutyArmorSteel
+    count: 1

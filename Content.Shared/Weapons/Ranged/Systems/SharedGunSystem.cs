@@ -223,6 +223,16 @@ public abstract partial class SharedGunSystem : EntitySystem
     {
         gun = default;
 
+        // _Duty-start: оружие техники RMC (танк) выбирается оператором, а не берётся из рук
+        var dutyGetGun = new Content.Shared._Duty.RMCVehicle.Gun.DutyGetGunEvent();
+        RaiseLocalEvent(entity, ref dutyGetGun);
+        if (dutyGetGun.Gun is { } dutyGun && TryComp(dutyGun, out GunComponent? dutyGunComp))
+        {
+            gun = (dutyGun, dutyGunComp);
+            return true;
+        }
+        // _Duty-end
+
         // ADT-Tweak-Start
         if (TryComp<MechPilotComponent>(entity, out var mechPilot))
         {
@@ -413,6 +423,28 @@ public abstract partial class SharedGunSystem : EntitySystem
         }
 
         var fromCoordinates = Transform(user).Coordinates;
+        // _Duty-start: турель танка выносит выстрел на дуло и блокирует огонь, пока ствол не довёрнут
+        var dutyAim = new Content.Shared._Duty.RMCVehicle.Gun.DutyGunAimEvent(user, fromCoordinates, toCoordinates);
+        RaiseLocalEvent(gun, ref dutyAim);
+        if (dutyAim.Cancelled)
+        {
+            if (dutyAim.Message != null)
+                PopupSystem.PopupEntity(dutyAim.Message, gun, user);
+
+            gun.Comp.BurstActivated = false;
+            gun.Comp.BurstShotsCount = 0;
+            gun.Comp.NextFire = dutyAim.ResetCooldown
+                ? curTime
+                : TimeSpan.FromSeconds(Math.Max(lastFire.TotalSeconds + SafetyNextFire, gun.Comp.NextFire.TotalSeconds));
+            return false;
+        }
+
+        if (dutyAim.ToCoordinates == null)
+            return false;
+
+        fromCoordinates = dutyAim.FromCoordinates;
+        toCoordinates = dutyAim.ToCoordinates;
+        // _Duty-end
         // Remove ammo
         var ev = new TakeAmmoEvent(shots, [], fromCoordinates, user);
 

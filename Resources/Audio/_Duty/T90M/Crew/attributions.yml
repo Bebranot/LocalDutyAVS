@@ -1,0 +1,179 @@
+- files: ["crew_armor_breached.ogg"]
+  license: "Custom"
+  copyright: "Gaijin Entertainment, War Thunder (extracted for private use)"
+  source: "War Thunder game files"
+
+- files: ["crew_autoloader_damaged.ogg"]
+  license: "Custom"
+  copyright: "Gaijin Entertainment, War Thunder (extracted for private use)"
+  source: "War Thunder game files"
+
+- files: ["crew_bail_out.ogg"]
+  license: "Custom"
+  copyright: "Gaijin Entertainment, War Thunder (extracted for private use)"
+  source: "War Thunder game files"
+
+- files: ["crew_commander_fire.ogg"]
+  license: "Custom"
+  copyright: "Gaijin Entertainment, War Thunder (extracted for private use)"
+  source: "War Thunder game files"
+
+- files: ["crew_commander_load_ap.ogg"]
+  license: "Custom"
+  copyright: "Gaijin Entertainment, War Thunder (extracted for private use)"
+  source: "War Thunder game files"
+
+- files: ["crew_commander_load_he.ogg"]
+  license: "Custom"
+  copyright: "Gaijin Entertainment, War Thunder (extracted for private use)"
+  source: "War Thunder game files"
+
+- files: ["crew_commander_load_heat.ogg"]
+  license: "Custom"
+  copyright: "Gaijin Entertainment, War Thunder (extracted for private use)"
+  source: "War Thunder game files"
+
+- files: ["crew_commander_load_smoke.ogg"]
+  license: "Custom"
+  copyright: "Gaijin Entertainment, War Thunder (extracted for private use)"
+  source: "War Thunder game files"
+
+- files: ["crew_commander_reload.ogg"]
+  license: "Custom"
+  copyright: "Gaijin Entertainment, War Thunder (extracted for private use)"
+  source: "War Thunder game files"
+
+- files: ["crew_crew_lost.ogg"]
+  license: "Custom"
+  copyright: "Gaijin Entertainment, War Thunder (extracted for private use)"
+  source: "War Thunder game files"
+
+- files: ["crew_driver_damaged.ogg"]
+  license: "Custom"
+  copyright: "Gaijin Entertainment, War Thunder (extracted for private use)"
+  source: "War Thunder game files"
+
+- files: ["crew_engine_repaired.ogg"]
+  license: "Custom"
+  copyright: "Gaijin Entertainment, War Thunder (extracted for private use)"
+  source: "War Thunder game files"
+
+- files: ["crew_engine_stalled.ogg"]
+  license: "Custom"
+  copyright: "Gaijin Entertainment, War Thunder (extracted for private use)"
+  source: "War Thunder game files"
+
+- files: ["crew_engine_start.ogg"]
+  license: "Custom"
+  copyright: "Gaijin Entertainment, War Thunder (extracted for private use)"
+  source: "War Thunder game files"
+
+- files: ["crew_engine_stop.ogg"]
+  license: "Custom"
+  copyright: "Gaijin Entertainment, War Thunder (extracted for private use)"
+  source: "War Thunder game files"
+
+- files: ["crew_fire.ogg"]
+  license: "Custom"
+  copyright: "Gaijin Entertainment, War Thunder (extracted for private use)"
+  source: "War Thunder game files"
+
+- files: ["crew_fire_ammo.ogg"]
+  license: "Custom"
+  copyright: "Gaijin Entertainment, War Thunder (extracted for private use)"
+  source: "War Thunder game files"
+
+- files: ["crew_fire_extinguished.ogg"]
+  license: "Custom"
+  copyright: "Gaijin Entertainment, War Thunder (extracted for private use)"
+  source: "War Thunder game files"
+
+- files: ["crew_gunner_ready.ogg"]
+  license: "Custom"
+  copyright: "Gaijin Entertainment, War Thunder (extracted for private use)"
+  source: "War Thunder game files"
+
+- files: ["crew_gunner_ready_2.ogg"]
+  license: "Custom"
+  copyright: "Gaijin Entertainment, War Thunder (extracted for private use)"
+  source: "War Thunder game files"
+
+- files: ["crew_gunner_shot.ogg"]
+  license: "Custom"
+  copyright: "Gaijin Entertainment, War Thunder (extracted for private use)"
+  source: "War Thunder game files"
+
+- files: ["crew_hit_confirmed.ogg"]
+  license: "Custom"
+  copyright: "Gaijin Entertainment, War Thunder (extracted for private use)"
+  source: "War Thunder game files"
+
+- files: ["crew_loader_damaged.ogg"]
+  license: "Custom"
+  copyright: "Gaijin Entertainment, War Thunder (extracted for private use)"
+  source: "War Thunder game files"
+
+- files: ["crew_loading_ap_1.ogg"]
+  license: "Custom"
+  copyright: "Gaijin Entertainment, War Thunder (extracted for private use)"
+  source: "War Thunder game files"
+
+- files: ["crew_loading_he_1.ogg"]
+  license: "Custom"
+  copyright: "Gaijin Entertainment, War Thunder (extracted for private use)"
+  source: "War Thunder game files"
+
+- files: ["crew_loading_heat_1.ogg"]
+  license: "Custom"
+  copyright: "Gaijin Entertainment, War Thunder (extracted for private use)"
+  source: "War Thunder game files"
+
+- files: ["crew_misfire.ogg"]
+  license: "Custom"
+  copyright: "Gaijin Entertainment, War Thunder (extracted for private use)"
+  source: "War Thunder game files"
+
+- files: ["crew_move_backward.ogg"]
+  license: "Custom"
+  copyright: "Gaijin Entertainment, War Thunder (extracted for private use)"
+  source: "War Thunder game files"
+
+- files: ["crew_move_forward.ogg"]
+  license: "Custom"
+  copyright: "Gaijin Entertainment, War Thunder (extracted for private use)"
+  source: "War Thunder game files"
+
+- files: ["crew_move_stop.ogg"]
+  license: "Custom"
+  copyright: "Gaijin Entertainment, War Thunder (extracted for private use)"
+  source: "War Thunder game files"
+
+- files: ["crew_stabilizer_damaged.ogg"]
+  license: "Custom"
+  copyright: "Gaijin Entertainment, War Thunder (extracted for private use)"
+  source: "War Thunder game files"
+
+- files: ["crew_target_destroyed.ogg"]
+  license: "Custom"
+  copyright: "Gaijin Entertainment, War Thunder (extracted for private use)"
+  source: "War Thunder game files"
+
+- files: ["crew_target_hit.ogg"]
+  license: "Custom"
+  copyright: "Gaijin Entertainment, War Thunder (extracted for private use)"
+  source: "War Thunder game files"
+
+- files: ["crew_target_tank.ogg"]
+  license: "Custom"
+  copyright: "Gaijin Entertainment, War Thunder (extracted for private use)"
+  source: "War Thunder game files"
+
+- files: ["crew_track_lost.ogg"]
+  license: "Custom"
+  copyright: "Gaijin Entertainment, War Thunder (extracted for private use)"
+  source: "War Thunder game files"
+
+- files: ["crew_weve_been_hit.ogg"]
+  license: "Custom"
+  copyright: "Gaijin Entertainment, War Thunder (extracted for private use)"
+  source: "War Thunder game files"

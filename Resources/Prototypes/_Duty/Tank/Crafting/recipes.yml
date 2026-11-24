@@ -1,0 +1,268 @@
+# SPDX-FileCopyrightText: 2026 LocalDuty
+# SPDX-License-Identifier: MIT
+
+# Рецепты станка DutyTankWorkshop. Время и стоимость подобраны так, чтобы лейт-часть всего танка занимала около 16 минут.
+# Ключевые id результатов (боеприпасные короба) пока заглушки из stubs.yml.
+
+- type: latheCategory
+  id: DutyTankMaterials
+  name: lathe-category-duty-tank-materials
+
+- type: latheCategory
+  id: DutyTankEngine
+  name: lathe-category-duty-tank-engine
+
+- type: latheCategory
+  id: DutyTankChassis
+  name: lathe-category-duty-tank-chassis
+
+- type: latheCategory
+  id: DutyTankArmament
+  name: lathe-category-duty-tank-armament
+
+- type: latheCategory
+  id: DutyTankAmmo
+  name: lathe-category-duty-tank-ammo
+
+- type: latheRecipe
+  id: DutyTankArmorSteelRecipe
+  result: SheetDutyArmorSteel1
+  categories:
+  - DutyTankMaterials
+  completetime: 3
+  materials:
+    Steel: 300
+    Plasteel: 100
+
+- type: latheRecipe
+  id: DutyTankCylinderBlockRecipe
+  result: DutyT90CylinderBlock
+  categories:
+  - DutyTankEngine
+  completetime: 60
+  materials:
+    Steel: 1400
+
+- type: latheRecipe
+  id: DutyTankTurbochargerRecipe
+  result: DutyT90Turbocharger
+  categories:
+  - DutyTankEngine
+  completetime: 40
+  materials:
+    Steel: 400
+    Plasteel: 100
+
+- type: latheRecipe
+  id: DutyTankFuelPumpRecipe
+  result: DutyT90FuelPump
+  categories:
+  - DutyTankEngine
+  completetime: 40
+  materials:
+    Steel: 300
+    Silver: 50
+    Plastic: 100
+
+- type: latheRecipe
+  id: DutyTankGearboxRecipe
+  result: DutyT90Gearbox
+  categories:
+  - DutyTankEngine
+  completetime: 60
+  materials:
+    Steel: 1000
+    Plasteel: 200
+
+- type: latheRecipe
+  id: DutyTankRoadWheelRecipe
+  result: DutyT90RoadWheel
+  categories:
+  - DutyTankChassis
+  completetime: 10
+  materials:
+    Steel: 300
+    Plastic: 100
+
+- type: latheRecipe
+  id: DutyTankTrackKitRecipe
+  result: DutyT90TrackKit
+  categories:
+  - DutyTankChassis
+  completetime: 25
+  materials:
+    Steel: 800
+
+- type: latheRecipe
+  id: DutyTankReliktBlockRecipe
+  result: DutyT90ReliktBlock
+  categories:
+  - DutyTankChassis
+  completetime: 10
+  materials:
+    DutyArmorSteel: 50
+    Plastic: 200
+    Gunpowder: 100
+
+- type: latheRecipe
+  id: DutyTankBarrelBlankRecipe
+  result: DutyT90BarrelBlank
+  categories:
+  - DutyTankArmament
+  completetime: 90
+  materials:
+    DutyArmorSteel: 300
+    Steel: 700
+
+- type: latheRecipe
+  id: DutyTankBreechRecipe
+  result: DutyT90Breech
+  categories:
+  - DutyTankArmament
+  completetime: 50
+  materials:
+    Steel: 900
+    DutyArmorSteel: 100
+
+- type: latheRecipe
+  id: DutyTankAutoloaderRecipe
+  result: DutyT90Autoloader
+  categories:
+  - DutyTankArmament
+  completetime: 60
+  materials:
+    Steel: 800
+    Plasteel: 100
+    Plastic: 100
+
+- type: latheRecipe
+  id: DutyTankKalinaRecipe
+  result: DutyT90Kalina
+  categories:
+  - DutyTankArmament
+  completetime: 60
+  materials:
+    Steel: 100
+    Glass: 500
+    Plastic: 300
+    Gold: 100
+    Silver: 100
+
+- type: latheRecipe
+  id: DutyTankPKTMRecipe
+  result: DutyT90PKTM
+  categories:
+  - DutyTankArmament
+  completetime: 30
+  materials:
+    Steel: 600
+    Plastic: 100
+
+- type: latheRecipe
+  id: DutyTankKordRecipe
+  result: DutyT90Kord
+  categories:
+  - DutyTankArmament
+  completetime: 30
+  materials:
+    Steel: 900
+    Plastic: 100
+
+- type: latheRecipe
+  id: DutyTankDUMVRecipe
+  result: DutyT90DUMV
+  categories:
+  - DutyTankArmament
+  completetime: 20
+  materials:
+    Steel: 400
+    Plastic: 200
+    Glass: 100
+
+- type: latheRecipe
+  id: DutyTankShellAPFSDSRecipe
+  result: DutyT90ShellAPFSDS
+  categories:
+  - DutyTankAmmo
+  completetime: 12
+  materials:
+    DutyArmorSteel: 100
+    Steel: 400
+
+- type: latheRecipe
+  id: DutyTankShellHEFragRecipe
+  result: DutyT90ShellHEFrag
+  categories:
+  - DutyTankAmmo
+  completetime: 12
+  materials:
+    Steel: 500
+    Gunpowder: 300
+
+- type: latheRecipe
+  id: DutyTankShellHEATRecipe
+  result: DutyT90ShellHEAT
+  categories:
+  - DutyTankAmmo
+  completetime: 12
+  materials:
+    Steel: 400
+    Plasteel: 50
+    Gunpowder: 300
+
+- type: latheRecipe
+  id: DutyTankPropellantChargeRecipe
+  result: DutyT90PropellantCharge
+  categories:
+  - DutyTankAmmo
+  completetime: 8
+  materials:
+    Gunpowder: 500
+    Plastic: 100
+
+- type: latheRecipe
+  id: DutyTankBelt762Recipe
+  result: DutyMagazineBelt762Tank
+  categories:
+  - DutyTankAmmo
+  completetime: 10
+  materials:
+    Steel: 400
+    Gunpowder: 100
+    Plastic: 100
+
+- type: latheRecipe
+  id: DutyTankBelt127Recipe
+  result: DutyMagazineBelt127Tank
+  categories:
+  - DutyTankAmmo
+  completetime: 10
+  materials:
+    Steel: 500
+    Gunpowder: 150
+    Plastic: 100
+
+- type: latheRecipePack
+  id: DutyTankWorkshopPack
+  recipes:
+  - DutyTankArmorSteelRecipe
+  - DutyTankCylinderBlockRecipe
+  - DutyTankTurbochargerRecipe
+  - DutyTankFuelPumpRecipe
+  - DutyTankGearboxRecipe
+  - DutyTankRoadWheelRecipe
+  - DutyTankTrackKitRecipe
+  - DutyTankReliktBlockRecipe
+  - DutyTankBarrelBlankRecipe
+  - DutyTankBreechRecipe
+  - DutyTankAutoloaderRecipe
+  - DutyTankKalinaRecipe
+  - DutyTankPKTMRecipe
+  - DutyTankKordRecipe
+  - DutyTankDUMVRecipe
+  - DutyTankShellAPFSDSRecipe
+  - DutyTankShellHEFragRecipe
+  - DutyTankShellHEATRecipe
+  - DutyTankPropellantChargeRecipe
+  - DutyTankBelt762Recipe
+  - DutyTankBelt127Recipe

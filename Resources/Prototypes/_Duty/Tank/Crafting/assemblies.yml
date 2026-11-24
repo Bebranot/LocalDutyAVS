@@ -1,0 +1,208 @@
+# SPDX-FileCopyrightText: 2026 LocalDuty
+# SPDX-License-Identifier: MIT
+
+# Промежуточные узлы графов крафта самодельного Т-90М: стенды и недостроенные корпуса.
+# Стоят на месте (анкерованы), снимаются гаечным ключом; визуал временный (шасси Рипли).
+
+- type: entity
+  abstract: true
+  parent: BaseMachine
+  id: DutyTankAssemblyBase
+  components:
+  - type: Sprite
+    sprite: Objects/Specific/Mech/ripley_construction.rsi
+    state: ripley_chassis
+    color: "#7a7260"
+  - type: Damageable
+    damageModifierSet: Metallic
+  - type: Injurable
+    damageContainer: StructuralInorganic
+  - type: Destructible
+    thresholds:
+    - trigger:
+        !type:DamageTrigger
+        damage: 400
+      behaviors:
+      - !type:PlaySoundBehavior
+        sound:
+          collection: MetalBreak
+      - !type:DoActsBehavior
+        acts: [ "Destruction" ]
+      - !type:SpawnEntitiesBehavior
+        spawn:
+          SheetSteel1:
+            min: 2
+            max: 6
+
+- type: entity
+  parent: DutyTankAssemblyBase
+  id: DutyTankWorkshopFrame
+  name: workshop frame
+  description: An unfinished stage of an improvised tank assembly.
+  components:
+  - type: Sprite
+    state: ripley_chassis
+  - type: Construction
+    graph: DutyTankWorkshopGraph
+    node: frame
+
+- type: entity
+  parent: DutyTankAssemblyBase
+  id: DutyT90EngineStand
+  name: engine assembly stand
+  description: An unfinished stage of an improvised tank assembly.
+  components:
+  - type: Sprite
+    state: ripley_harness
+  - type: Construction
+    graph: DutyT90EngineGraph
+    node: stand
+
+- type: entity
+  parent: DutyTankAssemblyBase
+  id: DutyT90HullFrame
+  name: tank hull frame
+  description: An unfinished stage of an improvised tank assembly.
+  components:
+  - type: Sprite
+    sprite: _Duty/Tank/t90m.rsi
+    state: stage_1
+  - type: Construction
+    graph: DutyT90HullGraph
+    node: frame
+
+- type: entity
+  parent: DutyTankAssemblyBase
+  id: DutyT90HullBottom
+  name: tank hull with bottom
+  description: An unfinished stage of an improvised tank assembly.
+  components:
+  - type: Sprite
+    sprite: _Duty/Tank/t90m.rsi
+    state: stage_1
+  - type: Construction
+    graph: DutyT90HullGraph
+    node: bottom
+
+- type: entity
+  parent: DutyTankAssemblyBase
+  id: DutyT90HullSides
+  name: tank hull with sides
+  description: An unfinished stage of an improvised tank assembly.
+  components:
+  - type: Sprite
+    sprite: _Duty/Tank/t90m.rsi
+    state: stage_2
+  - type: Construction
+    graph: DutyT90HullGraph
+    node: sides
+
+- type: entity
+  parent: DutyTankAssemblyBase
+  id: DutyT90HullGlacis
+  name: tank hull with glacis
+  description: An unfinished stage of an improvised tank assembly.
+  components:
+  - type: Sprite
+    sprite: _Duty/Tank/t90m.rsi
+    state: stage_2
+  - type: Construction
+    graph: DutyT90HullGraph
+    node: glacis
+
+- type: entity
+  parent: DutyTankAssemblyBase
+  id: DutyT90HullRoof
+  name: tank hull with roof
+  description: An unfinished stage of an improvised tank assembly.
+  components:
+  - type: Sprite
+    sprite: _Duty/Tank/t90m.rsi
+    state: stage_3
+  - type: Construction
+    graph: DutyT90HullGraph
+    node: roof
+
+- type: entity
+  parent: DutyTankAssemblyBase
+  id: DutyT90TurretBox
+  name: turret box
+  description: An unfinished stage of an improvised tank assembly.
+  components:
+  - type: Sprite
+    state: ripley1
+  - type: Construction
+    graph: DutyT90TurretGraph
+    node: box
+
+- type: entity
+  parent: DutyTankAssemblyBase
+  id: DutyT90TurretGun
+  name: turret with gun
+  description: An unfinished stage of an improvised tank assembly.
+  components:
+  - type: Sprite
+    state: ripley3
+  - type: Construction
+    graph: DutyT90TurretGraph
+    node: gun
+
+- type: entity
+  parent: DutyTankAssemblyBase
+  id: DutyT90TurretSights
+  name: turret with autoloader
+  description: An unfinished stage of an improvised tank assembly.
+  components:
+  - type: Sprite
+    state: ripley5
+  - type: Construction
+    graph: DutyT90TurretGraph
+    node: sights
+
+- type: entity
+  parent: DutyTankAssemblyBase
+  id: DutyT90TracksBogies
+  name: suspension beams
+  description: An unfinished stage of an improvised tank assembly.
+  components:
+  - type: Sprite
+    state: ripley7
+  - type: Construction
+    graph: DutyT90TracksGraph
+    node: bogies
+
+- type: entity
+  parent: DutyTankAssemblyBase
+  id: DutyT90TracksLeft
+  name: one side of running gear
+  description: An unfinished stage of an improvised tank assembly.
+  components:
+  - type: Sprite
+    state: ripley9
+  - type: Construction
+    graph: DutyT90TracksGraph
+    node: side
+
+- type: entity
+  parent: DutyTankAssemblyBase
+  id: DutyT90ReliktRack
+  name: ERA mounting rack
+  description: An unfinished stage of an improvised tank assembly.
+  components:
+  - type: Sprite
+    state: ripley10
+  - type: Construction
+    graph: DutyT90ReliktGraph
+    node: rack
+
+- type: entity
+  parent: DutyTankAssemblyBase
+  id: DutyT90KordMount
+  name: Kord mounting pedestal
+  description: An unfinished stage of an improvised tank assembly.
+  components:
+  - type: Sprite
+    state: ripley11
+  - type: Construction
+    graph: DutyT90KordGraph
+    node: mount

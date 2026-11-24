@@ -1,0 +1,197 @@
+# SPDX-FileCopyrightText: 2026 LocalDuty
+# SPDX-License-Identifier: MIT
+
+# База техники RMC, урезанная до одного танка. Из RMCVehicleBase/VehicleTankBase выкинуто:
+# - RMCNightVisionVisible, RMCIgnoreGhostInteractionLimits, Corrodible, VehicleXenoSize, MarineMapTracked,
+#   TacticalMap* — систем RMC у нас нет, компонентов нет;
+# - VehicleLock — танк самодельный, ездит кто угодно;
+# - поля xeno* в GridVehicleMover (у нас нет ксено; C# их читает, но по умолчанию они безвредны);
+# - VehicleRideSurface, Van-слоты колёс/интерьер.
+
+- type: entity
+  id: RMCVehicleBase
+  abstract: true
+  name: abstract vehicle
+  description: An abstract vehicle. Make sure to replace this!
+  components:
+  - type: Vehicle
+    # _Duty: у нас ванильный Vehicle без movementKind; сеточное движение задаёт GridVehicleMover
+    transferDamage: false
+    requiresHands: false
+  - type: LagCompensation
+  - type: Clickable
+  - type: WarpPoint
+    follow: true
+  - type: GridVehicleMover
+    maxSpeed: 6
+    acceleration: 5
+    deceleration: 12
+    turnDelay: 0.25
+    pushCooldown: 2
+  - type: VehicleOvercharge
+    speedMultiplier: 1.6
+    duration: 3
+    cooldown: 15
+    overchargeSound: /Audio/_Duty/T90M/Engine/engine_load_2.ogg
+  - type: VehicleSound
+    runningSound: /Audio/_Duty/T90M/Engine/engine_run_mid_loop.ogg
+    runningSoundCooldown: 8
+    collisionSound: /Audio/_Duty/T90M/Impacts/crash_concrete_hit.ogg
+    collisionSoundCooldown: 3
+    mobCollisionSound: /Audio/_Duty/T90M/Impacts/crash_body_big.ogg
+    crashSound: /Audio/_Duty/T90M/Impacts/crash_metal_debris.ogg
+  - type: VehicleSpotlight
+    radius: 6
+    energy: 2.5
+    softness: 2
+  - type: Physics
+    bodyType: Dynamic
+  # _Duty: слоя столкновений Vehicle (RMC) у нас нет — техника сталкивается через LargeMobLayer
+  - type: Fixtures
+    fixtures:
+      world:
+        shape:
+          !type:PhysShapeAabb
+          bounds: -0.425,-1.2,0.425,1.2
+        density: 1000
+        mask:
+        - Impassable
+        - HighImpassable
+        - LowImpassable
+        - LargeMobLayer
+        layer:
+        - LargeMobLayer
+      mob:
+        shape:
+          !type:PhysShapeAabb
+          bounds: -0.425,-1.2,0.425,1.2
+        density: 1000
+        mask:
+        - MidImpassable
+        - LargeMobLayer
+        layer:
+        - LargeMobLayer
+  - type: Damageable
+    damageModifierSet: StructuralMarine
+  # _Duty: у нас контейнер урона вынесен из Damageable в Injurable
+  - type: Injurable
+    damageContainer: StructuralMarine
+  - type: InteractionOutline
+  - type: Sprite
+    drawdepth: Mobs
+    sprite: _Duty/Tank/t90m.rsi
+    layers:
+    - map: [ base ]
+      state: tank_base
+    - map: [ rmc-wheels ]
+      state: wheels_1
+  - type: PointLight
+    enabled: false
+    radius: 6
+    energy: 2.5
+    softness: 2
+    autoRot: true
+    offset: "0,0.9"
+  - type: DoAfter
+  - type: UserInterface
+    interfaces:
+      enum.HardpointUiKey.Key:
+        type: HardpointBoundUserInterface
+      enum.VehicleWeaponsUiKey.Key:
+        type: VehicleWeaponsBoundUserInterface
+  - type: VehicleWeapons
+  # _Duty: InputMover и SpriteMovement из RMC убраны. Ездит танк по вводу водителя (GridVehicleMover), а с InputMover
+  # его подхватывает MoverController мобов: тело Dynamic — и там срывается каждый тик физики.
+  - type: ItemSlots
+  - type: HardpointIntegrity
+    maxIntegrity: 1000
+    integrity: 1000
+    bypassEntryOnZero: true
+  - type: VehicleDemolition
+    explosion: RMCVehicleWreckExplosion
+  - type: Appearance
+
+- type: entity
+  parent: RMCVehicleBase
+  id: VehicleTankBase
+  abstract: true
+  name: tank
+  description: A heavy armored tank built for battlefield dominance.
+  components:
+  - type: WarpPoint
+    follow: true
+    location: duty-tank-warp-point
+  - type: GridVehicleMover
+    maxSpeed: 3
+    acceleration: 1.154
+    deceleration: 8
+    maxReverseSpeed: 2
+    reverseAcceleration: 1.154
+    turnDelay: 1
+    turnInPlace: true
+    turnInPlaceMaxSpeed: 0.5
+    pushCooldown: 1
+    canPushVehicles: true
+    blockingMobBypassNudgeLimit: 2
+    weightClass: Medium
+  - type: VehicleOvercharge
+    speedMultiplier: 1.3
+    duration: 3
+    cooldown: 20
+    overchargeSound: /Audio/_Duty/T90M/Engine/engine_load_2.ogg
+  - type: VehicleSpotlight
+    radius: 8
+    energy: 3
+    softness: 2
+  - type: Fixtures
+    fixtures:
+      world:
+        shape:
+          !type:PhysShapeAabb
+          bounds: -1.2,-1.6,1.2,1.6
+        density: 1500
+        mask:
+        - Impassable
+        - HighImpassable
+        - LowImpassable
+        - LargeMobLayer
+        layer:
+        - LargeMobLayer
+      mob:
+        shape:
+          !type:PhysShapeAabb
+          bounds: -1.2,-1.6,1.2,1.6
+        density: 1500
+        mask:
+        - MidImpassable
+        - LargeMobLayer
+        layer:
+        - LargeMobLayer
+  - type: Damageable
+    damageModifierSet: VehicleFrameTank
+  - type: Sprite
+    layers:
+    - map: [ base ]
+      state: tank_base
+    - map: [ armor ]
+      state: ARMOR
+      visible: false
+    - map: [ primary ]
+      state: tank_turret_0
+      visible: false
+    - map: [ secondary ]
+      state: SECONDARY
+      visible: false
+    - map: [ support ]
+      state: SUPPORT
+      visible: false
+    - map: [ rmc-wheels ]
+      state: wheels_1
+  - type: PointLight
+    enabled: false
+    radius: 12
+    energy: 3
+    softness: 2
+    autoRot: true
+    offset: "0,0.9"
+  - type: VehicleHardpointVisuals

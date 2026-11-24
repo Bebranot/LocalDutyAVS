@@ -1,0 +1,343 @@
+# SPDX-FileCopyrightText: 2026 LocalDuty
+# SPDX-License-Identifier: MIT
+
+# Детали самодельного Т-90М, печатаются на станке DutyTankWorkshop.
+# Тяжёлые узлы: Huge/Ginormous, двуручные, замедляют носильщика; проще тянуть (pull).
+
+- type: entity
+  abstract: true
+  parent: BaseItem
+  id: DutyT90PartBase
+  components:
+  - type: Sprite
+    sprite: _Duty/Tank/parts.rsi
+    state: scrap_pile
+  - type: Item
+    size: Large
+
+- type: entity
+  parent: DutyT90PartBase
+  id: DutyT90CylinderBlock
+  name: V-92 cylinder block
+  description: Part of an improvised T-90M tank.
+  components:
+  - type: Sprite
+    sprite: _Duty/Tank/parts.rsi
+    state: engine
+  - type: Item
+    size: Huge
+  - type: MultiHandedItem
+  - type: ClothingSpeedModifier
+    walkModifier: 0.6
+    sprintModifier: 0.6
+  - type: HeldSpeedModifier
+  - type: Tag
+    tags:
+    - DutyT90CylinderBlock
+
+- type: entity
+  parent: DutyT90PartBase
+  id: DutyT90Turbocharger
+  name: turbocharger
+  description: Part of an improvised T-90M tank.
+  components:
+  - type: Sprite
+    sprite: Objects/Materials/Scrap/generic.rsi
+    state: junk-fireextinguisher
+    color: "#8a7d6a"
+  - type: Item
+    size: Large
+  - type: Tag
+    tags:
+    - DutyT90Turbocharger
+
+- type: entity
+  parent: DutyT90PartBase
+  id: DutyT90FuelPump
+  name: high-pressure fuel pump
+  description: Part of an improvised T-90M tank.
+  components:
+  - type: Sprite
+    sprite: Objects/Materials/Scrap/generic.rsi
+    state: junk-camera
+    color: "#7a7f6a"
+  - type: Item
+    size: Large
+  - type: Tag
+    tags:
+    - DutyT90FuelPump
+
+- type: entity
+  parent: DutyT90PartBase
+  id: DutyT90Gearbox
+  name: tank gearbox
+  description: Part of an improvised T-90M tank.
+  components:
+  - type: Sprite
+    sprite: _Duty/Tank/parts.rsi
+    state: gearbox
+  - type: Item
+    size: Huge
+  - type: MultiHandedItem
+  - type: ClothingSpeedModifier
+    walkModifier: 0.6
+    sprintModifier: 0.6
+  - type: HeldSpeedModifier
+  - type: Tag
+    tags:
+    - DutyT90Gearbox
+
+- type: entity
+  parent: DutyT90PartBase
+  id: DutyT90RoadWheel
+  name: road wheel
+  description: Part of an improvised T-90M tank.
+  components:
+  - type: Sprite
+    sprite: _Duty/Tank/parts.rsi
+    state: road_wheel
+  - type: Item
+    size: Large
+  - type: Stack
+    stackType: DutyT90RoadWheel
+    count: 1
+
+- type: entity
+  parent: DutyT90PartBase
+  id: DutyT90TrackKit
+  name: track link kit
+  description: Part of an improvised T-90M tank.
+  components:
+  - type: Sprite
+    sprite: _Duty/Tank/parts.rsi
+    state: track_segment
+  - type: Item
+    size: Large
+  - type: Stack
+    stackType: DutyT90TrackKit
+    count: 1
+
+- type: entity
+  parent: DutyT90PartBase
+  id: DutyT90BarrelBlank
+  name: 125 mm barrel blank
+  description: Part of an improvised T-90M tank.
+  components:
+  - type: Sprite
+    sprite: _Duty/Tank/parts.rsi
+    state: gun_barrel
+  - type: Item
+    size: Ginormous
+  - type: MultiHandedItem
+  - type: ClothingSpeedModifier
+    walkModifier: 0.5
+    sprintModifier: 0.5
+  - type: HeldSpeedModifier
+  - type: Tag
+    tags:
+    - DutyT90BarrelBlank
+
+- type: entity
+  parent: DutyT90PartBase
+  id: DutyT90Breech
+  name: gun breech
+  description: Part of an improvised T-90M tank.
+  components:
+  - type: Sprite
+    sprite: Objects/Materials/Scrap/generic.rsi
+    state: junk-canister-1
+    color: "#5b6055"
+  - type: Item
+    size: Huge
+  - type: MultiHandedItem
+  - type: ClothingSpeedModifier
+    walkModifier: 0.6
+    sprintModifier: 0.6
+  - type: HeldSpeedModifier
+  - type: Tag
+    tags:
+    - DutyT90Breech
+
+- type: entity
+  parent: DutyT90PartBase
+  id: DutyT90Autoloader
+  name: autoloader carousel
+  description: Part of an improvised T-90M tank.
+  components:
+  - type: Sprite
+    sprite: _Duty/Tank/parts.rsi
+    state: autoloader
+  - type: Item
+    size: Huge
+  - type: MultiHandedItem
+  - type: ClothingSpeedModifier
+    walkModifier: 0.6
+    sprintModifier: 0.6
+  - type: HeldSpeedModifier
+  - type: Tag
+    tags:
+    - DutyT90Autoloader
+
+- type: entity
+  parent: DutyT90PartBase
+  id: DutyT90Kalina
+  name: Kalina fire control unit
+  description: Part of an improvised T-90M tank.
+  components:
+  - type: Sprite
+    sprite: _Duty/Tank/parts.rsi
+    state: kalina
+  - type: Item
+    size: Large
+  - type: Tag
+    tags:
+    - DutyT90Kalina
+
+- type: entity
+  parent: DutyT90PartBase
+  id: DutyT90PKTM
+  name: PKTM machine gun
+  description: Part of an improvised T-90M tank.
+  components:
+  - type: Sprite
+    sprite: _Duty/Tank/parts.rsi
+    state: pktm
+  - type: Item
+    size: Large
+  - type: Tag
+    tags:
+    - DutyT90PKTM
+
+- type: entity
+  parent: DutyT90PartBase
+  id: DutyT90Kord
+  name: Kord heavy machine gun
+  description: Part of an improvised T-90M tank.
+  components:
+  - type: Sprite
+    sprite: _Duty/Tank/parts.rsi
+    state: kord
+  - type: Item
+    size: Huge
+  - type: MultiHandedItem
+  - type: ClothingSpeedModifier
+    walkModifier: 0.7
+    sprintModifier: 0.7
+  - type: HeldSpeedModifier
+  - type: Tag
+    tags:
+    - DutyT90Kord
+
+- type: entity
+  parent: DutyT90PartBase
+  id: DutyT90DUMV
+  name: DUMV remote weapon station
+  description: Part of an improvised T-90M tank.
+  components:
+  - type: Sprite
+    sprite: Objects/Materials/Scrap/generic.rsi
+    state: junk-camera
+    color: "#4c5148"
+  - type: Item
+    size: Large
+  - type: Tag
+    tags:
+    - DutyT90DUMV
+
+- type: entity
+  parent: DutyT90PartBase
+  id: DutyT90ReliktBlock
+  name: Relikt ERA block
+  description: Part of an improvised T-90M tank.
+  components:
+  - type: Sprite
+    sprite: _Duty/Tank/parts.rsi
+    state: relikt_block
+  - type: Item
+    size: Large
+  - type: Stack
+    stackType: DutyT90ReliktBlock
+    count: 1
+
+- type: entity
+  parent: DutyT90PartBase
+  id: DutyT90ShellAPFSDS
+  name: 3BM60 APFSDS projectile
+  description: Separate-loading ammunition component for the T-90M gun.
+  components:
+  - type: Sprite
+    sprite: _Duty/Tank/parts.rsi
+    state: shell_apfsds
+  - type: Item
+    size: Large
+  - type: Tag
+    tags:
+    - DutyT90ShellAPFSDS
+
+- type: entity
+  parent: DutyT90PartBase
+  id: DutyT90ShellHEFrag
+  name: 3OF26 HE-Frag projectile
+  description: Separate-loading ammunition component for the T-90M gun.
+  components:
+  - type: Sprite
+    sprite: _Duty/Tank/parts.rsi
+    state: shell_hefrag
+  - type: Item
+    size: Large
+  - type: Tag
+    tags:
+    - DutyT90ShellHEFrag
+
+- type: entity
+  parent: DutyT90PartBase
+  id: DutyT90ShellHEAT
+  name: 3BK29M HEAT projectile
+  description: Separate-loading ammunition component for the T-90M gun.
+  components:
+  - type: Sprite
+    sprite: _Duty/Tank/parts.rsi
+    state: shell_heat
+  - type: Item
+    size: Large
+  - type: Tag
+    tags:
+    - DutyT90ShellHEAT
+
+- type: entity
+  parent: DutyT90PartBase
+  id: DutyT90PropellantCharge
+  name: propellant charge
+  description: Separate-loading ammunition component for the T-90M gun.
+  components:
+  - type: Sprite
+    sprite: _Duty/Tank/parts.rsi
+    state: propellant_charge
+  - type: Item
+    size: Large
+  - type: Tag
+    tags:
+    - DutyT90PropellantCharge
+
+- type: entity
+  parent: DutyT90PartBase
+  id: DutyT90MEngine
+  name: V-92 engine assembly
+  description: A complete tank engine with turbocharger, fuel pump and gearbox.
+  components:
+  - type: Construction
+    graph: DutyT90EngineGraph
+    node: engine
+  - type: Sprite
+    sprite: _Duty/Tank/parts.rsi
+    state: engine
+  - type: Item
+    size: Ginormous
+  - type: MultiHandedItem
+  - type: ClothingSpeedModifier
+    walkModifier: 0.5
+    sprintModifier: 0.5
+  - type: HeldSpeedModifier
+  - type: Tag
+    tags:
+    - DutyT90Engine

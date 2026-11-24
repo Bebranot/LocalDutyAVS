@@ -48,6 +48,7 @@ public sealed partial class GunSystem : SharedGunSystem
     private const float MechMuzzleOffset = 1f; // ADT-Tweak
 
     [Dependency] private IEyeManager _eyeManager = default!;
+    [Dependency] private Content.Client._RMC14.Vehicle.VehicleTurretMuzzleOffsetSystem _dutyTurretMuzzle = default!; // _Duty
     [Dependency] private IInputManager _inputManager = default!;
     [Dependency] private InputSystem _inputSystem = default!;
     [Dependency] private IOverlayManager _overlayManager = default!;
@@ -222,7 +223,10 @@ public sealed partial class GunSystem : SharedGunSystem
         // Define target coordinates relative to gun entity, so that network latency on moving grids doesn't fuck up the target location.
         var target = GetBestTarget(_eyeManager.CurrentEye, mousePos);
 
-        var coordinates = TransformSystem.ToCoordinates(entity, mousePos);
+        // _Duty-start: наводчик танка сидит на карте интерьера, а целится по карте танка — считаем от орудия
+        var coordinatesOrigin = Transform(entity).MapID == mousePos.MapId ? entity : gun.Owner;
+        var coordinates = TransformSystem.ToCoordinates(coordinatesOrigin, mousePos);
+        // _Duty-end
 
         Log.Debug($"Sending shoot request tick {Timing.CurTick} / {Timing.CurTime}");
 
@@ -389,7 +393,17 @@ public sealed partial class GunSystem : SharedGunSystem
         var ent = Spawn(message.Prototype, coordinates);
         TransformSystem.SetWorldRotationNoLerp(ent, message.Angle);
 
-        if (tracked != null)
+        // _Duty-start: вспышка орудия техники держится за дуло башни, а не за стрелка в интерьере
+        if (_dutyTurretMuzzle.TryGetGunPose(gunUid, null, out var turretOrigin, out var turretRotation))
+        {
+            TransformSystem.SetWorldPosition(ent, TransformSystem.ToMapCoordinates(turretOrigin).Position + message.Angle.RotateVec(trackOffset));
+
+            var turretTrack = EnsureComp<Content.Client._RMC14.Vehicle.VehicleTurretTrackedMuzzleFlashComponent>(ent);
+            turretTrack.Weapon = gunUid;
+            turretTrack.Offset = trackOffset;
+            turretTrack.RotationOffset = (message.Angle - turretRotation).Reduced();
+        }
+        else if (tracked != null) // _Duty-end
         {
             var track = EnsureComp<TrackUserComponent>(ent);
             track.User = tracked;

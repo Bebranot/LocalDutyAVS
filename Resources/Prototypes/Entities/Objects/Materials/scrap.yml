@@ -27,6 +27,9 @@
     tags:
     - Recyclable
     - SalvageScrap
+  # _Duty: без Material хранилище материалов не принимает лом — нужно станку самодельного Т-90М (DutyTankWorkshop).
+  # Обычные лейты лом не берут: у них whitelist по тегам Sheet/RawMaterial/Ingot.
+  - type: Material
 
 - type: entity
   parent: BaseStructure
