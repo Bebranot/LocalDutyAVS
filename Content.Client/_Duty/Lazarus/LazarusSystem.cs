@@ -1,5 +1,6 @@
 using Content.Client.Audio;
 using Content.Shared._Duty.Lazarus;
+using Content.Shared.Mobs.Systems;
 using Robust.Client.Graphics;
 using Robust.Client.Player;
 using Robust.Client.ResourceManagement;
@@ -31,6 +32,7 @@ public sealed partial class LazarusSystem : EntitySystem
     [Dependency] private IPlayerManager _player = default!;
     [Dependency] private SharedAudioSystem _audio = default!;
     [Dependency] private ContentAudioSystem _contentAudio = default!;
+    [Dependency] private MobStateSystem _mobState = default!;
 
     /// <summary>За сколько гаснет сцена при обрыве — быстро, но не рывком.</summary>
     private const float AbortFadeSeconds = 0.4f;
@@ -44,6 +46,7 @@ public sealed partial class LazarusSystem : EntitySystem
     /// <summary>Множитель непрозрачности сцены: 1 в норме, едет к 0 при обрыве.</summary>
     private float _fade = 1f;
     private bool _aborting;
+    private bool _activeForced;
 
     // Живые звуки сцены. Держим ссылки, чтобы гасить их при обрыве и чтобы
     // DynamicAmbientMusicSystem знал, что сцена ещё звучит.
@@ -82,11 +85,17 @@ public sealed partial class LazarusSystem : EntitySystem
 
     private void OnTriggered(LazarusTriggeredEvent ev)
     {
+        // Если событие не принудительное (duty_lazarus_test), а игрок на клиенте уже не в крите
+        // (например, админ вылечил через Rejuvenate или вытащили за тот же тик), сцену не запускаем.
+        if (!ev.Forced && (_player.LocalEntity is not { } local || !_mobState.IsCritical(local)))
+            return;
+
         // Перекрытие предыдущей кинематики (на всякий случай) — начинаем заново.
         StopScene(fadeAudio: false);
 
         _fade = 1f;
         _aborting = false;
+        _activeForced = ev.Forced;
 
         _black = new LazarusOverlay(
             _clyde,
@@ -121,18 +130,20 @@ public sealed partial class LazarusSystem : EntitySystem
 
     /// <summary>
     /// Сцена оборвана сервером. Доигрывать её над трупом или над уже поднятым бойцом
-    /// незачем: гасим оверлеи и уводим звуки.
+    /// незачем: гасим оверлеи и уводим звуки (при Immediate — гасим мгновенно).
     /// </summary>
     private void OnCancelled(LazarusCancelledEvent ev)
     {
-        if (_black == null && _vignette == null)
+        _pendingLastStand = null;
+        _activeForced = false;
+
+        if (ev.Immediate || (_black == null && _vignette == null))
         {
-            StopScene(fadeAudio: true);
+            StopScene(fadeAudio: !ev.Immediate);
             return;
         }
 
         _aborting = true;
-        _pendingLastStand = null;
         FadeOutAudio();
     }
 
@@ -142,19 +153,27 @@ public sealed partial class LazarusSystem : EntitySystem
     {
         base.FrameUpdate(frameTime);
 
-        if (_pendingLastStand != null && _timing.RealTime >= _lastStandTime)
-        {
-            _lastStandStream = _audio.PlayGlobal(_pendingLastStand, Filter.Local(), false,
-                AudioParams.Default.WithVolume(_pendingLastStandVolume))?.Entity;
-            _pendingLastStand = null;
-        }
-
         // Игрок отцепился от тела (гиб, уход в призрака, рестарт раунда) — сцена больше
         // ни к чему не привязана, а трек Last Standing длиннее её самой.
-        if (SceneActive && _player.LocalEntity == null)
+        if (_player.LocalEntity is not { } local)
         {
-            StopScene(fadeAudio: false);
+            if (SceneActive)
+                StopScene(fadeAudio: false);
             return;
+        }
+
+        if (_pendingLastStand != null)
+        {
+            if (_aborting || (!_activeForced && !_mobState.IsCritical(local)))
+            {
+                _pendingLastStand = null;
+            }
+            else if (_timing.RealTime >= _lastStandTime)
+            {
+                _lastStandStream = _audio.PlayGlobal(_pendingLastStand, Filter.Local(), false,
+                    AudioParams.Default.WithVolume(_pendingLastStandVolume))?.Entity;
+                _pendingLastStand = null;
+            }
         }
 
         if (_aborting && _fade > 0f)
@@ -190,6 +209,7 @@ public sealed partial class LazarusSystem : EntitySystem
     {
         ClearOverlays();
         _pendingLastStand = null;
+        _activeForced = false;
 
         if (fadeAudio)
             FadeOutAudio();

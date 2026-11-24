@@ -32,6 +32,9 @@ public sealed class LazarusTriggeredEvent : EntityEventArgs
 
     /// <summary>Задержка вступления основного звука относительно сердцебиения, сек.</summary>
     public float LastStandDelay;
+
+    /// <summary>Принудительный запуск (админ-команда в обход крита).</summary>
+    public bool Forced;
 }
 
 /// <summary>
@@ -42,6 +45,11 @@ public sealed class LazarusTriggeredEvent : EntityEventArgs
 [Serializable, NetSerializable]
 public sealed class LazarusCancelledEvent : EntityEventArgs
 {
+    /// <summary>
+    /// Мгновенный обрыв (например, при админском Rejuvenate): гасит оверлеи и звук сразу,
+    /// без плавного затухания.
+    /// </summary>
+    public bool Immediate;
 }
 
 /// <summary>

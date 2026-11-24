@@ -5,6 +5,7 @@
 using Content.IntegrationTests.Tests.Interaction;
 using Content.Server._Duty.Lazarus;
 using Content.Shared._Duty.Lazarus;
+using Content.Shared.Administration.Systems;
 using Content.Shared.Body.Components;
 using Content.Shared.CCVar;
 using Content.Shared.Chemistry.EntitySystems;
@@ -423,6 +424,84 @@ public sealed class DutyLazarusTests : InteractionTest
         {
             Assert.That(SEntMan.GetComponent<MobStateComponent>(SPlayer).CurrentState, Is.EqualTo(MobState.Dead));
             Assert.That(SEntMan.GetComponent<LazarusComponent>(SPlayer).NextAvailableTime, Is.EqualTo(TimeSpan.Zero));
+        });
+    }
+
+    /// <summary>
+    /// Админское исцеление (<see cref="RejuvenateSystem.PerformRejuvenate"/>) в глубоком крите
+    /// не даёт эффекту Лазаруса сработать.
+    /// </summary>
+    [Test]
+    public async Task RejuvenateDuringCrit_DoesNotTriggerLazarus()
+    {
+        await AddAtmosphere();
+        await ConfigureLazarusCVars(enabled: true, nearDeath: 0.5f, chanceMin: 1f, chanceMax: 1f, nearbyRange: 0f);
+
+        await Server.WaitPost(() =>
+        {
+            SetNearDeathDamage(SPlayer);
+            SEntMan.System<RejuvenateSystem>().PerformRejuvenate(SPlayer);
+        });
+
+        await RunSeconds(0.6f);
+
+        await Server.WaitAssertion(() =>
+        {
+            var lazarus = SEntMan.GetComponent<LazarusComponent>(SPlayer);
+            Assert.Multiple(() =>
+            {
+                Assert.That(SEntMan.GetComponent<MobStateComponent>(SPlayer).CurrentState, Is.EqualTo(MobState.Alive));
+                Assert.That(lazarus.RolledThisCrit, Is.False);
+                Assert.That(lazarus.NextAvailableTime, Is.EqualTo(TimeSpan.Zero));
+                Assert.That(SEntMan.HasComponent<LazarusScarComponent>(SPlayer), Is.False);
+            });
+        });
+    }
+
+    /// <summary>
+    /// Если Лазарус уже запустился и идёт задержка до вставания, админский Rejuvenate
+    /// немедленно обрывает сцену, возвращает кулдаун и не даёт сработать отложенному Revive.
+    /// </summary>
+    [Test]
+    public async Task RejuvenateDuringDelay_CancelsPendingRevive()
+    {
+        await AddAtmosphere();
+        await ConfigureLazarusCVars(enabled: true, nearDeath: 0.5f, chanceMin: 1f, chanceMax: 1f, nearbyRange: 0f);
+
+        await Server.WaitPost(() => SetNearDeathDamage(SPlayer));
+        await RunSeconds(0.6f);
+
+        await Server.WaitAssertion(() =>
+        {
+            Assert.That(SEntMan.GetComponent<LazarusComponent>(SPlayer).NextAvailableTime, Is.GreaterThan(TimeSpan.Zero));
+        });
+
+        await Server.WaitPost(() => SEntMan.System<RejuvenateSystem>().PerformRejuvenate(SPlayer));
+        await RunTicks(1);
+
+        await Server.WaitAssertion(() =>
+        {
+            var lazarus = SEntMan.GetComponent<LazarusComponent>(SPlayer);
+            Assert.Multiple(() =>
+            {
+                Assert.That(SEntMan.GetComponent<MobStateComponent>(SPlayer).CurrentState, Is.EqualTo(MobState.Alive));
+                Assert.That(lazarus.RolledThisCrit, Is.False);
+                Assert.That(lazarus.NextAvailableTime, Is.EqualTo(TimeSpan.Zero),
+                    "При отмене через Rejuvenate кулдаун должен возвращаться сразу.");
+                Assert.That(SEntMan.HasComponent<LazarusScarComponent>(SPlayer), Is.False);
+            });
+        });
+
+        await RunSeconds(6f);
+
+        await Server.WaitAssertion(() =>
+        {
+            Assert.Multiple(() =>
+            {
+                Assert.That(SEntMan.HasComponent<LazarusScarComponent>(SPlayer), Is.False,
+                    "Отменённый через Rejuvenate Лазарус не должен вешать шрам.");
+                Assert.That(SEntMan.System<DamageableSystem>().GetTotalDamage(SPlayer), Is.EqualTo(FixedPoint2.Zero));
+            });
         });
     }
 }

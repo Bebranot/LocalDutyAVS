@@ -3,6 +3,7 @@ using Content.Shared.FixedPoint;
 using Robust.Shared.Audio;
 using Robust.Shared.GameStates;
 using Robust.Shared.Prototypes;
+using Robust.Shared.Timing;
 
 namespace Content.Shared._Duty.Lazarus;
 
@@ -133,4 +134,11 @@ public sealed partial class LazarusComponent : Component
     /// </summary>
     [ViewVariables]
     public bool RolledThisCrit;
+
+    /// <summary>
+    /// Тик последнего <see cref="Content.Shared.Rejuvenate.RejuvenateEvent"/> — запрещает
+    /// запуск Лазаруса на том же тике, если админское исцеление сработало рядом со сканом.
+    /// </summary>
+    [ViewVariables]
+    public GameTick LastRejuvenateTick;
 }

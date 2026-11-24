@@ -17,6 +17,7 @@ using Content.Shared.Mobs.Components;
 using Content.Shared.Mobs.Systems;
 using Content.Shared.Movement.Systems;
 using Content.Shared.Popups;
+using Content.Shared.Rejuvenate;
 using Robust.Server.GameObjects;
 using Robust.Server.Player;
 using Robust.Shared.Configuration;
@@ -106,6 +107,8 @@ public sealed partial class LazarusSystem : EntitySystem
         SubscribeLocalEvent<MobStateComponent, MindAddedMessage>(OnMindAdded);
 
         SubscribeLocalEvent<RoundRestartCleanupEvent>(OnRoundRestart);
+        SubscribeLocalEvent<LazarusComponent, RejuvenateEvent>(OnRejuvenate);
+        SubscribeLocalEvent<LazarusComponent, MobStateChangedEvent>(OnMobStateChanged);
         SubscribeLocalEvent<LazarusScarComponent, MobStateChangedEvent>(OnScarredMobStateChanged);
 
         _console.RegisterCommand("duty_lazarus_test",
@@ -175,6 +178,9 @@ public sealed partial class LazarusSystem : EntitySystem
             // выходе из зоны: иначе колебания урона у её границы (медик лечит крита медленнее,
             // чем тот задыхается) прокручивали бы рулетку по кругу.
             if (lazarus.RolledThisCrit)
+                continue;
+
+            if (lazarus.LastRejuvenateTick == _timing.CurTick)
                 continue;
 
             if (!TryGetCritRange(thresholds, out var critThreshold, out var deadThreshold))
@@ -291,6 +297,15 @@ public sealed partial class LazarusSystem : EntitySystem
     private void Trigger(EntityUid uid, LazarusComponent lazarus, TimeSpan now, bool forced = false)
     {
         var previousCooldown = lazarus.NextAvailableTime;
+        for (var i = _pendingRevives.Count - 1; i >= 0; i--)
+        {
+            if (_pendingRevives[i].Uid != uid)
+                continue;
+
+            previousCooldown = _pendingRevives[i].PreviousCooldown;
+            _pendingRevives.RemoveAt(i);
+        }
+
         lazarus.NextAvailableTime = now + _cooldown;
 
         var hasActor = HasComp<ActorComponent>(uid);
@@ -312,6 +327,7 @@ public sealed partial class LazarusSystem : EntitySystem
                 LastStand = lazarus.LastStand,
                 LastStandVolume = lazarus.LastStandVolume,
                 LastStandDelay = lazarus.LastStandDelay,
+                Forced = forced,
             }, actor.PlayerSession);
         }
 
@@ -362,7 +378,7 @@ public sealed partial class LazarusSystem : EntitySystem
     /// Обрыв кинематики: возвращаем кулдаун (эффект не отработал — шанс не потрачен)
     /// и просим клиента погасить оверлеи со звуками, а не доигрывать сцену над трупом.
     /// </summary>
-    private void CancelRevive(PendingRevive pending)
+    private void CancelRevive(PendingRevive pending, bool immediate = false)
     {
         Log.Info(
             $"Кинематика Лазаруса у {ToPrettyString(pending.Uid)} оборвана — цель больше не в криту; кулдаун возвращён, шанс не потрачен.");
@@ -371,7 +387,41 @@ public sealed partial class LazarusSystem : EntitySystem
             lazarus.NextAvailableTime = pending.PreviousCooldown;
 
         if (TryComp<ActorComponent>(pending.Uid, out var actor))
-            RaiseNetworkEvent(new LazarusCancelledEvent(), actor.PlayerSession);
+            RaiseNetworkEvent(new LazarusCancelledEvent { Immediate = immediate }, actor.PlayerSession);
+    }
+
+    private void CancelPendingRevives(EntityUid uid, bool includeForced, bool immediate)
+    {
+        for (var i = _pendingRevives.Count - 1; i >= 0; i--)
+        {
+            var pending = _pendingRevives[i];
+            if (pending.Uid != uid)
+                continue;
+
+            if (!includeForced && pending.Forced)
+                continue;
+
+            _pendingRevives.RemoveAt(i);
+            CancelRevive(pending, immediate);
+        }
+    }
+
+    private void OnRejuvenate(Entity<LazarusComponent> ent, ref RejuvenateEvent args)
+    {
+        // Админское исцеление: подавляем запуск на текущем тике и сразу обрываем любую
+        // активную кинематику (включая принудительную), чтобы не заиграл отложенный звук.
+        ent.Comp.LastRejuvenateTick = _timing.CurTick;
+        ent.Comp.RolledThisCrit = false;
+        CancelPendingRevives(ent.Owner, includeForced: true, immediate: true);
+    }
+
+    private void OnMobStateChanged(Entity<LazarusComponent> ent, ref MobStateChangedEvent args)
+    {
+        if (args.NewMobState != MobState.Critical)
+            ent.Comp.RolledThisCrit = false;
+
+        if (!_mobState.IsCritical(ent.Owner))
+            CancelPendingRevives(ent.Owner, includeForced: false, immediate: false);
     }
 
     /// <summary>
