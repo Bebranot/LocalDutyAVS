@@ -1,4 +1,5 @@
 using Content.Server.Chat.Systems;
+using Content.Shared._Duty.NaturalDeath; // _Duty: событие перед естественным deathgasp
 using Content.Shared.Mobs;
 using Content.Shared.Speech.Muting;
 using Content.Shared.StatusEffectNew;
@@ -25,6 +26,12 @@ public sealed partial class DeathgaspSystem : SharedDeathgaspSystem
         if (!ent.Comp.OnAnyState && args.OldMobState != MobState.Critical)
             return;
         //ADT-Tweak-End
+
+        // _Duty: при естественной смерти эмоут и вздох обрабатывает NaturalDeathSystem без дубля.
+        var beforeEv = new BeforeNaturalDeathgaspEvent(ent, args.OldMobState);
+        RaiseLocalEvent(ent, ref beforeEv);
+        if (beforeEv.Cancelled)
+            return;
 
         Deathgasp(ent, ent.Comp);
     }
