@@ -1,6 +1,7 @@
 ﻿using System.Linq;
 using System.Numerics;
 using Content.Server.Administration.Logs;
+using Content.Server._Duty.Ghost; // _Duty: маркерный компонент для отсоединённых тел
 using Content.Server.Chat.Managers;
 using Content.Server.GameTicking;
 using Content.Server.Mind;
@@ -10,11 +11,13 @@ using Content.Server.Roles.Jobs;
 using Content.Shared.StationRecords.Systems;
 using Content.Shared.Access.Systems;
 using Content.Shared.ADT.Medical.SuitSensors;
+using Content.Shared.ADT.Bed.Cryostorage; // _Duty: отслеживание крио-хранения тела при возврате
 using Content.Shared.ADT.Ghost;
 using Content.Shared.ADT.Ghost.GhostTypes;
 using Content.Shared.ADT.CustomGhostSystem;
 using Content.Shared.ADT.Roles;
 using Content.Shared.Actions;
+using Content.Shared.Bed.Cryostorage; // _Duty: проверка постоянного крио-хранения тела
 using Content.Shared.CCVar;
 using Content.Shared.Damage;
 using Content.Shared.Damage.Components;
@@ -135,6 +138,13 @@ namespace Content.Server.Ghost
             SubscribeLocalEvent<ToggleGhostVisibilityToAllEvent>(OnToggleGhostVisibilityToAll);
 
             SubscribeLocalEvent<GhostComponent, GetVisMaskEvent>(OnGhostVis);
+
+            // _Duty-start: отслеживание отсоединённых тел через отдельный маркерный компонент без конфликта подписок
+            SubscribeLocalEvent<DetachedGhostBodyComponent, MobStateChangedEvent>(OnDetachedBodyMobStateChanged);
+            SubscribeLocalEvent<DetachedGhostBodyComponent, MindAddedMessage>(OnDetachedBodyMindAdded);
+            SubscribeLocalEvent<DetachedGhostBodyComponent, EntityTerminatingEvent>(OnDetachedBodyTerminating);
+            SubscribeLocalEvent<DetachedGhostBodyComponent, EntityEnteredCryostorageEvent>(OnDetachedBodyEnteredCryostorage);
+            // _Duty-end
         }
 
         private void OnGhostVis(Entity<GhostComponent> ent, ref GetVisMaskEvent args)
@@ -212,6 +222,20 @@ namespace Content.Server.Ghost
 
         private void OnGhostShutdown(EntityUid uid, GhostComponent component, ComponentShutdown args)
         {
+            // _Duty-start: очистка ссылки на отсоединённое тело при удалении призрака
+            if (component.DetachedBody is { } detachedBody)
+            {
+                if (TryComp<DetachedGhostBodyComponent>(detachedBody, out var detachedComp)
+                    && detachedComp.Ghost == uid
+                    && !Terminating(detachedBody))
+                {
+                    RemCompDeferred<DetachedGhostBodyComponent>(detachedBody);
+                }
+
+                component.DetachedBody = null;
+            }
+            // _Duty-end
+
             // Perf: If the entity is deleting itself, no reason to change these back.
             if (Terminating(uid))
                 return;
@@ -270,14 +294,118 @@ namespace Content.Server.Ghost
             if (args.SenderSession.AttachedEntity is not {Valid: true} attached
                 || !_ghostQuery.TryComp(attached, out var ghost)
                 || !ghost.CanReturnToBody
-                || !TryComp(attached, out ActorComponent? actor))
+                || !TryComp(attached, out ActorComponent? actor)
+                || !_mind.TryGetMind(actor.PlayerSession, out var mindId, out var mind))
             {
                 Log.Warning($"User {args.SenderSession.Name} sent an invalid {nameof(GhostReturnToBodyRequest)}");
                 return;
             }
 
-            _mind.UnVisit(actor.PlayerSession);
+            // _Duty-start: проверка существования/доступности тела и поддержка возврата в тело, отсоединённое при /ghost
+            if (mind.VisitingEntity == attached && mind.OwnedEntity is { } ownedBody)
+            {
+                if (!CanReturnToEntity(ownedBody, mindId))
+                {
+                    SetCanReturnToBody((attached, ghost), false);
+                    Log.Warning($"User {args.SenderSession.Name} sent an invalid {nameof(GhostReturnToBodyRequest)}");
+                    return;
+                }
+
+                _mind.UnVisit(mindId, mind);
+                return;
+            }
+
+            if (mind.OwnedEntity == attached
+                && ghost.DetachedBody is { } detachedBody
+                && CanReturnToEntity(detachedBody, mindId, requireIncapacitated: true))
+            {
+                if (TryComp<DetachedGhostBodyComponent>(detachedBody, out var detachedComp) && detachedComp.Ghost == attached)
+                    RemComp<DetachedGhostBodyComponent>(detachedBody);
+                ghost.DetachedBody = null;
+
+                _mind.TransferTo(mindId, detachedBody, mind: mind);
+                return;
+            }
+
+            SetCanReturnToBody((attached, ghost), false);
+            Log.Warning($"User {args.SenderSession.Name} sent an invalid {nameof(GhostReturnToBodyRequest)}");
+            // _Duty-end
         }
+
+        // _Duty-start: валидация возможности возврата в тело и обновление статуса для /ghost до смерти
+        private bool CanReturnToEntity(EntityUid body, EntityUid? mindId, bool requireIncapacitated = false)
+        {
+            if (!Exists(body) || TerminatingOrDeleted(body))
+                return false;
+
+            if (_ghostQuery.HasComp(body))
+                return false;
+
+            if (Transform(body).MapID == MapId.Nullspace)
+                return false;
+
+            if (TryComp<CryostorageContainedComponent>(body, out var cryo) && !cryo.AllowReEnteringBody)
+                return false;
+
+            if (TryComp<MindContainerComponent>(body, out var mindContainer)
+                && mindContainer.HasMind
+                && mindContainer.Mind != mindId)
+            {
+                return false;
+            }
+
+            if (requireIncapacitated && !_mobState.IsIncapacitated(body))
+                return false;
+
+            return true;
+        }
+
+        private void OnDetachedBodyMobStateChanged(Entity<DetachedGhostBodyComponent> ent, ref MobStateChangedEvent args)
+        {
+            if (ent.Comp.Ghost is not { } ghostUid
+                || !_ghostQuery.TryComp(ghostUid, out var ghostComp)
+                || TerminatingOrDeleted(ghostUid))
+            {
+                if (!Terminating(ent.Owner))
+                    RemCompDeferred<DetachedGhostBodyComponent>(ent.Owner);
+                return;
+            }
+
+            _minds.TryGetMind(ghostUid, out var ghostMindId, out _);
+            var canReturn = CanReturnToEntity(ent.Owner, ghostMindId, requireIncapacitated: true);
+            SetCanReturnToBody((ghostUid, ghostComp), canReturn);
+        }
+
+        private void OnDetachedBodyMindAdded(Entity<DetachedGhostBodyComponent> ent, ref MindAddedMessage args)
+        {
+            ClearDetachedBodyGhost(ent);
+        }
+
+        private void OnDetachedBodyTerminating(Entity<DetachedGhostBodyComponent> ent, ref EntityTerminatingEvent args)
+        {
+            ClearDetachedBodyGhost(ent);
+        }
+
+        private void OnDetachedBodyEnteredCryostorage(Entity<DetachedGhostBodyComponent> ent, ref EntityEnteredCryostorageEvent args)
+        {
+            ClearDetachedBodyGhost(ent);
+        }
+
+        private void ClearDetachedBodyGhost(Entity<DetachedGhostBodyComponent> ent)
+        {
+            if (ent.Comp.Ghost is { } ghostUid
+                && _ghostQuery.TryComp(ghostUid, out var ghostComp)
+                && !TerminatingOrDeleted(ghostUid))
+            {
+                ghostComp.DetachedBody = null;
+                SetCanReturnToBody((ghostUid, ghostComp), false);
+            }
+
+            ent.Comp.Ghost = null;
+            if (!Terminating(ent.Owner))
+                RemCompDeferred<DetachedGhostBodyComponent>(ent.Owner);
+        }
+        // _Duty-end
 
         #region Warp
 
@@ -809,7 +937,8 @@ namespace Content.Server.Ghost
         }
         // ADT Tweak End
 
-        public bool OnGhostAttempt(EntityUid mindId, bool canReturnGlobal, bool viaCommand = false, bool forced = false, MindComponent? mind = null)
+        // _Duty: allowLivingReturn позволяет суициду сохранить связь с телом через Visit до нанесения летального урона
+        public bool OnGhostAttempt(EntityUid mindId, bool canReturnGlobal, bool viaCommand = false, bool forced = false, MindComponent? mind = null, bool allowLivingReturn = false)
         {
             if (!Resolve(mindId, ref mind))
                 return false;
@@ -874,16 +1003,17 @@ namespace Content.Server.Ghost
             // + If we're in a mob that is critical, and we're supposed to be able to return if possible,
             //   we're succumbing - the mob is killed. Therefore, character is dead. Ghosting OK.
             //   (If the mob survives, that's a bug. Ghosting is kept regardless.)
-            var canReturn = canReturnGlobal && _mind.IsCharacterDeadPhysically(mind);
+            // _Duty-start: учитываем allowLivingReturn (суицид) и разрешаем возврат из крита даже при GhostKillCrit = false
+            var canReturn = canReturnGlobal && (_mind.IsCharacterDeadPhysically(mind) || allowLivingReturn);
 
-            if (_configurationManager.GetCVar(CCVars.GhostKillCrit) &&
-                canReturnGlobal &&
-                TryComp(playerEntity, out MobStateComponent? mobState))
+            if (canReturnGlobal &&
+                TryComp(playerEntity, out MobStateComponent? mobState) &&
+                _mobState.IsCritical(playerEntity.Value, mobState))
             {
-                if (_mobState.IsCritical(playerEntity.Value, mobState))
-                {
-                    canReturn = true;
+                canReturn = true;
 
+                if (_configurationManager.GetCVar(CCVars.GhostKillCrit))
+                {
                     //todo: what if they dont breathe lol
                     //cry deeply
 
@@ -902,6 +1032,7 @@ namespace Content.Server.Ghost
                     _damageable.ChangeDamage(playerEntity.Value, damage, true);
                 }
             }
+            // _Duty-end
 
             if (playerEntity != null)
                 _adminLog.Add(LogType.Mind, $"{ToPrettyString(playerEntity.Value):player} ghosted{(!canReturn ? " (non-returnable)" : "")}");
@@ -915,6 +1046,22 @@ namespace Content.Server.Ghost
 
             if (ghost == null)
                 return false;
+
+            // _Duty-start: если игрок ушёл через /ghost живым (TransferTo), запоминаем тело для возврата после его смерти/крита
+            if (!canReturn
+                && canReturnGlobal
+                && playerEntity is { } body
+                && Exists(body)
+                && !Terminating(body)
+                && HasComp<MobStateComponent>(body)
+                && !_ghostQuery.HasComp(body)
+                && _ghostQuery.TryComp(ghost.Value, out var spawnedGhost))
+            {
+                var detachedComp = EnsureComp<DetachedGhostBodyComponent>(body);
+                detachedComp.Ghost = ghost.Value;
+                spawnedGhost.DetachedBody = body;
+            }
+            // _Duty-end
 
             return true;
         }

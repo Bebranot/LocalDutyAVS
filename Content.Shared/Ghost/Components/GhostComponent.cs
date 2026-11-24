@@ -94,6 +94,10 @@ public sealed partial class GhostComponent : Component
     [DataField, AutoNetworkedField]
     public bool CanReturnToBody;
 
+    // _Duty: тело, от которого разум был отсоединён при /ghost в живом состоянии, для возврата после смерти
+    [ViewVariables]
+    public EntityUid? DetachedBody;
+
     /// <summary>
     /// Ghost color
     /// </summary>

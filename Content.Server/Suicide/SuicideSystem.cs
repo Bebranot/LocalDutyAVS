@@ -58,6 +58,14 @@ public sealed partial class SuicideSystem : SharedSuicideSystem
         if (TryComp<ActorComponent>(victim, out var actor))
             session = actor.PlayerSession;
 
+        var mindContainer = CompOrNull<MindContainerComponent>(victim);
+        // _Duty: не позволяем уйти в призраки и умереть, если суицид запрещён самим разумом
+        if (!_tagSystem.HasTag(victim, CannotSuicideTag)
+            && mindContainer?.Mind is { } suicideMindId
+            && TryComp<MindComponent>(suicideMindId, out var suicideMind)
+            && suicideMind.PreventSuicide)
+            return false;
+
         var suicideGhostEvent = new SuicideGhostEvent(victim);
 
         RaiseLocalEvent(victim, suicideGhostEvent);
@@ -101,12 +109,11 @@ public sealed partial class SuicideSystem : SharedSuicideSystem
         if (!TryComp<MindComponent>(victim.Comp.Mind, out var mindComponent))
             return;
 
-        // CannotSuicide tag will allow the user to ghost, but also return to their mind
-        // This is kind of weird, not sure what it applies to?
-        if (_tagSystem.HasTag(victim, CannotSuicideTag))
-            args.CanReturnToBody = true;
+        // _Duty: разрешаем возврат в тело после суицида (и самоказни), пока тело существует и не занято
+        args.CanReturnToBody = true;
+        var allowLivingReturn = !_tagSystem.HasTag(victim, CannotSuicideTag);
 
-        if (_ghostSystem.OnGhostAttempt(victim.Comp.Mind.Value, args.CanReturnToBody, mind: mindComponent))
+        if (_ghostSystem.OnGhostAttempt(victim.Comp.Mind.Value, args.CanReturnToBody, mind: mindComponent, allowLivingReturn: allowLivingReturn))
             args.Handled = true;
     }
 
