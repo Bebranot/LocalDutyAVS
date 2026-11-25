@@ -31,7 +31,7 @@ public sealed partial class HealthExaminableSystem : EntitySystem
         {
             Act = () =>
             {
-                var markup = CreateMarkup(uid, component, damage, args.User); // _Duty: передаём осматривающего
+                var markup = CreateMarkup(uid, component, damage, args.User); // ADT-Tweak
                 _examineSystem.SendExamineTooltip(args.User, uid, markup, false, false);
             },
             Text = Loc.GetString("health-examinable-verb-text"),
@@ -44,7 +44,7 @@ public sealed partial class HealthExaminableSystem : EntitySystem
         args.Verbs.Add(verb);
     }
 
-    public FormattedMessage CreateMarkup(EntityUid uid, HealthExaminableComponent component, DamageableComponent damage, EntityUid? examiner = null) // _Duty: examiner
+    public FormattedMessage CreateMarkup(EntityUid uid, HealthExaminableComponent component, DamageableComponent damage, EntityUid examiner) // ADT-Tweak
     {
         var msg = new FormattedMessage();
 
@@ -97,7 +97,7 @@ public sealed partial class HealthExaminableSystem : EntitySystem
         }
 
         // Anything else want to add on to this?
-        RaiseLocalEvent(uid, new HealthBeingExaminedEvent(msg, examiner), true); // _Duty: examiner
+        RaiseLocalEvent(uid, new HealthBeingExaminedEvent(msg, examiner), true); // ADT-Tweak
 
         return msg;
     }
@@ -111,14 +111,13 @@ public sealed partial class HealthExaminableSystem : EntitySystem
 public sealed class HealthBeingExaminedEvent
 {
     public FormattedMessage Message;
+    // ADT-Tweak-Start
+    public EntityUid Examiner;
 
-    // _Duty-start: кто осматривает — нужно, чтобы часть строк видел только сам носитель (Examiner == цель)
-    public EntityUid? Examiner;
-
-    public HealthBeingExaminedEvent(FormattedMessage message, EntityUid? examiner = null)
+    public HealthBeingExaminedEvent(FormattedMessage message, EntityUid examiner)
     {
         Message = message;
         Examiner = examiner;
     }
-    // _Duty-end
+    // ADT-Tweak-End
 }
