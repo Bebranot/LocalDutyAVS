@@ -11,6 +11,7 @@ using Content.Shared._Duty.ErpStatus;
 using Content.Shared._Duty.HealthPhrases;
 using Content.Shared.Body;
 using Content.Shared.CCVar;
+using Content.Shared.Chat.Prototypes;
 using Content.Shared.Construction.Prototypes;
 using Content.Shared.Humanoid;
 using Content.Shared.Humanoid.Markings;
@@ -137,7 +138,7 @@ namespace Content.Server.Preferences.Managers
             }
 
             var voice = profile.Voice ?? speciesPrototype.DefaultSoundsBySex[(int)sex];
-            if (!_prototypeManager.HasIndex(voice))
+            if (!_prototypeManager.HasIndex<EmoteSoundsPrototype>(voice)) // ADT-Tweak
                 voice = speciesPrototype.DefaultSoundsBySex[(int)sex];
 
             if (profile.OrganMarkings?.RootElement is { } element)

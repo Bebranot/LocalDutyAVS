@@ -92,6 +92,10 @@ public sealed partial class ProjectileComponent : Component
     /// </summary>
     [DataField]
     public bool ProjectileSpent;
+    // ADT-Tweak-Start
+    [DataField]
+    public bool IgnoreTargeted;
+    // ADT-Tweak-End
 
     // _Duty: безвредное поле для портированных из STALKER-14 снарядов (там Projectile имел
     // projectileClass для своей системы точности). Поведения у нас не несёт — только чтобы YAML грузился.
