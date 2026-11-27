@@ -111,6 +111,8 @@ public sealed partial class HealthExaminableSystem : EntitySystem
 public sealed class HealthBeingExaminedEvent
 {
     public FormattedMessage Message;
+    // ADT-Tweak-Start
+    public EntityUid Examiner;
 
     // _Duty-start: кто осматривает — нужно, чтобы часть строк видел только сам носитель (Examiner == цель)
     public EntityUid? Examiner;

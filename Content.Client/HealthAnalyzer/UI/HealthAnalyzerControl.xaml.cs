@@ -595,56 +595,6 @@ public sealed partial class HealthAnalyzerControl : BoxContainer
     }
     // ADT-Tweak end
 
-    // _Duty start: табличка критического статуса
-    private void SetCriticalState(bool active, bool dead)
-    {
-        // Пересобираем при смене активности ИЛИ режима (жив на грани / мёртв).
-        if (_criticalActive == active && _criticalDead == dead)
-            return;
-
-        _criticalActive = active;
-        _criticalDead = dead;
-        CriticalStatusPanel.Visible = active;
-
-        if (!active)
-            return;
-
-        // Сброс анимации при повторном включении.
-        _criticalBlinkAccum = 0f;
-        _criticalTextAccum = 0f;
-        _criticalTextIndex = 0;
-        CriticalStatusLabel.Modulate = Color.White;
-        // Мёртв — статичный «Сердце остановлено.»; жив на грани — цикл тревожных фраз.
-        CriticalStatusLabel.Text = dead ? CriticalDeadText : CriticalTexts[0];
-    }
-
-    protected override void FrameUpdate(FrameEventArgs args)
-    {
-        base.FrameUpdate(args);
-
-        if (!_criticalActive)
-            return;
-
-        // Сердце остановлено — статичный текст, без мигания и смены фраз.
-        if (_criticalDead)
-            return;
-
-        // Смена текста между вариантами.
-        _criticalTextAccum += args.DeltaSeconds;
-        if (_criticalTextAccum >= CriticalTextPeriod)
-        {
-            _criticalTextAccum -= CriticalTextPeriod;
-            _criticalTextIndex = (_criticalTextIndex + 1) % CriticalTexts.Length;
-            CriticalStatusLabel.Text = CriticalTexts[_criticalTextIndex];
-        }
-
-        // Мигание (гашение прозрачностью по полупериоду).
-        _criticalBlinkAccum += args.DeltaSeconds;
-        var on = (int)(_criticalBlinkAccum / CriticalBlinkHalfPeriod) % 2 == 0;
-        CriticalStatusLabel.Modulate = on ? Color.White : Color.White.WithAlpha(0.15f);
-    }
-    // _Duty end
-
     // ADT-Tweak-Start
     private void DrawDiseases(List<ADTDiseaseInfo>? diseases)
     {
@@ -715,6 +665,56 @@ public sealed partial class HealthAnalyzerControl : BoxContainer
             DiseasesContainer.AddChild(card);
         }
     }
+
+    // _Duty start: табличка критического статуса
+    private void SetCriticalState(bool active, bool dead)
+    {
+        // Пересобираем при смене активности ИЛИ режима (жив на грани / мёртв).
+        if (_criticalActive == active && _criticalDead == dead)
+            return;
+
+        _criticalActive = active;
+        _criticalDead = dead;
+        CriticalStatusPanel.Visible = active;
+
+        if (!active)
+            return;
+
+        // Сброс анимации при повторном включении.
+        _criticalBlinkAccum = 0f;
+        _criticalTextAccum = 0f;
+        _criticalTextIndex = 0;
+        CriticalStatusLabel.Modulate = Color.White;
+        // Мёртв — статичный «Сердце остановлено.»; жив на грани — цикл тревожных фраз.
+        CriticalStatusLabel.Text = dead ? CriticalDeadText : CriticalTexts[0];
+    }
+
+    protected override void FrameUpdate(FrameEventArgs args)
+    {
+        base.FrameUpdate(args);
+
+        if (!_criticalActive)
+            return;
+
+        // Сердце остановлено — статичный текст, без мигания и смены фраз.
+        if (_criticalDead)
+            return;
+
+        // Смена текста между вариантами.
+        _criticalTextAccum += args.DeltaSeconds;
+        if (_criticalTextAccum >= CriticalTextPeriod)
+        {
+            _criticalTextAccum -= CriticalTextPeriod;
+            _criticalTextIndex = (_criticalTextIndex + 1) % CriticalTexts.Length;
+            CriticalStatusLabel.Text = CriticalTexts[_criticalTextIndex];
+        }
+
+        // Мигание (гашение прозрачностью по полупериоду).
+        _criticalBlinkAccum += args.DeltaSeconds;
+        var on = (int)(_criticalBlinkAccum / CriticalBlinkHalfPeriod) % 2 == 0;
+        CriticalStatusLabel.Modulate = on ? Color.White : Color.White.WithAlpha(0.15f);
+    }
+    // _Duty end
 
     // ADT-Tweak-Start: секция зависимостей (по паттерну DrawMetabolizingChemicals)
     private void DrawAddictions(List<AddictionInfo>? addictions)

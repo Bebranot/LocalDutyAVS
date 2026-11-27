@@ -368,6 +368,7 @@ internal sealed partial class ChatManager : IChatManager
 
         var adminData = _adminManager.GetAdminData(player);
         var isAdmin = _adminManager.HasAdminFlag(player, AdminFlags.Admin);
+        var hasNameColor = _adminManager.HasAdminFlag(player, AdminFlags.NameColor); // Duty: NameColor независимый флаг
         var hasTitle = !string.IsNullOrEmpty(adminData?.Title);
         var isSponsor = _sponsorsManager.TryGetInfo(player.UserId, out var sponsorData) && !string.IsNullOrEmpty(sponsorData?.OOCColor);
 
@@ -383,7 +384,7 @@ internal sealed partial class ChatManager : IChatManager
             sponsorColorStr = adtColor.Value.ToHex();
         }
 
-        if (_adminManager.HasAdminFlag(player, AdminFlags.NameColor))
+        if (hasNameColor)
         {
             var prefs = _preferencesManager.GetPreferences(player.UserId);
             colorOverride = prefs.AdminOOCColor;
