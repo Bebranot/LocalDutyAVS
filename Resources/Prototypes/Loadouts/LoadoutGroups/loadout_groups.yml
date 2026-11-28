@@ -61,6 +61,7 @@
   - AcousticGuitarInstrument
   - RockGuitarInstrument
   - BassGuitarInstrument
+  - FretlessBassGuitarInstrument
   - HarmonicaInstrument
   - SynthesizerInstrument
   # instrument-end
@@ -182,7 +183,10 @@
   loadouts:
   - CaptainHead
   - CaptainCap
-  - ADTClothingAdmiralHat # ADT Loadout
+  # ADT-Loadout-Start
+  - ADTClothingAdmiralHat
+  - ADTClothingHeadHatBeretCommand
+  # ADT-Loadout-End
 
 - type: loadoutGroup
   id: CaptainJumpsuit
@@ -239,6 +243,7 @@
   - HoPHead
   # ADT-Loadouts-Start
   - ADTHatBeretHOP
+  - ADTClothingHeadHatBeretCommand
   # ADT-Loadouts-End
 
 - type: loadoutGroup
@@ -627,7 +632,6 @@
   # ADT-Loadouts-End
   # ADT tweak start
   - ADTClothingUniformJumpsuitTurtleneckPurple
-  - ADTClothingUniformJumpsuitScientistHL
   - ADTClothingUniformJumpskirtTurtleneckPurple
   # ADT tweak end
 
@@ -854,7 +858,7 @@
   id: Instruments
   name: loadout-group-instruments
   minLimit: 0
-  maxLimit: 2
+  maxLimit: 3 #ADT-Tweak 2 > 3
   loadouts:
   - ADTBoxJukeBoxPlayer #ADT-Tweak
   - Glockenspiel
@@ -868,6 +872,7 @@
   - BassGuitar
   - RockGuitar
   - AcousticGuitar
+  - FretlessBassGuitar #ADT-Tweak
   - Banjo
   - Violin
   - Viola
@@ -903,6 +908,7 @@
   - QuartermasterBeret
   # ADT-Loadouts-Start
   - ADTCargoTechnicianBeret
+  - ADTClothingHeadHatBeretCommand
   # ADT-Loadouts-End
 
 - type: loadoutGroup
@@ -1069,8 +1075,11 @@
   name: loadout-group-chief-engineer-head
   minLimit: 0
   loadouts:
+  # ADT-Loadout-Start
   - ChiefEngineerHead
-  - ADTChiefEngineerBeret # ADT tweak
+  - ADTChiefEngineerBeret
+  - ADTClothingHeadHatBeretCommand
+  # ADT-Loadout-End
 
 - type: loadoutGroup
   id: ChiefEngineerJumpsuit
@@ -1274,6 +1283,7 @@
   minLimit: 0
   loadouts:
   - ResearchDirectorBeret
+  - ADTClothingHeadHatBeretCommand #ADT-Tweak
 
 - type: loadoutGroup
   id: ResearchDirectorNeck
@@ -1443,6 +1453,7 @@
   loadouts:
   - HeadofSecurityHead
   - HeadofSecurityBeret
+  - ADTClothingHeadHatBeretCommand  #ADT-Tweak
 
 - type: loadoutGroup
   id: HeadofSecurityJumpsuit
@@ -1539,6 +1550,7 @@
   - SecurityJumpskirtGrey
   - TrooperUniform
   # ADT-Loadouts-Start
+  - ADTUniformJumpsuitDSS
   - ADTSecurityOfficerMogesBrown
   - ADTSecurityOfficerMogesBlue
   - ADTSecurityOfficerMogesGray

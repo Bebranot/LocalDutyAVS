@@ -115,6 +115,8 @@
   - type: DutyStamina
     canGetWinded: false
   - type: Jump # _Duty: по той же причине прыжок из BaseSpeciesMob до ИПЦ не доходил
+  - type: ADTVirusImmune
+    absolute: true
   - type: VisualBody
   - type: PowerCellSlot
     cellSlotId: cell_slot
@@ -130,6 +132,18 @@
         #  tags:
         #  - ADTMegaCell
       # ADT-tweak-end
+  - type: EmpContainerProtection
+    strengthMultiplier: 1
+    capEnergyConsumption: true
+    capRelativeToMaxCharge: false
+    capPercentage: 0.5
+  - type: EmpGlitch
+    durationMultiplier: 0.4
+    smear: 1.2
+  - type: EmpSpeech
+    durationMultiplier: 0.55
+  - type: EmpSlowdown
+    durationMultiplier: 0.35
   - type: Lock
     locked: true
     lockOnClick: false
@@ -140,6 +154,7 @@
   - type: BatterySlotRequiresLock
     itemSlot: cell_slot
   - type: PickupHumans
+    handsRequired: 1
   - type: MobIpc
     disablePointLightOnDeath: true
   - type: InteractionPopup
